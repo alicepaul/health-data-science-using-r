@@ -1,16 +1,5 @@
-# Welcome to your Jupyter Book
+# R for Health Data Science
 
-This is a small sample book to give you a feel for how book content is
-structured.
+This book is designed to serve as an introduction to R for public health and health data science students. 
 
-:::{note}
-Here is a note!
-:::
-
-And here is a code block:
-
-```
-e = mc^2
-```
-
-Check out the content pages bundled with this sample book to see more.
+Please contact Alice Paul (alice_paul@brown.edu) with questions.
