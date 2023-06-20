@@ -41,3 +41,4 @@ This project is created using the excellent open source [Jupyter Book project](h
 - patchwork_1.1.2
 - datasets_4.1.1
 - haven_2.5.2
+- RforHDSdata_0.1.0
