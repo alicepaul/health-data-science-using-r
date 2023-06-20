@@ -34,7 +34,6 @@ This project is created using the excellent open source [Jupyter Book project](h
 
 - R_4.1.1
 - tidyverse_1.3.1
-- stats_4.1.1
 - gt_0.9.0
 - GGally_2.1.2
 - ggcorrplot_0.1.4
