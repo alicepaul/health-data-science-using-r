@@ -24,4 +24,8 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 - patchwork_1.1.2
 - datasets_2.13.0
 - haven_2.5.2
+- broom_1.0.5
+- pROC_1.18.2
+- car_3.1
+- lmtest_0.9.40
 - RforHDSdata_0.1.0
