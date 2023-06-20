@@ -151,7 +151,6 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="1_intro_to_r.html">Intro to R, RStudio, and Jupyter Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="2_data_structures.html">Data Structures in R</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="3_data_files.html">Working with Data Files in R</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
@@ -327,7 +326,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -343,6 +344,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -354,6 +363,106 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="exploring-data">
 <h1>Exploring Data<a class="headerlink" href="#exploring-data" title="Permalink to this headline">#</a></h1>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p>For these exercises, we will be using the <strong>NHANES</strong> data.</p>
+<ol class="arabic simple">
+<li><p>Using the numerical and graphical summaries, describe the distribution of diastolic blood pressure <code class="docutils literal notranslate"><span class="pre">dbp</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> among study participants, respectively.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## solutions:</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
+
+<span class="c1"># bbp</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">dbp</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">dbp</span><span class="p">)</span>
+
+<span class="c1"># age</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00   62.00   70.00   70.36   78.00  130.00 
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  20.00   34.00   48.00   49.18   63.00   85.00 
+</pre></div>
+</div>
+<img alt="../_images/58b57926c5415111d765fce76e95af2bcb970df089f9847ae1ffe8f8f69a847d.png" src="../_images/58b57926c5415111d765fce76e95af2bcb970df089f9847ae1ffe8f8f69a847d.png" />
+<img alt="../_images/cc84e294bffe6205c2adcf28414af6b313ba0c2ee630bb92ba15e6d9836aba99.png" src="../_images/cc84e294bffe6205c2adcf28414af6b313ba0c2ee630bb92ba15e6d9836aba99.png" />
+</div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Subset 20-to-55-year-old females and randomly select 1000 participants from the entire dataset. Using the random sample, <code class="docutils literal notranslate"><span class="pre">nhanes.samp</span></code>, explore how does blood pressure vary by age? Is there a remarkable trend in blood pressure between those females?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample.subset</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                              </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">sex</span><span class="o">==</span><span class="s">&quot;Female&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&gt;=</span><span class="m">20</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
+<span class="n">nhanes.samp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample_n</span><span class="p">(</span><span class="n">NHANESsample.subset</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">nhanes.samp</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes.samp</span><span class="o">$</span><span class="n">dbp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="ow">in</span> <span class="n">sample_n</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">):</span> <span class="n">could</span> <span class="ow">not</span> <span class="n">find</span> <span class="n">function</span> <span class="s2">&quot;sample_n&quot;</span>
+<span class="ne">Traceback</span>:
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Repeat exercise 2 for males.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                              </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">sex</span><span class="o">==</span><span class="s">&quot;Male&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&gt;=</span><span class="m">20</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
+<span class="n">nhanes.samp.males</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sample_n</span><span class="p">(</span><span class="n">subset.males</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="o">=</span><span class="m">1000</span><span class="p">,</span><span class="w"> </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">nhanes.samp.males</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes.samp.males</span><span class="o">$</span><span class="n">dbp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race variable. Order resulting tables from lowest to highest average blood pressure.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males.1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                         </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">sex</span><span class="o">==</span><span class="s">&quot;Male&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&gt;=</span><span class="m">50</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">age</span><span class="o">&lt;=</span><span class="m">59</span><span class="p">)</span>
+<span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="p">)</span>
+<span class="nf">boxplot</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="p">)</span>
+
+<span class="nf">levels</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="p">[</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="o">==</span><span class="s">&quot;Non-Hispanic White&quot;</span><span class="p">])[</span><span class="m">4</span><span class="p">]</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="p">[</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="o">==</span><span class="s">&quot;Mexican American&quot;</span><span class="p">])[</span><span class="m">4</span><span class="p">]</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="p">[</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="o">==</span><span class="s">&quot;Other Race&quot;</span><span class="w"> </span><span class="p">])[</span><span class="m">4</span><span class="p">]</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="p">[</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="o">==</span><span class="s">&quot;Other Hispanic&quot;</span><span class="p">])[</span><span class="m">4</span><span class="p">]</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">dbp</span><span class="p">[</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">race</span><span class="o">==</span><span class="s">&quot;Non-Hispanic Black&quot;</span><span class="p">])[</span><span class="m">4</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Examine the relationship between BMI levels with blood pressure, age, and income using appropriate correlation matrices and probability.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">ggcorrplot</span><span class="p">)</span>
+<span class="n">corr</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">cor</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">11</span><span class="p">)]),</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
+<span class="nf">ggcorrplot</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;square&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -414,6 +523,20 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
