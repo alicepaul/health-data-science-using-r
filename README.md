@@ -1,6 +1,6 @@
 # R for Health Data Science
 
-My book.
+The "R Book for Health Data Science" is a comprehensive guide designed to provide learners with the essential skills and knowledge needed to analyze health data using the R programming language. The book covers various modules, each focusing on specific topics and skills necessary for health data analysis. This book will cover topics in introduction in R, data structure, exploratory data analysis, data manipulation, data visualization, probability distribution, hypothesis testing and some regression analysis.
 
 ## Usage
 
@@ -29,3 +29,15 @@ We welcome and recognize all contributions. You can see a list of current contri
 ## Credits
 
 This project is created using the excellent open source [Jupyter Book project](https://jupyterbook.org/) and the [executablebooks/cookiecutter-jupyter-book template](https://github.com/executablebooks/cookiecutter-jupyter-book).
+
+## Environment Version Information
+
+- R_4.1.1
+- tidyverse_2.0.0
+- stats_4.1.1
+- gt_0.9.0
+- GGally_2.1.2
+- ggcorrplot_0.1.4
+- patchwork_1.1.2
+- datasets_4.1.1
+- haven_2.5.2
