@@ -33,7 +33,7 @@ This project is created using the excellent open source [Jupyter Book project](h
 ## Environment Version Information
 
 - R_4.1.1
-- tidyverse_2.0.0
+- tidyverse_1.3.1
 - stats_4.1.1
 - gt_0.9.0
 - GGally_2.1.2
