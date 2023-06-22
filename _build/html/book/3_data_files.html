@@ -60,12 +60,14 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'book/3_data_files';</script>
     <link rel="canonical" href="https://alicepaul.github.io/r-for-health-data-science/book/3_data_files.html" />
     <link rel="shortcut icon" href="../_static/fav.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Exploring Data" href="4_exploratory_analysis.html" />
+    <link rel="next" title="Intro to Exploratory Data Analysis" href="4_exploratory_analysis.html" />
     <link rel="prev" title="Data Structures in R" href="2_data_structures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
@@ -151,12 +153,11 @@ const thebe_selector_output = ".output, .cell_output"
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="1_intro_to_r.html">Intro to R, RStudio, and Jupyter Notebooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="2_data_structures.html">Data Structures in R</a></li>
-
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Working with Data Files in R</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">Exploring Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">Intro to Exploratory Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5_data_wrangling_transformation.html">Data Wrangling and Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6_visualization_ggplot.html">Visualization with ggplot</a></li>
 </ul>
@@ -327,7 +328,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -343,6 +346,30 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-and-exporting-data">Importing and Exporting Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-and-creating-data-columns">Summarizing and Creating Data Columns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#column-summaries">Column Summaries</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-summary-functions">Other Summary Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-values-infinite-values-and-nan-values">Missing values, Infinite values, and NaN values</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-logic-to-subset-summarize-and-transform">Using Logic to Subset, Summarize, and Transform</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-selection-functions">Other Selection Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#todos">TODOs</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -354,6 +381,871 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="working-with-data-files-in-r">
 <h1>Working with Data Files in R<a class="headerlink" href="#working-with-data-files-in-r" title="Permalink to this headline">#</a></h1>
+<p>In this chapter, we will start analyzing a data file. To start, we need to load our data into R. This requires identifying the type of data file we have (e.g. .csv, .xlsx, .dta) and finding the appropriate function to load in the data to R. This will create a data frame object containing the information. This chapter will then show how to find information about the data columns including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.</p>
+<p>In this chapter and all future chapters, we will load in the libraries needed for this chapter at the start of the chapter. In this chapter, we need a single library <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> that contains the sample data sets used in this book.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Chapter 3 libraries</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="importing-and-exporting-data">
+<h2>Importing and Exporting Data<a class="headerlink" href="#importing-and-exporting-data" title="Permalink to this headline">#</a></h2>
+<p>The data we will use contains information about 21,658 patients who visited one of the University of Pittsburgh’s seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up. Use the help operator to learn more about the source of this data and to read the variable descriptions <code class="docutils literal notranslate"><span class="pre">?pain</span></code>. Since this data is available in our R package, we can use the <code class="docutils literal notranslate"><span class="pre">data</span></code> function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.</p>
+<p>TODO: check dimensions?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>21659</li><li>92</li></ol>
+</div></div>
+</div>
+<p>In general, our data is not available in an R package and instead exists in one or more data files. In order to load in this data, we need to find the corresponding function that works for the file type we have. For example, we can load a csv file using the <code class="docutils literal notranslate"><span class="pre">read.csv</span></code> function (part of base R) or using the <code class="docutils literal notranslate"><span class="pre">read_csv</span></code> function from the <code class="docutils literal notranslate"><span class="pre">readr</span></code> package, both shown in Chapter 1. Looking at the print output below we can see that there is slight difference in the data structure and data types storing the data. The function <code class="docutils literal notranslate"><span class="pre">read.csv</span></code> loads the data as a data frame whereas <code class="docutils literal notranslate"><span class="pre">read_csv</span></code> returns an object of type <code class="docutils literal notranslate"><span class="pre">spec_tbl_df</span></code>. This is special type of data frame called a tibble that is used by the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> packages. We will cover this data structure in Chapter 5. You can use either function to read in a csv file.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;data/fake_names.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 5</caption>
+<thead>
+	<tr><th scope=col>Name</th><th scope=col>Age</th><th scope=col>DOB</th><th scope=col>City</th><th scope=col>State</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Ken Irwin          </td><td>37</td><td>6/28/85</td><td>Providence     </td><td>RI</td></tr>
+	<tr><td>Delores Whittington</td><td>56</td><td>4/28/67</td><td>Smithfield     </td><td>RI</td></tr>
+	<tr><td>Daniel Hughes      </td><td>41</td><td>5/22/82</td><td>Providence     </td><td>RI</td></tr>
+	<tr><td>Carlos Fain        </td><td>83</td><td>2/2/40 </td><td>Warren         </td><td>RI</td></tr>
+	<tr><td>James Alford       </td><td>67</td><td>2/23/56</td><td>East Providence</td><td>RI</td></tr>
+	<tr><td>Ruth Alvarez       </td><td>34</td><td>9/22/88</td><td>Providence     </td><td>RI</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">readr</span><span class="o">::</span><span class="nf">read_csv</span><span class="p">(</span><span class="s">&quot;data/fake_names.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">show_col_types</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A spec_tbl_df: 6 × 5</caption>
+<thead>
+	<tr><th scope=col>Name</th><th scope=col>Age</th><th scope=col>DOB</th><th scope=col>City</th><th scope=col>State</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Ken Irwin          </td><td>37</td><td>6/28/85</td><td>Providence     </td><td>RI</td></tr>
+	<tr><td>Delores Whittington</td><td>56</td><td>4/28/67</td><td>Smithfield     </td><td>RI</td></tr>
+	<tr><td>Daniel Hughes      </td><td>41</td><td>5/22/82</td><td>Providence     </td><td>RI</td></tr>
+	<tr><td>Carlos Fain        </td><td>83</td><td>2/2/40 </td><td>Warren         </td><td>RI</td></tr>
+	<tr><td>James Alford       </td><td>67</td><td>2/23/56</td><td>East Providence</td><td>RI</td></tr>
+	<tr><td>Ruth Alvarez       </td><td>34</td><td>9/22/88</td><td>Providence     </td><td>RI</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We may also want to save data from R into a data file we can access or share. To write a data frame from R to a csv file, we can use the <code class="docutils literal notranslate"><span class="pre">write.csv()</span></code> function. This function has three key arguments: the first agrument is the data frame in R that we want to write to a file, the second argument is the file name or the full file path where we want to write the data, and the third argument is whether or not we want to include the row names as an extra column to write. In this case, we will not include these row names. If we do not specify a full file path, R will save the file in our current working directory.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="p">))</span>
+<span class="nf">write.csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;data/test.csv&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">row.names</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>If you your data is not in a csv file, you may need to use another package to read in the file. The two most common packages are the <code class="docutils literal notranslate"><span class="pre">readxl</span></code> package, which makes it easy to read in Excel files, and the <code class="docutils literal notranslate"><span class="pre">haven</span></code> package, which can import SAS, SPSS, and Stata files. For each function, you need to specify the file path to the data file.</p>
+<ul class="simple">
+<li><p><strong>Excel Files</strong>: You can read in a .xls or .xlsx file using <code class="docutils literal notranslate"><span class="pre">readxl::read_excel()</span></code>, which allows you to specify a sheet and/or cell range within a file. (e.g. <code class="docutils literal notranslate"><span class="pre">read_excel('test.xlsx',</span> <span class="pre">sheet=&quot;Sheet1&quot;)</span></code>).</p></li>
+<li><p><strong>SAS</strong>: <code class="docutils literal notranslate"><span class="pre">haven::read_sas()</span></code> reads in .sas7bdat or .sas7bcat files, <code class="docutils literal notranslate"><span class="pre">haven::read_xpt()</span></code> reads in SAS transport files</p></li>
+<li><p><strong>Stata</strong>: <code class="docutils literal notranslate"><span class="pre">haven::read_dta()</span></code> reads in .dta files</p></li>
+<li><p><strong>SPSS</strong>: <code class="docutils literal notranslate"><span class="pre">haven::read_spss(filepath)</span></code> reads in .spss files</p></li>
+</ul>
+</section>
+<section id="summarizing-and-creating-data-columns">
+<h2>Summarizing and Creating Data Columns<a class="headerlink" href="#summarizing-and-creating-data-columns" title="Permalink to this headline">#</a></h2>
+<p>We will not look at the data we have loaded into the data frame called <code class="docutils literal notranslate"><span class="pre">pain</span></code>. We use the <code class="docutils literal notranslate"><span class="pre">head()</span></code> function to print the first six rows. However, we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, the column <code class="docutils literal notranslate"><span class="pre">PATIENT_NUM</span></code> is currently a numeric column. We might consider whether we should make this a factor or a character representation. We also use the <code class="docutils literal notranslate"><span class="pre">names()</span></code> function to print all the column names. Note that columns <code class="docutils literal notranslate"><span class="pre">X101</span></code> to <code class="docutils literal notranslate"><span class="pre">X238</span></code> correspond to the body pain map. Each of these columns has a 1 if the patient indicated that body part as experiencing pain and 0 if not.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 92</caption>
+<thead>
+	<tr><th scope=col>PATIENT_NUM</th><th scope=col>X101</th><th scope=col>X102</th><th scope=col>X103</th><th scope=col>X104</th><th scope=col>X105</th><th scope=col>X106</th><th scope=col>X107</th><th scope=col>X108</th><th scope=col>X109</th><th scope=col>⋯</th><th scope=col>GH_MENTAL_SCORE</th><th scope=col>GH_PHYSICAL_SCORE</th><th scope=col>AGE_AT_CONTACT</th><th scope=col>BMI</th><th scope=col>CCI_TOTAL_SCORE</th><th scope=col>PAIN_INTENSITY_AVERAGE.follow_up</th><th scope=col>PAT_SEX</th><th scope=col>PAT_RACE</th><th scope=col>CCI_bin</th><th scope=col>medicaid_bin</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>13118</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>43.5</td><td>29.6</td><td>78</td><td>33.67</td><td>0</td><td>2</td><td>male  </td><td>WHITE</td><td>No comorbidity</td><td>no</td></tr>
+	<tr><td>21384</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>53.3</td><td>37.4</td><td>70</td><td>36.26</td><td>0</td><td>5</td><td>female</td><td>WHITE</td><td>No comorbidity</td><td>no</td></tr>
+	<tr><td> 6240</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>48.3</td><td>37.4</td><td>75</td><td>27.25</td><td>0</td><td>6</td><td>male  </td><td>WHITE</td><td>No comorbidity</td><td>no</td></tr>
+	<tr><td> 1827</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>  NA</td><td>  NA</td><td>61</td><td>   NA</td><td>0</td><td>7</td><td>male  </td><td>WHITE</td><td>No comorbidity</td><td>no</td></tr>
+	<tr><td>11309</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>45.8</td><td>34.9</td><td>63</td><td>28.89</td><td>0</td><td>6</td><td>male  </td><td>WHITE</td><td>No comorbidity</td><td>no</td></tr>
+	<tr><td>11093</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>31.3</td><td>26.7</td><td>54</td><td>27.32</td><td>0</td><td>0</td><td>male  </td><td>WHITE</td><td>No comorbidity</td><td>NA</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'PATIENT_NUM'</li><li>'X101'</li><li>'X102'</li><li>'X103'</li><li>'X104'</li><li>'X105'</li><li>'X106'</li><li>'X107'</li><li>'X108'</li><li>'X109'</li><li>'X110'</li><li>'X111'</li><li>'X112'</li><li>'X113'</li><li>'X114'</li><li>'X115'</li><li>'X116'</li><li>'X117'</li><li>'X118'</li><li>'X119'</li><li>'X120'</li><li>'X121'</li><li>'X122'</li><li>'X123'</li><li>'X124'</li><li>'X125'</li><li>'X126'</li><li>'X127'</li><li>'X128'</li><li>'X129'</li><li>'X130'</li><li>'X131'</li><li>'X132'</li><li>'X133'</li><li>'X134'</li><li>'X135'</li><li>'X136'</li><li>'X201'</li><li>'X202'</li><li>'X203'</li><li>'X204'</li><li>'X205'</li><li>'X206'</li><li>'X207'</li><li>'X208'</li><li>'X209'</li><li>'X210'</li><li>'X211'</li><li>'X212'</li><li>'X213'</li><li>'X214'</li><li>'X215'</li><li>'X216'</li><li>'X217'</li><li>'X218'</li><li>'X219'</li><li>'X220'</li><li>'X221'</li><li>'X222'</li><li>'X223'</li><li>'X224'</li><li>'X225'</li><li>'X226'</li><li>'X227'</li><li>'X228'</li><li>'X229'</li><li>'X230'</li><li>'X231'</li><li>'X232'</li><li>'X233'</li><li>'X234'</li><li>'X235'</li><li>'X236'</li><li>'X237'</li><li>'X238'</li><li>'PAIN_INTENSITY_AVERAGE'</li><li>'PROMIS_PHYSICAL_FUNCTION'</li><li>'PROMIS_PAIN_BEHAVIOR'</li><li>'PROMIS_DEPRESSION'</li><li>'PROMIS_ANXIETY'</li><li>'PROMIS_SLEEP_DISTURB_V1_0'</li><li>'PROMIS_PAIN_INTERFERENCE'</li><li>'GH_MENTAL_SCORE'</li><li>'GH_PHYSICAL_SCORE'</li><li>'AGE_AT_CONTACT'</li><li>'BMI'</li><li>'CCI_TOTAL_SCORE'</li><li>'PAIN_INTENSITY_AVERAGE.follow_up'</li><li>'PAT_SEX'</li><li>'PAT_RACE'</li><li>'CCI_bin'</li><li>'medicaid_bin'</li></ol>
+</div></div>
+</div>
+<p>Recall that the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator can be used to access a single column. Alternatively, we can use double brackets <code class="docutils literal notranslate"><span class="pre">[[]]</span></code> to select a column. Below, we demonstrate both ways to find the column with the patient’s average pain intensity and then find the first five values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">]</span>
+<span class="n">pain</span><span class="p">[[</span><span class="s">&quot;PAIN_INTENSITY_AVERAGE&quot;</span><span class="p">]][</span><span class="m">1</span><span class="o">:</span><span class="m">5</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>7</li><li>5</li><li>4</li><li>7</li><li>8</li></ol>
+</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>7</li><li>5</li><li>4</li><li>7</li><li>8</li></ol>
+</div></div>
+</div>
+<section id="column-summaries">
+<h3>Column Summaries<a class="headerlink" href="#column-summaries" title="Permalink to this headline">#</a></h3>
+<p>To understand the range and distribution of a column’s values, we can rely on some of the base R functions. The <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function is a useful way to summarize a numeric column’s values. Below, we can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+  0.000   5.000   7.000   6.485   8.000  10.000       1 
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have already seen the <code class="docutils literal notranslate"><span class="pre">max</span></code>, <code class="docutils literal notranslate"><span class="pre">min</span></code>, <code class="docutils literal notranslate"><span class="pre">mean</span></code>, and <code class="docutils literal notranslate"><span class="pre">median</span></code> functions that could have computed some of these values for us separately. Since we do have an NA value, we add the <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> argument to these functions. Without this argument the returned value is NA.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">min</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">max</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">mean</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="nf">median</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0</div><div class="output text_html">10</div><div class="output text_html">6.48527103148952</div><div class="output text_html">7</div></div>
+</div>
+<p>Additionally, the functions below are helpful for summarizing quantitative variables.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">range()</span></code> - returns the minimum and maximum values for a numeric vector x</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">quantile()</span></code> - returns the sample quantiles for a numeric vector</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">IQR()</span></code> - returns the interquartile range for a numeric vector</p></li>
+</ul>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">quantile()</span></code> function returns the sample quartiles. However, we can pass in a list of probabilities to use instead. For example, below we find the 0.1 and 0.9 quantiles. Again, we add the <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> argument.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">quantile</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span><span class="w"> </span><span class="n">probs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span><span class="w"> </span><span class="m">0.9</span><span class="p">),</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>10%</dt><dd>4</dd><dt>90%</dt><dd>9</dd></dl>
+</div></div>
+</div>
+<p>We can also plot a histogram of the sample distribution using the <code class="docutils literal notranslate"><span class="pre">hist()</span></code> function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/da8c3ea57d48a6f1072709ddc6293158d1e323c91ca2c387709dee632001d613.png" src="../_images/da8c3ea57d48a6f1072709ddc6293158d1e323c91ca2c387709dee632001d613.png" />
+</div>
+</div>
+</section>
+<section id="practice-question">
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<p>TODO: summarize variable</p>
+<p>The column <code class="docutils literal notranslate"><span class="pre">PAT_SEX</span></code> corresponds to the reported patient sex. For categorical variables, it is useful to use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function. This returns the counts for each possible value. By default, <code class="docutils literal notranslate"><span class="pre">table()</span></code> ignores NA values. However, we can set <code class="docutils literal notranslate"><span class="pre">useNA=&quot;always&quot;</span></code> to also count the number of NA values. Additionally, we can use the <code class="docutils literal notranslate"><span class="pre">prop.table()</span></code> function to convert this to proportions. This column a single missing value and we can see that around 60% of patients are female.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="o">=</span><span class="s">&quot;always&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>female   male   &lt;NA&gt; 
+ 13102   8556      1 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">prop.table</span><span class="p">(</span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   female      male 
+0.6049497 0.3950503 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that this column is not actually a factor variable yet. We can convert it to one using <code class="docutils literal notranslate"><span class="pre">as.factor()</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">is.factor</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">FALSE</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
+<span class="nf">is.factor</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">TRUE</div></div>
+</div>
+</section>
+<section id="other-summary-functions">
+<h3>Other Summary Functions<a class="headerlink" href="#other-summary-functions" title="Permalink to this headline">#</a></h3>
+<p>Sometimes we want to summarize some information across multiple columns or rows. We can use the <code class="docutils literal notranslate"><span class="pre">rowSums()</span></code> and <code class="docutils literal notranslate"><span class="pre">colSums()</span></code> functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain maps. In the first line of code I find the column names and select those pertaining to these variables. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called <code class="docutils literal notranslate"><span class="pre">pain_body_map</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">body_map_cols</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">names</span><span class="p">(</span><span class="n">pain</span><span class="p">)[</span><span class="m">2</span><span class="o">:</span><span class="m">75</span><span class="p">]</span>
+<span class="n">pain_body_map</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="p">[,</span><span class="w"> </span><span class="n">body_map_cols</span><span class="p">]</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 74</caption>
+<thead>
+	<tr><th scope=col>X101</th><th scope=col>X102</th><th scope=col>X103</th><th scope=col>X104</th><th scope=col>X105</th><th scope=col>X106</th><th scope=col>X107</th><th scope=col>X108</th><th scope=col>X109</th><th scope=col>X110</th><th scope=col>⋯</th><th scope=col>X229</th><th scope=col>X230</th><th scope=col>X231</th><th scope=col>X232</th><th scope=col>X233</th><th scope=col>X234</th><th scope=col>X235</th><th scope=col>X236</th><th scope=col>X237</th><th scope=col>X238</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>⋯</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+	<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>⋯</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>I now compute the row sums and column sums on this subset of data. The row sum for each patient is the total number of body parts selected as experiencing pain whereas the column sum for each pain region is the total number of patients who experience pain in that area. The histogram below shows that most people select a low number of total regions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">rowSums</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/3d5a3b75ba022d8e081af95ab82bd9c67014f6441ee1fb3d32e5ba846f17524f.png" src="../_images/3d5a3b75ba022d8e081af95ab82bd9c67014f6441ee1fb3d32e5ba846f17524f.png" />
+</div>
+</div>
+<p>We can also see that some body parts are more often selected. We create a vector called <code class="docutils literal notranslate"><span class="pre">perc_patients</span></code> below by finding the total number of patients who selected each region divided by the total number of patients. The histogram shows that some body regions are selected by over 50% of patients!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">perc_patients</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">colSums</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">perc_patients</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/05b360087ea30747a9d8af1317d5150c24aac40cc18240a13b662b46ae2fe8c7.png" src="../_images/05b360087ea30747a9d8af1317d5150c24aac40cc18240a13b662b46ae2fe8c7.png" />
+</div>
+</div>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">which.max()</span></code> function to see that region <code class="docutils literal notranslate"><span class="pre">X219</span></code> is selected the most number of times. This corresponds to lower back pain.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">which.max</span><span class="p">(</span><span class="n">perc_patients</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>X219:</strong> 55</div></div>
+</div>
+<p>Another pair of useful functions are <code class="docutils literal notranslate"><span class="pre">pmin</span></code> and <code class="docutils literal notranslate"><span class="pre">pmax</span></code>. These functions take at least two vectors (of the same length) and finds the pairwise minimum of maximum. For example, if we want to create a new variable <code class="docutils literal notranslate"><span class="pre">lower_back_pain</span></code>, which corresponds to whether someone selects <em>either</em> X218 or X219 we can use the <code class="docutils literal notranslate"><span class="pre">pmax</span></code> function to find the maximum value between columns <code class="docutils literal notranslate"><span class="pre">X218</span></code> and <code class="docutils literal notranslate"><span class="pre">X219</span></code>. We can see that almost 60% of patients select at least one of these regions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lower_back</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pmax</span><span class="p">(</span><span class="n">pain_body_map</span><span class="o">$</span><span class="n">X218</span><span class="p">,</span><span class="w"> </span><span class="n">pain_body_map</span><span class="o">$</span><span class="n">X219</span><span class="p">)</span>
+<span class="nf">prop.table</span><span class="p">(</span><span class="nf">table</span><span class="p">(</span><span class="n">lower_back</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>lower_back
+        0         1 
+0.4053929 0.5946071 
+</pre></div>
+</div>
+</div>
+</div>
+<p>We might want to store the total number of pain regions and our indicator of whether a patient has lower back pain as new columns. We use our code above to create new columns in the pain data using the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator. To be consistent with the variable naming in the data we use all upper case for our variable names. The <code class="docutils literal notranslate"><span class="pre">dim()</span></code> function shows that our data has grown by two columns, as expected.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">NUM_REGIONS</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rowSums</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">LOWER_BACK</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lower_back</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>21659</li><li>94</li></ol>
+</div></div>
+</div>
+<p>Another useful function that allows us to compute over the rows or columns of a matrix or data frame is the <code class="docutils literal notranslate"><span class="pre">apply</span></code> function. The apply function takes in three arguments. The first agrument is the data frame or matrix, the second argument indicates whether to computer over the rows (<code class="docutils literal notranslate"><span class="pre">1</span></code>) or columns (<code class="docutils literal notranslate"><span class="pre">2</span></code>), and the last argument is the function to apply. The first example finds the maximum value for each row in the data frame <code class="docutils literal notranslate"><span class="pre">pain_body_map</span></code>. Taking the minimum value here shows that every patient selected at least one region. In the second example we find the sum over the columns and is equivalent to the example using <code class="docutils literal notranslate"><span class="pre">colSums</span></code> above. In this case, we added the <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> argument to the <code class="docutils literal notranslate"><span class="pre">apply</span></code> function to use when calculating the summation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">any_selected</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">)</span>
+<span class="nf">min</span><span class="p">(</span><span class="n">any_selected</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">perc_patients</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">sum</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">perc_patients</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.03227 0.06966 0.13620 0.14375 0.18125 0.54190 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="id1">
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>TODO: something about apply and colSums or rowSums</p>
+</section>
+<section id="missing-values-infinite-values-and-nan-values">
+<h3>Missing values, Infinite values, and NaN values<a class="headerlink" href="#missing-values-infinite-values-and-nan-values" title="Permalink to this headline">#</a></h3>
+<p>As we saw above, this data contains some missing values, which are represented as <code class="docutils literal notranslate"><span class="pre">NA</span></code> in R. R treats these values exactly as if they are unknown. This is why we have to add the <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> argument to functions like <code class="docutils literal notranslate"><span class="pre">sum()</span></code> and <code class="docutils literal notranslate"><span class="pre">max()</span></code>. In the example below, we can see that R figures out that 1 plus an unknown number is also unknown!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="kc">NA</span><span class="m">+1</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">&lt;NA&gt;</div></div>
+</div>
+<p>For a single column, we can find the number of missing values using a function <code class="docutils literal notranslate"><span class="pre">is.na()</span></code>. This function returns <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> if the value is NA and <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> otherwise. We can then sum up these values since each <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> value corresponds to a value of 1 and <code class="docutils literal notranslate"><span class="pre">FALSE</span></code> corresponds to a value of 0. Below we can see that there is a single NA value for the column <code class="docutils literal notranslate"><span class="pre">PATIENT_NUM</span></code>, which is the patient ID number.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PATIENT_NUM</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">1</div></div>
+</div>
+<p>If we want to apply this to every column, we can use the <code class="docutils literal notranslate"><span class="pre">apply</span></code> function. Since we want to apply this over the columns, the second argument has value 2. Recall that the last argument is the function we want to call for each column. In this case, we want to apply the combination of the <code class="docutils literal notranslate"><span class="pre">sum()</span></code> and <code class="docutils literal notranslate"><span class="pre">is.na()</span></code> function. To do so, we have to specify this function ourselves. This is called an <em>anonymous function</em> since it doesn’t have a name.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">apply</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>PATIENT_NUM</dt><dd>1</dd><dt>X101</dt><dd>1</dd><dt>X102</dt><dd>1</dd><dt>X103</dt><dd>1</dd><dt>X104</dt><dd>1</dd><dt>X105</dt><dd>1</dd><dt>X106</dt><dd>1</dd><dt>X107</dt><dd>1</dd><dt>X108</dt><dd>1</dd><dt>X109</dt><dd>1</dd><dt>X110</dt><dd>1</dd><dt>X111</dt><dd>1</dd><dt>X112</dt><dd>1</dd><dt>X113</dt><dd>1</dd><dt>X114</dt><dd>1</dd><dt>X115</dt><dd>1</dd><dt>X116</dt><dd>1</dd><dt>X117</dt><dd>1</dd><dt>X118</dt><dd>1</dd><dt>X119</dt><dd>1</dd><dt>X120</dt><dd>1</dd><dt>X121</dt><dd>1</dd><dt>X122</dt><dd>1</dd><dt>X123</dt><dd>1</dd><dt>X124</dt><dd>1</dd><dt>X125</dt><dd>1</dd><dt>X126</dt><dd>1</dd><dt>X127</dt><dd>1</dd><dt>X128</dt><dd>1</dd><dt>X129</dt><dd>1</dd><dt>X130</dt><dd>1</dd><dt>X131</dt><dd>1</dd><dt>X132</dt><dd>1</dd><dt>X133</dt><dd>1</dd><dt>X134</dt><dd>1</dd><dt>X135</dt><dd>1</dd><dt>X136</dt><dd>1</dd><dt>X201</dt><dd>1</dd><dt>X202</dt><dd>1</dd><dt>X203</dt><dd>1</dd><dt>X204</dt><dd>1</dd><dt>X205</dt><dd>1</dd><dt>X206</dt><dd>1</dd><dt>X207</dt><dd>1</dd><dt>X208</dt><dd>1</dd><dt>X209</dt><dd>1</dd><dt>X210</dt><dd>1</dd><dt>X211</dt><dd>1</dd><dt>X212</dt><dd>1</dd><dt>X213</dt><dd>1</dd><dt>X214</dt><dd>1</dd><dt>X215</dt><dd>1</dd><dt>X216</dt><dd>1</dd><dt>X217</dt><dd>1</dd><dt>X218</dt><dd>1</dd><dt>X219</dt><dd>1</dd><dt>X220</dt><dd>1</dd><dt>X221</dt><dd>1</dd><dt>X222</dt><dd>1</dd><dt>X223</dt><dd>1</dd><dt>X224</dt><dd>1</dd><dt>X225</dt><dd>1</dd><dt>X226</dt><dd>1</dd><dt>X227</dt><dd>1</dd><dt>X228</dt><dd>1</dd><dt>X229</dt><dd>1</dd><dt>X230</dt><dd>1</dd><dt>X231</dt><dd>1</dd><dt>X232</dt><dd>1</dd><dt>X233</dt><dd>1</dd><dt>X234</dt><dd>1</dd><dt>X235</dt><dd>1</dd><dt>X236</dt><dd>1</dd><dt>X237</dt><dd>1</dd><dt>X238</dt><dd>1</dd><dt>PAIN_INTENSITY_AVERAGE</dt><dd>1</dd><dt>PROMIS_PHYSICAL_FUNCTION</dt><dd>1</dd><dt>PROMIS_PAIN_BEHAVIOR</dt><dd>6371</dd><dt>PROMIS_DEPRESSION</dt><dd>88</dd><dt>PROMIS_ANXIETY</dt><dd>88</dd><dt>PROMIS_SLEEP_DISTURB_V1_0</dt><dd>88</dd><dt>PROMIS_PAIN_INTERFERENCE</dt><dd>152</dd><dt>GH_MENTAL_SCORE</dt><dd>2947</dd><dt>GH_PHYSICAL_SCORE</dt><dd>2947</dd><dt>AGE_AT_CONTACT</dt><dd>1</dd><dt>BMI</dt><dd>5633</dd><dt>CCI_TOTAL_SCORE</dt><dd>1</dd><dt>PAIN_INTENSITY_AVERAGE.follow_up</dt><dd>14521</dd><dt>PAT_SEX</dt><dd>1</dd><dt>PAT_RACE</dt><dd>142</dd><dt>CCI_bin</dt><dd>1</dd><dt>medicaid_bin</dt><dd>301</dd><dt>NUM_REGIONS</dt><dd>1</dd><dt>LOWER_BACK</dt><dd>1</dd></dl>
+</div></div>
+</div>
+<p>Interestingly, we can see that there is at least one missing value in each column. It might be the case that there is a row with all NA values. Let’s apply the same function by row. Taking the maximum, we can see that row 11749 has all NA values.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">max</span><span class="p">(</span><span class="nf">apply</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+<span class="nf">which.max</span><span class="p">(</span><span class="nf">apply</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">94</div><div class="output text_html">11749</div></div>
+</div>
+<p>We remove that row and then find the percentage of missing values by column. We can see that the column with the highest percentage of missing values is the pain intensity at follow-up. In fact, only 33% of patients have a recorded follow-up visit.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="p">[</span><span class="m">-11749</span><span class="p">,]</span>
+<span class="nf">apply</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pain</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.dl-inline {width: auto; margin:0; padding: 0}
+.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
+.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
+.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
+</style><dl class=dl-inline><dt>PATIENT_NUM</dt><dd>0</dd><dt>X101</dt><dd>0</dd><dt>X102</dt><dd>0</dd><dt>X103</dt><dd>0</dd><dt>X104</dt><dd>0</dd><dt>X105</dt><dd>0</dd><dt>X106</dt><dd>0</dd><dt>X107</dt><dd>0</dd><dt>X108</dt><dd>0</dd><dt>X109</dt><dd>0</dd><dt>X110</dt><dd>0</dd><dt>X111</dt><dd>0</dd><dt>X112</dt><dd>0</dd><dt>X113</dt><dd>0</dd><dt>X114</dt><dd>0</dd><dt>X115</dt><dd>0</dd><dt>X116</dt><dd>0</dd><dt>X117</dt><dd>0</dd><dt>X118</dt><dd>0</dd><dt>X119</dt><dd>0</dd><dt>X120</dt><dd>0</dd><dt>X121</dt><dd>0</dd><dt>X122</dt><dd>0</dd><dt>X123</dt><dd>0</dd><dt>X124</dt><dd>0</dd><dt>X125</dt><dd>0</dd><dt>X126</dt><dd>0</dd><dt>X127</dt><dd>0</dd><dt>X128</dt><dd>0</dd><dt>X129</dt><dd>0</dd><dt>X130</dt><dd>0</dd><dt>X131</dt><dd>0</dd><dt>X132</dt><dd>0</dd><dt>X133</dt><dd>0</dd><dt>X134</dt><dd>0</dd><dt>X135</dt><dd>0</dd><dt>X136</dt><dd>0</dd><dt>X201</dt><dd>0</dd><dt>X202</dt><dd>0</dd><dt>X203</dt><dd>0</dd><dt>X204</dt><dd>0</dd><dt>X205</dt><dd>0</dd><dt>X206</dt><dd>0</dd><dt>X207</dt><dd>0</dd><dt>X208</dt><dd>0</dd><dt>X209</dt><dd>0</dd><dt>X210</dt><dd>0</dd><dt>X211</dt><dd>0</dd><dt>X212</dt><dd>0</dd><dt>X213</dt><dd>0</dd><dt>X214</dt><dd>0</dd><dt>X215</dt><dd>0</dd><dt>X216</dt><dd>0</dd><dt>X217</dt><dd>0</dd><dt>X218</dt><dd>0</dd><dt>X219</dt><dd>0</dd><dt>X220</dt><dd>0</dd><dt>X221</dt><dd>0</dd><dt>X222</dt><dd>0</dd><dt>X223</dt><dd>0</dd><dt>X224</dt><dd>0</dd><dt>X225</dt><dd>0</dd><dt>X226</dt><dd>0</dd><dt>X227</dt><dd>0</dd><dt>X228</dt><dd>0</dd><dt>X229</dt><dd>0</dd><dt>X230</dt><dd>0</dd><dt>X231</dt><dd>0</dd><dt>X232</dt><dd>0</dd><dt>X233</dt><dd>0</dd><dt>X234</dt><dd>0</dd><dt>X235</dt><dd>0</dd><dt>X236</dt><dd>0</dd><dt>X237</dt><dd>0</dd><dt>X238</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE</dt><dd>0</dd><dt>PROMIS_PHYSICAL_FUNCTION</dt><dd>0</dd><dt>PROMIS_PAIN_BEHAVIOR</dt><dd>0.294117647058824</dd><dt>PROMIS_DEPRESSION</dt><dd>0.00401699141194939</dd><dt>PROMIS_ANXIETY</dt><dd>0.00401699141194939</dd><dt>PROMIS_SLEEP_DISTURB_V1_0</dt><dd>0.00401699141194939</dd><dt>PROMIS_PAIN_INTERFERENCE</dt><dd>0.00697201957706159</dd><dt>GH_MENTAL_SCORE</dt><dd>0.136023640225321</dd><dt>GH_PHYSICAL_SCORE</dt><dd>0.136023640225321</dd><dt>AGE_AT_CONTACT</dt><dd>0</dd><dt>BMI</dt><dd>0.260042478529873</dd><dt>CCI_TOTAL_SCORE</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE.follow_up</dt><dd>0.67042201495983</dd><dt>PAT_SEX</dt><dd>0</dd><dt>PAT_RACE</dt><dd>0.00651029642626281</dd><dt>CCI_bin</dt><dd>0</dd><dt>medicaid_bin</dt><dd>0.0138516945239634</dd><dt>NUM_REGIONS</dt><dd>0</dd><dt>LOWER_BACK</dt><dd>0</dd></dl>
+</div></div>
+</div>
+<p>We will create two new columns. First, we create a column for the change in pain at follow-up. Second, we create a column which is the percent change in pain at follow-up.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_CHANGE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.follow_up</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_CHANGE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0aec37b12ddf749631833eb9117711f68ba72a8991f07407203b70364aa58b4c.png" src="../_images/0aec37b12ddf749631833eb9117711f68ba72a8991f07407203b70364aa58b4c.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PERC_PAIN_CHANGE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_CHANGE</span><span class="o">/</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PERC_PAIN_CHANGE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+ -1.000  -0.200   0.000     Inf   0.143     Inf   14520 
+</pre></div>
+</div>
+</div>
+</div>
+<p>In the summary of the percent change, we can see that the maximum value is <code class="docutils literal notranslate"><span class="pre">Inf</span></code>. This is R’s representation of infinity. This occurred because some patients have an intial pain score of 0, which creates infinite values when we divide through by this value to find the percent change. We can test whether something is infinite using the <code class="docutils literal notranslate"><span class="pre">is.infinite</span></code> or <code class="docutils literal notranslate"><span class="pre">is.finite()</span></code> functions. This shows that there were three patients with infinite values. The value <code class="docutils literal notranslate"><span class="pre">-Inf</span></code> is used to represent negative infinity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.infinite</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PERC_PAIN_CHANGE</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">3</div></div>
+</div>
+<p>Another special value in R is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, which stands for “Not a Number”. For example, <code class="docutils literal notranslate"><span class="pre">0/0</span></code> will result in a NaN value. We can test for <code class="docutils literal notranslate"><span class="pre">NaN</span></code> values using the <code class="docutils literal notranslate"><span class="pre">is.nan()</span></code> function.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">0</span><span class="o">/</span><span class="m">0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">NaN</div></div>
+</div>
+<p>Looking back at the missing values, there are two useful functions for selecting the complete cases in a data frame. The <code class="docutils literal notranslate"><span class="pre">na.omit()</span></code> function returns the data frame with incomplete cases removed whereas <code class="docutils literal notranslate"><span class="pre">complete.cases()</span></code> returns TRUE/FALSE values for each row indicating whether each row is complete, which we can then use to select the rows with TRUE values. Below, we see both approaches select the same number of rows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_sub1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+<span class="n">pain_sub2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">pain</span><span class="p">),]</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">pain_sub1</span><span class="p">)</span>
+<span class="nf">dim</span><span class="p">(</span><span class="n">pain_sub2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>2413</li><li>96</li></ol>
+</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>2413</li><li>96</li></ol>
+</div></div>
+</div>
+</section>
+</section>
+<section id="using-logic-to-subset-summarize-and-transform">
+<h2>Using Logic to Subset, Summarize, and Transform<a class="headerlink" href="#using-logic-to-subset-summarize-and-transform" title="Permalink to this headline">#</a></h2>
+<p>Above, we used TRUE/FALSE values to select rows in a data frame. The logic operators in R allow us to expand on this capability to write more complex logic. The operators are given below.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code> less than</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> less than or equal to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;</span></code> greater than</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> greater than or equal to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">==</span></code> equal to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!=</span></code> not equal to</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">%in%</span> <span class="pre">b</span></code> a’s value is in a vector of values v</p></li>
+</ul>
+<p>The first six operators are a direct comparison between two values and are demonstrated below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">2</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">2</span>
+<span class="m">2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">2</span>
+<span class="m">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">2</span>
+<span class="m">3</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">2</span>
+<span class="m">3</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">2</span>
+<span class="s">&quot;A&quot;</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;B&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">FALSE</div><div class="output text_html">TRUE</div><div class="output text_html">TRUE</div><div class="output text_html">TRUE</div><div class="output text_html">TRUE</div><div class="output text_html">FALSE</div></div>
+</div>
+<p>The operators assume there is a natural ordering or comparison between values. For example, for strings the ordering is alphabetical and for logical operators we use their numeric interpretation (TRUE = 1, FALSE = 0).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;A?&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;B&quot;</span>
+<span class="kc">TRUE</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="kc">FALSE</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">TRUE</div><div class="output text_html">FALSE</div></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">%in%</span></code> operator is slightly different. This operator checks whether a value is in a set of possible values. Below, we can check whether values are in the set <code class="docutils literal notranslate"><span class="pre">c(4,1,2)</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">1</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">)</span>
+<span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">TRUE</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>FALSE</li><li>TRUE</li><li>FALSE</li></ol>
+</div></div>
+</div>
+<p>Additionally, we can combine use the following operators to allow us to negate or combine two.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">!x</span></code> - the <strong>NOT</strong> operator <code class="docutils literal notranslate"><span class="pre">!</span></code> reverses TRUE/FALSE values</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">|</span> <span class="pre">y</span></code> - the <strong>OR</strong> operator <code class="docutils literal notranslate"><span class="pre">|</span></code> checks whether x or y is equal to TRUE</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&amp;</span> <span class="pre">y</span></code> - the <strong>AND</strong> operator <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> checks whether both x and y are equal to TRUE</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">any(x)</span></code> - the <strong>any</strong> function checks whether any value in x is TRUE (equivalent to using an OR operator <code class="docutils literal notranslate"><span class="pre">|</span></code> between all values</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">all(x)</span></code> - the <strong>all</strong> function checks whether all values in x are TRUE (equivalent to using an AND operator <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> between all values</p></li>
+</ul>
+<p>Some simple examples for each are below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="p">(</span><span class="m">2</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+<span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;Aaron&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="s">&quot;Aaron&quot;</span><span class="p">)</span>
+<span class="nf">any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="nf">all</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">FALSE</div><div class="output text_html">TRUE</div><div class="output text_html">FALSE</div><div class="output text_html">TRUE</div><div class="output text_html">FALSE</div></div>
+</div>
+<p>Let’s demonstrate these operators on the pain data. We first update the Medicaid column. The logic on the left hand side selects those that do or do not have Medicaid and then assigns those values to the new ones.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;no&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;No Medicaid&quot;</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;yes&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Medicaid&quot;</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Medicaid No Medicaid 
+       4601       16757 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Additionally, we could subset the data to those that have follow-up. The not operator <code class="docutils literal notranslate"><span class="pre">!</span></code> will reverse the TRUE/FALSE values returned from the <code class="docutils literal notranslate"><span class="pre">is.na()</span></code> function. Therefore, the new value will be TRUE if the follow-up value is <em>not</em> NA.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_follow_up</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="p">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.follow_up</span><span class="p">),]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Earlier we created a column indicating whether a patient has lower back pain. We now use the <code class="docutils literal notranslate"><span class="pre">any()</span></code> function to check whether a patient has general back pain. If at least one of these values is equal to 1 then the function will return TRUE. If we had used the <code class="docutils literal notranslate"><span class="pre">all()</span></code> function instead this would check whether all values are equal to 0, indicating that a patient has pain on their whole back.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">BACK</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">any</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">X208</span><span class="o">==</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">X209</span><span class="o">==</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">X212</span><span class="o">==</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">X213</span><span class="o">==</span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="n">pain</span><span class="o">$</span><span class="n">X218</span><span class="o">==</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">X219</span><span class="o">==</span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="id2">
+<h3>Practice Question:<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>TODO: question has follow-up and has initial pain at 5 or above.</p>
+<p>Last, we look at the column for patient race <code class="docutils literal notranslate"><span class="pre">PAT_RACE</span></code>. The <code class="docutils literal notranslate"><span class="pre">table()</span></code> function shows that most patients are <code class="docutils literal notranslate"><span class="pre">WHITE</span></code> or <code class="docutils literal notranslate"><span class="pre">BLACK</span></code>. Given how few observations are in the other categories, we may want to combine these levels.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         ALASKA NATIVE        AMERICAN INDIAN                  BLACK 
+                     2                     58                   3229 
+               CHINESE               DECLINED               FILIPINO 
+                    21                    121                      6 
+         GUAM/CHAMORRO               HAWAIIAN         INDIAN (ASIAN) 
+                     1                      1                     49 
+              JAPANESE                 KOREAN          NOT SPECIFIED 
+                     9                     10                      4 
+                 OTHER            OTHER ASIAN OTHER PACIFIC ISLANDER 
+                     1                     47                     12 
+            VIETNAMESE                  WHITE 
+                     6                  17940 
+</pre></div>
+</div>
+</div>
+</div>
+<p>To do so, we can use the <code class="docutils literal notranslate"><span class="pre">%in%</span></code> operator. We first create an Asian, Asian American, or Pacific Islander race category and then create an American Indian or Alaska Native category.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">aapi_values</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;CHINESE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;HAWAIIAN&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;INDIAN (ASIAN)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;FILIPINO&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;VIETNAMESE&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="s">&quot;JAPANESE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;KOREAN&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;GUAM/CHAMORRO&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;OTHER ASIAN&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                 </span><span class="s">&quot;OTHER PACIFIC ISLANDER&quot;</span><span class="p">)</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="n">aapi_values</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;AAPI&quot;</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;ALASKA NATIVE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;AMERICAN INDIAN&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;AI/AN&quot;</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK      DECLINED NOT SPECIFIED 
+          162            60          3229           121             4 
+        OTHER         WHITE 
+            1         17940 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="other-selection-functions">
+<h3>Other Selection Functions<a class="headerlink" href="#other-selection-functions" title="Permalink to this headline">#</a></h3>
+<p>Above we selected using TRUE/FALSE boolean values. Instead, we can also use the <code class="docutils literal notranslate"><span class="pre">which()</span></code> function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as <code class="docutils literal notranslate"><span class="pre">DECLINED</span></code> as not specified.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;DECLINED&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;NOT SPECIFIED&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Another selection function is the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function. This function takes in two arguments. The first is the vector, matrix, or data frame to select from and the second is a vector of TRUE/FALSE values to use for row selection. We use this to find the observation with race marked as <code class="docutils literal notranslate"><span class="pre">OTHER</span></code>. We then update this race also be marked as not specified.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;OTHER&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 1 × 97</caption>
+<thead>
+	<tr><th scope=col>PATIENT_NUM</th><th scope=col>X101</th><th scope=col>X102</th><th scope=col>X103</th><th scope=col>X104</th><th scope=col>X105</th><th scope=col>X106</th><th scope=col>X107</th><th scope=col>X108</th><th scope=col>X109</th><th scope=col>⋯</th><th scope=col>PAIN_INTENSITY_AVERAGE.follow_up</th><th scope=col>PAT_SEX</th><th scope=col>PAT_RACE</th><th scope=col>CCI_bin</th><th scope=col>medicaid_bin</th><th scope=col>NUM_REGIONS</th><th scope=col>LOWER_BACK</th><th scope=col>PAIN_CHANGE</th><th scope=col>PERC_PAIN_CHANGE</th><th scope=col>BACK</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>3588</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>⋯</td><td>NA</td><td>female</td><td>OTHER</td><td>No comorbidity</td><td>Medicaid</td><td>34</td><td>1</td><td>NA</td><td>NA</td><td>TRUE</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PATIENT_NUM</span><span class="o">==</span><span class="m">3588</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;NOT SPECIFIED&quot;</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK NOT SPECIFIED         WHITE 
+          162            60          3229           126         17940 
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="recap-video">
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<p>TODO: outline what would be helpful here?</p>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p>For these exercises, we will be using the <strong>pain</strong> data.</p>
+<p>TODO: Add question: Find those that are NA for both <code class="docutils literal notranslate"><span class="pre">GH_MENTAL_SCORE</span></code> and <code class="docutils literal notranslate"><span class="pre">GH_PHYSICAL_SCORE</span></code>, which are the PROMIS global mental and physical scores. Both have 13.6% of missing values - will see missing for both. Drop these columns.</p>
+<ol class="arabic simple">
+<li><p>Find summary statistics for <code class="docutils literal notranslate"><span class="pre">PROMIS_PHYSICAL_FUNTION</span></code> and <code class="docutils literal notranslate"><span class="pre">PROMIS_ANXIETY</span></code> variables and observe the distribution of those patient-reported pain experiences. What striking feature do you notice in the summary?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## solutions:</span>
+<span class="c1">#data(pain)</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PROMIS_PHYSICAL_FUNCTION</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PROMIS_ANXIETY</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  15.40   30.60   35.39   35.27   39.37   73.33 
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+  32.87   49.27   56.49   56.28   63.35   84.90      87 
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Create frequency tables about <code class="docutils literal notranslate"><span class="pre">PAT_SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">PAT_RACE</span></code> and tell more information about distributions of demographic characteristics.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>female   male 
+ 13102   8556 
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK NOT SPECIFIED         WHITE 
+          162            60          3229           126         17940 
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Create a data frame to describe the total number of patients reported pain for each of bodily pain regions. Then, create another data frame for summary statistics.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">colsum</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.data.frame</span><span class="p">(</span><span class="nf">colSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">75</span><span class="p">)],</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">colsum</span><span class="o">$</span><span class="n">`colSums(pain[, c(2:75)], na.rm = TRUE)`</span>
+
+<span class="n">colsum_summary</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Variable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Sum of Columns&quot;</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Min</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="nf">min</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Median</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">median</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Mean</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">SD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">var</span><span class="p">(</span><span class="n">colsum</span><span class="o">$</span><span class="n">colSumValue</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Calculate the median and interquartile range of the distribution of the total number of painful regions selected for each patient. Write a sentence to explain any interesting observations in the context of this dataset.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rowsum</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.data.frame</span><span class="p">(</span><span class="nf">rowSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="m">2</span><span class="o">:</span><span class="m">75</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rowsum</span><span class="o">$</span><span class="n">`rowSums(pain[, 2:75], na.rm = TRUE)`</span>
+
+<span class="nf">median</span><span class="p">(</span><span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
+<span class="nf">IQR</span><span class="p">(</span><span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">7</div><div class="output text_html">9</div></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Assume a reasonable number of painful regions for patients to be 15 and use a <code class="docutils literal notranslate"><span class="pre">subset()</span></code> command to create a trimmed version of the pain dataset called <strong>pain.subset</strong> that only contains data for patients with the total number of painful regions less than 15.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">rowsum</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span>
+<span class="n">pain.subset</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="n">rowsum</span><span class="w"> </span><span class="o">&lt;=</span><span class="m">15</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Find the distribution of <code class="docutils literal notranslate"><span class="pre">PAIN_INTENSITY_AVERAGE.follow_up</span></code>. And create a column of missing data at this follow up variable.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.follow_up</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.follow_up</span><span class="p">)</span>
+
+<span class="c1"># TODO: do without ifelse</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.follow_up</span><span class="p">)</span><span class="o">==</span><span class="kc">TRUE</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+  0.000   5.000   6.000   5.988   8.000  10.000   14520 
+</pre></div>
+</div>
+<img alt="../_images/f06c05ca9115b54e6d133cc134a8e408d05a369d02782bc432fb39e46810f7a9.png" src="../_images/f06c05ca9115b54e6d133cc134a8e408d05a369d02782bc432fb39e46810f7a9.png" />
+</div>
+</div>
+</section>
+<section id="todos">
+<h2>TODOs<a class="headerlink" href="#todos" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>Functions with () in text</p></li>
+<li><p>Test all on binder</p></li>
+</ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -401,7 +1293,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Exploring Data</p>
+        <p class="prev-next-title">Intro to Exploratory Data Analysis</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -414,6 +1306,36 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#importing-and-exporting-data">Importing and Exporting Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-and-creating-data-columns">Summarizing and Creating Data Columns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#column-summaries">Column Summaries</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-summary-functions">Other Summary Functions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#missing-values-infinite-values-and-nan-values">Missing values, Infinite values, and NaN values</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-logic-to-subset-summarize-and-transform">Using Logic to Subset, Summarize, and Transform</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-selection-functions">Other Selection Functions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#todos">TODOs</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
