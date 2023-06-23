@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>4. Intro to Exploratory Data Analysis &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -67,10 +68,10 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="shortcut icon" href="../_static/fav.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="5. Data Wrangling and Transformation" href="5_data_wrangling_transformation.html" />
+    <link rel="next" title="5. Data Transformations and Summaries" href="5_data_transformations_summaries.html" />
     <link rel="prev" title="3. Working with Data Files in R" href="3_data_files.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -158,8 +159,8 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">4. Intro to Exploratory Data Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_data_wrangling_transformation.html">5. Data Wrangling and Transformation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
@@ -375,14 +376,14 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="intro-to-exploratory-data-analysis">
-<h1>4. Intro to Exploratory Data Analysis<a class="headerlink" href="#intro-to-exploratory-data-analysis" title="Permalink to this headline">#</a></h1>
+<h1>4. Intro to Exploratory Data Analysis<a class="headerlink" href="#intro-to-exploratory-data-analysis" title="Permalink to this heading">#</a></h1>
 <p>In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we will learn how to conduct more exploratory analysis focusing on the univariate and bivariate sample distributions. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to utilize create summary plots using the <code class="docutils literal notranslate"><span class="pre">GGally</span></code> package and tables using the <code class="docutils literal notranslate"><span class="pre">gt</span></code> and <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> packages.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span><span class="w"> </span><span class="c1"># sample data</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">GGally</span><span class="p">)</span><span class="w"> </span><span class="c1"># pairwise plots</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">gt</span><span class="p">)</span><span class="w"> </span><span class="c1"># tables</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">gtsummary</span><span class="p">)</span><span class="w"> </span><span class="c1"># summary tables</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span> <span class="c1"># sample data</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">GGally</span><span class="p">)</span> <span class="c1"># pairwise plots</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">gt</span><span class="p">)</span> <span class="c1"># tables</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">gtsummary</span><span class="p">)</span> <span class="c1"># summary tables</span>
 </pre></div>
 </div>
 </div>
@@ -395,10 +396,13 @@ document.write(`
   +.gg   ggplot2
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>#StandWithUkraine
+</pre></div>
+</div>
 </div>
 </div>
 <section id="univariate-distributions">
-<h2>Univariate Distributions<a class="headerlink" href="#univariate-distributions" title="Permalink to this headline">#</a></h2>
+<h2>Univariate Distributions<a class="headerlink" href="#univariate-distributions" title="Permalink to this heading">#</a></h2>
 <p>We will use a samples of the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>). The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018, downloaded from the nhanesA package. There are 31,625 observations in this sample. Use the help operator <code class="docutils literal notranslate"><span class="pre">?NHANESsample</span></code> to read the variable descriptions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -427,7 +431,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">))</span>
-<span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
+<span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -443,7 +447,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">))</span>
-<span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
+<span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -458,7 +462,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="n">select</span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP2</span><span class="p">,</span><span class="w"> </span><span class="n">SBP3</span><span class="p">,</span><span class="w"> </span><span class="n">SBP4</span><span class="p">,</span><span class="w"> </span><span class="n">DBP2</span><span class="p">,</span><span class="w"> </span><span class="n">DBP3</span><span class="p">,</span><span class="w"> </span><span class="n">DBP4</span><span class="p">)))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="nf">na.omit</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span> <span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP2</span><span class="p">,</span> <span class="n">SBP3</span><span class="p">,</span> <span class="n">SBP4</span><span class="p">,</span> <span class="n">DBP2</span><span class="p">,</span> <span class="n">DBP3</span><span class="p">,</span> <span class="n">DBP4</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -485,7 +489,7 @@ document.write(`
 <p>We decide to select the most recent observations for our analysis in this chapter. We use the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function to select these rows.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">YEAR</span><span class="o">==</span><span class="m">2017</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">YEAR</span><span class="o">==</span><span class="m">2017</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -493,7 +497,7 @@ document.write(`
 <p>As shown above, smoking status has been coded into three categories. We want to create a new variable to represent whether someone has ever smoked. To do so, we use the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function. This function allows us to create a new vector using some logic. The logic captured by this function is that we will take one value if we meet some condition(s) and we will use a second value otherwise. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value to use if we meet the condition(s), and the last argument is the value to use otherwise. We use this function to create a new vector <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> that equals “Yes” for those who are either still smoking or quit smoking and “No” otherwise.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">EVER_SMOKE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;QuitSmoke&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;StillSmoke&quot;</span><span class="p">),</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">EVER_SMOKE</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;QuitSmoke&quot;</span><span class="p">,</span> <span class="s">&quot;StillSmoke&quot;</span><span class="p">),</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
 <span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">EVER_SMOKE</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -519,8 +523,8 @@ document.write(`
 <p>If we want to polish this figure, we can use some of the other optional arguments to the function (see <code class="docutils literal notranslate"><span class="pre">?hist</span></code> for the full list of arguments). For example, we may want to update the text <code class="docutils literal notranslate"><span class="pre">log(nhanes_df$lead)</span></code> in the title and x-axis. Below we update the <a class="reference external" href="http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf">color</a>, labels, and number of bins for the plot. The argument <code class="docutils literal notranslate"><span class="pre">breaks</span></code> specifies the number of bins to use to create the histogram, <code class="docutils literal notranslate"><span class="pre">col</span></code> specifies the color, <code class="docutils literal notranslate"><span class="pre">main</span></code> specified the title of the plot, and <code class="docutils literal notranslate"><span class="pre">xlab</span></code> specifies the x-axis label (using <code class="docutils literal notranslate"><span class="pre">ylab</span></code> would specify the y-axis label).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">),</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">30</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Log Blood Lead Level&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">),</span> <span class="n">breaks</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Log Blood Lead Level&quot;</span><span class="p">,</span>
+    <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -531,9 +535,9 @@ document.write(`
 <p>For categorical variables, we may want to plot the counts in each category using a bar plot. The function <code class="docutils literal notranslate"><span class="pre">barplot()</span></code> asks us to specify the <code class="docutils literal notranslate"><span class="pre">names</span></code> and <code class="docutils literal notranslate"><span class="pre">heights</span></code> of the bars. To do so, we will need to store the counts for each category. Again, we update the color and labels.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">smoke_counts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span><span class="p">)</span>
-<span class="nf">barplot</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">smoke_counts</span><span class="p">,</span><span class="w"> </span><span class="n">names</span><span class="o">=</span><span class="nf">names</span><span class="p">(</span><span class="n">smoke_counts</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;violetred&quot;</span><span class="p">,</span>
-<span class="w">       </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Smoking Status&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Frequency&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">smoke_counts</span> <span class="o">&lt;-</span> <span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span><span class="p">)</span>
+<span class="nf">barplot</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">smoke_counts</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="nf">names</span><span class="p">(</span><span class="n">smoke_counts</span><span class="p">),</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;violetred&quot;</span><span class="p">,</span>
+       <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Smoking Status&quot;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Frequency&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -544,8 +548,8 @@ document.write(`
 <p>With a bar plot, we can even specify a different color for each bar. To do so, <code class="docutils literal notranslate"><span class="pre">col</span></code> must be a vector of specified colors with the same length as the number of categories.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">barplot</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">smoke_counts</span><span class="p">,</span><span class="w"> </span><span class="n">names</span><span class="o">=</span><span class="nf">names</span><span class="p">(</span><span class="n">smoke_counts</span><span class="p">),</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="s">&quot;violetred&quot;</span><span class="p">,</span><span class="s">&quot;blue&quot;</span><span class="p">),</span>
-<span class="w">       </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Smoking Status&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Frequency&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">barplot</span><span class="p">(</span><span class="n">height</span><span class="o">=</span><span class="n">smoke_counts</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="nf">names</span><span class="p">(</span><span class="n">smoke_counts</span><span class="p">),</span> <span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="s">&quot;violetred&quot;</span><span class="p">,</span><span class="s">&quot;blue&quot;</span><span class="p">),</span>
+       <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Smoking Status&quot;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Frequency&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -554,15 +558,15 @@ document.write(`
 </div>
 </div>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 </section>
 </section>
 <section id="bivariate-distributions">
-<h2>Bivariate Distributions<a class="headerlink" href="#bivariate-distributions" title="Permalink to this headline">#</a></h2>
+<h2>Bivariate Distributions<a class="headerlink" href="#bivariate-distributions" title="Permalink to this heading">#</a></h2>
 <p>We now turn our attention to the relationship between multiple columns. When we have two categorical variables, we can use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function to find the counts across all combinations. Below, we look at the distribution in smoking status by sex. We observe that a higer percentage of female participants have never smoked.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -598,7 +602,7 @@ document.write(`
 <p>We could also observe this visually through a box plot. When given one categorical variable and one continuous variable, the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> function creates a box plot. By default, the first argument is the x-axis variable and second argument is the y-axis variable.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">),</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Sex&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="p">,</span> <span class="nf">log</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">),</span> <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Sex&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -609,8 +613,8 @@ document.write(`
 <p>Alternatively, we could use the <code class="docutils literal notranslate"><span class="pre">boxplot()</span></code> which can be passed a formula to specify how to group the data. In the case below, we make our outcome the log value of blood lead level and we group by multiple columns, <code class="docutils literal notranslate"><span class="pre">SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code>, so our formula is <code class="docutils literal notranslate"><span class="pre">log(LEAD)~SEX+EVER_SMOKE</span></code>. The second argument to the function specifies the data.  We specify the column colors to show the link between the box plots shown.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">boxplot</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">)</span><span class="o">~</span><span class="n">SEX</span><span class="o">+</span><span class="n">EVER_SMOKE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;orange&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="p">),</span>
-<span class="w">       </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Sex : Ever Smoked&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">boxplot</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">)</span><span class="o">~</span><span class="n">SEX</span><span class="o">+</span><span class="n">EVER_SMOKE</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;orange&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="s">&quot;orange&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">),</span>
+       <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Sex : Ever Smoked&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;Log Blood Lead Level&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -636,8 +640,8 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span>
+    <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -648,22 +652,22 @@ document.write(`
 <p>The two measures of blood pressure look highly correlated. We can calculate their Pearson and Spearman correlation using the <code class="docutils literal notranslate"><span class="pre">cor()</span></code> function. The default method is the Pearson correlation, but we can also specify to calculate the Kendall or Spearman correlation by specifying the method.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
-<span class="nf">cor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="o">=</span><span class="s">&quot;spearman&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<span class="nf">cor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;spearman&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">0.416679648373894</div><div class="output text_html">0.471190779532646</div></div>
+<div class="output text_html">0.416679648373896</div><div class="output text_html">0.471190779532646</div></div>
 </div>
 <p>We may also want to add some extra information to our plot above. This time instead of specifying the color manually, we use the column <code class="docutils literal notranslate"><span class="pre">hyp</span></code>, an indicator for hypertension, to specify the color. We have to make sure this vector is a factor for R to color by group. Additionally, we add a blue vertical and horizontal line using the <code class="docutils literal notranslate"><span class="pre">abline()</span></code> function to mark cutoffs for hypertension. Even though this function is called after <code class="docutils literal notranslate"><span class="pre">plot()</span></code>, the lines are automatically added to the current plot.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">HYP</span><span class="p">),</span><span class="w"> </span>
-<span class="w">     </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span>
-<span class="w">     </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="m">130</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="m">80</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">HYP</span><span class="p">),</span> 
+     <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span>
+     <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">v</span><span class="o">=</span><span class="m">130</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="m">80</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -672,17 +676,17 @@ document.write(`
 </div>
 </div>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <p>TODO:</p>
 </section>
 </section>
 <section id="autogenerated-plots">
-<h2>Autogenerated Plots<a class="headerlink" href="#autogenerated-plots" title="Permalink to this headline">#</a></h2>
+<h2>Autogenerated Plots<a class="headerlink" href="#autogenerated-plots" title="Permalink to this heading">#</a></h2>
 <p>Above, we learned some new functions for visualizing the relationship between variables. The <code class="docutils literal notranslate"><span class="pre">GGally</span></code> package contains some useful functions for looking at multiple univariate and bivariate relationships at the same time. The <code class="docutils literal notranslate"><span class="pre">ggpairs()</span></code> function takes the data as its first argument. By default, it will plot the pairwise distributions for all columns, but we can also specify to only select a subset of columns using the <code class="docutils literal notranslate"><span class="pre">columns</span></code> argument. You can see below that it plots the box plots and density plots for each univariate sample distribution. It then plots the bivariate distributions and calculates the Pearson correlation for all pairs of continuous variables. That’s a lot of information!</p>
 <p>TODO: messages, check Pearson?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggpairs</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;AGE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LEAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP1&quot;</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggpairs</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">,</span> <span class="s">&quot;LEAD&quot;</span><span class="p">,</span> <span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -705,8 +709,8 @@ document.write(`
 <p>Another useful function in this package is the <code class="docutils literal notranslate"><span class="pre">ggcorr()</span></code> function. In this function, it expects us to pass in a data frame with only numeric columns and it displays the correlation between all pairs where the color of each grid cell indicates the strength of the correlation. The additional argument <code class="docutils literal notranslate"><span class="pre">label=TRUE</span></code> specifies to put the correlation value on each grid cell. This is a useful way to identify pairs of strongly correlated variables.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_cont</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;AGE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LEAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP1&quot;</span><span class="p">)]</span>
-<span class="nf">ggcorr</span><span class="p">(</span><span class="n">nhanes_cont</span><span class="p">,</span><span class="w"> </span><span class="n">label</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_cont</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;AGE&quot;</span><span class="p">,</span> <span class="s">&quot;LEAD&quot;</span><span class="p">,</span> <span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">)]</span>
+<span class="nf">ggcorr</span><span class="p">(</span><span class="n">nhanes_cont</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -716,13 +720,13 @@ document.write(`
 </div>
 </section>
 <section id="tables">
-<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this headline">#</a></h2>
+<h2>Tables<a class="headerlink" href="#tables" title="Permalink to this heading">#</a></h2>
 <p>Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample such as the mean and standard deviation for all continuous variables and the proportions for categorical variables. The <code class="docutils literal notranslate"><span class="pre">gt</span></code> package is designed to create beautiful tables that can include footnotes, titles, column labels, etc. The <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> package is an extension of this package that can create summary tables. We will focus on the latter and come back to the capabilities of <code class="docutils literal notranslate"><span class="pre">gt</span></code> in Chapter X.</p>
 <p>TODO: update chapter ref</p>
 <p>To start, we create a gt object using the first six rows of our data using the <code class="docutils literal notranslate"><span class="pre">gt()</span></code> function. In R Markdown, this would be knit as a table. Since we are using this within a Jupyter notebook, we need to pass this to another function to make sure it displays correctly as HTML. The pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code> passes the result on the left hand side as the first argument to the function on the right hand side. You can see the difference in the formatting.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">gt</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">gt</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -734,23 +738,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="ddaebojiyu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#ddaebojiyu table {
+		<div id="lhveicvmix" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#lhveicvmix table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ddaebojiyu thead, #ddaebojiyu tbody, #ddaebojiyu tfoot, #ddaebojiyu tr, #ddaebojiyu td, #ddaebojiyu th {
+#lhveicvmix thead, #lhveicvmix tbody, #lhveicvmix tfoot, #lhveicvmix tr, #lhveicvmix td, #lhveicvmix th {
   border-style: none;
 }
 
-#ddaebojiyu p {
+#lhveicvmix p {
   margin: 0;
   padding: 0;
 }
 
-#ddaebojiyu .gt_table {
+#lhveicvmix .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -776,12 +780,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_caption {
+#lhveicvmix .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ddaebojiyu .gt_title {
+#lhveicvmix .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -793,7 +797,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#ddaebojiyu .gt_subtitle {
+#lhveicvmix .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -805,7 +809,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#ddaebojiyu .gt_heading {
+#lhveicvmix .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -817,13 +821,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_bottom_border {
+#lhveicvmix .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_col_headings {
+#lhveicvmix .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -838,7 +842,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_col_heading {
+#lhveicvmix .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -858,7 +862,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#ddaebojiyu .gt_column_spanner_outer {
+#lhveicvmix .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -870,15 +874,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#ddaebojiyu .gt_column_spanner_outer:first-child {
+#lhveicvmix .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ddaebojiyu .gt_column_spanner_outer:last-child {
+#lhveicvmix .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ddaebojiyu .gt_column_spanner {
+#lhveicvmix .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -890,11 +894,11 @@ document.write(`
   width: 100%;
 }
 
-#ddaebojiyu .gt_spanner_row {
+#lhveicvmix .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ddaebojiyu .gt_group_heading {
+#lhveicvmix .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -920,7 +924,7 @@ document.write(`
   text-align: left;
 }
 
-#ddaebojiyu .gt_empty_group_heading {
+#lhveicvmix .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -935,15 +939,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#ddaebojiyu .gt_from_md > :first-child {
+#lhveicvmix .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ddaebojiyu .gt_from_md > :last-child {
+#lhveicvmix .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ddaebojiyu .gt_row {
+#lhveicvmix .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -962,7 +966,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#ddaebojiyu .gt_stub {
+#lhveicvmix .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -975,7 +979,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ddaebojiyu .gt_stub_row_group {
+#lhveicvmix .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -989,15 +993,15 @@ document.write(`
   vertical-align: top;
 }
 
-#ddaebojiyu .gt_row_group_first td {
+#lhveicvmix .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ddaebojiyu .gt_row_group_first th {
+#lhveicvmix .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ddaebojiyu .gt_summary_row {
+#lhveicvmix .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1007,16 +1011,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#ddaebojiyu .gt_first_summary_row {
+#lhveicvmix .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_first_summary_row.thick {
+#lhveicvmix .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ddaebojiyu .gt_last_summary_row {
+#lhveicvmix .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1026,7 +1030,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_grand_summary_row {
+#lhveicvmix .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1036,7 +1040,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ddaebojiyu .gt_first_grand_summary_row {
+#lhveicvmix .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1046,7 +1050,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_last_grand_summary_row_top {
+#lhveicvmix .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1056,11 +1060,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_striped {
+#lhveicvmix .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ddaebojiyu .gt_table_body {
+#lhveicvmix .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1069,7 +1073,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_footnotes {
+#lhveicvmix .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1083,7 +1087,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_footnote {
+#lhveicvmix .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1092,7 +1096,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ddaebojiyu .gt_sourcenotes {
+#lhveicvmix .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1106,7 +1110,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ddaebojiyu .gt_sourcenote {
+#lhveicvmix .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1114,63 +1118,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#ddaebojiyu .gt_left {
+#lhveicvmix .gt_left {
   text-align: left;
 }
 
-#ddaebojiyu .gt_center {
+#lhveicvmix .gt_center {
   text-align: center;
 }
 
-#ddaebojiyu .gt_right {
+#lhveicvmix .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ddaebojiyu .gt_font_normal {
+#lhveicvmix .gt_font_normal {
   font-weight: normal;
 }
 
-#ddaebojiyu .gt_font_bold {
+#lhveicvmix .gt_font_bold {
   font-weight: bold;
 }
 
-#ddaebojiyu .gt_font_italic {
+#lhveicvmix .gt_font_italic {
   font-style: italic;
 }
 
-#ddaebojiyu .gt_super {
+#lhveicvmix .gt_super {
   font-size: 65%;
 }
 
-#ddaebojiyu .gt_footnote_marks {
+#lhveicvmix .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ddaebojiyu .gt_asterisk {
+#lhveicvmix .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ddaebojiyu .gt_indent_1 {
+#lhveicvmix .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ddaebojiyu .gt_indent_2 {
+#lhveicvmix .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ddaebojiyu .gt_indent_3 {
+#lhveicvmix .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ddaebojiyu .gt_indent_4 {
+#lhveicvmix .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ddaebojiyu .gt_indent_5 {
+#lhveicvmix .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1305,10 +1309,10 @@ document.write(`
 <p>We now show how to use the <code class="docutils literal notranslate"><span class="pre">tbl_summary()</span></code> function in the <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> package. The first argument to this function is the data frame again. By default, this function will summarize all the variables in the data. Instead, we use the <code class="docutils literal notranslate"><span class="pre">include</span></code> argument to specify a list of variables to include. We this pipe this result to <code class="docutils literal notranslate"><span class="pre">as_gt()</span></code> which creates a gt table from the summary output before passing to the last function again to display the HTML table. Note that the table computes the total number of observations and computes the proportions for categorical variables and the interquartile range for continuous variables.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">include</span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RACE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;AGE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;EDUCATION&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SMOKE&quot;</span><span class="p">,</span>
-<span class="w">                                  </span><span class="s">&quot;BMI_CAT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LEAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;HYP&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">as_gt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span> <span class="s">&quot;RACE&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">,</span> <span class="s">&quot;EDUCATION&quot;</span><span class="p">,</span> <span class="s">&quot;SMOKE&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;BMI_CAT&quot;</span><span class="p">,</span> <span class="s">&quot;LEAD&quot;</span><span class="p">,</span> <span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">,</span> <span class="s">&quot;HYP&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
+  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1320,23 +1324,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="ozadohioyk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#ozadohioyk table {
+		<div id="fgywxqvpuc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#fgywxqvpuc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ozadohioyk thead, #ozadohioyk tbody, #ozadohioyk tfoot, #ozadohioyk tr, #ozadohioyk td, #ozadohioyk th {
+#fgywxqvpuc thead, #fgywxqvpuc tbody, #fgywxqvpuc tfoot, #fgywxqvpuc tr, #fgywxqvpuc td, #fgywxqvpuc th {
   border-style: none;
 }
 
-#ozadohioyk p {
+#fgywxqvpuc p {
   margin: 0;
   padding: 0;
 }
 
-#ozadohioyk .gt_table {
+#fgywxqvpuc .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1362,12 +1366,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_caption {
+#fgywxqvpuc .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ozadohioyk .gt_title {
+#fgywxqvpuc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1379,7 +1383,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#ozadohioyk .gt_subtitle {
+#fgywxqvpuc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1391,7 +1395,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#ozadohioyk .gt_heading {
+#fgywxqvpuc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1403,13 +1407,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_bottom_border {
+#fgywxqvpuc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_col_headings {
+#fgywxqvpuc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1424,7 +1428,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_col_heading {
+#fgywxqvpuc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1444,7 +1448,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#ozadohioyk .gt_column_spanner_outer {
+#fgywxqvpuc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1456,15 +1460,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#ozadohioyk .gt_column_spanner_outer:first-child {
+#fgywxqvpuc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ozadohioyk .gt_column_spanner_outer:last-child {
+#fgywxqvpuc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ozadohioyk .gt_column_spanner {
+#fgywxqvpuc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1476,11 +1480,11 @@ document.write(`
   width: 100%;
 }
 
-#ozadohioyk .gt_spanner_row {
+#fgywxqvpuc .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ozadohioyk .gt_group_heading {
+#fgywxqvpuc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1506,7 +1510,7 @@ document.write(`
   text-align: left;
 }
 
-#ozadohioyk .gt_empty_group_heading {
+#fgywxqvpuc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1521,15 +1525,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#ozadohioyk .gt_from_md > :first-child {
+#fgywxqvpuc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ozadohioyk .gt_from_md > :last-child {
+#fgywxqvpuc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ozadohioyk .gt_row {
+#fgywxqvpuc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1548,7 +1552,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#ozadohioyk .gt_stub {
+#fgywxqvpuc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1561,7 +1565,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ozadohioyk .gt_stub_row_group {
+#fgywxqvpuc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1575,15 +1579,15 @@ document.write(`
   vertical-align: top;
 }
 
-#ozadohioyk .gt_row_group_first td {
+#fgywxqvpuc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ozadohioyk .gt_row_group_first th {
+#fgywxqvpuc .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ozadohioyk .gt_summary_row {
+#fgywxqvpuc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1593,16 +1597,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#ozadohioyk .gt_first_summary_row {
+#fgywxqvpuc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_first_summary_row.thick {
+#fgywxqvpuc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ozadohioyk .gt_last_summary_row {
+#fgywxqvpuc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1612,7 +1616,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_grand_summary_row {
+#fgywxqvpuc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1622,7 +1626,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ozadohioyk .gt_first_grand_summary_row {
+#fgywxqvpuc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1632,7 +1636,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_last_grand_summary_row_top {
+#fgywxqvpuc .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1642,11 +1646,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_striped {
+#fgywxqvpuc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ozadohioyk .gt_table_body {
+#fgywxqvpuc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1655,7 +1659,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_footnotes {
+#fgywxqvpuc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1669,7 +1673,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_footnote {
+#fgywxqvpuc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1678,7 +1682,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#ozadohioyk .gt_sourcenotes {
+#fgywxqvpuc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1692,7 +1696,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#ozadohioyk .gt_sourcenote {
+#fgywxqvpuc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1700,63 +1704,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#ozadohioyk .gt_left {
+#fgywxqvpuc .gt_left {
   text-align: left;
 }
 
-#ozadohioyk .gt_center {
+#fgywxqvpuc .gt_center {
   text-align: center;
 }
 
-#ozadohioyk .gt_right {
+#fgywxqvpuc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ozadohioyk .gt_font_normal {
+#fgywxqvpuc .gt_font_normal {
   font-weight: normal;
 }
 
-#ozadohioyk .gt_font_bold {
+#fgywxqvpuc .gt_font_bold {
   font-weight: bold;
 }
 
-#ozadohioyk .gt_font_italic {
+#fgywxqvpuc .gt_font_italic {
   font-style: italic;
 }
 
-#ozadohioyk .gt_super {
+#fgywxqvpuc .gt_super {
   font-size: 65%;
 }
 
-#ozadohioyk .gt_footnote_marks {
+#fgywxqvpuc .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ozadohioyk .gt_asterisk {
+#fgywxqvpuc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ozadohioyk .gt_indent_1 {
+#fgywxqvpuc .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ozadohioyk .gt_indent_2 {
+#fgywxqvpuc .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ozadohioyk .gt_indent_3 {
+#fgywxqvpuc .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ozadohioyk .gt_indent_4 {
+#fgywxqvpuc .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ozadohioyk .gt_indent_5 {
+#fgywxqvpuc .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1837,11 +1841,11 @@ document.write(`
 <p>We can update some of the arguments to update our table. This time we specify that we want to stratify our table by the hypertension status, which summarizes the data by this grouping. Additionally, we change how continuous variables are summarized by specifying that we want to report the mean and standard deviation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">include</span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;RACE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;AGE&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;EDUCATION&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SMOKE&quot;</span><span class="p">,</span>
-<span class="w">                                  </span><span class="s">&quot;BMI_CAT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LEAD&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;HYP&quot;</span><span class="p">),</span>
-<span class="w">           </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;HYP&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">statistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">as_gt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span> <span class="s">&quot;RACE&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">,</span> <span class="s">&quot;EDUCATION&quot;</span><span class="p">,</span> <span class="s">&quot;SMOKE&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;BMI_CAT&quot;</span><span class="p">,</span> <span class="s">&quot;LEAD&quot;</span><span class="p">,</span> <span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">,</span> <span class="s">&quot;HYP&quot;</span><span class="p">),</span>
+           <span class="n">by</span> <span class="o">=</span> <span class="s">&quot;HYP&quot;</span><span class="p">,</span> <span class="n">statistic</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span> <span class="o">~</span> <span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
+  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1853,23 +1857,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="rhgycjfuur" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#rhgycjfuur table {
+		<div id="zeyymmiexx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#zeyymmiexx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#rhgycjfuur thead, #rhgycjfuur tbody, #rhgycjfuur tfoot, #rhgycjfuur tr, #rhgycjfuur td, #rhgycjfuur th {
+#zeyymmiexx thead, #zeyymmiexx tbody, #zeyymmiexx tfoot, #zeyymmiexx tr, #zeyymmiexx td, #zeyymmiexx th {
   border-style: none;
 }
 
-#rhgycjfuur p {
+#zeyymmiexx p {
   margin: 0;
   padding: 0;
 }
 
-#rhgycjfuur .gt_table {
+#zeyymmiexx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1895,12 +1899,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_caption {
+#zeyymmiexx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#rhgycjfuur .gt_title {
+#zeyymmiexx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1912,7 +1916,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#rhgycjfuur .gt_subtitle {
+#zeyymmiexx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1924,7 +1928,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#rhgycjfuur .gt_heading {
+#zeyymmiexx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1936,13 +1940,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_bottom_border {
+#zeyymmiexx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_col_headings {
+#zeyymmiexx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1957,7 +1961,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_col_heading {
+#zeyymmiexx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1977,7 +1981,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#rhgycjfuur .gt_column_spanner_outer {
+#zeyymmiexx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1989,15 +1993,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#rhgycjfuur .gt_column_spanner_outer:first-child {
+#zeyymmiexx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#rhgycjfuur .gt_column_spanner_outer:last-child {
+#zeyymmiexx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#rhgycjfuur .gt_column_spanner {
+#zeyymmiexx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2009,11 +2013,11 @@ document.write(`
   width: 100%;
 }
 
-#rhgycjfuur .gt_spanner_row {
+#zeyymmiexx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#rhgycjfuur .gt_group_heading {
+#zeyymmiexx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2039,7 +2043,7 @@ document.write(`
   text-align: left;
 }
 
-#rhgycjfuur .gt_empty_group_heading {
+#zeyymmiexx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2054,15 +2058,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#rhgycjfuur .gt_from_md > :first-child {
+#zeyymmiexx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#rhgycjfuur .gt_from_md > :last-child {
+#zeyymmiexx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#rhgycjfuur .gt_row {
+#zeyymmiexx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2081,7 +2085,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#rhgycjfuur .gt_stub {
+#zeyymmiexx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2094,7 +2098,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#rhgycjfuur .gt_stub_row_group {
+#zeyymmiexx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2108,15 +2112,15 @@ document.write(`
   vertical-align: top;
 }
 
-#rhgycjfuur .gt_row_group_first td {
+#zeyymmiexx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#rhgycjfuur .gt_row_group_first th {
+#zeyymmiexx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#rhgycjfuur .gt_summary_row {
+#zeyymmiexx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2126,16 +2130,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#rhgycjfuur .gt_first_summary_row {
+#zeyymmiexx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_first_summary_row.thick {
+#zeyymmiexx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#rhgycjfuur .gt_last_summary_row {
+#zeyymmiexx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2145,7 +2149,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_grand_summary_row {
+#zeyymmiexx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2155,7 +2159,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#rhgycjfuur .gt_first_grand_summary_row {
+#zeyymmiexx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2165,7 +2169,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_last_grand_summary_row_top {
+#zeyymmiexx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2175,11 +2179,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_striped {
+#zeyymmiexx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#rhgycjfuur .gt_table_body {
+#zeyymmiexx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2188,7 +2192,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_footnotes {
+#zeyymmiexx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2202,7 +2206,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_footnote {
+#zeyymmiexx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2211,7 +2215,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#rhgycjfuur .gt_sourcenotes {
+#zeyymmiexx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2225,7 +2229,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#rhgycjfuur .gt_sourcenote {
+#zeyymmiexx .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2233,63 +2237,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#rhgycjfuur .gt_left {
+#zeyymmiexx .gt_left {
   text-align: left;
 }
 
-#rhgycjfuur .gt_center {
+#zeyymmiexx .gt_center {
   text-align: center;
 }
 
-#rhgycjfuur .gt_right {
+#zeyymmiexx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#rhgycjfuur .gt_font_normal {
+#zeyymmiexx .gt_font_normal {
   font-weight: normal;
 }
 
-#rhgycjfuur .gt_font_bold {
+#zeyymmiexx .gt_font_bold {
   font-weight: bold;
 }
 
-#rhgycjfuur .gt_font_italic {
+#zeyymmiexx .gt_font_italic {
   font-style: italic;
 }
 
-#rhgycjfuur .gt_super {
+#zeyymmiexx .gt_super {
   font-size: 65%;
 }
 
-#rhgycjfuur .gt_footnote_marks {
+#zeyymmiexx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#rhgycjfuur .gt_asterisk {
+#zeyymmiexx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#rhgycjfuur .gt_indent_1 {
+#zeyymmiexx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#rhgycjfuur .gt_indent_2 {
+#zeyymmiexx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#rhgycjfuur .gt_indent_3 {
+#zeyymmiexx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#rhgycjfuur .gt_indent_4 {
+#zeyymmiexx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#rhgycjfuur .gt_indent_5 {
+#zeyymmiexx .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2393,7 +2397,7 @@ document.write(`
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <p>For these exercises, we will be using the <strong>NHANES</strong> data.</p>
 <ol class="arabic simple">
 <li><p>Using the numerical and graphical summaries, describe the distribution of diastolic blood pressure <code class="docutils literal notranslate"><span class="pre">dbp</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> among study participants, respectively.</p></li>
@@ -2432,9 +2436,9 @@ document.write(`
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample.subset</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                              </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Female&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample.subset</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
+                              <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Female&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2447,9 +2451,9 @@ document.write(`
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                              </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">subset.males</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">subset.males</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
+                              <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">subset.males</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">subset.males</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -2462,10 +2466,10 @@ document.write(`
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males.1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                         </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">50</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">59</span><span class="p">)</span>
-<span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
-<span class="nf">boxplot</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">DBP1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males.1</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
+                         <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">50</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">59</span><span class="p">)</span>
+<span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
+<span class="nf">boxplot</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
 
 <span class="c1">#levels(subset.males.1$race)</span>
 <span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Non-Hispanic White&quot;])[4]</span>
@@ -2485,7 +2489,7 @@ document.write(`
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggcorr</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;INCOME&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;AGE&quot;</span><span class="p">)])</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggcorr</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">,</span> <span class="s">&quot;INCOME&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">)])</span>
 </pre></div>
 </div>
 </div>
@@ -2537,11 +2541,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="5_data_wrangling_transformation.html"
+       href="5_data_transformations_summaries.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">5. Data Wrangling and Transformation</p>
+        <p class="prev-next-title">5. Data Transformations and Summaries</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
