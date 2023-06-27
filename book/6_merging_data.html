@@ -3,13 +3,13 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>6. Merging Data Sources &#8212; R for Health Data Science</title>
+    <title>6. Merging and Reshaping Data &#8212; R for Health Data Science</title>
   
   
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -60,15 +61,17 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'book/6_merging_data';</script>
     <link rel="canonical" href="https://alicepaul.github.io/r-for-health-data-science/book/6_merging_data.html" />
     <link rel="shortcut icon" href="../_static/fav.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="7. Visualization with ggplot" href="7_visualization_ggplot.html" />
-    <link rel="prev" title="5. Data Wrangling and Transformation" href="5_data_wrangling_transformation.html" />
+    <link rel="prev" title="5. Data Transformations and Summaries" href="5_data_transformations_summaries.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -156,8 +159,8 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_data_wrangling_transformation.html">5. Data Wrangling and Transformation</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Merging Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">6. Merging and Reshaping Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
@@ -327,7 +330,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -338,11 +343,22 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>6. Merging Data Sources</h1>
+    <h1>6. Merging and Reshaping Data</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reshaping-data">Reshaping Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-data-with-joins">Merging Data with Joins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -352,8 +368,415 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="merging-data-sources">
-<h1>6. Merging Data Sources<a class="headerlink" href="#merging-data-sources" title="Permalink to this headline">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="merging-and-reshaping-data">
+<h1>6. Merging and Reshaping Data<a class="headerlink" href="#merging-and-reshaping-data" title="Permalink to this heading">#</a></h1>
+<p>In this chapter, we continue with some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert our data between wide form (more columns, fewer rows) and long form (fewer columns, more rows). For example, we can use these data pivots to put our data into a tidy form. When merging data, we are combining information from multiple data frames into a single data frame. The key idea when merging data is to think about what the common information is between the data frames and which values we want to keep.</p>
+<p>For this chapter, we will use three data sets. The first data set is <code class="docutils literal notranslate"><span class="pre">covidcases</span></code>, which contains the daily case and death counts by county in the United States for 2020, the second data set is <code class="docutils literal notranslate"><span class="pre">mobility</span></code>, which contains daily mobility estimates by state in 2020, and lastly we have <code class="docutils literal notranslate"><span class="pre">lockdowndates</span></code>, which contains the start and end dates for statewide stay at home orders. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">lockdowndates</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">mobility</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr    </span> 1.1.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr    </span> 2.1.4
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats  </span> 1.0.0     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr  </span> 1.5.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2  </span> 3.4.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble   </span> 3.2.1
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">lubridate</span> 1.9.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr    </span> 1.3.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr    </span> 1.0.1     
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+<span class=" -Color -Color-Cyan">ℹ</span> Use the conflicted package (<span class=" -Color -Color-Blue">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases</span> <span class="o">&lt;-</span> <span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;data/covidcases.csv&quot;</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>date</th><th scope=col>state</th><th scope=col>county</th><th scope=col>daily_deaths</th><th scope=col>daily_cases</th></tr>
+	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>2020-03-01</td><td>California</td><td>Marin        </td><td>0</td><td>1</td></tr>
+	<tr><th scope=row>2</th><td>2020-03-01</td><td>California</td><td>Orange       </td><td>0</td><td>1</td></tr>
+	<tr><th scope=row>3</th><td>2020-03-01</td><td>Florida   </td><td>Manatee      </td><td>0</td><td>1</td></tr>
+	<tr><th scope=row>4</th><td>2020-03-01</td><td>California</td><td>Napa         </td><td>0</td><td>1</td></tr>
+	<tr><th scope=row>5</th><td>2020-03-01</td><td>Washington</td><td>Spokane      </td><td>0</td><td>4</td></tr>
+	<tr><th scope=row>6</th><td>2020-03-01</td><td>California</td><td>San Francisco</td><td>0</td><td>3</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">mobility</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A grouped_df: 6 × 5</caption>
+<thead>
+	<tr><th scope=col>state</th><th scope=col>date</th><th scope=col>samples</th><th scope=col>m50</th><th scope=col>m50_index</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Alabama</td><td>2020-03-01</td><td>267652</td><td>10.87194</td><td> 76.92647</td></tr>
+	<tr><td>Alabama</td><td>2020-03-02</td><td>287264</td><td>14.34513</td><td> 98.57353</td></tr>
+	<tr><td>Alabama</td><td>2020-03-03</td><td>292018</td><td>14.24460</td><td> 98.25000</td></tr>
+	<tr><td>Alabama</td><td>2020-03-04</td><td>298704</td><td>13.08301</td><td> 89.69118</td></tr>
+	<tr><td>Alabama</td><td>2020-03-05</td><td>288218</td><td>14.81503</td><td>102.38235</td></tr>
+	<tr><td>Alabama</td><td>2020-03-06</td><td>282982</td><td>17.94399</td><td>126.22059</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">lockdowndates</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 3</caption>
+<thead>
+	<tr><th scope=col>State</th><th scope=col>Lockdown_Start</th><th scope=col>Lockdown_End</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Alabama   </td><td>2020-04-04</td><td>2020-04-30</td></tr>
+	<tr><td>Alaska    </td><td>2020-03-28</td><td>2020-04-24</td></tr>
+	<tr><td>Arizona   </td><td>2020-03-31</td><td>2020-05-15</td></tr>
+	<tr><td>Arkansas  </td><td>None      </td><td>None      </td></tr>
+	<tr><td>California</td><td>2020-03-19</td><td>2020-08-28</td></tr>
+	<tr><td>Colorado  </td><td>2020-03-26</td><td>2020-04-26</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>For each of these data frames, there is a date column. Write now the class of these columns is a character value. We can use the <code class="docutils literal notranslate"><span class="pre">as.Date()</span></code> function to tell R to treat these as dates. We need to specify the date format as an argument to this function. In our format <code class="docutils literal notranslate"><span class="pre">%Y-%M-%D</span></code> the <code class="docutils literal notranslate"><span class="pre">%Y</span></code> stands for the full four-digit year, <code class="docutils literal notranslate"><span class="pre">%M</span></code> is a two-digit month (e.g. January is coded “01” vs “1”), and <code class="docutils literal notranslate"><span class="pre">%D</span></code> stands for the two-digit day (e.g. the third day is coded “03” vs “3”).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mobility</span><span class="o">$</span><span class="n">date</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">mobility</span><span class="o">$</span><span class="n">date</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">)</span>
+<span class="n">covidcases</span><span class="o">$</span><span class="n">date</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">covidcases</span><span class="o">$</span><span class="n">date</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">)</span>
+<span class="n">lockdowndates</span><span class="o">$</span><span class="n">Lockdown_Start</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">lockdowndates</span><span class="o">$</span><span class="n">Lockdown_Start</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">)</span>
+<span class="n">lockdowndates</span><span class="o">$</span><span class="n">Lockdown_End</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">lockdowndates</span><span class="o">$</span><span class="n">Lockdown_End</span><span class="p">,</span> <span class="n">formula</span><span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>By coding these columns as dates, we can access information such as the day, month, year, or week. These functions are all available in base R. The <code class="docutils literal notranslate"><span class="pre">lubridate</span></code> package, which is not used in this book, has more capabilities for working with date times.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">month</span><span class="p">(</span><span class="n">mobility</span><span class="o">$</span><span class="n">date</span><span class="p">[</span><span class="m">1</span><span class="p">])</span>
+<span class="nf">week</span><span class="p">(</span><span class="n">mobility</span><span class="o">$</span><span class="n">date</span><span class="p">[</span><span class="m">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">3</div><div class="output text_html">9</div></div>
+</div>
+<section id="reshaping-data">
+<h2>Reshaping Data<a class="headerlink" href="#reshaping-data" title="Permalink to this heading">#</a></h2>
+<p>The mobility and covid case data are in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider the lockdown dates to not be in the same form. Another way to represent this data would be to have each observation be the start or end of a stay at home order.</p>
+<p>To reshape our data, we use the <code class="docutils literal notranslate"><span class="pre">pivot_longer()</span></code> function to change the data from what is called <strong>wide form</strong> to <strong>long form</strong>. This kind of pivot involves taking a subset of columns that we will <em>gather</em> into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. In our case, we want to take the lockdown start and end columns and create two columns: one column will be whether this is the start or end of a lockdown and the other will be the date. These are called the key and value columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values).</p>
+<p>TODO: image</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">pivot_longer()</span></code> function takes in a data table, the columns <code class="docutils literal notranslate"><span class="pre">cols</span></code> that we are pivoting to longer form, the column name <code class="docutils literal notranslate"><span class="pre">names_to</span></code> that will store the data from the previous column names, and the column name <code class="docutils literal notranslate"><span class="pre">values_to</span></code> for the column that will store the information from the columns gathered. In our case, the first column we will name <code class="docutils literal notranslate"><span class="pre">Lockdown_Event</span></code> since it will contain whether each date is the start or end of a lockdown and the second column we will name <code class="docutils literal notranslate"><span class="pre">Date</span></code>. Take a look at the result below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lockdown_long</span> <span class="o">&lt;-</span> <span class="n">lockdowndates</span> <span class="o">%&gt;%</span>
+  <span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span> <span class="s">&quot;Lockdown_End&quot;</span><span class="p">),</span> <span class="n">names_to</span><span class="o">=</span><span class="s">&quot;Lockdown_Event&quot;</span><span class="p">,</span> <span class="n">values_to</span><span class="o">=</span><span class="s">&quot;Date&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">Date</span> <span class="o">=</span> <span class="nf">as.Date</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="n">formula</span> <span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">),</span> 
+         <span class="n">Lockdown_Event</span> <span class="o">=</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">Lockdown_Event</span><span class="o">==</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span> <span class="s">&quot;Start&quot;</span><span class="p">,</span> <span class="s">&quot;End&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">na.omit</span><span class="p">()</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">lockdown_long</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 3</caption>
+<thead>
+	<tr><th scope=col>State</th><th scope=col>Lockdown_Event</th><th scope=col>Date</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;date&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Alabama</td><td>Start</td><td>2020-04-04</td></tr>
+	<tr><td>Alabama</td><td>End  </td><td>2020-04-30</td></tr>
+	<tr><td>Alaska </td><td>Start</td><td>2020-03-28</td></tr>
+	<tr><td>Alaska </td><td>End  </td><td>2020-04-24</td></tr>
+	<tr><td>Arizona</td><td>Start</td><td>2020-03-31</td></tr>
+	<tr><td>Arizona</td><td>End  </td><td>2020-05-15</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We can also transform our data in the opposite direction. The function <code class="docutils literal notranslate"><span class="pre">pivot_wider()</span></code> converts data in long form to wide form. This function again takes in the the data frame but now we specify the arguments <code class="docutils literal notranslate"><span class="pre">names_from</span></code> and <code class="docutils literal notranslate"><span class="pre">values_from</span></code>. The former is the column to get the new column names from and the latter is where the row values will be taken from. To pivot our lockdown data back to wider form, we specify that <code class="docutils literal notranslate"><span class="pre">names_from</span></code> is the lockdown event and <code class="docutils literal notranslate"><span class="pre">values_from</span></code> is the date itself. Now we are back to the same form as before!</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lockdown_wide</span> <span class="o">&lt;-</span> <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">lockdown_long</span><span class="p">,</span> <span class="n">names_from</span><span class="o">=</span><span class="n">Lockdown_Event</span><span class="p">,</span> <span class="n">values_from</span><span class="o">=</span><span class="n">Date</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">lockdown_wide</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 3</caption>
+<thead>
+	<tr><th scope=col>State</th><th scope=col>Start</th><th scope=col>End</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;date&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Alabama    </td><td>2020-04-04</td><td>2020-04-30</td></tr>
+	<tr><td>Alaska     </td><td>2020-03-28</td><td>2020-04-24</td></tr>
+	<tr><td>Arizona    </td><td>2020-03-31</td><td>2020-05-15</td></tr>
+	<tr><td>California </td><td>2020-03-19</td><td>2020-08-28</td></tr>
+	<tr><td>Colorado   </td><td>2020-03-26</td><td>2020-04-26</td></tr>
+	<tr><td>Connecticut</td><td>2020-03-23</td><td>2020-05-20</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Let’s show another example. Suppose that I wanted to create a data frame where the columns corresponded to the number of cases for each state in New England and the rows corresponded to the months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the <code class="docutils literal notranslate"><span class="pre">month()</span></code> function to be able to group by month and state. Additionally, you can see that I add an <code class="docutils literal notranslate"><span class="pre">ungroup()</span></code> at the end since the summarized output will still be grouped by state (as shown in the warning message).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ne_cases</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
+  <span class="nf">filter</span><span class="p">(</span><span class="n">state</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Maine&quot;</span><span class="p">,</span> <span class="s">&quot;Vermont&quot;</span><span class="p">,</span> <span class="s">&quot;New Hampshire&quot;</span><span class="p">,</span> <span class="s">&quot;Connecticut&quot;</span><span class="p">,</span> <span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">month</span> <span class="o">=</span> <span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarize</span><span class="p">(</span><span class="n">total_cases</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">daily_cases</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">ungroup</span><span class="p">()</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">ne_cases</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;state&#39;. You can override using the
+`.groups` argument.
+</pre></div>
+</div>
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 3</caption>
+<thead>
+	<tr><th scope=col>state</th><th scope=col>month</th><th scope=col>total_cases</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Connecticut</td><td>3</td><td> 3051</td></tr>
+	<tr><td>Connecticut</td><td>4</td><td>24187</td></tr>
+	<tr><td>Connecticut</td><td>5</td><td>14729</td></tr>
+	<tr><td>Connecticut</td><td>6</td><td> 4343</td></tr>
+	<tr><td>Connecticut</td><td>7</td><td> 3257</td></tr>
+	<tr><td>Connecticut</td><td>8</td><td> 3202</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Now, I need to focus on converting this data to wide format. I want a column for each state. This tells me that my <code class="docutils literal notranslate"><span class="pre">names_from</span></code> argument will be <code class="docutils literal notranslate"><span class="pre">state</span></code>. Next, I want each row to have the case values for each state. This tells me that my <code class="docutils literal notranslate"><span class="pre">values_from</span></code> argument will be total_cases. The format of this data may not be tidy but it allows me to quickly compare cases across states.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">ne_cases</span><span class="p">,</span> <span class="n">names_from</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">values_from</span><span class="o">=</span><span class="n">total_cases</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 10 × 7</caption>
+<thead>
+	<tr><th scope=col>month</th><th scope=col>Connecticut</th><th scope=col>Maine</th><th scope=col>Massachusetts</th><th scope=col>New Hampshire</th><th scope=col>Rhode Island</th><th scope=col>Vermont</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td> 3</td><td> 3051</td><td>  297</td><td>  6285</td><td>  367</td><td>  416</td><td> 282</td></tr>
+	<tr><td> 4</td><td>24187</td><td>  797</td><td> 55505</td><td> 1776</td><td> 7118</td><td> 581</td></tr>
+	<tr><td> 5</td><td>14729</td><td> 1229</td><td> 34878</td><td> 2502</td><td> 5537</td><td> 113</td></tr>
+	<tr><td> 6</td><td> 4343</td><td>  928</td><td> 11926</td><td> 1136</td><td> 2158</td><td> 226</td></tr>
+	<tr><td> 7</td><td> 3257</td><td>  659</td><td>  8711</td><td>  801</td><td> 2015</td><td> 205</td></tr>
+	<tr><td> 8</td><td> 3202</td><td>  616</td><td>  9642</td><td>  691</td><td> 2565</td><td> 209</td></tr>
+	<tr><td> 9</td><td> 4630</td><td>  863</td><td>  2503</td><td>  990</td><td> 2884</td><td> 128</td></tr>
+	<tr><td>10</td><td>13667</td><td> 1273</td><td> 24746</td><td> 2795</td><td> 5764</td><td> 427</td></tr>
+	<tr><td>11</td><td>45527</td><td> 5090</td><td> 63522</td><td> 9543</td><td>17387</td><td>1993</td></tr>
+	<tr><td>12</td><td>68450</td><td>12448</td><td>140650</td><td>22544</td><td>32483</td><td>3239</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="merging-data-with-joins">
+<h2>Merging Data with Joins<a class="headerlink" href="#merging-data-with-joins" title="Permalink to this heading">#</a></h2>
+<p>Above, we saw how to manipulate our current data into a new format. Now, we will see how we can combine our multiple data sources. Merging two data frames is called joining and the function we will use depends on how we want to match between the data frames. The image below shows an overview of the different joins and the video talks through each join type.</p>
+<p><strong>Types of Joins</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">left_join(table1,table2,by)</span></code>: Joins each row of table1 with all matches in table2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">right_join(table1,table2,by)</span></code>: Joins each row of table2 with all matches in table1 (the opposite of a left join)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inner_join(table1,table2,by)</span></code>: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full_join(table1,table2,by)</span></code>: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semi_join(table1,table2,by)</span></code>: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">anti_join(table1,table2,by)</span></code>: Keeps all rows in table1 that <em>do not</em> have a match in table 2 but does not join to any information from table2. The opposite of a semi join.</p></li>
+</ul>
+<p>TODO: image and video</p>
+<p>We will first demonstate a left join using the <code class="docutils literal notranslate"><span class="pre">left_join()</span></code> function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. We will use a left join to add the lockdown information to our case data. In this case, the first table will be <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> and we will match by <code class="docutils literal notranslate"><span class="pre">state</span></code>. Since the state column is slightly different between the two data frames we specify that <code class="docutils literal notranslate"><span class="pre">state</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">State</span></code> in the <code class="docutils literal notranslate"><span class="pre">by</span></code> argument.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases_full</span> <span class="o">&lt;-</span> <span class="nf">left_join</span><span class="p">(</span><span class="n">covidcases</span><span class="p">,</span> <span class="n">lockdowndates</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;state&quot;</span><span class="o">=</span><span class="s">&quot;State&quot;</span><span class="p">))</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">covidcases_full</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 7</caption>
+<thead>
+	<tr><th></th><th scope=col>date</th><th scope=col>state</th><th scope=col>county</th><th scope=col>daily_deaths</th><th scope=col>daily_cases</th><th scope=col>Lockdown_Start</th><th scope=col>Lockdown_End</th></tr>
+	<tr><th></th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;date&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>2020-03-01</td><td>California</td><td>Marin        </td><td>0</td><td>1</td><td>2020-03-19</td><td>2020-08-28</td></tr>
+	<tr><th scope=row>2</th><td>2020-03-01</td><td>California</td><td>Orange       </td><td>0</td><td>1</td><td>2020-03-19</td><td>2020-08-28</td></tr>
+	<tr><th scope=row>3</th><td>2020-03-01</td><td>Florida   </td><td>Manatee      </td><td>0</td><td>1</td><td>2020-04-02</td><td>2020-05-04</td></tr>
+	<tr><th scope=row>4</th><td>2020-03-01</td><td>California</td><td>Napa         </td><td>0</td><td>1</td><td>2020-03-19</td><td>2020-08-28</td></tr>
+	<tr><th scope=row>5</th><td>2020-03-01</td><td>Washington</td><td>Spokane      </td><td>0</td><td>4</td><td>2020-03-24</td><td>2020-05-04</td></tr>
+	<tr><th scope=row>6</th><td>2020-03-01</td><td>California</td><td>San Francisco</td><td>0</td><td>3</td><td>2020-03-19</td><td>2020-08-28</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>These two new columns will allow us to determine whether a given day was during a lockdown. We use the <code class="docutils literal notranslate"><span class="pre">between</span></code> function to create a new column <code class="docutils literal notranslate"><span class="pre">lockdown</span></code> before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases_full</span> <span class="o">&lt;-</span> <span class="n">covidcases_full</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">lockdown</span> <span class="o">=</span> <span class="nf">between</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">Lockdown_Start</span><span class="p">,</span> <span class="n">Lockdown_End</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">Lockdown_Start</span><span class="p">,</span> <span class="n">Lockdown_End</span><span class="p">))</span> 
+<span class="n">covidcases_full</span> <span class="o">%&gt;%</span>
+  <span class="nf">filter</span><span class="p">(</span><span class="n">state</span> <span class="o">==</span> <span class="s">&quot;Alabama&quot;</span><span class="p">,</span> <span class="n">county</span> <span class="o">==</span> <span class="s">&quot;Jefferson&quot;</span><span class="p">,</span> <span class="n">date</span> <span class="o">&lt;=</span> <span class="nf">as.Date</span><span class="p">(</span><span class="s">&quot;2020-05-10&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 59 × 6</caption>
+<thead>
+	<tr><th scope=col>date</th><th scope=col>state</th><th scope=col>county</th><th scope=col>daily_deaths</th><th scope=col>daily_cases</th><th scope=col>lockdown</th></tr>
+	<tr><th scope=col>&lt;date&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>2020-03-13</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 2</td><td>FALSE</td></tr>
+	<tr><td>2020-03-14</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 4</td><td>FALSE</td></tr>
+	<tr><td>2020-03-15</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 7</td><td>FALSE</td></tr>
+	<tr><td>2020-03-16</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 4</td><td>FALSE</td></tr>
+	<tr><td>2020-03-17</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 4</td><td>FALSE</td></tr>
+	<tr><td>2020-03-18</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 4</td><td>FALSE</td></tr>
+	<tr><td>2020-03-19</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 9</td><td>FALSE</td></tr>
+	<tr><td>2020-03-20</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>16</td><td>FALSE</td></tr>
+	<tr><td>2020-03-21</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>11</td><td>FALSE</td></tr>
+	<tr><td>2020-03-22</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>10</td><td>FALSE</td></tr>
+	<tr><td>2020-03-23</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>15</td><td>FALSE</td></tr>
+	<tr><td>2020-03-24</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 5</td><td>FALSE</td></tr>
+	<tr><td>2020-03-25</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>38</td><td>FALSE</td></tr>
+	<tr><td>2020-03-26</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>44</td><td>FALSE</td></tr>
+	<tr><td>2020-03-27</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 6</td><td>FALSE</td></tr>
+	<tr><td>2020-03-28</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>35</td><td>FALSE</td></tr>
+	<tr><td>2020-03-29</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>32</td><td>FALSE</td></tr>
+	<tr><td>2020-03-30</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>11</td><td>FALSE</td></tr>
+	<tr><td>2020-03-31</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>25</td><td>FALSE</td></tr>
+	<tr><td>2020-04-01</td><td>Alabama</td><td>Jefferson</td><td>4</td><td>23</td><td>FALSE</td></tr>
+	<tr><td>2020-04-02</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>27</td><td>FALSE</td></tr>
+	<tr><td>2020-04-03</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>37</td><td>FALSE</td></tr>
+	<tr><td>2020-04-04</td><td>Alabama</td><td>Jefferson</td><td>3</td><td> 7</td><td> TRUE</td></tr>
+	<tr><td>2020-04-05</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>42</td><td> TRUE</td></tr>
+	<tr><td>2020-04-06</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>20</td><td> TRUE</td></tr>
+	<tr><td>2020-04-07</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>23</td><td> TRUE</td></tr>
+	<tr><td>2020-04-08</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>31</td><td> TRUE</td></tr>
+	<tr><td>2020-04-09</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>31</td><td> TRUE</td></tr>
+	<tr><td>2020-04-10</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>32</td><td> TRUE</td></tr>
+	<tr><td>2020-04-11</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>24</td><td> TRUE</td></tr>
+	<tr><td>2020-04-12</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>18</td><td> TRUE</td></tr>
+	<tr><td>2020-04-13</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>20</td><td> TRUE</td></tr>
+	<tr><td>2020-04-14</td><td>Alabama</td><td>Jefferson</td><td>1</td><td> 3</td><td> TRUE</td></tr>
+	<tr><td>2020-04-15</td><td>Alabama</td><td>Jefferson</td><td>1</td><td> 8</td><td> TRUE</td></tr>
+	<tr><td>2020-04-16</td><td>Alabama</td><td>Jefferson</td><td>5</td><td> 6</td><td> TRUE</td></tr>
+	<tr><td>2020-04-17</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>11</td><td> TRUE</td></tr>
+	<tr><td>2020-04-18</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>28</td><td> TRUE</td></tr>
+	<tr><td>2020-04-19</td><td>Alabama</td><td>Jefferson</td><td>0</td><td> 9</td><td> TRUE</td></tr>
+	<tr><td>2020-04-20</td><td>Alabama</td><td>Jefferson</td><td>1</td><td> 6</td><td> TRUE</td></tr>
+	<tr><td>2020-04-21</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>12</td><td> TRUE</td></tr>
+	<tr><td>2020-04-22</td><td>Alabama</td><td>Jefferson</td><td>5</td><td>44</td><td> TRUE</td></tr>
+	<tr><td>2020-04-23</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>34</td><td> TRUE</td></tr>
+	<tr><td>2020-04-24</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>19</td><td> TRUE</td></tr>
+	<tr><td>2020-04-25</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>31</td><td> TRUE</td></tr>
+	<tr><td>2020-04-26</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>11</td><td> TRUE</td></tr>
+	<tr><td>2020-04-27</td><td>Alabama</td><td>Jefferson</td><td>3</td><td> 0</td><td> TRUE</td></tr>
+	<tr><td>2020-04-28</td><td>Alabama</td><td>Jefferson</td><td>5</td><td>22</td><td> TRUE</td></tr>
+	<tr><td>2020-04-29</td><td>Alabama</td><td>Jefferson</td><td>3</td><td>20</td><td> TRUE</td></tr>
+	<tr><td>2020-04-30</td><td>Alabama</td><td>Jefferson</td><td>2</td><td> 5</td><td> TRUE</td></tr>
+	<tr><td>2020-05-01</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>43</td><td>FALSE</td></tr>
+	<tr><td>2020-05-02</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>17</td><td>FALSE</td></tr>
+	<tr><td>2020-05-03</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>23</td><td>FALSE</td></tr>
+	<tr><td>2020-05-04</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>23</td><td>FALSE</td></tr>
+	<tr><td>2020-05-05</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>28</td><td>FALSE</td></tr>
+	<tr><td>2020-05-06</td><td>Alabama</td><td>Jefferson</td><td>4</td><td>28</td><td>FALSE</td></tr>
+	<tr><td>2020-05-07</td><td>Alabama</td><td>Jefferson</td><td>4</td><td>17</td><td>FALSE</td></tr>
+	<tr><td>2020-05-08</td><td>Alabama</td><td>Jefferson</td><td>2</td><td>29</td><td>FALSE</td></tr>
+	<tr><td>2020-05-09</td><td>Alabama</td><td>Jefferson</td><td>1</td><td>15</td><td>FALSE</td></tr>
+	<tr><td>2020-05-10</td><td>Alabama</td><td>Jefferson</td><td>0</td><td>12</td><td>FALSE</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We now want to add in the mobility data. In the last case, we wanted to keep any observation in <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> regardless if it was in the <code class="docutils literal notranslate"><span class="pre">lockdowndates</span></code> data frame. Therefore, we used a left join. In this case, we will only want to keep observations that have mobility date for that state on each date. This indicates that we want to use an <em>inner join</em>. The function <code class="docutils literal notranslate"><span class="pre">inner_join()</span></code> takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by state and date.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases_full</span> <span class="o">&lt;-</span> <span class="nf">inner_join</span><span class="p">(</span><span class="n">covidcases_full</span><span class="p">,</span> <span class="n">mobility</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;state&quot;</span><span class="p">,</span> <span class="s">&quot;date&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">m50_index</span><span class="p">))</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">covidcases_full</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 7</caption>
+<thead>
+	<tr><th></th><th scope=col>date</th><th scope=col>state</th><th scope=col>county</th><th scope=col>daily_deaths</th><th scope=col>daily_cases</th><th scope=col>lockdown</th><th scope=col>m50</th></tr>
+	<tr><th></th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;lgl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>2020-03-01</td><td>California</td><td>Marin        </td><td>0</td><td>1</td><td>FALSE</td><td>9.722800</td></tr>
+	<tr><th scope=row>2</th><td>2020-03-01</td><td>California</td><td>Orange       </td><td>0</td><td>1</td><td>FALSE</td><td>9.722800</td></tr>
+	<tr><th scope=row>3</th><td>2020-03-01</td><td>Florida   </td><td>Manatee      </td><td>0</td><td>1</td><td>FALSE</td><td>7.386687</td></tr>
+	<tr><th scope=row>4</th><td>2020-03-01</td><td>California</td><td>Napa         </td><td>0</td><td>1</td><td>FALSE</td><td>9.722800</td></tr>
+	<tr><th scope=row>5</th><td>2020-03-01</td><td>Washington</td><td>Spokane      </td><td>0</td><td>4</td><td>FALSE</td><td>2.503500</td></tr>
+	<tr><th scope=row>6</th><td>2020-03-01</td><td>California</td><td>San Francisco</td><td>0</td><td>3</td><td>FALSE</td><td>9.722800</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="recap-video">
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
+<p>TODO: might skip since we have a video up above</p>
+</section>
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -388,12 +811,12 @@ document.write(`
     <div class="footer-article-item"><!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="5_data_wrangling_transformation.html"
+       href="5_data_transformations_summaries.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">5. Data Wrangling and Transformation</p>
+        <p class="prev-next-title">5. Data Transformations and Summaries</p>
       </div>
     </a>
     <a class="right-next"
@@ -414,6 +837,23 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reshaping-data">Reshaping Data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-data-with-joins">Merging Data with Joins</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>9. Simulation &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="10. Linear Regression" href="10_linear_regression.html" />
     <link rel="prev" title="8. Distributions and Hypothesis Testing" href="8_distributions_and_tests.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -158,8 +159,8 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_data_wrangling_transformation.html">5. Data Wrangling and Transformation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
@@ -369,12 +370,12 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="simulation">
-<h1>9. Simulation<a class="headerlink" href="#simulation" title="Permalink to this headline">#</a></h1>
+<h1>9. Simulation<a class="headerlink" href="#simulation" title="Permalink to this heading">#</a></h1>
 <p>The Logistic Regression, also called a logit model, is a method for fitting a regression curve <span class="math notranslate nohighlight">\(y=f(x)\)</span> in which the response variable (dependent variable) <span class="math notranslate nohighlight">\(y\)</span> is a <strong>categorical</strong> variable (dichotomous outcome variable) such as True/False or 0/1.</p>
 <p>In the logit model it actually measures the <strong>log odds</strong> of the outcome given a linear combination of a set of predictors <span class="math notranslate nohighlight">\(x\)</span>. The predictors can be continuous, categorical or a mix of both.</p>
 <p>The categorical variable y, in general, can assume different values. In the simplest case scenario y is binary meaning that it can assume either the value 1 (Yes) or 0 (No). In this post we call the model “binomial logistic regression”, however, logistic regression can also be used to predict an outcome with more than 2 categories. In this second case we call the model “multinomial logistic regression”. A typical example for instance, would be classifying marketing campaign between “failure”, “non existent” or “success”.</p>
 <section id="implementation-in-r">
-<h2>Implementation in R<a class="headerlink" href="#implementation-in-r" title="Permalink to this headline">#</a></h2>
+<h2>Implementation in R<a class="headerlink" href="#implementation-in-r" title="Permalink to this heading">#</a></h2>
 <p>Logistic regression is implemented in R using <code class="docutils literal notranslate"><span class="pre">glm()</span></code> by predicting the primary outcome of interest using features or variables in the dataset.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">formula</span></code> - specify the relationship between variables and the outcome of interest</p></li>
@@ -383,12 +384,12 @@ document.write(`
 </ul>
 </section>
 <section id="the-dataset">
-<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Permalink to this headline">#</a></h2>
+<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Permalink to this heading">#</a></h2>
 <p>We would use a dataset from the 2021 National Youth Tobacco Survey (NYTS) in the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package called <code class="docutils literal notranslate"><span class="pre">nyts</span></code>. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. One question from this study was whether… (TODO). The objective of the logistic regression model is to predict whether … or not based on the predictor variables, such as demographic information.</p>
 <p><strong>Jialin Note</strong>: applicability? What’s the outcome of interest? For example, students quit smoking.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">remotes</span><span class="o">::</span><span class="nf">install_github</span><span class="p">(</span><span class="s">&quot;joannamwalsh/RforHDSdata&quot;</span><span class="p">)</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">remotes</span><span class="o">::</span><span class="nf">install_github</span><span class="p">(</span><span class="s">&quot;joannamwalsh/RforHDSdata&quot;</span><span class="p">)</span> 
 <span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">nyts</span><span class="p">)</span>
 </pre></div>
@@ -430,7 +431,7 @@ document.write(`
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># use an in-built dataset instead</span>
 
 <span class="c1"># Select some columns form mtcars.</span>
-<span class="n">mtcars</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mtcars</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;am&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;cyl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;wt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vs&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;carb&quot;</span><span class="p">)]</span>
+<span class="n">mtcars</span> <span class="o">&lt;-</span> <span class="n">mtcars</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;am&quot;</span><span class="p">,</span> <span class="s">&quot;cyl&quot;</span><span class="p">,</span> <span class="s">&quot;hp&quot;</span><span class="p">,</span> <span class="s">&quot;wt&quot;</span><span class="p">,</span> <span class="s">&quot;vs&quot;</span><span class="p">,</span> <span class="s">&quot;carb&quot;</span><span class="p">)]</span>
 
 <span class="nf">head</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span>
 </pre></div>
@@ -456,10 +457,10 @@ document.write(`
 </div>
 </section>
 <section id="model-fitting">
-<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">#</a></h2>
+<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">am</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">cyl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">hp</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">wt</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;binomial&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">am</span> <span class="o">~</span> <span class="n">cyl</span> <span class="o">+</span> <span class="n">hp</span> <span class="o">+</span> <span class="n">wt</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mtcars</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="s">&quot;binomial&quot;</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -498,12 +499,12 @@ Number of Fisher Scoring iterations: 8
 <p>Below the table of coefficients are fit indices, including the null and deviance residuals and the AIC. Later we show an example of how you can use these values to help assess model fit.</p>
 </section>
 <section id="diagnostic-plots">
-<h2>Diagnostic Plots<a class="headerlink" href="#diagnostic-plots" title="Permalink to this headline">#</a></h2>
+<h2>Diagnostic Plots<a class="headerlink" href="#diagnostic-plots" title="Permalink to this heading">#</a></h2>
 <p>Next we see the deviance residuals, which are a measure of model fit. The first part of the above output shows the distribution of the deviance residuals for individual cases used in the model. Below we discuss how to use summaries of the deviance statistic to assess model fit. Let’s look at the residuals from this model. Change type to “deviance” below to get the deviance residuals.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -514,17 +515,17 @@ Number of Fisher Scoring iterations: 8
 </div>
 </section>
 <section id="predictability-of-the-model">
-<h2>Predictability of the Model<a class="headerlink" href="#predictability-of-the-model" title="Permalink to this headline">#</a></h2>
+<h2>Predictability of the Model<a class="headerlink" href="#predictability-of-the-model" title="Permalink to this heading">#</a></h2>
 <p>In the steps above, we briefly evaluated the fitting of the model, now we would like to find the predicted
 probabilities. By setting the parameter type=’response’, R will output probabilities in the form of P(y=1|X). Our decision boundary will be 0.5. If P(y=1|X) &gt; 0.5 then y = 1 otherwise y=0. Note that for some applications different thresholds could be a better option. When we add in <code class="docutils literal notranslate"><span class="pre">type=“response”</span></code> to the code below it indicates that we want the predicted probabilities instead of the predicted log odds.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
-<span class="n">pred_ys</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">,</span><span class="w"> </span><span class="n">pred_ys</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<span class="n">pred_ys</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span> <span class="o">&gt;</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">,</span> <span class="n">pred_ys</span><span class="p">)</span>
 
-<span class="n">misClasificError</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">pred_ys</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&#39;Accuracy&#39;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">-</span><span class="n">misClasificError</span><span class="p">))</span>
+<span class="n">misClasificError</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">pred_ys</span> <span class="o">!=</span> <span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&#39;Accuracy&#39;</span><span class="p">,</span> <span class="m">1</span><span class="o">-</span><span class="n">misClasificError</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -544,7 +545,7 @@ probabilities. By setting the parameter type=’response’, R will output proba
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span>
-<span class="nf">confusionMatrix</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">pred_ys</span><span class="p">),</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">),</span><span class="w"> </span><span class="n">positive</span><span class="o">=</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
+<span class="nf">confusionMatrix</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">pred_ys</span><span class="p">),</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">),</span> <span class="n">positive</span><span class="o">=</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -563,8 +564,8 @@ probabilities to the data frame to use this function.</p>
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;predtools&quot;</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">predtools</span><span class="p">)</span>
-<span class="n">mtcars</span><span class="o">$</span><span class="n">pred</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pred_probs</span>
-<span class="nf">calibration_plot</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mtcars</span><span class="p">,</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;am&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pred</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;pred&quot;</span><span class="p">)</span>
+<span class="n">mtcars</span><span class="o">$</span><span class="n">pred</span> <span class="o">&lt;-</span> <span class="n">pred_probs</span>
+<span class="nf">calibration_plot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mtcars</span><span class="p">,</span> <span class="n">obs</span> <span class="o">=</span> <span class="s">&quot;am&quot;</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="s">&quot;pred&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -587,8 +588,8 @@ probabilities to the data frame to use this function.</p>
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;pROC&quot;</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span>
-<span class="n">roc_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">=</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">roc_mod</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
