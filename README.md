@@ -16,7 +16,7 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 
 ## Environment Version Information
 
-- R_4.3.0
+- R_4.2.3
 - tidyverse_1.3.1
 - gt_0.9.0
 - GGally_2.1.2
