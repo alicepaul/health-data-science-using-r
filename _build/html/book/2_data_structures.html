@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>2. Data Structures in R &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="3. Working with Data Files in R" href="3_data_files.html" />
     <link rel="prev" title="1. Intro to R, RStudio, and Jupyter Notebooks" href="1_intro_to_r.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -158,8 +159,8 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Exploratory Analysis</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
-<li class="toctree-l1"><a class="reference internal" href="5_data_wrangling_transformation.html">5. Data Wrangling and Transformation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging Data Sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
@@ -391,11 +392,11 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="data-structures-in-r">
-<h1>2. Data Structures in R<a class="headerlink" href="#data-structures-in-r" title="Permalink to this headline">#</a></h1>
+<h1>2. Data Structures in R<a class="headerlink" href="#data-structures-in-r" title="Permalink to this heading">#</a></h1>
 <p>In this chapter, we will demonstrate the key <strong>data structures</strong> in R. A data structure is how information is stored in R, and it informs R how to interpret our code. Any <strong>object</strong> is a named instance of a data structure. For example, the object <code class="docutils literal notranslate"><span class="pre">ex_num</span></code> is a vector of numeric type.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_num</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">4</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_num</span> <span class="o">&lt;-</span> <span class="m">4</span>
 </pre></div>
 </div>
 </div>
@@ -403,7 +404,7 @@ document.write(`
 <p>The main data structures in R are <strong>vectors</strong>, <strong>factors</strong>, <strong>matrices</strong>, <strong>arrays</strong>, <strong>lists</strong>, and <strong>data frames</strong>. These structures are distinguished by their dimensions and type of data they store. For example, a vector is a 1-dimensional data structure of the same type whereas a data frame is a 2-dimensional data structure where each column has the same type. We will cover each structure except for arrays, which are an extension of matrices that allow for data that is more than 2-dimensional.</p>
 <a class="reference internal image-reference" href="../_images/2-data-structures.png"><img alt="“”" class="align-center" src="../_images/2-data-structures.png" style="width: 500pt;" /></a>
 <section id="data-types">
-<h2>Data Types<a class="headerlink" href="#data-types" title="Permalink to this headline">#</a></h2>
+<h2>Data Types<a class="headerlink" href="#data-types" title="Permalink to this heading">#</a></h2>
 <p>Each individual value in R is a type: logical, integer, double, or character. We can think of these as the building blocks of all data structures. Below, we can use the <code class="docutils literal notranslate"><span class="pre">typeof</span></code> function to find the type, which shows that the value of <code class="docutils literal notranslate"><span class="pre">ex_num</span></code> is a <strong>double</strong>. A double is a numeric value that can store a decimal (as opposed to an integer, which is a numeric value that can only take whole number values).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -417,7 +418,7 @@ document.write(`
 <p>We now create an integer object <code class="docutils literal notranslate"><span class="pre">ex_int</span></code>: to indicate to R that we want to restrict our values to integer values, we use an <code class="docutils literal notranslate"><span class="pre">L</span></code> after the number. For the examples in this book, though, we will not need to use this notation.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_int</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">4L</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_int</span> <span class="o">&lt;-</span> <span class="m">4L</span>
 <span class="nf">typeof</span><span class="p">(</span><span class="n">ex_int</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -428,8 +429,8 @@ document.write(`
 <p>Both <code class="docutils literal notranslate"><span class="pre">ex_var</span></code> and <code class="docutils literal notranslate"><span class="pre">ex_int</span></code> are numeric objects, but we can also work with two other kinds of types: characters (e.g. “php”, “stats”) and booleans (TRUE, FALSE), also known as logicals.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_bool</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">TRUE</span>
-<span class="n">ex_char</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_bool</span> <span class="o">&lt;-</span> <span class="kc">TRUE</span>
+<span class="n">ex_char</span> <span class="o">&lt;-</span> <span class="s">&quot;Alice&quot;</span>
 
 <span class="nf">typeof</span><span class="p">(</span><span class="n">ex_bool</span><span class="p">)</span>
 <span class="nf">typeof</span><span class="p">(</span><span class="n">ex_char</span><span class="p">)</span>
@@ -452,7 +453,7 @@ document.write(`
 <p>To create all of the above objects, we used the assignment operator <code class="docutils literal notranslate"><span class="pre">&lt;-</span></code>. We could intead use the <code class="docutils literal notranslate"><span class="pre">=</span></code> operator, which can also be used for assignment but also has other meanings. It is generally preferable to stick to using <code class="docutils literal notranslate"><span class="pre">&lt;-</span></code>.</p>
 </section>
 <section id="vectors">
-<h2>Vectors<a class="headerlink" href="#vectors" title="Permalink to this headline">#</a></h2>
+<h2>Vectors<a class="headerlink" href="#vectors" title="Permalink to this heading">#</a></h2>
 <p>In the examples above, we created objects with a single value. However, R actually uses a vector of length 1 to store this information. Vectors are 1-dimensional data structures that can store multiple data values of the same type (e.g. character, boolean, or numeric).</p>
 <a class="reference internal image-reference" href="../_images/2-vectors.png"><img alt="“”" class="align-center" src="../_images/2-vectors.png" style="width: 500pt;" /></a>
 <p>We can confirm this by using the <code class="docutils literal notranslate"><span class="pre">is.vector</span></code> function, which returns TRUE if the inputted argument is a vector.</p>
@@ -468,8 +469,8 @@ document.write(`
 <p>One way to create a vector with multiple values is to use the combine function <code class="docutils literal notranslate"><span class="pre">c()</span></code>. Below we create two vectors: one with the days of the week and one with the amount of rain on each day.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Thursday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Friday&quot;</span><span class="p">)</span>
-<span class="n">rain</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">0.1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0.4</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s">&quot;Thursday&quot;</span><span class="p">,</span> <span class="s">&quot;Friday&quot;</span><span class="p">)</span>
+<span class="n">rain</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="m">0.1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0.4</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -477,7 +478,7 @@ document.write(`
 <p>Remember, vectors cannot store objects of different types. Because of this, R automatically converts the numeric value to be a character in the code below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -504,7 +505,7 @@ document.write(`
 <p>What happens when we create an empty vector? What is the class?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_empty</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_empty</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">()</span>
 <span class="nf">class</span><span class="p">(</span><span class="n">ex_empty</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -515,7 +516,7 @@ document.write(`
 <p>In this case, there is no specified type yet. If we wanted to specify the type, we could make an empty vector using the <code class="docutils literal notranslate"><span class="pre">vector()</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_empty</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">vector</span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;numeric&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_empty</span> <span class="o">&lt;-</span> <span class="nf">vector</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s">&quot;numeric&quot;</span><span class="p">)</span>
 <span class="nf">class</span><span class="p">(</span><span class="n">ex_empty</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -526,10 +527,10 @@ document.write(`
 <p>Another way to create a non-empty vector is with the <code class="docutils literal notranslate"><span class="pre">rep()</span></code> or <code class="docutils literal notranslate"><span class="pre">seq()</span></code> functions. The first function <code class="docutils literal notranslate"><span class="pre">rep(x,</span> <span class="pre">times)</span></code> takes in a vector <code class="docutils literal notranslate"><span class="pre">x</span></code> and a number of times <code class="docutils literal notranslate"><span class="pre">times</span></code> and outputs <code class="docutils literal notranslate"><span class="pre">x</span></code> repeated that many times. Let’s try this with a single value below. The second function <code class="docutils literal notranslate"><span class="pre">seq(from,</span> <span class="pre">to,</span> <span class="pre">step)</span></code> takes in a starting value, end value, and step size (all numeric values) and returns a sequence from <code class="docutils literal notranslate"><span class="pre">from</span></code> in increments of <code class="docutils literal notranslate"><span class="pre">step</span></code> until a maximum value of <code class="docutils literal notranslate"><span class="pre">to</span></code> is reached.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
-<span class="nf">rep</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)</span>
-<span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
-<span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">-10</span><span class="p">,</span><span class="w"> </span><span class="m">-2</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
+<span class="nf">rep</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="m">4</span><span class="p">)</span>
+<span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">5</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span>
+<span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">-10</span><span class="p">,</span> <span class="m">-2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -572,8 +573,8 @@ document.write(`
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">)</span>
-<span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1"># equivalent to the code above</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span> <span class="o">+</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">)</span>
+<span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">)</span> <span class="o">+</span> <span class="m">1</span> <span class="c1"># equivalent to the code above</span>
 <span class="nf">sqrt</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">16</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -600,7 +601,7 @@ document.write(`
 </div></div>
 </div>
 <section id="indexing-a-vector">
-<h3>Indexing a Vector<a class="headerlink" href="#indexing-a-vector" title="Permalink to this headline">#</a></h3>
+<h3>Indexing a Vector<a class="headerlink" href="#indexing-a-vector" title="Permalink to this heading">#</a></h3>
 <p>Now that we have a vector, we may want to access the values. To do so, we index the values starting from index 1: the first value has index 1, the second value has index 2, etc. This is what we mean when we say a vector is 1-dimensional. Below, we use these indices to find the value at index 1 and the value at index 4.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -638,7 +639,7 @@ document.write(`
 <p>However, always indexing by the index value can sometimes be difficult. One extra feature of vectors is that we can associate a name with each value. Below, we update the names of the vector <code class="docutils literal notranslate"><span class="pre">rain</span></code> to be the days of the week and then find Friday’s rain count by indexing with the name.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">days</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">days</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
 <span class="n">rain</span><span class="p">[</span><span class="s">&quot;Friday&quot;</span><span class="p">]</span>
 </pre></div>
@@ -654,7 +655,7 @@ document.write(`
 <p>We can also index a vector using TRUE and FALSE values. If we have a vector of booleans that is the same length as our original vector, then this will return all the values that correspond to a TRUE value. Below, this will return the first and fourth values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ind_bools</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ind_bools</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">)</span>
 <span class="n">days</span><span class="p">[</span><span class="n">ind_bools</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -671,11 +672,11 @@ document.write(`
 <p>This is useful because we can use logic to access certain values. We will see more about this later on.</p>
 </section>
 <section id="editing-a-vector-and-calculations">
-<h3>Editing a Vector and Calculations<a class="headerlink" href="#editing-a-vector-and-calculations" title="Permalink to this headline">#</a></h3>
+<h3>Editing a Vector and Calculations<a class="headerlink" href="#editing-a-vector-and-calculations" title="Permalink to this heading">#</a></h3>
 <p>After we create a vector, we may need to update it or change it. For example, we may want to change a value. We can do so using indexing. Below, we update the rain value for Friday using the assignment operator.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rain</span><span class="p">[</span><span class="s">&quot;Friday&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0.5</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rain</span><span class="p">[</span><span class="s">&quot;Friday&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">0.5</span>
 <span class="n">rain</span>
 </pre></div>
 </div>
@@ -693,8 +694,8 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">length</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
-<span class="n">days</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">days</span><span class="p">,</span><span class="s">&quot;Saturday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sunday&quot;</span><span class="p">)</span><span class="w"> </span><span class="c1"># add the weekend with no rain</span>
-<span class="n">rain</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="n">days</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">days</span><span class="p">,</span><span class="s">&quot;Saturday&quot;</span><span class="p">,</span> <span class="s">&quot;Sunday&quot;</span><span class="p">)</span> <span class="c1"># add the weekend with no rain</span>
+<span class="n">rain</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span><span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
 <span class="nf">length</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -705,7 +706,7 @@ document.write(`
 <p>We can also call some useful functions on vectors. For example, the <code class="docutils literal notranslate"><span class="pre">sum()</span></code>, <code class="docutils literal notranslate"><span class="pre">max()</span></code>, and <code class="docutils literal notranslate"><span class="pre">min()</span></code> functions will return the sum, maximum value, and minimum value of a vector, respectively.</p>
 </section>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 <p>Create a vector of the odd numbers from 1 to 11 using the <code class="docutils literal notranslate"><span class="pre">seq()</span></code> function. Then, find the third value in the vector using indexing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -716,7 +717,7 @@ document.write(`
 </div>
 </section>
 <section id="common-vector-functions">
-<h3>Common Vector Functions<a class="headerlink" href="#common-vector-functions" title="Permalink to this headline">#</a></h3>
+<h3>Common Vector Functions<a class="headerlink" href="#common-vector-functions" title="Permalink to this heading">#</a></h3>
 <p>Below we list some of the most common vector functions that are available in base R. All of these functions assume that the vector is numeric. If we pass the function a logical vector, it will convert it to 0/1 first, and if we pass it a character vector, it will return an error.</p>
 <ul class="simple">
 <li><p>sum() -  summation</p></li>
@@ -732,9 +733,9 @@ document.write(`
 <p>Try these out using the vector <code class="docutils literal notranslate"><span class="pre">rain</span></code>. Note that R is case sensitive - <code class="docutils literal notranslate"><span class="pre">Mean()</span></code> is considered different from <code class="docutils literal notranslate"><span class="pre">mean()</span></code> so if we type <code class="docutils literal notranslate"><span class="pre">Mean(rain)</span></code> R will tell us that it cannot find this function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span><span class="w">  </span>
-<span class="nf">min</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span><span class="w"> </span>
-<span class="nf">which.min</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span>  
+<span class="nf">min</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> 
+<span class="nf">which.min</span><span class="p">(</span><span class="n">rain</span><span class="p">)</span> 
 </pre></div>
 </div>
 </div>
@@ -743,7 +744,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">We</span><span class="w"> </span><span class="n">may</span><span class="w"> </span><span class="n">also</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">interested</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">order</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">values.</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">`sort`</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">sorts</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">values</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">vector</span><span class="w"> </span><span class="n">whereas</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">`order`</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">returns</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">permutation</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">elements</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">be</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="n">sorted</span><span class="w"> </span><span class="n">order.</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">last</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">below</span><span class="w"> </span><span class="n">sorts</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">days</span><span class="w"> </span><span class="n">of</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="n">week</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">smallest</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">largest</span><span class="w"> </span><span class="n">rain</span><span class="w"> </span><span class="n">value.</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">We</span> <span class="n">may</span> <span class="n">also</span> <span class="n">be</span> <span class="n">interested</span> <span class="n">in</span> <span class="n">the</span> <span class="n">order</span> <span class="n">of</span> <span class="n">the</span> <span class="n">values.</span> <span class="n">The</span> <span class="n">`sort`</span> <span class="n">function</span> <span class="n">sorts</span> <span class="n">the</span> <span class="n">values</span> <span class="n">of</span> <span class="n">a</span> <span class="n">vector</span> <span class="n">whereas</span> <span class="n">the</span> <span class="n">`order`</span> <span class="n">function</span> <span class="n">returns</span> <span class="n">the</span> <span class="n">permutation</span> <span class="n">of</span> <span class="n">the</span> <span class="n">elements</span> <span class="n">to</span> <span class="n">be</span> <span class="n">in</span> <span class="n">sorted</span> <span class="n">order.</span> <span class="n">The</span> <span class="n">last</span> <span class="n">line</span> <span class="n">of</span> <span class="n">code</span> <span class="n">below</span> <span class="n">sorts</span> <span class="n">the</span> <span class="n">days</span> <span class="n">of</span> <span class="n">the</span> <span class="n">week</span> <span class="n">from</span> <span class="n">smallest</span> <span class="n">to</span> <span class="n">largest</span> <span class="n">rain</span> <span class="n">value.</span> 
 </pre></div>
 </div>
 </div>
@@ -789,7 +790,7 @@ document.write(`
 <p>Both of these functions have an extra possible argument <code class="docutils literal notranslate"><span class="pre">decreasing</span></code>, which has a default value of FALSE. We can specify this to be TRUE to find the days of the week sorted from largest to smallest rainfall.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span><span class="p">[</span><span class="nf">order</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span><span class="w"> </span><span class="n">decreasing</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span><span class="p">[</span><span class="nf">order</span><span class="p">(</span><span class="n">rain</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -805,12 +806,12 @@ document.write(`
 </section>
 </section>
 <section id="factors">
-<h2>Factors<a class="headerlink" href="#factors" title="Permalink to this headline">#</a></h2>
+<h2>Factors<a class="headerlink" href="#factors" title="Permalink to this heading">#</a></h2>
 <p>A <strong>factor</strong> is a special kind of vector that behaves exactly like a regular vector except that it assumes the vector represents values from a category. In particular, it keeps track of all possible values of that category, which are called the <strong>levels</strong> of the factor. Factors will be especially helpful when we start getting into data analysis and have categorical variables. The <code class="docutils literal notranslate"><span class="pre">as.factor()</span></code> function will convert a vector to a factor.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Thursday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">)</span>
-<span class="n">days_fct</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">days</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Thursday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">)</span>
+<span class="n">days_fct</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">days</span><span class="p">)</span>
 
 <span class="nf">class</span><span class="p">(</span><span class="n">days_fct</span><span class="p">)</span>
 <span class="nf">levels</span><span class="p">(</span><span class="n">days_fct</span><span class="p">)</span>
@@ -837,14 +838,14 @@ document.write(`
 <p>We can avoid this error by specifying the levels using the <code class="docutils literal notranslate"><span class="pre">factor</span></code> function instead of the <code class="docutils literal notranslate"><span class="pre">as.factor</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Thursday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">)</span>
-<span class="n">days_fct</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">days</span><span class="p">,</span><span class="w"> </span>
-<span class="w">               </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Thursday&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                          </span><span class="s">&quot;Friday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sunday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Saturday&quot;</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">days</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Thursday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">)</span>
+<span class="n">days_fct</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">days</span><span class="p">,</span> 
+               <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s">&quot;Thursday&quot;</span><span class="p">,</span> 
+                          <span class="s">&quot;Friday&quot;</span><span class="p">,</span> <span class="s">&quot;Sunday&quot;</span><span class="p">,</span> <span class="s">&quot;Saturday&quot;</span><span class="p">))</span>
 
 <span class="nf">class</span><span class="p">(</span><span class="n">days_fct</span><span class="p">)</span>
 <span class="nf">levels</span><span class="p">(</span><span class="n">days_fct</span><span class="p">)</span>
-<span class="n">days_fct</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Friday&quot;</span>
+<span class="n">days_fct</span><span class="p">[</span><span class="m">2</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Friday&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -859,13 +860,13 @@ document.write(`
 </div>
 </section>
 <section id="matrices">
-<h2>Matrices<a class="headerlink" href="#matrices" title="Permalink to this headline">#</a></h2>
+<h2>Matrices<a class="headerlink" href="#matrices" title="Permalink to this heading">#</a></h2>
 <p>Matrices are similar to vectors in that they store data of the same type, but matrices are two-dimensional (as opposed to one-dimensional vectors), and consist of both rows and columns.</p>
 <a class="reference internal image-reference" href="../_images/2-matrix.png"><img alt="“”" class="align-center" src="../_images/2-matrix.png" style="width: 300pt;" /></a>
 <p>Below, we create a matrix reporting the daily rainfall over multiple weeks. We can create a matrix using the <code class="docutils literal notranslate"><span class="pre">matrix(data,</span> <span class="pre">nrow,</span> <span class="pre">ncol,</span> <span class="pre">byrow)</span></code> function. This creates a <code class="docutils literal notranslate"><span class="pre">nrow</span></code> by <code class="docutils literal notranslate"><span class="pre">ncol</span></code> matrix from the vector <code class="docutils literal notranslate"><span class="pre">data</span></code> values filling in by row if <code class="docutils literal notranslate"><span class="pre">byrow</span></code> is TRUE and by column otherwise. Run the code below. Then, change the last argument to <code class="docutils literal notranslate"><span class="pre">byrow=FALSE</span></code> and see what happens to the values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">0.1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span><span class="w"> </span><span class="n">ncol</span><span class="o">=</span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">0.1</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.3</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">),</span> <span class="n">ncol</span><span class="o">=</span><span class="m">7</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">byrow</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 <span class="n">rainfall</span>
 </pre></div>
 </div>
@@ -899,7 +900,7 @@ document.write(`
 </div></div>
 </div>
 <section id="indexing-a-matrix">
-<h3>Indexing a Matrix<a class="headerlink" href="#indexing-a-matrix" title="Permalink to this headline">#</a></h3>
+<h3>Indexing a Matrix<a class="headerlink" href="#indexing-a-matrix" title="Permalink to this heading">#</a></h3>
 <p>Since matrices are two-dimensaional, a single value is indexed by both its row number and its column number. This means that to access a subset of values in a matrix, we need to provide row and column indices. Below, we access a single value in the 1st row and the 4th column. The first value is always the row index and the second value is always the column index.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -929,7 +930,7 @@ document.write(`
 <p>As with vectors, we can also use booleans to index a matrix by providing boolean values for the rows and/or columns. Note that below we give a vector for the row indices and no values for the columns. Since we did not specify any column indices, this will select all of them.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="p">]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="kc">FALSE</span><span class="p">,</span> <span class="kc">TRUE</span><span class="p">),</span> <span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -945,7 +946,7 @@ document.write(`
 <p>Let’s do the opposite and select some columns and all rows.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span> <span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="kc">FALSE</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
@@ -962,9 +963,9 @@ document.write(`
 <p>As with vectors, we can specify row names and column names to access an entry instead of using indices.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">colnames</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Thursday&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                        </span><span class="s">&quot;Friday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Saturday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sunday&quot;</span><span class="p">)</span>
-<span class="nf">rownames</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Week2&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">colnames</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">,</span> <span class="s">&quot;Wednesday&quot;</span><span class="p">,</span> <span class="s">&quot;Thursday&quot;</span><span class="p">,</span> 
+                        <span class="s">&quot;Friday&quot;</span><span class="p">,</span> <span class="s">&quot;Saturday&quot;</span><span class="p">,</span> <span class="s">&quot;Sunday&quot;</span><span class="p">)</span>
+<span class="nf">rownames</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span> <span class="s">&quot;Week2&quot;</span><span class="p">)</span>
 <span class="n">rainfall</span><span class="p">[</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Friday&quot;</span><span class="p">,</span><span class="s">&quot;Saturday&quot;</span><span class="p">)]</span>
 </pre></div>
 </div>
@@ -980,18 +981,18 @@ document.write(`
 </div>
 </section>
 <section id="editing-a-matrix">
-<h3>Editing a Matrix<a class="headerlink" href="#editing-a-matrix" title="Permalink to this headline">#</a></h3>
+<h3>Editing a Matrix<a class="headerlink" href="#editing-a-matrix" title="Permalink to this heading">#</a></h3>
 <p>If we want to change the values in a matrix, we need to index those values and then give the new value(s). Below, we change a single entry to be 3 and then update several values to all be 0. Note that we do not provide multiple 0’s on the right-hand side, as R will infer that all values be set to 0.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Friday&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">3</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span> <span class="s">&quot;Friday&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">3</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Tuesday&quot;</span><span class="p">)]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="p">[</span><span class="s">&quot;Week1&quot;</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span> <span class="s">&quot;Tuesday&quot;</span><span class="p">)]</span> <span class="o">&lt;-</span> <span class="m">0</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1007,8 +1008,8 @@ Week2      1     0.4       0.2      0.5    0.3        0      0
 <p>Further, we can append values to our matrix by adding rows or columns through the <strong>rbind</strong> and <strong>cbind</strong> functions. The first function appends a row (or multiple rows) to a matrix and the second appends a column (or multiple columns). Note that below I provide a row and column name when passing in the additional data (if I didn’t, then those rows and columns would not be named).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">rbind</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Week3&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0.4</span><span class="p">,</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">0.0</span><span class="p">,</span><span class="w"> </span><span class="m">1.2</span><span class="p">,</span><span class="w"> </span><span class="m">2.2</span><span class="p">,</span><span class="w"> </span><span class="m">0.0</span><span class="p">))</span>
-<span class="n">rainfall</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cbind</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Total&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">7.1</span><span class="p">,</span><span class="w"> </span><span class="m">2.4</span><span class="p">,</span><span class="w"> </span><span class="m">3.8</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rainfall</span> <span class="o">&lt;-</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="s">&quot;Week3&quot;</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.4</span><span class="p">,</span> <span class="m">0.0</span><span class="p">,</span> <span class="m">0.0</span><span class="p">,</span> <span class="m">0.0</span><span class="p">,</span> <span class="m">1.2</span><span class="p">,</span> <span class="m">2.2</span><span class="p">,</span> <span class="m">0.0</span><span class="p">))</span>
+<span class="n">rainfall</span> <span class="o">&lt;-</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">rainfall</span><span class="p">,</span> <span class="s">&quot;Total&quot;</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">7.1</span><span class="p">,</span> <span class="m">2.4</span><span class="p">,</span> <span class="m">3.8</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">rainfall</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1025,9 +1026,9 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>Here is an example where we bind two matrices by column.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
-<span class="n">B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">8</span><span class="p">),</span><span class="w"> </span><span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
-<span class="n">C</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cbind</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">7</span><span class="p">,</span><span class="m">8</span><span class="p">),</span> <span class="n">nrow</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">&lt;-</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 <span class="n">C</span>
 </pre></div>
 </div>
@@ -1077,7 +1078,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </div>
 </section>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <p>Create a 3x4 matrix of all 1’s using the <code class="docutils literal notranslate"><span class="pre">rep()</span></code> and <code class="docutils literal notranslate"><span class="pre">matrix()</span></code> functions. Then select the first and third columns using indexing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1089,15 +1090,15 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </section>
 </section>
 <section id="data-frames">
-<h2>Data Frames<a class="headerlink" href="#data-frames" title="Permalink to this headline">#</a></h2>
+<h2>Data Frames<a class="headerlink" href="#data-frames" title="Permalink to this heading">#</a></h2>
 <p>Matrices can store data such as the rainfall data when everything is of the same type. However, if we want to capture more complex data records, we also want to allow for different measurement types: this is where data frames come in. A data frame is like a matrix in that it is two-dimensional, but unlike matrices, dataframes allow for each column to be a different type. In this case, each row corresponds to a single data entry (or observation) and each column corresponds to a different variable.</p>
 <a class="reference internal image-reference" href="../_images/2-dataframe.png"><img alt="“”" class="align-center" src="../_images/2-dataframe.png" style="width: 250pt;" /></a>
 <p>For example, suppose that, for every day in a study, we want to record the temperature, rainfall, and day of the week. Temperature and rainfall can be numeric values, but day of the week will be character type. We create a data frame using the <code class="docutils literal notranslate"><span class="pre">data.frame()</span></code> function. Note that I am providing column names for each vector (column).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">head()</span></code> function prints the first six rows of a data frame (to avoid printing very large datasets). In our case, it will show all the data because we only created four rows. The column names are displayed as well as their type. By contrast, the <code class="docutils literal notranslate"><span class="pre">tail()</span></code> function prints the last six rows of a data frame.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">day_of_week</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="s">&quot;Monday&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                           </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">62</span><span class="p">,</span><span class="m">75</span><span class="p">,</span><span class="m">50</span><span class="p">),</span><span class="w"> </span><span class="n">rain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.0</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">day_of_week</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Monday&quot;</span><span class="p">,</span><span class="s">&quot;Tuesday&quot;</span><span class="p">,</span><span class="s">&quot;Wednesday&quot;</span><span class="p">,</span><span class="s">&quot;Monday&quot;</span><span class="p">),</span> 
+                           <span class="n">temp</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">70</span><span class="p">,</span><span class="m">62</span><span class="p">,</span><span class="m">75</span><span class="p">,</span><span class="m">50</span><span class="p">),</span> <span class="n">rain</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.0</span><span class="p">,</span><span class="m">0.5</span><span class="p">))</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">weather_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1169,7 +1170,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>We could update the row names to be more informative as with a matrix.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">rownames</span><span class="p">(</span><span class="n">weather_data</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;6/1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;6/2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;6/3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;6/8&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">rownames</span><span class="p">(</span><span class="n">weather_data</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;6/1&quot;</span><span class="p">,</span> <span class="s">&quot;6/2&quot;</span><span class="p">,</span> <span class="s">&quot;6/3&quot;</span><span class="p">,</span> <span class="s">&quot;6/8&quot;</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">weather_data</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1191,7 +1192,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </div></div>
 </div>
 <section id="indexing-a-data-frame">
-<h3>Indexing a Data Frame<a class="headerlink" href="#indexing-a-data-frame" title="Permalink to this headline">#</a></h3>
+<h3>Indexing a Data Frame<a class="headerlink" href="#indexing-a-data-frame" title="Permalink to this heading">#</a></h3>
 <p>We can select elements of the data frame using its indices in the same way as matrices. Below, we access a single value and then a subset of our data frame. The subset returned is itself a data frame. Note that both of the lines below return a data frame.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1239,7 +1240,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>The column <code class="docutils literal notranslate"><span class="pre">day_of_week</span></code> is a categorical variable in that it can only take on a limited number of values. For this kind of variable, it is often useful to convert that column to a <strong>factor</strong> as we did below. It is especially useful to convert a column to a factor if you have a numerical value corresponding to a category (e.g. 0/1 encodings).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">day_of_week</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">factor</span><span class="p">(</span><span class="n">weather_data</span><span class="o">$</span><span class="n">day_of_week</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">day_of_week</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">weather_data</span><span class="o">$</span><span class="n">day_of_week</span><span class="p">)</span>
 <span class="nf">levels</span><span class="p">(</span><span class="n">weather_data</span><span class="o">$</span><span class="n">day_of_week</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1257,8 +1258,8 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>The next line uses that result to index the temperature vector (remember TRUE indicates to select that entry and FALSE indicates not to).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">rain</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span>
-<span class="n">weather_data</span><span class="o">$</span><span class="n">temp</span><span class="p">[</span><span class="n">weather_data</span><span class="o">$</span><span class="n">rain</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">rain</span> <span class="o">&gt;</span> <span class="m">0</span>
+<span class="n">weather_data</span><span class="o">$</span><span class="n">temp</span><span class="p">[</span><span class="n">weather_data</span><span class="o">$</span><span class="n">rain</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -1279,11 +1280,11 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </div>
 </section>
 <section id="editing-a-data-frame">
-<h3>Editing a Data Frame<a class="headerlink" href="#editing-a-data-frame" title="Permalink to this headline">#</a></h3>
+<h3>Editing a Data Frame<a class="headerlink" href="#editing-a-data-frame" title="Permalink to this heading">#</a></h3>
 <p>As with matrices, we can change values in a data frame by indexing those entries.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;rain&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">2.2</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="s">&quot;rain&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">2.2</span>
 <span class="n">weather_data</span>
 </pre></div>
 </div>
@@ -1307,7 +1308,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>The <strong>rbind</strong> functions and <strong>cbind</strong> functions also work for data frames in the same way as for matrices. However, another way to add a column is to directly use the $ accessor. Below, we add a categorical column called heavy_traffic.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">heavy_traffic</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">weather_data</span><span class="o">$</span><span class="n">heavy_traffic</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0</span><span class="p">))</span>
 <span class="n">weather_data</span>
 </pre></div>
 </div>
@@ -1329,7 +1330,7 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </div></div>
 </div>
 <section id="id2">
-<h4>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h4>
+<h4>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h4>
 <p>Add a column to <code class="docutils literal notranslate"><span class="pre">weather_data</span></code> called <code class="docutils literal notranslate"><span class="pre">air_quality_index</span></code> using the <code class="docutils literal notranslate"><span class="pre">rep()</span></code> function so that all values are <code class="docutils literal notranslate"><span class="pre">NA</span></code> (the missing value in R). Then, index the second value of this column and set it to be 57.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1342,11 +1343,11 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 </section>
 </section>
 <section id="lists">
-<h2>Lists<a class="headerlink" href="#lists" title="Permalink to this headline">#</a></h2>
+<h2>Lists<a class="headerlink" href="#lists" title="Permalink to this heading">#</a></h2>
 <p>A data frame is actually a special kind of another data structure called a <strong>list</strong>, which is a collection of objects under the same name. These objects can be vectors, matrices, data frames, or even other lists! With a list there does not have to be any relation in size, type, or other attribute between different members of the list. Below, we create an example list using the <code class="docutils literal notranslate"><span class="pre">list</span></code> function, which takes in a series of objects. What are the types of each element of the list? We can access each element using the index, but here we need to use double brackets.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="s">&quot;John&quot;</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;ibuprofen&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;metformin&quot;</span><span class="p">),</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">136</span><span class="p">,</span><span class="w"> </span><span class="m">142</span><span class="p">,</span><span class="w"> </span><span class="m">159</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="s">&quot;John&quot;</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;ibuprofen&quot;</span><span class="p">,</span> <span class="s">&quot;metformin&quot;</span><span class="p">),</span> <span class="nf">c</span><span class="p">(</span><span class="m">136</span><span class="p">,</span> <span class="m">142</span><span class="p">,</span> <span class="m">159</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">ex_list</span><span class="p">)</span>
 <span class="n">ex_list</span><span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
 </pre></div>
@@ -1374,8 +1375,8 @@ Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8
 <p>More often, however, it is useful to name the elements of the list for easier access. Let’s create this list again but this time give names to each object.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;John&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">medications</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;ibuprofen&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;metformin&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                </span><span class="n">past_weights</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">136</span><span class="p">,</span><span class="w"> </span><span class="m">142</span><span class="p">,</span><span class="w"> </span><span class="m">159</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;John&quot;</span><span class="p">,</span> <span class="n">medications</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;ibuprofen&quot;</span><span class="p">,</span> <span class="s">&quot;metformin&quot;</span><span class="p">),</span> 
+                <span class="n">past_weights</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">136</span><span class="p">,</span> <span class="m">142</span><span class="p">,</span> <span class="m">159</span><span class="p">))</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">ex_list</span><span class="p">)</span>
 <span class="n">ex_list</span><span class="o">$</span><span class="n">medications</span>
 </pre></div>
@@ -1403,7 +1404,7 @@ $past_weights
 <p>To edit a list, we can index and access different objects in the list. Additionally, we can add objects to the list using the $ accessor.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="o">$</span><span class="n">supplements</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;vitamin D&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;biotin&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="o">$</span><span class="n">supplements</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;vitamin D&quot;</span><span class="p">,</span> <span class="s">&quot;biotin&quot;</span><span class="p">)</span>
 <span class="n">ex_list</span>
 </pre></div>
 </div>
@@ -1441,7 +1442,7 @@ $past_weights
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="o">$</span><span class="n">toppings</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;collagen&quot;</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ex_list</span><span class="o">$</span><span class="n">toppings</span><span class="p">[</span><span class="m">2</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;collagen&quot;</span>
 <span class="n">ex_list</span>
 </pre></div>
 </div>
@@ -1487,24 +1488,24 @@ $past_weights
 </div>
 </section>
 <section id="data-structures-review">
-<h2>Data Structures Review<a class="headerlink" href="#data-structures-review" title="Permalink to this headline">#</a></h2>
+<h2>Data Structures Review<a class="headerlink" href="#data-structures-review" title="Permalink to this heading">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/YKCQ6uhg0fM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Create a data frame by passing the variable <code class="docutils literal notranslate"><span class="pre">city</span></code>, <code class="docutils literal notranslate"><span class="pre">country</span></code>, <code class="docutils literal notranslate"><span class="pre">temperature</span></code> into the <code class="docutils literal notranslate"><span class="pre">data.frame()</span></code> function. Use the function to create a vector with the average high temperatures in January for Beijing, Shanghai, Paris, Italian, United Kingdom, San Francisco, and Toronto, which are 35, 88, 42, 84, 81, 55, and 30 degrees Fahrenheit. Simply specify the name of the variables.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">35</span><span class="p">,</span><span class="w"> </span><span class="m">88</span><span class="p">,</span><span class="w"> </span><span class="m">42</span><span class="p">,</span><span class="w"> </span><span class="m">84</span><span class="p">,</span><span class="w"> </span><span class="m">81</span><span class="p">,</span><span class="w"> </span><span class="m">55</span><span class="p">,</span><span class="w"> </span><span class="m">30</span><span class="p">)</span>
-<span class="n">city</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Beijing&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Shanghai&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Paris&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Italy&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">          </span><span class="s">&quot;England&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;San Francisco&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Toronto&quot;</span><span class="p">)</span>
-<span class="n">ctry</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;China&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;China&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;France&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Italy&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;England&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;United States&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Canada&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">temp</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">35</span><span class="p">,</span> <span class="m">88</span><span class="p">,</span> <span class="m">42</span><span class="p">,</span> <span class="m">84</span><span class="p">,</span> <span class="m">81</span><span class="p">,</span> <span class="m">55</span><span class="p">,</span> <span class="m">30</span><span class="p">)</span>
+<span class="n">city</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Beijing&quot;</span><span class="p">,</span> <span class="s">&quot;Shanghai&quot;</span><span class="p">,</span> <span class="s">&quot;Paris&quot;</span><span class="p">,</span> <span class="s">&quot;Italy&quot;</span><span class="p">,</span> 
+          <span class="s">&quot;England&quot;</span><span class="p">,</span> <span class="s">&quot;San Francisco&quot;</span><span class="p">,</span> <span class="s">&quot;Toronto&quot;</span><span class="p">)</span>
+<span class="n">ctry</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;China&quot;</span><span class="p">,</span> <span class="s">&quot;China&quot;</span><span class="p">,</span> <span class="s">&quot;France&quot;</span><span class="p">,</span> <span class="s">&quot;Italy&quot;</span><span class="p">,</span> <span class="s">&quot;England&quot;</span><span class="p">,</span> <span class="s">&quot;United States&quot;</span><span class="p">,</span> <span class="s">&quot;Canada&quot;</span><span class="p">)</span>
 
-<span class="n">city_temps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">city</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">city</span><span class="p">,</span><span class="w"> </span><span class="n">temperature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp</span><span class="p">,</span><span class="w"> </span><span class="n">country</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ctry</span><span class="p">)</span>
+<span class="n">city_temps</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">city</span> <span class="o">=</span> <span class="n">city</span><span class="p">,</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span><span class="p">,</span> <span class="n">country</span> <span class="o">=</span> <span class="n">ctry</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1514,8 +1515,8 @@ $past_weights
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rain</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">)</span>
-<span class="n">city_temps</span><span class="o">$</span><span class="n">rain</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">rain</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
+<span class="n">city_temps</span><span class="o">$</span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="n">rain</span> 
 </pre></div>
 </div>
 </div>
@@ -1532,7 +1533,7 @@ $past_weights
 </div>
 </section>
 <section id="tips-and-resources">
-<h2>Tips and Resources<a class="headerlink" href="#tips-and-resources" title="Permalink to this headline">#</a></h2>
+<h2>Tips and Resources<a class="headerlink" href="#tips-and-resources" title="Permalink to this heading">#</a></h2>
 <p>TODO: cheatsheet with all functions?</p>
 <p>TODO: figure captions</p>
 <p>TODO: update the examples above to add pollution instead of late to work</p>
