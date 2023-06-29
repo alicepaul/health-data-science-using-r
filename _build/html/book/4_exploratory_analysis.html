@@ -424,23 +424,7 @@ document.write(`
 <ol class=list-inline><li>'ID'</li><li>'AGE'</li><li>'SEX'</li><li>'RACE'</li><li>'EDUCATION'</li><li>'INCOME'</li><li>'SMOKE'</li><li>'YEAR'</li><li>'LEAD'</li><li>'BMI_CAT'</li><li>'LEAD_QUANTILE'</li><li>'HYP'</li><li>'ALC'</li><li>'DBP1'</li><li>'DBP2'</li><li>'DBP3'</li><li>'DBP4'</li><li>'SBP1'</li><li>'SBP2'</li><li>'SBP3'</li><li>'SBP4'</li></ol>
 </div></div>
 </div>
-<p>To start our exploration, we will look at whether there are any missing values. We use the <code class="docutils literal notranslate"><span class="pre">complete.cases()</span></code> function to observe that there are no complete cases. We also see that blood pressure measurements and alcohol use have the highest percentages of missing values. For simplicity, we chose to keep the first systolic and diastolic blood pressure measurements and do a complete case analysis using the <code class="docutils literal notranslate"><span class="pre">na.omit()</span></code> function to define our complete data frame <code class="docutils literal notranslate"><span class="pre">nhanes_df</span></code>.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">))</span>
-<span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nf">sum</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">0</div><div class="output text_html"><style>
-.dl-inline {width: auto; margin:0; padding: 0}
-.dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
-.dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
-.dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>ID</dt><dd>0</dd><dt>AGE</dt><dd>0</dd><dt>SEX</dt><dd>0</dd><dt>RACE</dt><dd>0</dd><dt>EDUCATION</dt><dd>0.000671677594754518</dd><dt>INCOME</dt><dd>0</dd><dt>SMOKE</dt><dd>0</dd><dt>YEAR</dt><dd>0</dd><dt>LEAD</dt><dd>0</dd><dt>BMI_CAT</dt><dd>0</dd><dt>LEAD_QUANTILE</dt><dd>0</dd><dt>HYP</dt><dd>0</dd><dt>ALC</dt><dd>0.0268671037901807</dd><dt>DBP1</dt><dd>0.0600351831121062</dd><dt>DBP2</dt><dd>0.063905325443787</dd><dt>DBP3</dt><dd>0.070973932512394</dd><dt>DBP4</dt><dd>0.89112426035503</dd><dt>SBP1</dt><dd>0.0600351831121062</dd><dt>SBP2</dt><dd>0.063905325443787</dd><dt>SBP3</dt><dd>0.0709419478650248</dd><dt>SBP4</dt><dd>0.89112426035503</dd></dl>
-</div></div>
-</div>
+<p>To start our exploration, we will look at whether there are any missing values. We use the <code class="docutils literal notranslate"><span class="pre">complete.cases()</span></code> function to observe that there are 30,405 complete cases. We also see that alcohol use has the highest percentage of missing values. For demonstration, we chose to do a complete case analysis using the <code class="docutils literal notranslate"><span class="pre">na.omit()</span></code> function to define our complete data frame <code class="docutils literal notranslate"><span class="pre">nhanes_df</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">))</span>
@@ -491,7 +475,27 @@ document.write(`
 </div>
 </div>
 </div>
-<p>As shown above, smoking status has been coded into three categories. We want to create a new variable to represent whether someone has ever smoked. To do so, we use the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function. This function allows us to create a new vector using some logic. The logic captured by this function is that we will take one value if we meet some condition(s) and we will use a second value otherwise. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value to use if we meet the condition(s), and the last argument is the value to use otherwise. We use this function to create a new vector <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> that equals “Yes” for those who are either still smoking or quit smoking and “No” otherwise.</p>
+<p>As shown above, smoking status has been coded into three categories. We want to create a new variable to represent whether someone has ever smoked. To do so, we use the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function. This function allows us to create a new vector using some logic. The logic captured by this function is that we will take one value if we meet some condition(s) and we will use a second value otherwise. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value to use if we meet the condition(s), and the last argument is the value to use otherwise. We use this function to create a new vector <code class="docutils literal notranslate"><span class="pre">ever_smoke</span></code> that equals “Yes” for those who are either still smoking or quit smoking and “No” otherwise.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">ever_smoke</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">smoke</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;QuitSmoke&quot;</span><span class="p">,</span> <span class="s">&quot;StillSmoke&quot;</span><span class="p">),</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">ever_smoke</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in `$&lt;-.data.frame`(`*tmp*`, ever_smoke, value = logical(0)): replacement has 0 rows, data has 2584
+Traceback:
+
+1. `$&lt;-`(`*tmp*`, ever_smoke, value = logical(0))
+2. `$&lt;-.data.frame`(`*tmp*`, ever_smoke, value = logical(0))
+3. stop(sprintf(ngettext(N, &quot;replacement has %d row, data has %d&quot;, 
+ .     &quot;replacement has %d rows, data has %d&quot;), N, nrows), domain = NA)
+</pre></div>
+</div>
+</div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">summary()</span></code> and <code class="docutils literal notranslate"><span class="pre">table()</span></code> functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in the last chapter that the <code class="docutils literal notranslate"><span class="pre">hist()</span></code> function creates a histogram plot. Below we use this to plot a histogram of the log transformation of the lead column.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">EVER_SMOKE</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;QuitSmoke&quot;</span><span class="p">,</span> <span class="s">&quot;StillSmoke&quot;</span><span class="p">),</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
@@ -506,7 +510,6 @@ document.write(`
 </div>
 </div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">summary()</span></code> and <code class="docutils literal notranslate"><span class="pre">table()</span></code> functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in the last chapter that the <code class="docutils literal notranslate"><span class="pre">hist()</span></code> function creates a histogram plot. Below we use this to plot a histogram of the log transformation of the lead column.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">))</span>
@@ -607,7 +610,7 @@ document.write(`
 <img alt="../_images/6a5d5dbcaed245c547ca7bbd8d144ecdb3c003aeee73b8307bb8c118c14529dd.png" src="../_images/6a5d5dbcaed245c547ca7bbd8d144ecdb3c003aeee73b8307bb8c118c14529dd.png" />
 </div>
 </div>
-<p>Alternatively, we could use the <code class="docutils literal notranslate"><span class="pre">boxplot()</span></code> which can be passed a formula to specify how to group the data. In the case below, we make our outcome the log value of blood lead level and we group by multiple columns, <code class="docutils literal notranslate"><span class="pre">SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code>, so our formula is <code class="docutils literal notranslate"><span class="pre">log(LEAD)~SEX+EVER_SMOKE</span></code>. The second argument to the function specifies the data.  We specify the column colors to show the link between the box plots shown.</p>
+<p>Alternatively, we could use the <code class="docutils literal notranslate"><span class="pre">boxplot()</span></code> which can be passed a formula to specify how to group the data. In the case below, we group by multiple columns, <code class="docutils literal notranslate"><span class="pre">SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code>, so our formula is <code class="docutils literal notranslate"><span class="pre">log(LEAD)~SEX+EVER_SMOKE</span></code>. The second argument to the function specifies the data.  We specify the column colors to show the link between the box plots shown.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">boxplot</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">)</span><span class="o">~</span><span class="n">SEX</span><span class="o">+</span><span class="n">EVER_SMOKE</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;orange&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="s">&quot;orange&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">),</span>
@@ -689,15 +692,9 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 </pre></div>
 </div>
 <img alt="../_images/8463b4554134c5f7644a597dec1d7efc97dafaed61a13fbe2e03c49794ebf44c.png" src="../_images/8463b4554134c5f7644a597dec1d7efc97dafaed61a13fbe2e03c49794ebf44c.png" />
@@ -735,23 +732,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="hylmpjwnwa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#hylmpjwnwa table {
+		<div id="padqgrqlni" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#padqgrqlni table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hylmpjwnwa thead, #hylmpjwnwa tbody, #hylmpjwnwa tfoot, #hylmpjwnwa tr, #hylmpjwnwa td, #hylmpjwnwa th {
+#padqgrqlni thead, #padqgrqlni tbody, #padqgrqlni tfoot, #padqgrqlni tr, #padqgrqlni td, #padqgrqlni th {
   border-style: none;
 }
 
-#hylmpjwnwa p {
+#padqgrqlni p {
   margin: 0;
   padding: 0;
 }
 
-#hylmpjwnwa .gt_table {
+#padqgrqlni .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -777,12 +774,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_caption {
+#padqgrqlni .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hylmpjwnwa .gt_title {
+#padqgrqlni .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -794,7 +791,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#hylmpjwnwa .gt_subtitle {
+#padqgrqlni .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -806,7 +803,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#hylmpjwnwa .gt_heading {
+#padqgrqlni .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -818,13 +815,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_bottom_border {
+#padqgrqlni .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_col_headings {
+#padqgrqlni .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -839,7 +836,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_col_heading {
+#padqgrqlni .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -859,7 +856,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#hylmpjwnwa .gt_column_spanner_outer {
+#padqgrqlni .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -871,15 +868,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#hylmpjwnwa .gt_column_spanner_outer:first-child {
+#padqgrqlni .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hylmpjwnwa .gt_column_spanner_outer:last-child {
+#padqgrqlni .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hylmpjwnwa .gt_column_spanner {
+#padqgrqlni .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -891,11 +888,11 @@ document.write(`
   width: 100%;
 }
 
-#hylmpjwnwa .gt_spanner_row {
+#padqgrqlni .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hylmpjwnwa .gt_group_heading {
+#padqgrqlni .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -921,7 +918,7 @@ document.write(`
   text-align: left;
 }
 
-#hylmpjwnwa .gt_empty_group_heading {
+#padqgrqlni .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -936,15 +933,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#hylmpjwnwa .gt_from_md > :first-child {
+#padqgrqlni .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hylmpjwnwa .gt_from_md > :last-child {
+#padqgrqlni .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hylmpjwnwa .gt_row {
+#padqgrqlni .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -963,7 +960,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#hylmpjwnwa .gt_stub {
+#padqgrqlni .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -976,7 +973,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#hylmpjwnwa .gt_stub_row_group {
+#padqgrqlni .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -990,15 +987,15 @@ document.write(`
   vertical-align: top;
 }
 
-#hylmpjwnwa .gt_row_group_first td {
+#padqgrqlni .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hylmpjwnwa .gt_row_group_first th {
+#padqgrqlni .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hylmpjwnwa .gt_summary_row {
+#padqgrqlni .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1008,16 +1005,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#hylmpjwnwa .gt_first_summary_row {
+#padqgrqlni .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_first_summary_row.thick {
+#padqgrqlni .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hylmpjwnwa .gt_last_summary_row {
+#padqgrqlni .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1027,7 +1024,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_grand_summary_row {
+#padqgrqlni .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1037,7 +1034,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#hylmpjwnwa .gt_first_grand_summary_row {
+#padqgrqlni .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1047,7 +1044,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_last_grand_summary_row_top {
+#padqgrqlni .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1057,11 +1054,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_striped {
+#padqgrqlni .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hylmpjwnwa .gt_table_body {
+#padqgrqlni .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1070,7 +1067,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_footnotes {
+#padqgrqlni .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1084,7 +1081,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_footnote {
+#padqgrqlni .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1093,7 +1090,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#hylmpjwnwa .gt_sourcenotes {
+#padqgrqlni .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1107,7 +1104,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#hylmpjwnwa .gt_sourcenote {
+#padqgrqlni .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1115,63 +1112,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#hylmpjwnwa .gt_left {
+#padqgrqlni .gt_left {
   text-align: left;
 }
 
-#hylmpjwnwa .gt_center {
+#padqgrqlni .gt_center {
   text-align: center;
 }
 
-#hylmpjwnwa .gt_right {
+#padqgrqlni .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hylmpjwnwa .gt_font_normal {
+#padqgrqlni .gt_font_normal {
   font-weight: normal;
 }
 
-#hylmpjwnwa .gt_font_bold {
+#padqgrqlni .gt_font_bold {
   font-weight: bold;
 }
 
-#hylmpjwnwa .gt_font_italic {
+#padqgrqlni .gt_font_italic {
   font-style: italic;
 }
 
-#hylmpjwnwa .gt_super {
+#padqgrqlni .gt_super {
   font-size: 65%;
 }
 
-#hylmpjwnwa .gt_footnote_marks {
+#padqgrqlni .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hylmpjwnwa .gt_asterisk {
+#padqgrqlni .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hylmpjwnwa .gt_indent_1 {
+#padqgrqlni .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hylmpjwnwa .gt_indent_2 {
+#padqgrqlni .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hylmpjwnwa .gt_indent_3 {
+#padqgrqlni .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hylmpjwnwa .gt_indent_4 {
+#padqgrqlni .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hylmpjwnwa .gt_indent_5 {
+#padqgrqlni .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1321,23 +1318,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="afqfwpbyus" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#afqfwpbyus table {
+		<div id="eebjpesrrt" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#eebjpesrrt table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#afqfwpbyus thead, #afqfwpbyus tbody, #afqfwpbyus tfoot, #afqfwpbyus tr, #afqfwpbyus td, #afqfwpbyus th {
+#eebjpesrrt thead, #eebjpesrrt tbody, #eebjpesrrt tfoot, #eebjpesrrt tr, #eebjpesrrt td, #eebjpesrrt th {
   border-style: none;
 }
 
-#afqfwpbyus p {
+#eebjpesrrt p {
   margin: 0;
   padding: 0;
 }
 
-#afqfwpbyus .gt_table {
+#eebjpesrrt .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1363,12 +1360,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_caption {
+#eebjpesrrt .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#afqfwpbyus .gt_title {
+#eebjpesrrt .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1380,7 +1377,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#afqfwpbyus .gt_subtitle {
+#eebjpesrrt .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1392,7 +1389,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#afqfwpbyus .gt_heading {
+#eebjpesrrt .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1404,13 +1401,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_bottom_border {
+#eebjpesrrt .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_col_headings {
+#eebjpesrrt .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1425,7 +1422,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_col_heading {
+#eebjpesrrt .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1445,7 +1442,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#afqfwpbyus .gt_column_spanner_outer {
+#eebjpesrrt .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1457,15 +1454,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#afqfwpbyus .gt_column_spanner_outer:first-child {
+#eebjpesrrt .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#afqfwpbyus .gt_column_spanner_outer:last-child {
+#eebjpesrrt .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#afqfwpbyus .gt_column_spanner {
+#eebjpesrrt .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1477,11 +1474,11 @@ document.write(`
   width: 100%;
 }
 
-#afqfwpbyus .gt_spanner_row {
+#eebjpesrrt .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#afqfwpbyus .gt_group_heading {
+#eebjpesrrt .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1507,7 +1504,7 @@ document.write(`
   text-align: left;
 }
 
-#afqfwpbyus .gt_empty_group_heading {
+#eebjpesrrt .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1522,15 +1519,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#afqfwpbyus .gt_from_md > :first-child {
+#eebjpesrrt .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#afqfwpbyus .gt_from_md > :last-child {
+#eebjpesrrt .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#afqfwpbyus .gt_row {
+#eebjpesrrt .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1549,7 +1546,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#afqfwpbyus .gt_stub {
+#eebjpesrrt .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1562,7 +1559,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#afqfwpbyus .gt_stub_row_group {
+#eebjpesrrt .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1576,15 +1573,15 @@ document.write(`
   vertical-align: top;
 }
 
-#afqfwpbyus .gt_row_group_first td {
+#eebjpesrrt .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#afqfwpbyus .gt_row_group_first th {
+#eebjpesrrt .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#afqfwpbyus .gt_summary_row {
+#eebjpesrrt .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1594,16 +1591,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#afqfwpbyus .gt_first_summary_row {
+#eebjpesrrt .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_first_summary_row.thick {
+#eebjpesrrt .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#afqfwpbyus .gt_last_summary_row {
+#eebjpesrrt .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1613,7 +1610,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_grand_summary_row {
+#eebjpesrrt .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1623,7 +1620,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#afqfwpbyus .gt_first_grand_summary_row {
+#eebjpesrrt .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1633,7 +1630,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_last_grand_summary_row_top {
+#eebjpesrrt .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1643,11 +1640,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_striped {
+#eebjpesrrt .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#afqfwpbyus .gt_table_body {
+#eebjpesrrt .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1656,7 +1653,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_footnotes {
+#eebjpesrrt .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1670,7 +1667,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_footnote {
+#eebjpesrrt .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1679,7 +1676,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#afqfwpbyus .gt_sourcenotes {
+#eebjpesrrt .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1693,7 +1690,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#afqfwpbyus .gt_sourcenote {
+#eebjpesrrt .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1701,63 +1698,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#afqfwpbyus .gt_left {
+#eebjpesrrt .gt_left {
   text-align: left;
 }
 
-#afqfwpbyus .gt_center {
+#eebjpesrrt .gt_center {
   text-align: center;
 }
 
-#afqfwpbyus .gt_right {
+#eebjpesrrt .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#afqfwpbyus .gt_font_normal {
+#eebjpesrrt .gt_font_normal {
   font-weight: normal;
 }
 
-#afqfwpbyus .gt_font_bold {
+#eebjpesrrt .gt_font_bold {
   font-weight: bold;
 }
 
-#afqfwpbyus .gt_font_italic {
+#eebjpesrrt .gt_font_italic {
   font-style: italic;
 }
 
-#afqfwpbyus .gt_super {
+#eebjpesrrt .gt_super {
   font-size: 65%;
 }
 
-#afqfwpbyus .gt_footnote_marks {
+#eebjpesrrt .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#afqfwpbyus .gt_asterisk {
+#eebjpesrrt .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#afqfwpbyus .gt_indent_1 {
+#eebjpesrrt .gt_indent_1 {
   text-indent: 5px;
 }
 
-#afqfwpbyus .gt_indent_2 {
+#eebjpesrrt .gt_indent_2 {
   text-indent: 10px;
 }
 
-#afqfwpbyus .gt_indent_3 {
+#eebjpesrrt .gt_indent_3 {
   text-indent: 15px;
 }
 
-#afqfwpbyus .gt_indent_4 {
+#eebjpesrrt .gt_indent_4 {
   text-indent: 20px;
 }
 
-#afqfwpbyus .gt_indent_5 {
+#eebjpesrrt .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1854,23 +1851,23 @@ document.write(`
 		
 	</head>
 	<body>
-		<div id="voxgtzbltw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#voxgtzbltw table {
+		<div id="svarrmwubk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#svarrmwubk table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#voxgtzbltw thead, #voxgtzbltw tbody, #voxgtzbltw tfoot, #voxgtzbltw tr, #voxgtzbltw td, #voxgtzbltw th {
+#svarrmwubk thead, #svarrmwubk tbody, #svarrmwubk tfoot, #svarrmwubk tr, #svarrmwubk td, #svarrmwubk th {
   border-style: none;
 }
 
-#voxgtzbltw p {
+#svarrmwubk p {
   margin: 0;
   padding: 0;
 }
 
-#voxgtzbltw .gt_table {
+#svarrmwubk .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1896,12 +1893,12 @@ document.write(`
   border-left-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_caption {
+#svarrmwubk .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#voxgtzbltw .gt_title {
+#svarrmwubk .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1913,7 +1910,7 @@ document.write(`
   border-bottom-width: 0;
 }
 
-#voxgtzbltw .gt_subtitle {
+#svarrmwubk .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1925,7 +1922,7 @@ document.write(`
   border-top-width: 0;
 }
 
-#voxgtzbltw .gt_heading {
+#svarrmwubk .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1937,13 +1934,13 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_bottom_border {
+#svarrmwubk .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_col_headings {
+#svarrmwubk .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1958,7 +1955,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_col_heading {
+#svarrmwubk .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1978,7 +1975,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#voxgtzbltw .gt_column_spanner_outer {
+#svarrmwubk .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1990,15 +1987,15 @@ document.write(`
   padding-right: 4px;
 }
 
-#voxgtzbltw .gt_column_spanner_outer:first-child {
+#svarrmwubk .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#voxgtzbltw .gt_column_spanner_outer:last-child {
+#svarrmwubk .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#voxgtzbltw .gt_column_spanner {
+#svarrmwubk .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2010,11 +2007,11 @@ document.write(`
   width: 100%;
 }
 
-#voxgtzbltw .gt_spanner_row {
+#svarrmwubk .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#voxgtzbltw .gt_group_heading {
+#svarrmwubk .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2040,7 +2037,7 @@ document.write(`
   text-align: left;
 }
 
-#voxgtzbltw .gt_empty_group_heading {
+#svarrmwubk .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2055,15 +2052,15 @@ document.write(`
   vertical-align: middle;
 }
 
-#voxgtzbltw .gt_from_md > :first-child {
+#svarrmwubk .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#voxgtzbltw .gt_from_md > :last-child {
+#svarrmwubk .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#voxgtzbltw .gt_row {
+#svarrmwubk .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2082,7 +2079,7 @@ document.write(`
   overflow-x: hidden;
 }
 
-#voxgtzbltw .gt_stub {
+#svarrmwubk .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2095,7 +2092,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#voxgtzbltw .gt_stub_row_group {
+#svarrmwubk .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2109,15 +2106,15 @@ document.write(`
   vertical-align: top;
 }
 
-#voxgtzbltw .gt_row_group_first td {
+#svarrmwubk .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#voxgtzbltw .gt_row_group_first th {
+#svarrmwubk .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#voxgtzbltw .gt_summary_row {
+#svarrmwubk .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2127,16 +2124,16 @@ document.write(`
   padding-right: 5px;
 }
 
-#voxgtzbltw .gt_first_summary_row {
+#svarrmwubk .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_first_summary_row.thick {
+#svarrmwubk .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#voxgtzbltw .gt_last_summary_row {
+#svarrmwubk .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2146,7 +2143,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_grand_summary_row {
+#svarrmwubk .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2156,7 +2153,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#voxgtzbltw .gt_first_grand_summary_row {
+#svarrmwubk .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2166,7 +2163,7 @@ document.write(`
   border-top-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_last_grand_summary_row_top {
+#svarrmwubk .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2176,11 +2173,11 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_striped {
+#svarrmwubk .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#voxgtzbltw .gt_table_body {
+#svarrmwubk .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2189,7 +2186,7 @@ document.write(`
   border-bottom-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_footnotes {
+#svarrmwubk .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2203,7 +2200,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_footnote {
+#svarrmwubk .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2212,7 +2209,7 @@ document.write(`
   padding-right: 5px;
 }
 
-#voxgtzbltw .gt_sourcenotes {
+#svarrmwubk .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2226,7 +2223,7 @@ document.write(`
   border-right-color: #D3D3D3;
 }
 
-#voxgtzbltw .gt_sourcenote {
+#svarrmwubk .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2234,63 +2231,63 @@ document.write(`
   padding-right: 5px;
 }
 
-#voxgtzbltw .gt_left {
+#svarrmwubk .gt_left {
   text-align: left;
 }
 
-#voxgtzbltw .gt_center {
+#svarrmwubk .gt_center {
   text-align: center;
 }
 
-#voxgtzbltw .gt_right {
+#svarrmwubk .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#voxgtzbltw .gt_font_normal {
+#svarrmwubk .gt_font_normal {
   font-weight: normal;
 }
 
-#voxgtzbltw .gt_font_bold {
+#svarrmwubk .gt_font_bold {
   font-weight: bold;
 }
 
-#voxgtzbltw .gt_font_italic {
+#svarrmwubk .gt_font_italic {
   font-style: italic;
 }
 
-#voxgtzbltw .gt_super {
+#svarrmwubk .gt_super {
   font-size: 65%;
 }
 
-#voxgtzbltw .gt_footnote_marks {
+#svarrmwubk .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#voxgtzbltw .gt_asterisk {
+#svarrmwubk .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#voxgtzbltw .gt_indent_1 {
+#svarrmwubk .gt_indent_1 {
   text-indent: 5px;
 }
 
-#voxgtzbltw .gt_indent_2 {
+#svarrmwubk .gt_indent_2 {
   text-indent: 10px;
 }
 
-#voxgtzbltw .gt_indent_3 {
+#svarrmwubk .gt_indent_3 {
   text-indent: 15px;
 }
 
-#voxgtzbltw .gt_indent_4 {
+#svarrmwubk .gt_indent_4 {
   text-indent: 20px;
 }
 
-#voxgtzbltw .gt_indent_5 {
+#svarrmwubk .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2398,101 +2395,682 @@ document.write(`
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <p>For these exercises, we will be using the <strong>NHANES</strong> data.</p>
 <ol class="arabic simple">
-<li><p>Using the numerical and graphical summaries, describe the distribution of diastolic blood pressure <code class="docutils literal notranslate"><span class="pre">dbp</span></code> and <code class="docutils literal notranslate"><span class="pre">age</span></code> among study participants, respectively.</p></li>
+<li><p>Using the numerical and graphical summaries, describe the distribution of diastolic blood pressure <code class="docutils literal notranslate"><span class="pre">DBP1</span></code> and <code class="docutils literal notranslate"><span class="pre">AGE</span></code> among study participants, respectively. And create a column of <code class="docutils literal notranslate"><span class="pre">INCOME_CAT</span></code> with two categories: low income for those whose income is less than 2 and normal otherwise.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## solutions:</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
-<span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
-
-<span class="c1"># bbp</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<span class="c1"># dbp</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span><span class="n">breaks</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;pink&quot;</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Diastolic Blood Pressure&quot;</span><span class="p">,</span>
+    <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">)</span>
 
 <span class="c1"># age</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="p">)</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Age&quot;</span><span class="p">,</span>
+    <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Age&quot;</span><span class="p">)</span>
+
+<span class="c1"># income</span>
+<span class="n">nhanes_df</span><span class="o">$</span><span class="n">INCOME_CAT</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">INCOME</span><span class="o">&lt;=</span><span class="m">2</span><span class="p">,</span><span class="s">&quot;Low&quot;</span><span class="p">,</span><span class="s">&quot;Normal&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-   0.00   64.00   72.00   70.93   78.00  134.00    1877 
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   0.00   66.00   72.00   72.79   80.00  124.00 
 </pre></div>
 </div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  20.00   34.00   48.00   49.18   63.00   85.00 
+  20.00   33.00   48.00   48.32   62.00   80.00 
 </pre></div>
 </div>
-<img alt="../_images/4ce834a532b4dcf139470649a6498ae547db869475cfd22fb3b4cc4be08faf79.png" src="../_images/4ce834a532b4dcf139470649a6498ae547db869475cfd22fb3b4cc4be08faf79.png" />
-<img alt="../_images/20eb30caccb302659cd3a1115a3abc987d993bbe81e2ef3eeb688d7ef0ec078e.png" src="../_images/20eb30caccb302659cd3a1115a3abc987d993bbe81e2ef3eeb688d7ef0ec078e.png" />
+<img alt="../_images/1cebeb66e1b8379bdb9360e6da0187793caf2ede746fbc2a602bf9928b72fea2.png" src="../_images/1cebeb66e1b8379bdb9360e6da0187793caf2ede746fbc2a602bf9928b72fea2.png" />
+<img alt="../_images/feb506a67df5ae4f480311979cb887bb92d1422278eaa4e1e2888ed56d4356da.png" src="../_images/feb506a67df5ae4f480311979cb887bb92d1422278eaa4e1e2888ed56d4356da.png" />
 </div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Subset 20-to-55-year-old females and randomly select 1000 participants from the entire dataset. Using the random sample, <code class="docutils literal notranslate"><span class="pre">nhanes.samp</span></code>, explore how does blood pressure vary by age? Is there a remarkable trend in blood pressure between those females?</p></li>
+<li><p>Subset 20-to-55-year-old both females and males. Using the subset sample, <code class="docutils literal notranslate"><span class="pre">nhanes_df.subset</span></code>, explore how does blood pressure vary by age and gender? Is there a remarkable trend in blood pressure between those females?</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample.subset</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
-                              <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Female&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">NHANESsample.subset</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df.subset</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> 
+                              <span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df.subset</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">nhanes_df.subset</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&quot;blue&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df.subset</span><span class="o">$</span><span class="n">SEX</span><span class="p">,</span> <span class="n">nhanes_df.subset</span><span class="o">$</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&quot;Sex&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&quot;orange&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d7b1536562591943f0b49d9bae08ad24b028d6116b4dfd6b19376b1c39f7c375.png" src="../_images/d7b1536562591943f0b49d9bae08ad24b028d6116b4dfd6b19376b1c39f7c375.png" />
-</div>
-</div>
-<ol class="arabic simple" start="3">
-<li><p>Repeat exercise 2 for males.</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
-                              <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">20</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">55</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">subset.males</span><span class="o">$</span><span class="n">AGE</span><span class="p">,</span> <span class="n">subset.males</span><span class="o">$</span><span class="n">DBP1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/be40b934a83fe1b876a9b3072e0b7289fed21430ad52f53ef4d8e560b27f3c4d.png" src="../_images/be40b934a83fe1b876a9b3072e0b7289fed21430ad52f53ef4d8e560b27f3c4d.png" />
+<img alt="../_images/07123993a5f0b94ecc5256dda13020278519463de5bd15f84fd9ab7690acbfbf.png" src="../_images/07123993a5f0b94ecc5256dda13020278519463de5bd15f84fd9ab7690acbfbf.png" />
+<img alt="../_images/3dac82267946fe86b9fb21158a7d631552d918e975fa66f0393893849370cd67.png" src="../_images/3dac82267946fe86b9fb21158a7d631552d918e975fa66f0393893849370cd67.png" />
 </div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race variable. Order resulting tables from lowest to highest average blood pressure.</p></li>
+<li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race variable. Then, create a summary table stratified by the <code class="docutils literal notranslate"><span class="pre">RACE</span></code> categories and report the mean, standard deviation, minimum and maximum values for all continuous variables.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males.1</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span> 
-                         <span class="n">NHANESsample</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">50</span> <span class="o">&amp;</span> <span class="n">NHANESsample</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">59</span><span class="p">)</span>
-<span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
-<span class="nf">boxplot</span><span class="p">(</span><span class="n">subset.males.1</span><span class="o">$</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">subset.males.1</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">subset.males</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> 
+                       <span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="o">==</span><span class="s">&quot;Male&quot;</span> <span class="o">&amp;</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="o">&gt;=</span><span class="m">50</span> <span class="o">&amp;</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">AGE</span><span class="o">&lt;=</span><span class="m">59</span><span class="p">)</span>
+<span class="n">subset.males</span><span class="o">$</span><span class="n">RACE</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">subset.males</span><span class="o">$</span><span class="n">RACE</span><span class="p">)</span>
+<span class="nf">boxplot</span><span class="p">(</span><span class="n">subset.males</span><span class="o">$</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">subset.males</span><span class="o">$</span><span class="n">RACE</span><span class="p">,</span> 
+        <span class="n">xlab</span> <span class="o">=</span> <span class="s">&quot;Race&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;Diastolic Blood Pressure&quot;</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="s">&quot;pink&quot;</span><span class="p">)</span>
 
-<span class="c1">#levels(subset.males.1$race)</span>
-<span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Non-Hispanic White&quot;])[4]</span>
-<span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Mexican American&quot;])[4]</span>
-<span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Other Race&quot; ])[4]</span>
-<span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Other Hispanic&quot;])[4]</span>
-<span class="c1">#summary(subset.males.1$dbp[subset.males.1$race==&quot;Non-Hispanic Black&quot;])[4]</span>
+<span class="nf">tbl_summary</span><span class="p">(</span><span class="n">subset.males</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;SEX&quot;</span><span class="p">,</span> <span class="s">&quot;RACE&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">,</span> <span class="s">&quot;EDUCATION&quot;</span><span class="p">,</span> <span class="s">&quot;SMOKE&quot;</span><span class="p">,</span>
+                                  <span class="s">&quot;BMI_CAT&quot;</span><span class="p">,</span> <span class="s">&quot;LEAD&quot;</span><span class="p">,</span> <span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">,</span> <span class="s">&quot;HYP&quot;</span><span class="p">),</span>
+           <span class="n">by</span> <span class="o">=</span> <span class="s">&quot;RACE&quot;</span><span class="p">,</span> <span class="n">statistic</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span> <span class="o">~</span> <span class="s">&quot;{mean} ({sd}, {min}, {max})&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
+  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
+  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/7efa5e5340d58f15b39195ff91e3887489bdc06ee87b1455d54865d24f7dfc0e.png" src="../_images/7efa5e5340d58f15b39195ff91e3887489bdc06ee87b1455d54865d24f7dfc0e.png" />
+<div class="output text_html"><!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		
+	</head>
+	<body>
+		<div id="jfjkilapit" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#jfjkilapit table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jfjkilapit thead, #jfjkilapit tbody, #jfjkilapit tfoot, #jfjkilapit tr, #jfjkilapit td, #jfjkilapit th {
+  border-style: none;
+}
+
+#jfjkilapit p {
+  margin: 0;
+  padding: 0;
+}
+
+#jfjkilapit .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jfjkilapit .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jfjkilapit .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jfjkilapit .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jfjkilapit .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jfjkilapit .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jfjkilapit .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jfjkilapit .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jfjkilapit .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jfjkilapit .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jfjkilapit .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jfjkilapit .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jfjkilapit .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jfjkilapit .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jfjkilapit .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfjkilapit .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jfjkilapit .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jfjkilapit .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jfjkilapit .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfjkilapit .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jfjkilapit .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfjkilapit .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jfjkilapit .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfjkilapit .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jfjkilapit .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jfjkilapit .gt_left {
+  text-align: left;
+}
+
+#jfjkilapit .gt_center {
+  text-align: center;
+}
+
+#jfjkilapit .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jfjkilapit .gt_font_normal {
+  font-weight: normal;
+}
+
+#jfjkilapit .gt_font_bold {
+  font-weight: bold;
+}
+
+#jfjkilapit .gt_font_italic {
+  font-style: italic;
+}
+
+#jfjkilapit .gt_super {
+  font-size: 65%;
+}
+
+#jfjkilapit .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jfjkilapit .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jfjkilapit .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jfjkilapit .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jfjkilapit .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jfjkilapit .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jfjkilapit .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+  <table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Characteristic&lt;/strong&gt;"><strong>Characteristic</strong></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Mexican American&lt;/strong&gt;, N = 33&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>Mexican American</strong>, N = 33<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Other Hispanic&lt;/strong&gt;, N = 23&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>Other Hispanic</strong>, N = 23<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Non-Hispanic White&lt;/strong&gt;, N = 74&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>Non-Hispanic White</strong>, N = 74<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Non-Hispanic Black&lt;/strong&gt;, N = 40&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>Non-Hispanic Black</strong>, N = 40<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Other Race&lt;/strong&gt;, N = 59&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>Other Race</strong>, N = 59<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">SEX</td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td>
+<td headers="stat_3" class="gt_row gt_center"></td>
+<td headers="stat_4" class="gt_row gt_center"></td>
+<td headers="stat_5" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Male</td>
+<td headers="stat_1" class="gt_row gt_center">33 (100%)</td>
+<td headers="stat_2" class="gt_row gt_center">23 (100%)</td>
+<td headers="stat_3" class="gt_row gt_center">74 (100%)</td>
+<td headers="stat_4" class="gt_row gt_center">40 (100%)</td>
+<td headers="stat_5" class="gt_row gt_center">59 (100%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    Female</td>
+<td headers="stat_1" class="gt_row gt_center">0 (0%)</td>
+<td headers="stat_2" class="gt_row gt_center">0 (0%)</td>
+<td headers="stat_3" class="gt_row gt_center">0 (0%)</td>
+<td headers="stat_4" class="gt_row gt_center">0 (0%)</td>
+<td headers="stat_5" class="gt_row gt_center">0 (0%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">AGE</td>
+<td headers="stat_1" class="gt_row gt_center">53.88 (2.45, 50.00, 57.00)</td>
+<td headers="stat_2" class="gt_row gt_center">53.70 (2.90, 50.00, 59.00)</td>
+<td headers="stat_3" class="gt_row gt_center">55.09 (3.10, 50.00, 59.00)</td>
+<td headers="stat_4" class="gt_row gt_center">54.33 (3.02, 50.00, 59.00)</td>
+<td headers="stat_5" class="gt_row gt_center">54.08 (2.44, 50.00, 59.00)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">EDUCATION</td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td>
+<td headers="stat_3" class="gt_row gt_center"></td>
+<td headers="stat_4" class="gt_row gt_center"></td>
+<td headers="stat_5" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    LessThanHS</td>
+<td headers="stat_1" class="gt_row gt_center">12 (36%)</td>
+<td headers="stat_2" class="gt_row gt_center">4 (17%)</td>
+<td headers="stat_3" class="gt_row gt_center">10 (14%)</td>
+<td headers="stat_4" class="gt_row gt_center">7 (18%)</td>
+<td headers="stat_5" class="gt_row gt_center">1 (1.7%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    HS</td>
+<td headers="stat_1" class="gt_row gt_center">9 (27%)</td>
+<td headers="stat_2" class="gt_row gt_center">6 (26%)</td>
+<td headers="stat_3" class="gt_row gt_center">20 (27%)</td>
+<td headers="stat_4" class="gt_row gt_center">12 (30%)</td>
+<td headers="stat_5" class="gt_row gt_center">10 (17%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    MoreThanHS</td>
+<td headers="stat_1" class="gt_row gt_center">12 (36%)</td>
+<td headers="stat_2" class="gt_row gt_center">13 (57%)</td>
+<td headers="stat_3" class="gt_row gt_center">44 (59%)</td>
+<td headers="stat_4" class="gt_row gt_center">21 (52%)</td>
+<td headers="stat_5" class="gt_row gt_center">48 (81%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">SMOKE</td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td>
+<td headers="stat_3" class="gt_row gt_center"></td>
+<td headers="stat_4" class="gt_row gt_center"></td>
+<td headers="stat_5" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    NeverSmoke</td>
+<td headers="stat_1" class="gt_row gt_center">21 (64%)</td>
+<td headers="stat_2" class="gt_row gt_center">16 (70%)</td>
+<td headers="stat_3" class="gt_row gt_center">34 (46%)</td>
+<td headers="stat_4" class="gt_row gt_center">14 (35%)</td>
+<td headers="stat_5" class="gt_row gt_center">27 (46%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    QuitSmoke</td>
+<td headers="stat_1" class="gt_row gt_center">7 (21%)</td>
+<td headers="stat_2" class="gt_row gt_center">3 (13%)</td>
+<td headers="stat_3" class="gt_row gt_center">16 (22%)</td>
+<td headers="stat_4" class="gt_row gt_center">11 (28%)</td>
+<td headers="stat_5" class="gt_row gt_center">19 (32%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    StillSmoke</td>
+<td headers="stat_1" class="gt_row gt_center">5 (15%)</td>
+<td headers="stat_2" class="gt_row gt_center">4 (17%)</td>
+<td headers="stat_3" class="gt_row gt_center">24 (32%)</td>
+<td headers="stat_4" class="gt_row gt_center">15 (38%)</td>
+<td headers="stat_5" class="gt_row gt_center">13 (22%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">BMI_CAT</td>
+<td headers="stat_1" class="gt_row gt_center"></td>
+<td headers="stat_2" class="gt_row gt_center"></td>
+<td headers="stat_3" class="gt_row gt_center"></td>
+<td headers="stat_4" class="gt_row gt_center"></td>
+<td headers="stat_5" class="gt_row gt_center"></td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    BMI&lt;=25</td>
+<td headers="stat_1" class="gt_row gt_center">2 (6.1%)</td>
+<td headers="stat_2" class="gt_row gt_center">1 (4.3%)</td>
+<td headers="stat_3" class="gt_row gt_center">18 (24%)</td>
+<td headers="stat_4" class="gt_row gt_center">7 (18%)</td>
+<td headers="stat_5" class="gt_row gt_center">19 (32%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    25&lt;BMI&lt;30</td>
+<td headers="stat_1" class="gt_row gt_center">15 (45%)</td>
+<td headers="stat_2" class="gt_row gt_center">8 (35%)</td>
+<td headers="stat_3" class="gt_row gt_center">28 (38%)</td>
+<td headers="stat_4" class="gt_row gt_center">14 (35%)</td>
+<td headers="stat_5" class="gt_row gt_center">27 (46%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">    BMI&gt;=30</td>
+<td headers="stat_1" class="gt_row gt_center">16 (48%)</td>
+<td headers="stat_2" class="gt_row gt_center">14 (61%)</td>
+<td headers="stat_3" class="gt_row gt_center">28 (38%)</td>
+<td headers="stat_4" class="gt_row gt_center">19 (48%)</td>
+<td headers="stat_5" class="gt_row gt_center">13 (22%)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">LEAD</td>
+<td headers="stat_1" class="gt_row gt_center">1.47 (1.11, 0.51, 5.71)</td>
+<td headers="stat_2" class="gt_row gt_center">0.99 (0.61, 0.41, 2.97)</td>
+<td headers="stat_3" class="gt_row gt_center">1.54 (1.18, 0.49, 7.02)</td>
+<td headers="stat_4" class="gt_row gt_center">1.56 (0.78, 0.47, 4.51)</td>
+<td headers="stat_5" class="gt_row gt_center">1.90 (1.74, 0.63, 11.01)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">SBP1</td>
+<td headers="stat_1" class="gt_row gt_center">132 (17, 108, 180)</td>
+<td headers="stat_2" class="gt_row gt_center">127 (20, 100, 180)</td>
+<td headers="stat_3" class="gt_row gt_center">126 (15, 94, 156)</td>
+<td headers="stat_4" class="gt_row gt_center">141 (22, 104, 212)</td>
+<td headers="stat_5" class="gt_row gt_center">125 (14, 98, 166)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">DBP1</td>
+<td headers="stat_1" class="gt_row gt_center">81 (12, 56, 114)</td>
+<td headers="stat_2" class="gt_row gt_center">79 (10, 54, 92)</td>
+<td headers="stat_3" class="gt_row gt_center">76 (10, 48, 98)</td>
+<td headers="stat_4" class="gt_row gt_center">85 (14, 54, 122)</td>
+<td headers="stat_5" class="gt_row gt_center">77 (10, 44, 98)</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">HYP</td>
+<td headers="stat_1" class="gt_row gt_center">24 (73%)</td>
+<td headers="stat_2" class="gt_row gt_center">15 (65%)</td>
+<td headers="stat_3" class="gt_row gt_center">49 (66%)</td>
+<td headers="stat_4" class="gt_row gt_center">31 (78%)</td>
+<td headers="stat_5" class="gt_row gt_center">42 (71%)</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="6"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> n (%); Mean (SD, Range)</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+	</body>
+</html>
+</div><img alt="../_images/a39ed599e2ff42953094502a057db7b02da0c4713397d43669246a7214d3bc23.png" src="../_images/a39ed599e2ff42953094502a057db7b02da0c4713397d43669246a7214d3bc23.png" />
 </div>
 </div>
 <ol class="arabic simple" start="5">
-<li><p>Examine the relationship between blood pressure, age, and income using appropriate correlation matrices and probability.</p></li>
+<li><p>Examine the relationship between BMI levels with blood pressure, age, and income using appropriate correlation matrices and probability.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggcorr</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span> <span class="s">&quot;DBP1&quot;</span><span class="p">,</span> <span class="s">&quot;INCOME&quot;</span><span class="p">,</span> <span class="s">&quot;AGE&quot;</span><span class="p">)])</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">corr</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="nf">cor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">6</span><span class="p">,</span><span class="m">14</span><span class="p">)]),</span> <span class="m">1</span><span class="p">)</span>
+<span class="nf">ggcorrplot</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&quot;square&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/180d2d24012fad17677f8a9a91691381dc2588bb8818a4650c3e283786ac0b88.png" src="../_images/180d2d24012fad17677f8a9a91691381dc2588bb8818a4650c3e283786ac0b88.png" />
+<img alt="../_images/538d0ddd6dc8aa0720d9a606eeba1b2463b91b2a75e3df0500366453ed860b37.png" src="../_images/538d0ddd6dc8aa0720d9a606eeba1b2463b91b2a75e3df0500366453ed860b37.png" />
 </div>
 </div>
 </section>
