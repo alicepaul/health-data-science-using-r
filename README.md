@@ -16,14 +16,12 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 
 ## Environment Version Information
 
-- R_4.3.0
-- tidyverse_1.3.1
+- R_4.2.3
+- tidyverse_1.3.2
 - gt_0.9.0
 - GGally_2.1.2
 - ggcorrplot_0.1.4
 - patchwork_1.1.2
-- datasets_2.13.0
-- haven_2.5.2
 - broom_1.0.5
 - pROC_1.18.2
 - car_3.1
