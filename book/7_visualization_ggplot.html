@@ -597,6 +597,39 @@ document.write(`
 </div>
 </div>
 <p>Let’s try another example. Suppose that we want to find the distribution of initial overall pain by those that do and do not have follow up. In this case, we want to plot the proportion for each pain score for each group rather than comparing counts. We first need to find these proportions. We do so by grouping and summarizing over our data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df_grp</span> <span class="o">&lt;-</span> <span class="n">pain_df</span> <span class="o">%&gt;%</span>
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">HAS_FOLLOW_UP</span><span class="p">,</span> <span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarize</span><span class="p">(</span><span class="n">tot</span> <span class="o">=</span> <span class="nf">n</span><span class="p">())</span> <span class="o">%&gt;%</span>
+  <span class="nf">mutate</span><span class="p">(</span><span class="n">prop</span> <span class="o">=</span> <span class="n">tot</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tot</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">ungroup</span><span class="p">()</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">pain_df_grp</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;HAS_FOLLOW_UP&#39;. You can override using the
+`.groups` argument.
+</pre></div>
+</div>
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 4</caption>
+<thead>
+	<tr><th scope=col>HAS_FOLLOW_UP</th><th scope=col>PAIN_INTENSITY_AVERAGE</th><th scope=col>tot</th><th scope=col>prop</th></tr>
+	<tr><th scope=col>&lt;lgl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>FALSE</td><td>0</td><td>  8</td><td>0.002219756</td></tr>
+	<tr><td>FALSE</td><td>1</td><td> 16</td><td>0.004439512</td></tr>
+	<tr><td>FALSE</td><td>2</td><td> 62</td><td>0.017203108</td></tr>
+	<tr><td>FALSE</td><td>3</td><td>132</td><td>0.036625971</td></tr>
+	<tr><td>FALSE</td><td>4</td><td>273</td><td>0.075749168</td></tr>
+	<tr><td>FALSE</td><td>5</td><td>508</td><td>0.140954495</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
 <p>We can now use the <code class="docutils literal notranslate"><span class="pre">geom_col()</span></code> function to create a bar plot of the proportions. By default, this function will stack the bars on top of each other when there is grouping. We add <code class="docutils literal notranslate"><span class="pre">position=&quot;dodge&quot;</span></code> to place them side by side.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -610,12 +643,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="ow">in</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">envir</span><span class="p">,</span> <span class="n">enclos</span><span class="p">):</span> <span class="nb">object</span> <span class="s1">&#39;pain_df_grp&#39;</span> <span class="ow">not</span> <span class="n">found</span>
-<span class="ne">Traceback</span>:
-
-<span class="mi">1</span><span class="o">.</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">pain_df_grp</span><span class="p">)</span>
-</pre></div>
-</div>
+<img alt="../_images/c773ff99ee3c76631e2a54553e0ff196ae71c1cd6d6b9f3a30eaf9dc25df7d3f.png" src="../_images/c773ff99ee3c76631e2a54553e0ff196ae71c1cd6d6b9f3a30eaf9dc25df7d3f.png" />
 </div>
 </div>
 <p>Another way to visualize by group is by adding a facet wrap. Facets divide a plot into subplots based on one or more discrete variable values. We can either arrange these plots as a grid where the rows and/or columns correspond to variables we are grouping by or wrap the plots into a rectangular format. Below, we take a previous plot and add a facet grid by race.</p>
@@ -634,8 +662,12 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
-Warning message:
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
 “Removed 3604 rows containing non-finite values (`stat_bin()`).”
 </pre></div>
 </div>
@@ -695,14 +727,14 @@ Warning message:
   <span class="nf">geom_label</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">perc_patients</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">avg_pain</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">part</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">region</span><span class="p">))</span> <span class="o">+</span> 
   <span class="nf">geom_hline</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="nf">mean</span><span class="p">(</span><span class="n">pain_body_map</span><span class="o">$</span><span class="n">avg_pain</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">annotate</span><span class="p">(</span><span class="n">geom</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Average Pain Value&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="m">0.35</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="m">7.0</span><span class="p">)</span> <span class="o">+</span> 
-  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion Patients Selected Region&quot;</span><span class="p">,</span> <span class="s">&quot;Average Pain of Patients&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion Patients Selected Region&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Average Pain of Patients&quot;</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">theme_minimal</span><span class="p">()</span><span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">panel.grid.major</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;lightpink&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/02c5a98af48a1be5e088c6d204cc30c04aaaefdd9d6cac1f1ffea15d56f9bef4.png" src="../_images/02c5a98af48a1be5e088c6d204cc30c04aaaefdd9d6cac1f1ffea15d56f9bef4.png" />
+<img alt="../_images/a8295b30271a383e43d6d5e8d629e3cdf8bd3f0b744e860e7c18af9e743f7bc3.png" src="../_images/a8295b30271a383e43d6d5e8d629e3cdf8bd3f0b744e860e7c18af9e743f7bc3.png" />
 </div>
 </div>
 <p>So far we have not saved any of our figures as objects. Below I create two plots <code class="docutils literal notranslate"><span class="pre">p1</span></code> and <code class="docutils literal notranslate"><span class="pre">p2</span></code>. If we want to save our images, we can use the <code class="docutils literal notranslate"><span class="pre">ggsave()</span></code> function, which saves the last plot generated under the file name provided. Additionally, I can use the <code class="docutils literal notranslate"><span class="pre">patchwork</span></code> package to incorporate multiple plots together. A <code class="docutils literal notranslate"><span class="pre">+</span></code> between plots puts them side by side wheras <code class="docutils literal notranslate"><span class="pre">/</span></code> stacks them.</p>
@@ -712,13 +744,13 @@ Warning message:
   <span class="nf">geom_label</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">perc_patients</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">avg_pain</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">part</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">region</span><span class="p">))</span> <span class="o">+</span> 
   <span class="nf">geom_hline</span><span class="p">(</span><span class="n">yintercept</span><span class="o">=</span><span class="nf">mean</span><span class="p">(</span><span class="n">pain_body_map</span><span class="o">$</span><span class="n">avg_pain</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">annotate</span><span class="p">(</span><span class="n">geom</span><span class="o">=</span><span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Average Pain Value&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="m">0.35</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="m">7.0</span><span class="p">)</span> <span class="o">+</span> 
-  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion Patients Selected Region&quot;</span><span class="p">,</span> <span class="s">&quot;Average Pain of Patients&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion Patients Selected Region&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Average Pain of Patients&quot;</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">theme_minimal</span><span class="p">()</span><span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span> <span class="n">panel.grid.major</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;lightpink&quot;</span><span class="p">))</span>
 
 <span class="n">p2</span> <span class="o">&lt;-</span> <span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">perc_patients</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;violetred&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s">&quot;lightpink&quot;</span><span class="p">)</span> <span class="o">+</span> 
-  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion of Patients Selected Region&quot;</span><span class="p">,</span> <span class="s">&quot;Count&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Proportion of Patients Selected Region&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Count&quot;</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">theme_minimal</span><span class="p">()</span><span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">panel.grid.major</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;lightpink&quot;</span><span class="p">))</span>
 </pre></div>
@@ -735,7 +767,7 @@ Warning message:
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 </pre></div>
 </div>
-<img alt="../_images/fd54a8f971434e099681ced4154a54166885f6f3c9e6b821fc64b178891c7449.png" src="../_images/fd54a8f971434e099681ced4154a54166885f6f3c9e6b821fc64b178891c7449.png" />
+<img alt="../_images/a28a7a24871c86d75fd65ce7346fda747c630208a3f8900c4cdc3d33805b4bd6.png" src="../_images/a28a7a24871c86d75fd65ce7346fda747c630208a3f8900c4cdc3d33805b4bd6.png" />
 </div>
 </div>
 <div class="cell docutils container">
@@ -746,7 +778,9 @@ Warning message:
 </div>
 <div class="cell_output docutils container">
 <div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Saving 7 x 7 in image
-`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 </pre></div>
 </div>
 </div>

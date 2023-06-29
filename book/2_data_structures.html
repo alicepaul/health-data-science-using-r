@@ -161,7 +161,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot2</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
 <ul class="nav bd-sidenav">
@@ -1496,7 +1496,7 @@ $past_weights
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>Create a data frame by passing the variable <code class="docutils literal notranslate"><span class="pre">city</span></code>, <code class="docutils literal notranslate"><span class="pre">country</span></code>, <code class="docutils literal notranslate"><span class="pre">temperature</span></code> into the <code class="docutils literal notranslate"><span class="pre">data.frame()</span></code> function. Use the function to create a vector with the average high temperatures in January for Beijing, Shanghai, Paris, Italian, United Kingdom, San Francisco, and Toronto, which are 35, 88, 42, 84, 81, 55, and 30 degrees Fahrenheit. Simply specify the name of the variables.</p></li>
+<li><p>Create a data frame by passing the variable <code class="docutils literal notranslate"><span class="pre">city</span></code>, <code class="docutils literal notranslate"><span class="pre">country</span></code>, <code class="docutils literal notranslate"><span class="pre">temperature</span></code>, <code class="docutils literal notranslate"><span class="pre">air_quality</span></code> into the <code class="docutils literal notranslate"><span class="pre">data.frame()</span></code> function. Use the function to create a vector with the average high temperatures in January for Beijing, Shanghai, Paris, Italian, United Kingdom, San Francisco, and Toronto, which are 35, 88, 42, 84, 81, 55, and 30 degrees Fahrenheit. And true hourly averaged concentration CO in <span class="math notranslate nohighlight">\(mg/m^3\)</span> are 2.6, 2.2, 1.6, 1.2, 0.9, 0.7 and 1.7. Simply specify the name of the variables.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1504,29 +1504,68 @@ $past_weights
 <span class="n">city</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Beijing&quot;</span><span class="p">,</span> <span class="s">&quot;Shanghai&quot;</span><span class="p">,</span> <span class="s">&quot;Paris&quot;</span><span class="p">,</span> <span class="s">&quot;Italy&quot;</span><span class="p">,</span> 
           <span class="s">&quot;England&quot;</span><span class="p">,</span> <span class="s">&quot;San Francisco&quot;</span><span class="p">,</span> <span class="s">&quot;Toronto&quot;</span><span class="p">)</span>
 <span class="n">ctry</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;China&quot;</span><span class="p">,</span> <span class="s">&quot;China&quot;</span><span class="p">,</span> <span class="s">&quot;France&quot;</span><span class="p">,</span> <span class="s">&quot;Italy&quot;</span><span class="p">,</span> <span class="s">&quot;England&quot;</span><span class="p">,</span> <span class="s">&quot;United States&quot;</span><span class="p">,</span> <span class="s">&quot;Canada&quot;</span><span class="p">)</span>
-
-<span class="n">city_temps</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">city</span> <span class="o">=</span> <span class="n">city</span><span class="p">,</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span><span class="p">,</span> <span class="n">country</span> <span class="o">=</span> <span class="n">ctry</span><span class="p">)</span>
+<span class="n">CO2</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="m">2.6</span><span class="p">,</span> <span class="m">2.2</span><span class="p">,</span> <span class="m">1.6</span><span class="p">,</span> <span class="m">1.2</span><span class="p">,</span> <span class="m">0.9</span><span class="p">,</span> <span class="m">0.7</span><span class="p">,</span> <span class="m">1.7</span><span class="p">)</span>
+<span class="n">city_air_quality</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">city</span> <span class="o">=</span> <span class="n">city</span><span class="p">,</span> <span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span><span class="p">,</span> <span class="n">country</span> <span class="o">=</span> <span class="n">ctry</span><span class="p">,</span> <span class="n">CO2</span> <span class="o">=</span> <span class="n">CO2</span><span class="p">)</span>
+<span class="n">city_air_quality</span> 
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 7 × 4</caption>
+<thead>
+	<tr><th scope=col>city</th><th scope=col>temperature</th><th scope=col>country</th><th scope=col>CO2</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Beijing      </td><td>35</td><td>China        </td><td>2.6</td></tr>
+	<tr><td>Shanghai     </td><td>88</td><td>China        </td><td>2.2</td></tr>
+	<tr><td>Paris        </td><td>42</td><td>France       </td><td>1.6</td></tr>
+	<tr><td>Italy        </td><td>84</td><td>Italy        </td><td>1.2</td></tr>
+	<tr><td>England      </td><td>81</td><td>England      </td><td>0.9</td></tr>
+	<tr><td>San Francisco</td><td>55</td><td>United States</td><td>0.7</td></tr>
+	<tr><td>Toronto      </td><td>30</td><td>Canada       </td><td>1.7</td></tr>
+</tbody>
+</table>
+</div></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Append a new column <code class="docutils literal notranslate"><span class="pre">rain</span></code> to the data frame.</p></li>
+<li><p>Append a new column <code class="docutils literal notranslate"><span class="pre">rain</span></code> to the data frame. TODO: add more explanation about <code class="docutils literal notranslate"><span class="pre">rain</span></code>.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
-<span class="n">city_temps</span><span class="o">$</span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="n">rain</span> 
+<span class="n">city_air_quality</span><span class="o">$</span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="n">rain</span> 
 </pre></div>
 </div>
 </div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>Use square brackets to access specific raining status in China.</p></li>
+<li><p>Use single square brackets to access specific raining and concentration C0 status in San Francisco.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">city_temps</span><span class="o">$</span><span class="n">rain</span><span class="p">[</span><span class="n">city_temps</span><span class="o">$</span><span class="n">country</span><span class="o">==</span><span class="s">&quot;China&quot;</span><span class="p">]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">rain</span><span class="p">[</span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">city</span><span class="o">==</span><span class="s">&quot;San Francisco&quot;</span><span class="p">]</span>
+<span class="n">city_air_quality</span><span class="o">$</span><span class="n">CO2</span><span class="p">[</span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">city</span><span class="o">==</span><span class="s">&quot;San Francisco&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">'Yes'</div><div class="output text_html">0.7</div></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Factorize the categorical variable.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">rain</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">rain</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">city_air_quality</span><span class="o">$</span><span class="n">rain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span> No Yes 
+  3   4 
 </pre></div>
 </div>
 </div>

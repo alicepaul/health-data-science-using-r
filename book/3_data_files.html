@@ -161,7 +161,7 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot2</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
 <ul class="nav bd-sidenav">
@@ -995,9 +995,9 @@ document.write(`
 <p>Let’s demonstrate these operators on the pain data. We first update the Medicaid column. The logic on the left hand side selects those that do or do not have Medicaid and then assigns those values to the new ones.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">MEDICAID_BIN</span> <span class="o">==</span> <span class="s">&quot;no&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;No Medicaid&quot;</span>
-<span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">MEDICAID_BIN</span> <span class="o">==</span> <span class="s">&quot;yes&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Medicaid&quot;</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">MEDICAID_BIN</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span> <span class="o">==</span> <span class="s">&quot;no&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;No Medicaid&quot;</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span> <span class="o">==</span> <span class="s">&quot;yes&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Medicaid&quot;</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">medicaid_bin</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1006,8 +1006,156 @@ document.write(`
 “Unknown or uninitialised column: `medicaid_bin`.”
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   no   yes 
-16757  4601 
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+“Unknown or uninitialised column: `medicaid_bin`.”
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in `$&lt;-`:
+! Assigned data `&lt;chr&gt;` must be compatible with existing data.
+✖ Existing data has 21658 rows.
+✖ Assigned data has 0 rows.
+ℹ Only vectors of size 1 are recycled.
+Caused by error in `vectbl_recycle_rhs_rows()`:
+! Can&#39;t recycle input of size 0 to size 21658.
+Traceback:
+
+1. `$&lt;-`(`*tmp*`, medicaid_bin, value = character(0))
+2. `$&lt;-.tbl_df`(`*tmp*`, medicaid_bin, value = character(0))
+3. tbl_subassign(x, i = NULL, as_string(name), list(value), i_arg = NULL, 
+ .     j_arg = name, value_arg = substitute(value))
+4. vectbl_recycle_rhs_rows(value, fast_nrow(xo), i_arg = NULL, value_arg, 
+ .     call)
+5. withCallingHandlers(for (j in seq_along(value)) {
+ .     if (!is.null(value[[j]])) {
+ .         value[[j]] &lt;- vec_recycle(value[[j]], nrow)
+ .     }
+ . }, vctrs_error_recycle_incompatible_size = function(cnd) {
+ .     abort_assign_incompatible_size(nrow, value, j, i_arg, value_arg, 
+ .         cnd, call = call)
+ . }, vctrs_error_scalar_type = function(cnd) {
+ .     abort_assign_vector(value, j, value_arg, cnd, call = call)
+ . })
+6. vec_recycle(value[[j]], nrow)
+7. stop_recycle_incompatible_size(x_size = 0L, size = 21658L, x_arg = &quot;&quot;, 
+ .     call = &lt;environment&gt;)
+8. stop_vctrs(x_size = x_size, y_size = size, x_arg = x_arg, class = c(&quot;vctrs_error_incompatible_size&quot;, 
+ .     &quot;vctrs_error_recycle_incompatible_size&quot;), call = call)
+9. abort(message, class = c(class, &quot;vctrs_error&quot;), ..., call = call)
+10. signal_abort(cnd, .file)
+11. signalCondition(cnd)
+12. (function (cnd) 
+  . {
+  .     abort_assign_incompatible_size(nrow, value, j, i_arg, value_arg, 
+  .         cnd, call = call)
+  . })(structure(list(message = &quot;&quot;, trace = structure(list(call = list(
+  .     IRkernel::main(), kernel$run(), handle_shell(), executor$execute(msg), 
+  .     tryCatch(evaluate(request$content$code, envir = .GlobalEnv, 
+  .         output_handler = oh, stop_on_error = 1L), interrupt = function(cond) {
+  .         log_debug(&quot;Interrupt during execution&quot;)
+  .         interrupted &lt;&lt;- TRUE
+  .     }, error = .self$handle_error), tryCatchList(expr, classes, 
+  .         parentenv, handlers), tryCatchOne(tryCatchList(expr, 
+  .         names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, 
+  .         handlers[[nh]]), doTryCatch(return(expr), name, parentenv, 
+  .         handler), tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), 
+  .     tryCatchOne(expr, names, parentenv, handlers[[1L]]), doTryCatch(return(expr), 
+  .         name, parentenv, handler), evaluate(request$content$code, 
+  .         envir = .GlobalEnv, output_handler = oh, stop_on_error = 1L), 
+  .     evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, 
+  .         debug = debug, last = i == length(out), use_try = stop_on_error != 
+  .             2L, keep_warning = keep_warning, keep_message = keep_message, 
+  .         log_echo = log_echo, log_warning = log_warning, output_handler = output_handler, 
+  .         include_timing = include_timing), timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
+  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
+  .         message = mHandler))), handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
+  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
+  .         message = mHandler)), try(f, silent = TRUE), tryCatch(expr, 
+  .         error = function(e) {
+  .             call &lt;- conditionCall(e)
+  .             if (!is.null(call)) {
+  .                 if (identical(call[[1L]], quote(doTryCatch))) 
+  .                   call &lt;- sys.call(-4L)
+  .                 dcall &lt;- deparse(call, nlines = 1L)
+  .                 prefix &lt;- paste(&quot;Error in&quot;, dcall, &quot;: &quot;)
+  .                 LONG &lt;- 75L
+  .                 sm &lt;- strsplit(conditionMessage(e), &quot;\n&quot;)[[1L]]
+  .                 w &lt;- 14L + nchar(dcall, type = &quot;w&quot;) + nchar(sm[1L], 
+  .                   type = &quot;w&quot;)
+  .                 if (is.na(w)) 
+  .                   w &lt;- 14L + nchar(dcall, type = &quot;b&quot;) + nchar(sm[1L], 
+  .                     type = &quot;b&quot;)
+  .                 if (w &gt; LONG) 
+  .                   prefix &lt;- paste0(prefix, &quot;\n  &quot;)
+  .             }
+  .             else prefix &lt;- &quot;Error : &quot;
+  .             msg &lt;- paste0(prefix, conditionMessage(e), &quot;\n&quot;)
+  .             .Internal(seterrmessage(msg[1L]))
+  .             if (!silent &amp;&amp; isTRUE(getOption(&quot;show.error.messages&quot;))) {
+  .                 cat(msg, file = outFile)
+  .                 .Internal(printDeferredWarnings())
+  .             }
+  .             invisible(structure(msg, class = &quot;try-error&quot;, condition = e))
+  .         }), tryCatchList(expr, classes, parentenv, handlers), 
+  .     tryCatchOne(expr, names, parentenv, handlers[[1L]]), doTryCatch(return(expr), 
+  .         name, parentenv, handler), withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
+  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
+  .         message = mHandler), withVisible(eval_with_user_handlers(expr, 
+  .         envir, enclos, user_handlers)), eval_with_user_handlers(expr, 
+  .         envir, enclos, user_handlers), eval(expr, envir, enclos), 
+  .     eval(expr, envir, enclos), `$&lt;-`(`*tmp*`, medicaid_bin, value = `&lt;chr&gt;`), 
+  .     `$&lt;-.tbl_df`(`*tmp*`, medicaid_bin, value = `&lt;chr&gt;`), tbl_subassign(x, 
+  .         i = NULL, as_string(name), list(value), i_arg = NULL, 
+  .         j_arg = name, value_arg = substitute(value)), vectbl_recycle_rhs_rows(value, 
+  .         fast_nrow(xo), i_arg = NULL, value_arg, call), withCallingHandlers(for (j in seq_along(value)) {
+  .         if (!is.null(value[[j]])) {
+  .             value[[j]] &lt;- vec_recycle(value[[j]], nrow)
+  .         }
+  .     }, vctrs_error_recycle_incompatible_size = function(cnd) {
+  .         abort_assign_incompatible_size(nrow, value, j, i_arg, 
+  .             value_arg, cnd, call = call)
+  .     }, vctrs_error_scalar_type = function(cnd) {
+  .         abort_assign_vector(value, j, value_arg, cnd, call = call)
+  .     }), vec_recycle(value[[j]], nrow), stop_recycle_incompatible_size(x_size = 0L, 
+  .         size = 21658L, x_arg = &quot;&quot;, call = `&lt;env&gt;`), stop_vctrs(x_size = x_size, 
+  .         y_size = size, x_arg = x_arg, class = c(&quot;vctrs_error_incompatible_size&quot;, 
+  .             &quot;vctrs_error_recycle_incompatible_size&quot;), call = call), 
+  .     abort(message, class = c(class, &quot;vctrs_error&quot;), ..., call = call)), 
+  .     parent = c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 6L, 9L, 10L, 4L, 
+  .     12L, 13L, 13L, 15L, 16L, 17L, 18L, 19L, 13L, 13L, 13L, 23L, 
+  .     24L, 0L, 0L, 27L, 28L, 29L, 29L, 0L, 32L, 33L), visible = c(TRUE, 
+  .     TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+  .     TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
+  .     TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, 
+  .     FALSE, FALSE, FALSE), namespace = c(&quot;IRkernel&quot;, NA, &quot;IRkernel&quot;, 
+  .     NA, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, 
+  .     &quot;evaluate&quot;, &quot;evaluate&quot;, &quot;evaluate&quot;, &quot;evaluate&quot;, &quot;base&quot;, &quot;base&quot;, 
+  .     &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;evaluate&quot;, &quot;base&quot;, 
+  .     &quot;base&quot;, &quot;base&quot;, &quot;tibble&quot;, &quot;tibble&quot;, &quot;tibble&quot;, &quot;base&quot;, &quot;vctrs&quot;, 
+  .     &quot;vctrs&quot;, &quot;vctrs&quot;, &quot;rlang&quot;), scope = c(&quot;::&quot;, NA, &quot;local&quot;, 
+  .     NA, &quot;::&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, 
+  .     &quot;::&quot;, &quot;:::&quot;, &quot;local&quot;, &quot;local&quot;, &quot;::&quot;, &quot;::&quot;, &quot;local&quot;, &quot;local&quot;, 
+  .     &quot;local&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;:::&quot;, 
+  .     &quot;:::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;::&quot;), error_frame = c(FALSE, 
+  .     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+  .     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+  .     FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
+  .     TRUE, FALSE, FALSE, FALSE, FALSE, FALSE)), row.names = c(NA, 
+  . -34L), version = 2L, class = c(&quot;rlang_trace&quot;, &quot;rlib_trace&quot;, &quot;tbl&quot;, 
+  . &quot;data.frame&quot;)), parent = NULL, x_size = 0L, y_size = 21658L, 
+  .     x_arg = &quot;&quot;, rlang = list(inherit = TRUE), call = vectbl_recycle_rhs_rows(value, 
+  .         fast_nrow(xo), i_arg = NULL, value_arg, call)), class = c(&quot;vctrs_error_incompatible_size&quot;, 
+  . &quot;vctrs_error_recycle_incompatible_size&quot;, &quot;vctrs_error&quot;, &quot;rlang_error&quot;, 
+  . &quot;error&quot;, &quot;condition&quot;)))
+13. abort_assign_incompatible_size(nrow, value, j, i_arg, value_arg, 
+  .     cnd, call = call)
+14. tibble_abort(bullets(paste0(&quot;Assigned data &quot;, tick(as_label(value_arg)), 
+  .     &quot; must be compatible with &quot;, target, &quot;:&quot;), x = existing, 
+  .     x = new, i = if (nrow != 1) &quot;Only vectors of size 1 are recycled&quot;, 
+  .     i = if (nrow == 1 &amp;&amp; vec_size(value[[j]]) != 1) &quot;Row updates require a list value. Do you need `list()` or `as.list()`?&quot;), 
+  .     expected = nrow, actual = vec_size(value[[j]]), j = j, parent = parent, 
+  .     call = call)
+15. abort(x, class, ..., call = call, parent = parent, use_cli_format = TRUE)
+16. signal_abort(cnd, .file)
 </pre></div>
 </div>
 </div>
@@ -1039,22 +1187,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         ALASKA NATIVE        AMERICAN INDIAN                  BLACK 
-                     2                     58                   3229 
-               CHINESE               DECLINED               FILIPINO 
-                    21                    121                      6 
-         GUAM/CHAMORRO               HAWAIIAN         INDIAN (ASIAN) 
-                     1                      1                     49 
-              JAPANESE                 KOREAN          NOT SPECIFIED 
-                     9                     10                      4 
-                 OTHER            OTHER ASIAN OTHER PACIFIC ISLANDER 
-                     1                     47                     12 
-            VIETNAMESE                  WHITE 
-                     6                  17940 
-</pre></div>
-</div>
-</div>
 </div>
 <p>To do so, we can use the <code class="docutils literal notranslate"><span class="pre">%in%</span></code> operator. We first create an Asian, Asian American, or Pacific Islander race category and then create an American Indian or Alaska Native category.</p>
 <div class="cell docutils container">
@@ -1065,14 +1197,6 @@ document.write(`
 <span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span> <span class="o">%in%</span> <span class="n">aapi_values</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;AAPI&quot;</span>
 <span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;ALASKA NATIVE&quot;</span><span class="p">,</span> <span class="s">&quot;AMERICAN INDIAN&quot;</span><span class="p">)]</span> <span class="o">&lt;-</span> <span class="s">&quot;AI/AN&quot;</span>
 <span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK      DECLINED NOT SPECIFIED 
-          162            60          3229           121             4 
-        OTHER         WHITE 
-            1         17940 
 </pre></div>
 </div>
 </div>
@@ -1095,29 +1219,11 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 1 × 98</caption>
-<thead>
-	<tr><th scope=col>PATIENT_NUM</th><th scope=col>X101</th><th scope=col>X102</th><th scope=col>X103</th><th scope=col>X104</th><th scope=col>X105</th><th scope=col>X106</th><th scope=col>X107</th><th scope=col>X108</th><th scope=col>X109</th><th scope=col>⋯</th><th scope=col>PAT_SEX</th><th scope=col>PAT_RACE</th><th scope=col>CCI_BIN</th><th scope=col>MEDICAID_BIN</th><th scope=col>NUM_REGIONS</th><th scope=col>LOWER_BACK</th><th scope=col>PAIN_CHANGE</th><th scope=col>PERC_PAIN_CHANGE</th><th scope=col>medicaid_bin</th><th scope=col>BACK</th></tr>
-	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>3588</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>⋯</td><td>female</td><td>OTHER</td><td>No comorbidity</td><td>yes</td><td>34</td><td>1</td><td>NA</td><td>NA</td><td>Medicaid</td><td>TRUE</td></tr>
-</tbody>
-</table>
-</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">PATIENT_NUM</span><span class="o">==</span><span class="m">3588</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;NOT SPECIFIED&quot;</span>
 <span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK NOT SPECIFIED         WHITE 
-          162            60          3229           126         17940 
 </pre></div>
 </div>
 </div>
@@ -1131,7 +1237,6 @@ document.write(`
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <p>For these exercises, we will be using the <strong>pain</strong> data.</p>
-<p>TODO: Add question: Find those that are NA for both <code class="docutils literal notranslate"><span class="pre">GH_MENTAL_SCORE</span></code> and <code class="docutils literal notranslate"><span class="pre">GH_PHYSICAL_SCORE</span></code>, which are the PROMIS global mental and physical scores. Both have 13.6% of missing values - will see missing for both. Drop these columns.</p>
 <ol class="arabic simple">
 <li><p>Find summary statistics for <code class="docutils literal notranslate"><span class="pre">PROMIS_PHYSICAL_FUNTION</span></code> and <code class="docutils literal notranslate"><span class="pre">PROMIS_ANXIETY</span></code> variables and observe the distribution of those patient-reported pain experiences. What striking feature do you notice in the summary?</p></li>
 </ol>
@@ -1145,16 +1250,6 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  15.40   30.60   35.39   35.27   39.37   73.33 
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-  32.87   49.27   56.49   56.28   63.35   84.90      87 
-</pre></div>
-</div>
-</div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Create frequency tables about <code class="docutils literal notranslate"><span class="pre">PAT_SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">PAT_RACE</span></code> and tell more information about distributions of demographic characteristics.</p></li>
@@ -1163,16 +1258,6 @@ document.write(`
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
 <span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>female   male 
- 13102   8556 
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK NOT SPECIFIED         WHITE 
-          162            60          3229           126         17940 
 </pre></div>
 </div>
 </div>
@@ -1197,20 +1282,20 @@ document.write(`
 </div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Calculate the median and interquartile range of the distribution of the total number of painful regions selected for each patient. Write a sentence to explain any interesting observations in the context of this dataset.</p></li>
+<li><p>Calculate the median and interquartile range of the distribution of the total number of painful <strong>thigh</strong> regions selected for each patient. Write a sentence to explain any interesting observations in the context of this dataset.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">rowsum</span> <span class="o">&lt;-</span> <span class="nf">as.data.frame</span><span class="p">(</span><span class="nf">rowSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="m">2</span><span class="o">:</span><span class="m">75</span><span class="p">],</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span>
-<span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span> <span class="o">&lt;-</span> <span class="n">rowsum</span><span class="o">$</span><span class="n">`rowSums(pain[, 2:75], na.rm = TRUE)`</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">which</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span><span class="o">==</span><span class="s">&quot;X126&quot;</span><span class="p">)</span>
+<span class="nf">which</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span><span class="o">==</span><span class="s">&quot;X127&quot;</span><span class="p">)</span>
+<span class="n">rowsum.thigh</span> <span class="o">&lt;-</span> <span class="nf">as.data.frame</span><span class="p">(</span><span class="nf">rowSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">27</span><span class="p">,</span><span class="m">28</span><span class="p">)],</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span>
+<span class="n">rowsum.thigh</span><span class="o">$</span><span class="n">RowSumValue</span> <span class="o">&lt;-</span> <span class="n">rowsum</span><span class="o">$</span><span class="n">`rowSums(pain[, 2:75], na.rm = TRUE)`</span>
 
-<span class="nf">median</span><span class="p">(</span><span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
-<span class="nf">IQR</span><span class="p">(</span><span class="n">rowsum</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
+<span class="nf">median</span><span class="p">(</span><span class="n">rowsum.thigh</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
+<span class="nf">IQR</span><span class="p">(</span><span class="n">rowsum.thigh</span><span class="o">$</span><span class="n">RowSumValue</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html">7</div><div class="output text_html">9</div></div>
 </div>
 <ol class="arabic simple" start="5">
 <li><p>Assume a reasonable number of painful regions for patients to be 15 and use a <code class="docutils literal notranslate"><span class="pre">subset()</span></code> command to create a trimmed version of the pain dataset called <strong>pain.subset</strong> that only contains data for patients with the total number of painful regions less than 15.</p></li>
@@ -1224,15 +1309,17 @@ document.write(`
 </div>
 </div>
 <ol class="arabic simple" start="6">
-<li><p>Find the distribution of <code class="docutils literal notranslate"><span class="pre">PAIN_INTENSITY_AVERAGE.follow_up</span></code>. And create a column of missing data at this follow up variable.</p></li>
+<li><p>Find the distribution of <code class="docutils literal notranslate"><span class="pre">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span></code>. And create a column of missing data at this follow up variable and create a frequency tablen about this new column.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
 <span class="nf">hist</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
 
-<span class="c1"># TODO: do without ifelse</span>
-<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span><span class="o">==</span><span class="kc">TRUE</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0</span><span class="p">)</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">&lt;-</span> <span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">==</span> <span class="s">&quot;FALSE&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Non missing&quot;</span>
+<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">==</span> <span class="s">&quot;yes&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Missing&quot;</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1241,8 +1328,26 @@ document.write(`
   0.000   5.000   6.000   5.988   8.000  10.000   14520 
 </pre></div>
 </div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Non missing        TRUE 
+       7138       14520 
+</pre></div>
+</div>
 <img alt="../_images/7b9f908322e19f2e96a9514b6e86254db2c2ea0190555613fb352b8e5aa6d0f9.png" src="../_images/7b9f908322e19f2e96a9514b6e86254db2c2ea0190555613fb352b8e5aa6d0f9.png" />
 </div>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>Find those that are NA for both <code class="docutils literal notranslate"><span class="pre">GH_MENTAL_SCORE</span></code> and <code class="docutils literal notranslate"><span class="pre">GH_PHYSICAL_SCORE</span></code>, which are the PROMIS global mental and physical scores. Both have 13.6% of missing values - will see missing for both. Drop these rows.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain.new</span> <span class="o">&lt;-</span> <span class="n">pain</span><span class="p">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">GH_MENTAL_SCORE</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">GH_PHYSICAL_SCORE</span><span class="p">),]</span>
+<span class="c1"># TODO: Check percentage of missing values </span>
+<span class="c1"># TODO: Find the number of rows that are missing for both columns respectively</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">18712</div></div>
 </div>
 </section>
 <section id="todos">
