@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>11. Logistic Regression &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="12. Writing Reports with R Markdown" href="12_rmarkdown_reports.html" />
     <link rel="prev" title="10. Linear Regression" href="10_linear_regression.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -371,12 +372,12 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="logistic-regression">
-<h1>11. Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this headline">#</a></h1>
+<h1>11. Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this heading">#</a></h1>
 <p>The Logistic Regression, also called a logit model, is a method for fitting a regression curve <span class="math notranslate nohighlight">\(y=f(x)\)</span> in which the response variable (dependent variable) <span class="math notranslate nohighlight">\(y\)</span> is a <strong>categorical</strong> variable (dichotomous outcome variable) such as True/False or 0/1.</p>
 <p>In the logit model it actually measures the <strong>log odds</strong> of the outcome given a linear combination of a set of predictors <span class="math notranslate nohighlight">\(x\)</span>. The predictors can be continuous, categorical or a mix of both.</p>
 <p>The categorical variable y, in general, can assume different values. In the simplest case scenario y is binary meaning that it can assume either the value 1 (Yes) or 0 (No). In this post we call the model “binomial logistic regression”, however, logistic regression can also be used to predict an outcome with more than 2 categories. In this second case we call the model “multinomial logistic regression”. A typical example for instance, would be classifying marketing campaign between “failure”, “non existent” or “success”.</p>
 <section id="implementation-in-r">
-<h2>Implementation in R<a class="headerlink" href="#implementation-in-r" title="Permalink to this headline">#</a></h2>
+<h2>Implementation in R<a class="headerlink" href="#implementation-in-r" title="Permalink to this heading">#</a></h2>
 <p>Logistic regression is implemented in R using <code class="docutils literal notranslate"><span class="pre">glm()</span></code> by predicting the primary outcome of interest using features or variables in the dataset.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">formula</span></code> - specify the relationship between variables and the outcome of interest</p></li>
@@ -385,7 +386,7 @@ document.write(`
 </ul>
 </section>
 <section id="the-dataset">
-<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Permalink to this headline">#</a></h2>
+<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Permalink to this heading">#</a></h2>
 <p>We would use a dataset from the 2021 National Youth Tobacco Survey (NYTS) in the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package called <code class="docutils literal notranslate"><span class="pre">nyts</span></code>. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. One question from this study was whether subjects used e-cigarettes in the past 30 days. The objective of the logistic regression model is to predict whether they used or not based on the predictor variables, such as demographic information. We add a new column <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code>, as our outcome of interest, which is equal to 0 if respondent answered with “No” and 1 otherwise.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -397,30 +398,30 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="o">==</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">)</span>
-<span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="o">==</span><span class="m">0</span><span class="p">,</span> <span class="s">&quot;0&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts.sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;sex&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;race_and_ethnicity&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LGBT&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;num_cigarettes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;family_affluence&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;e_cig_use&quot;</span><span class="p">)]</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts.sub</span> <span class="o">&lt;-</span> <span class="n">nyts</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="s">&quot;sex&quot;</span><span class="p">,</span> <span class="s">&quot;race_and_ethnicity&quot;</span><span class="p">,</span> <span class="s">&quot;LGBT&quot;</span><span class="p">,</span> <span class="s">&quot;num_cigarettes&quot;</span><span class="p">,</span> <span class="s">&quot;family_affluence&quot;</span><span class="p">,</span> <span class="s">&quot;e_cig_use&quot;</span><span class="p">)]</span>
 
-<span class="n">nyts.sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">nyts</span><span class="p">),]</span>
+<span class="n">nyts.sub</span> <span class="o">&lt;-</span> <span class="n">nyts</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="n">nyts</span><span class="p">),]</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 <section id="model-fitting">
-<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this headline">#</a></h2>
+<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">age</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.numeric</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">age</span><span class="p">)</span>
-<span class="n">model1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">race_and_ethnicity</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LGBT</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_cigarettes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">family_affluence</span><span class="p">,</span><span class="w"> </span>
-<span class="w">              </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts.sub</span><span class="p">,</span><span class="w"> </span>
-<span class="w">              </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;binomial&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">age</span> <span class="o">&lt;-</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">age</span><span class="p">)</span>
+<span class="n">model1</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">age</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">race_and_ethnicity</span> <span class="o">+</span> <span class="n">LGBT</span> <span class="o">+</span> <span class="n">num_cigarettes</span> <span class="o">+</span> <span class="n">family_affluence</span><span class="p">,</span> 
+              <span class="n">data</span> <span class="o">=</span> <span class="n">nyts.sub</span><span class="p">,</span> 
+              <span class="n">family</span> <span class="o">=</span> <span class="s">&quot;binomial&quot;</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -502,12 +503,12 @@ Number of Fisher Scoring iterations: 25
 <p>Below the table of coefficients are fit indices, including the null and deviance residuals and the AIC. Later we show an example of how you can use these values to help assess model fit.</p>
 </section>
 <section id="diagnostic-plots">
-<h2>Diagnostic Plots<a class="headerlink" href="#diagnostic-plots" title="Permalink to this headline">#</a></h2>
+<h2>Diagnostic Plots<a class="headerlink" href="#diagnostic-plots" title="Permalink to this heading">#</a></h2>
 <p>Next we see the deviance residuals, which are a measure of model fit. The first part of the above output shows the distribution of the deviance residuals for individual cases used in the model. Below we discuss how to use summaries of the deviance statistic to assess model fit. Let’s look at the residuals from this model. Change type to “deviance” below to get the deviance residuals.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -518,7 +519,7 @@ Number of Fisher Scoring iterations: 25
 </div>
 </section>
 <section id="predictability-of-the-model">
-<h2>Predictability of the Model<a class="headerlink" href="#predictability-of-the-model" title="Permalink to this headline">#</a></h2>
+<h2>Predictability of the Model<a class="headerlink" href="#predictability-of-the-model" title="Permalink to this heading">#</a></h2>
 <p>In the steps above, we briefly evaluated the fitting of the model, now we would like to find the predicted
 probabilities. By setting the parameter type=’response’, R will output probabilities in the form of P(y=1|X). Our decision boundary will be 0.5. If P(y=1|X) &gt; 0.5 then y = 1 otherwise y=0. Note that for some applications different thresholds could be a better option. When we add in <code class="docutils literal notranslate"><span class="pre">type=“response”</span></code> to the code below it indicates that we want the predicted probabilities instead of the predicted log odds.</p>
 <div class="cell docutils container">
@@ -540,12 +541,12 @@ probabilities. By setting the parameter type=’response’, R will output proba
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
-<span class="n">pred_ys</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="nf">na.omit</span><span class="p">(</span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">),</span><span class="w"> </span><span class="n">pred_ys</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<span class="n">pred_ys</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span> <span class="o">&gt;</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="nf">na.omit</span><span class="p">(</span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">),</span> <span class="n">pred_ys</span><span class="p">)</span>
 
-<span class="n">misClasificError</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">pred_ys</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&#39;Accuracy&#39;</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="o">-</span><span class="n">misClasificError</span><span class="p">))</span>
+<span class="n">misClasificError</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">pred_ys</span> <span class="o">!=</span> <span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&#39;Accuracy&#39;</span><span class="p">,</span> <span class="m">1</span><span class="o">-</span><span class="n">misClasificError</span><span class="p">))</span>
 <span class="c1"># simple table, sensitivity</span>
 </pre></div>
 </div>
@@ -573,23 +574,23 @@ probabilities to the data frame to use this function.</p>
 <span class="c1"># nyts$pred &lt;- pred_probs</span>
 <span class="c1"># calibration_plot(data = nyts, obs = &quot;e_cig_use&quot;, pred = &quot;pred&quot;)</span>
 
-<span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
-<span class="n">num_cuts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span>
-<span class="n">cuts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="n">num_cuts</span><span class="p">)</span><span class="o">/</span><span class="n">num_cuts</span>
-<span class="n">binData</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span><span class="p">,</span>
-<span class="w">                      </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">cuts</span><span class="p">,</span><span class="w"> </span><span class="n">include.lowest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">),</span>
-<span class="w">                      </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
-<span class="n">midpoints</span><span class="w"> </span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="n">num_cuts</span><span class="p">),</span><span class="m">1-1</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="n">num_cuts</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="o">/</span><span class="n">num_cuts</span><span class="p">)</span>
+<span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<span class="n">num_cuts</span> <span class="o">&lt;-</span> <span class="m">10</span>
+<span class="n">cuts</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="n">num_cuts</span><span class="p">)</span><span class="o">/</span><span class="n">num_cuts</span>
+<span class="n">binData</span> <span class="o">&lt;-</span>  <span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span> <span class="o">=</span> <span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span><span class="p">,</span>
+                      <span class="n">bin</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">nyts.sub</span><span class="o">$</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">cuts</span><span class="p">,</span> <span class="n">include.lowest</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">),</span>
+                      <span class="n">class</span> <span class="o">=</span> <span class="n">nyts.sub</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
+<span class="n">midpoints</span> <span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="n">num_cuts</span><span class="p">),</span><span class="m">1-1</span><span class="o">/</span><span class="p">(</span><span class="m">2</span><span class="o">*</span><span class="n">num_cuts</span><span class="p">),</span> <span class="m">1</span><span class="o">/</span><span class="n">num_cuts</span><span class="p">)</span>
 <span class="nf">names</span><span class="p">(</span><span class="n">midpoints</span><span class="p">)</span><span class="o">=</span><span class="nf">levels</span><span class="p">(</span><span class="n">binData</span><span class="o">$</span><span class="n">bin</span><span class="p">)</span>
-<span class="n">binData</span><span class="o">$</span><span class="n">midpoint</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">unname</span><span class="p">(</span><span class="n">midpoints</span><span class="p">[</span><span class="n">binData</span><span class="o">$</span><span class="n">bin</span><span class="p">])</span>
-<span class="n">binData</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">binData</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">             </span><span class="nf">group_by</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">             </span><span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">())</span>
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">binData</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">ylim</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">xlim</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">midpoint</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">observed</span><span class="p">))</span>
+<span class="n">binData</span><span class="o">$</span><span class="n">midpoint</span> <span class="o">&lt;-</span> <span class="nf">unname</span><span class="p">(</span><span class="n">midpoints</span><span class="p">[</span><span class="n">binData</span><span class="o">$</span><span class="n">bin</span><span class="p">])</span>
+<span class="n">binData</span> <span class="o">&lt;-</span> <span class="n">binData</span> <span class="o">%&gt;%</span> 
+             <span class="nf">group_by</span><span class="p">(</span><span class="n">midpoint</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+             <span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">class</span> <span class="o">==</span> <span class="m">1</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">())</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">binData</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">ylim</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">xlim</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">midpoint</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">observed</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -601,8 +602,8 @@ probabilities to the data frame to use this function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span>
-<span class="n">roc_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="o">=</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">roc_mod</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 
 <span class="c1"># TODO: different cutoff point - at ROC curve </span>
 </pre></div>
@@ -612,14 +613,14 @@ probabilities to the data frame to use this function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># stepwise function </span>
-<span class="nf">step</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;backward&#39;</span><span class="p">,</span><span class="w"> </span><span class="n">trace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+<span class="nf">step</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&#39;backward&#39;</span><span class="p">,</span> <span class="n">trace</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises:<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises:<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Try using <code class="docutils literal notranslate"><span class="pre">lm</span></code> for analyzing the smoking behavior as a function of variables in the <code class="docutils literal notranslate"><span class="pre">nyts</span></code> data. They can be random from your favorite or interested potential predictors. Fit a Logistic regression to your subset of data frame using <code class="docutils literal notranslate"><span class="pre">glm</span></code>. Are the estimated coefficients similar to the true ones we used?</p></li>
 <li><p>What is the estimated probability of an event at x=1,1? Use <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function but make sure to read the documentation on the type argument.</p></li>
