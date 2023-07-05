@@ -382,7 +382,7 @@ document.write(`
   <section class="tex2jax_ignore mathjax_ignore" id="linear-regression">
 <h1>10. Linear Regression<a class="headerlink" href="#linear-regression" title="Permalink to this heading">#</a></h1>
 <p>This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, checking model assumptions using diagnostic plots, adding transformations and interactions, performance metrics, and variable selection using stepwise selection.</p>
-<p>For this chapter, we will use the a samples from the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>). The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="xref myst">Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892</span>. Use the help operator <code class="docutils literal notranslate"><span class="pre">?NHANESsample</span></code> to read the variable descriptions.</p>
+<p>For this chapter, we will use the a samples from the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>). The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="xref myst">Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892</span>. Use the help operator <code class="docutils literal notranslate"><span class="pre">?NHANESsample</span></code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
 <p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package to present the estimated coefficients for our regression models and the <code class="docutils literal notranslate"><span class="pre">car</span></code> package to compute variance-inflation factors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -942,27 +942,23 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mae</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">SBP</span> <span class="o">-</span> <span class="n">pred_y</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mae</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span> <span class="o">-</span> <span class="n">pred_y</span><span class="p">))</span>
 <span class="n">mae</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="ow">in</span> <span class="nb">eval</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">envir</span><span class="p">,</span> <span class="n">enclos</span><span class="p">):</span> <span class="nb">object</span> <span class="s1">&#39;SBP&#39;</span> <span class="ow">not</span> <span class="n">found</span>
-<span class="ne">Traceback</span>:
-
-<span class="mi">1</span><span class="o">.</span> <span class="n">mean</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">SBP</span> <span class="o">-</span> <span class="n">pred_y</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
+<div class="output text_html">118.96266105268</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mse</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">((</span><span class="n">SBP</span><span class="o">-</span> <span class="n">pred_y</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mse</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">((</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="o">-</span> <span class="n">pred_y</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
 <span class="n">mse</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output text_html">14501.9230485642</div></div>
 </div>
 </section>
 <section id="stepwise-selection">
@@ -978,10 +974,100 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start:  AIC=-125047.6
+log(SBP) ~ log(LEAD) + AGE + SEX + SEX:log(LEAD)
+
+            Df Sum of Sq    RSS     AIC
++ RACE       4    9.1605 488.19 -125605
++ BMI_CAT    2    8.9722 488.38 -125597
++ INCOME     1    2.8709 494.48 -125222
++ EDUCATION  2    1.8966 495.46 -125160
++ SMOKE      2    0.3496 497.00 -125065
+&lt;none&gt;                   497.35 -125048
+
+Step:  AIC=-125604.9
+log(SBP) ~ log(LEAD) + AGE + SEX + RACE + log(LEAD):SEX
+
+            Df Sum of Sq    RSS     AIC
++ BMI_CAT    2    7.1612 481.03 -126050
++ INCOME     1    1.7985 486.39 -125715
++ EDUCATION  2    1.3404 486.85 -125684
++ SMOKE      2    0.1297 488.06 -125609
+&lt;none&gt;                   488.19 -125605
+
+Step:  AIC=-126050.2
+log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + log(LEAD):SEX
+
+            Df Sum of Sq    RSS     AIC
++ INCOME     1   1.61678 479.42 -126151
++ EDUCATION  2   1.11221 479.92 -126117
++ SMOKE      2   0.26139 480.77 -126063
+&lt;none&gt;                   481.03 -126050
+
+Step:  AIC=-126150.5
+log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + 
+    log(LEAD):SEX
+
+            Df Sum of Sq    RSS     AIC
++ EDUCATION  2   0.41789 479.00 -126173
++ SMOKE      2   0.25818 479.16 -126163
+&lt;none&gt;                   479.42 -126151
+
+Step:  AIC=-126173
+log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + 
+    EDUCATION + log(LEAD):SEX
+
+        Df Sum of Sq    RSS     AIC
++ SMOKE  2   0.28648 478.71 -126187
+&lt;none&gt;               479.00 -126173
+
+Step:  AIC=-126187.2
+log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + 
+    EDUCATION + SMOKE + log(LEAD):SEX
+</pre></div>
+</div>
+</div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">mod_step</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + 
+    INCOME + EDUCATION + SMOKE + log(LEAD):SEX, data = nhanes_df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.67127 -0.07992 -0.00393  0.07377  0.67974 
+
+Coefficients:
+                         Estimate Std. Error  t value Pr(&gt;|t|)    
+(Intercept)             4.614e+00  3.316e-03 1391.511  &lt; 2e-16 ***
+log(LEAD)               2.282e-02  1.694e-03   13.473  &lt; 2e-16 ***
+AGE                     3.485e-03  4.848e-05   71.872  &lt; 2e-16 ***
+SEXMale                 3.466e-02  1.655e-03   20.945  &lt; 2e-16 ***
+RACEOther Hispanic     -7.106e-03  3.223e-03   -2.205   0.0275 *  
+RACENon-Hispanic White -4.449e-03  2.198e-03   -2.024   0.0430 *  
+RACENon-Hispanic Black  3.369e-02  2.466e-03   13.662  &lt; 2e-16 ***
+RACEOther Race          6.270e-03  3.388e-03    1.850   0.0643 .  
+BMI_CAT25&lt;BMI&lt;30        1.513e-02  1.838e-03    8.230  &lt; 2e-16 ***
+BMI_CATBMI&gt;=30          3.783e-02  1.835e-03   20.623  &lt; 2e-16 ***
+INCOME                 -3.886e-03  4.996e-04   -7.778 7.57e-15 ***
+EDUCATIONHS            -1.935e-05  2.186e-03   -0.009   0.9929    
+EDUCATIONMoreThanHS    -8.692e-03  2.068e-03   -4.203 2.64e-05 ***
+SMOKEQuitSmoke         -7.556e-03  1.796e-03   -4.207 2.60e-05 ***
+SMOKEStillSmoke        -4.037e-03  1.943e-03   -2.077   0.0378 *  
+log(LEAD):SEXMale      -2.606e-02  2.122e-03  -12.278  &lt; 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.1255 on 30389 degrees of freedom
+Multiple R-squared:  0.2483,	Adjusted R-squared:  0.2479 
+F-statistic: 669.1 on 15 and 30389 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
@@ -999,8 +1085,32 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solution:</span>
-<span class="n">model_exercise1</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP1</span><span class="o">~</span><span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="p">),</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
+<span class="n">model_exercise1</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP</span><span class="o">~</span><span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="n">SMOKE</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = DBP ~ LEAD + AGE + SMOKE, data = nhanes_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-76.894  -7.293   0.561   7.883  60.902 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     71.815455   0.237372 302.544  &lt; 2e-16 ***
+LEAD             0.312515   0.044106   7.085 1.42e-12 ***
+AGE             -0.034381   0.004683  -7.342 2.16e-13 ***
+SMOKEQuitSmoke  -0.707128   0.188252  -3.756 0.000173 ***
+SMOKEStillSmoke -0.329253   0.195901  -1.681 0.092829 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 13.36 on 30400 degrees of freedom
+Multiple R-squared:  0.003634,	Adjusted R-squared:  0.003503 
+F-statistic: 27.72 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
@@ -1011,8 +1121,34 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solution:</span>
-<span class="n">model_exercise2</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="p">)</span> <span class="o">+</span> <span class="n">EVER_SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
+<span class="n">model_exercise2</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP</span> <span class="o">~</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="n">SMOKE</span> <span class="o">+</span> <span class="n">SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = DBP ~ LEAD + AGE + SMOKE + SMOKE:AGE, data = nhanes_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-77.199  -7.265   0.487   7.848  59.681 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         70.654988   0.309311 228.427  &lt; 2e-16 ***
+LEAD                 0.303901   0.044021   6.904 5.17e-12 ***
+AGE                 -0.009102   0.006298  -1.445    0.148    
+SMOKEQuitSmoke       6.207891   0.590710  10.509  &lt; 2e-16 ***
+SMOKEStillSmoke     -2.747224   0.572464  -4.799 1.60e-06 ***
+AGE:SMOKEQuitSmoke  -0.125788   0.010497 -11.984  &lt; 2e-16 ***
+AGE:SMOKEStillSmoke  0.056366   0.012086   4.664 3.12e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 13.31 on 30398 degrees of freedom
+Multiple R-squared:  0.0108,	Adjusted R-squared:  0.0106 
+F-statistic:  55.3 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
@@ -1029,6 +1165,9 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<img alt="../_images/6017c0733efc466cb3a72be4c11648068a1f8ec048b3eee40f17255075622407.png" src="../_images/6017c0733efc466cb3a72be4c11648068a1f8ec048b3eee40f17255075622407.png" />
+</div>
 </div>
 <ol class="arabic simple" start="4">
 <li><p>Try some diagnostic plots such as Residual vs. fitted value to see which transformation is fitted for this model.</p></li>
@@ -1040,13 +1179,40 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <span class="c1">#use log(DBP1 + 1) beacuase DBP1 has 0, and r can&#39;t deal with log transformation with 0</span>
 <span class="c1">#this transformation creates the most outliers, but it also makes the model more normally</span>
 <span class="c1">#distributed and Homoscedasticity</span>
-<span class="n">model_exercise4</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">DBP1</span><span class="m">+1</span><span class="p">)</span> <span class="o">~</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="p">)</span> <span class="o">+</span> <span class="n">EVER_SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span> 
+<span class="n">model_exercise4</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">DBP</span><span class="m">+1</span><span class="p">)</span> <span class="o">~</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="n">SMOKE</span> <span class="o">+</span> <span class="n">SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span> 
 <span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise4</span><span class="p">)</span>
 
 <span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
 <span class="nf">plot</span><span class="p">(</span><span class="n">model_exercise4</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = log(DBP + 1) ~ LEAD + AGE + SMOKE + SMOKE:AGE, data = nhanes_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.3384 -0.0748  0.0414  0.1423  0.6465 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          4.2886416  0.0085825 499.697  &lt; 2e-16 ***
+LEAD                 0.0032962  0.0012215   2.699  0.00697 ** 
+AGE                 -0.0011359  0.0001747  -6.501 8.13e-11 ***
+SMOKEQuitSmoke       0.1172809  0.0163905   7.155 8.53e-13 ***
+SMOKEStillSmoke     -0.0511110  0.0158842  -3.218  0.00129 ** 
+AGE:SMOKEQuitSmoke  -0.0022883  0.0002912  -7.857 4.07e-15 ***
+AGE:SMOKEStillSmoke  0.0010002  0.0003354   2.983  0.00286 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3693 on 30398 degrees of freedom
+Multiple R-squared:  0.00883,	Adjusted R-squared:  0.008634 
+F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+<img alt="../_images/af3b822c073768d9a0a2bd7b157147f9b28f2ff68600d7607ad2d506dcaeda6f.png" src="../_images/af3b822c073768d9a0a2bd7b157147f9b28f2ff68600d7607ad2d506dcaeda6f.png" />
 </div>
 </div>
 <ol class="arabic simple" start="5">
@@ -1060,11 +1226,11 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <span class="n">predicted</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)</span>
 
 <span class="c1">#mae</span>
-<span class="n">mae</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span> <span class="o">-</span> <span class="n">predicted</span><span class="p">))</span>
+<span class="n">mae</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP</span> <span class="o">-</span> <span class="n">predicted</span><span class="p">))</span>
 <span class="nf">cat</span><span class="p">(</span><span class="s">&#39;MAE: &#39;</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="s">&#39;\n&#39;</span><span class="p">)</span>
 
 <span class="c1">#mse</span>
-<span class="n">mse</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">((</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span><span class="o">-</span> <span class="n">predicted</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
+<span class="n">mse</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">((</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP</span><span class="o">-</span> <span class="n">predicted</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
 <span class="nf">cat</span><span class="p">(</span><span class="s">&#39;MSE: &#39;</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="s">&#39;\n&#39;</span><span class="p">)</span>
 
 <span class="c1">#aic</span>
@@ -1073,18 +1239,14 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MAE:  9.748759 
+</pre></div>
 </div>
-<ol class="arabic simple" start="6">
-<li><p>Use reorder() to change the reference level of <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> to YES.</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solution:</span>
-<span class="n">DBP1</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP1</span>
-<span class="n">EVER_SMOKE</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span><span class="o">$</span><span class="n">EVER_SMOKE</span>
-<span class="n">EVER_SMOKE_reordered</span> <span class="o">&lt;-</span> <span class="nf">reorder</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="p">,</span> <span class="o">-</span><span class="n">DBP1</span><span class="p">)</span>
-<span class="n">model_exercise5</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="n">AGE</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EVER_SMOKE_reordered</span><span class="p">)</span> <span class="o">+</span> <span class="n">EVER_SMOKE_reordered</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span> 
-<span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise5</span><span class="p">)</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE:  177.1186 
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC:  243702.9
 </pre></div>
 </div>
 </div>
@@ -1092,24 +1254,8 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <ol class="arabic simple" start="7">
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">DBP1</span></code> as outcome, use forward selection method to choose the best model.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solution:</span>
-
-<span class="c1">#set up model with only intercept and with all variables</span>
-<span class="n">fit.all</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP1</span> <span class="o">~</span> <span class="n">AGE</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">SEX</span><span class="p">)</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EDUCATION</span><span class="p">)</span> <span class="o">+</span>
-              <span class="n">INCOME</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="p">)</span> <span class="o">+</span> <span class="n">LEAD</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">BMI_CAT</span><span class="p">)</span> <span class="o">+</span>
-              <span class="nf">factor</span><span class="p">(</span><span class="n">HYP</span><span class="p">)</span> <span class="o">+</span> <span class="n">SBP1</span> <span class="o">+</span> <span class="nf">factor</span><span class="p">(</span><span class="n">LEAD_QUANTILE</span><span class="p">),</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
-<span class="n">intercept_only</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">DBP1</span> <span class="o">~</span> <span class="m">1</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nhanes_df</span><span class="p">)</span>
-
-<span class="c1">#forward selection</span>
-<span class="n">forward</span> <span class="o">&lt;-</span> <span class="nf">step</span><span class="p">(</span><span class="n">intercept_only</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&#39;forward&#39;</span><span class="p">,</span> <span class="n">scope</span> <span class="o">=</span> <span class="nf">formula</span><span class="p">(</span><span class="n">fit.all</span><span class="p">),</span> <span class="n">trac</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">forward</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
 <p>TODO: suppress messages and warnings</p>
+<p>TODO: formula . and -</p>
 </section>
 </section>
 
