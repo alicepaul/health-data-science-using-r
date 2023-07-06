@@ -161,12 +161,12 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot2</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Distributions and Hypothesis Testing</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="8_distributions_and_tests.html">8. Distributions and Hypothesis Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="9_simulation.html">9. Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions and Random Variables in R</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_hypothesis_tests.html">9. Hypothesis Testing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Regression</span></p>
 <ul class="current nav bd-sidenav">
@@ -176,6 +176,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
 
@@ -353,11 +354,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-in-r">Implementation in R</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-fitting">Model Fitting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots">Diagnostic Plots</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predictability-of-the-model">Predictability of the Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residuals-discrimination-and-calibration">Residuals, Discrimination, and Calibration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-selection">Variable Selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises:</a></li>
 </ul>
             </nav>
         </div>
@@ -371,236 +371,31 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="logistic-regression">
 <h1>11. Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this heading">#</a></h1>
-<p>The Logistic Regression, also called a logit model, is a method for fitting a regression curve <span class="math notranslate nohighlight">\(y=f(x)\)</span> in which the response variable (dependent variable) <span class="math notranslate nohighlight">\(y\)</span> is a <strong>categorical</strong> variable (dichotomous outcome variable) such as True/False or 0/1.</p>
-<p>In the logit model it actually measures the <strong>log odds</strong> of the outcome given a linear combination of a set of predictors <span class="math notranslate nohighlight">\(x\)</span>. The predictors can be continuous, categorical or a mix of both.</p>
-<p>The categorical variable y, in general, can assume different values. In the simplest case scenario y is binary meaning that it can assume either the value 1 (Yes) or 0 (No). In this post we call the model “binomial logistic regression”, however, logistic regression can also be used to predict an outcome with more than 2 categories. In this second case we call the model “multinomial logistic regression”. A typical example for instance, would be classifying marketing campaign between “failure”, “non existent” or “success”.</p>
-<section id="implementation-in-r">
-<h2>Implementation in R<a class="headerlink" href="#implementation-in-r" title="Permalink to this heading">#</a></h2>
-<p>Logistic regression is implemented in R using <code class="docutils literal notranslate"><span class="pre">glm()</span></code> by predicting the primary outcome of interest using features or variables in the dataset.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">formula</span></code> - specify the relationship between variables and the outcome of interest</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> - the dataset used to train the model</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">family</span></code> - R object to specify the details of the model. In logistic regression, its value is binomial</p></li>
-</ul>
-</section>
-<section id="the-dataset">
-<h2>The Dataset<a class="headerlink" href="#the-dataset" title="Permalink to this heading">#</a></h2>
-<p>We would use a dataset from the 2021 National Youth Tobacco Survey (NYTS) in the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package called <code class="docutils literal notranslate"><span class="pre">nyts</span></code>. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. One question from this study was whether… (TODO). The objective of the logistic regression model is to predict whether … or not based on the predictor variables, such as demographic information.</p>
-<p><strong>Jialin Note</strong>: applicability? What’s the outcome of interest? For example, students quit smoking</p>
+<p>This chapter will build on the last and continue with regression in R. In this chapter, we will cover binary logistic regression using the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function, which can be used to fit generalized linear models. Many of the functions learned in the last chapter can also be used with a <code class="docutils literal notranslate"><span class="pre">glm</span></code> object. For example, the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function expects a formula in the same way as the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function. We will also cover diagnostic plots and model evaluation specific to a binary outcome.</p>
+<p>The data used in this chapter is from the 2021 National Youth Tobacco Survey (NYTS). This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. We will use logistic regression to examine whether survey setting was associated with youth reporting of current tobacco use similar to the analysis presented in <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/36470692/">Park-Lee et al. (2023). Impact of Survey Setting on Current Tobacco Product Use: National Youth Tobacco Survey, 2021. Journal of Adolescent Health, 72(3), 365-374</a>. Note that we ignore survey weights for this analysis.</p>
+<p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package again to present the estimated coefficients, the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> package to demonstrate calibration plots, and the <code class="docutils literal notranslate"><span class="pre">pROC</span></code> package to create receiver operating characteristic curves.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">remotes</span><span class="o">::</span><span class="nf">install_github</span><span class="p">(</span><span class="s">&quot;joannamwalsh/RforHDSdata&quot;</span><span class="p">)</span> 
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">nyts</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Skipping install of &#39;RforHDSdata&#39; from a github remote, the SHA1 (8708a224) has not changed since last install.
-  Use `force = TRUE` to force installation
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">nyts</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 6 × 35</caption>
-<thead>
-	<tr><th></th><th scope=col>location</th><th scope=col>age</th><th scope=col>sex</th><th scope=col>grade</th><th scope=col>otherlang</th><th scope=col>grades_in_past_year</th><th scope=col>perceived_cigarette_use</th><th scope=col>perceived_e_cig_use</th><th scope=col>race_and_ethnicity</th><th scope=col>LGBT</th><th scope=col>⋯</th><th scope=col>bought_from_gas_station</th><th scope=col>bought_from_grocery_store</th><th scope=col>bought_from_drugstore</th><th scope=col>bought_from_mall</th><th scope=col>bought_from_vending_machine</th><th scope=col>bought_from_internet</th><th scope=col>bought_through_mail</th><th scope=col>bought_through_delivery</th><th scope=col>bought_from_smoke_shop</th><th scope=col>bought_elsewhere</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>In a school building/classroom</td><td>11</td><td>Female</td><td>6th</td><td>Yes</td><td>Mostly B's</td><td> 0</td><td> 0</td><td>Hispanic               </td><td>Not Sure</td><td>⋯</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td></tr>
-	<tr><th scope=row>2</th><td>In a school building/classroom</td><td>12</td><td>Male  </td><td>6th</td><td>No </td><td>Mostly A's</td><td> 0</td><td> 0</td><td>non-Hispanic White     </td><td>No      </td><td>⋯</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td></tr>
-	<tr><th scope=row>3</th><td>In a school building/classroom</td><td>12</td><td>Female</td><td>6th</td><td>Yes</td><td>Mostly A's</td><td> 0</td><td> 0</td><td>Hispanic               </td><td>NA      </td><td>⋯</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td></tr>
-	<tr><th scope=row>4</th><td>In a school building/classroom</td><td>12</td><td>Female</td><td>6th</td><td>No </td><td>Mostly A's</td><td> 0</td><td> 0</td><td>non-Hispanic White     </td><td>Not Sure</td><td>⋯</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td></tr>
-	<tr><th scope=row>5</th><td>In a school building/classroom</td><td>11</td><td>Female</td><td>6th</td><td>NA </td><td>NA        </td><td>NA</td><td>NA</td><td>Hispanic               </td><td>NA      </td><td>⋯</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td><td>NA</td></tr>
-	<tr><th scope=row>6</th><td>In a school building/classroom</td><td>12</td><td>Male  </td><td>6th</td><td>Yes</td><td>Mostly A's</td><td> 0</td><td> 0</td><td>non-Hispanic other race</td><td>NA      </td><td>⋯</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td><td> 0</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># use an in-built dataset instead</span>
-
-<span class="c1"># Select some columns form mtcars.</span>
-<span class="n">mtcars</span> <span class="o">&lt;-</span> <span class="n">mtcars</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;am&quot;</span><span class="p">,</span> <span class="s">&quot;cyl&quot;</span><span class="p">,</span> <span class="s">&quot;hp&quot;</span><span class="p">,</span> <span class="s">&quot;wt&quot;</span><span class="p">,</span> <span class="s">&quot;vs&quot;</span><span class="p">,</span> <span class="s">&quot;carb&quot;</span><span class="p">)]</span>
-
-<span class="nf">head</span><span class="p">(</span><span class="n">mtcars</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 6 × 6</caption>
-<thead>
-	<tr><th></th><th scope=col>am</th><th scope=col>cyl</th><th scope=col>hp</th><th scope=col>wt</th><th scope=col>vs</th><th scope=col>carb</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>Mazda RX4</th><td>1</td><td>6</td><td>110</td><td>2.620</td><td>0</td><td>4</td></tr>
-	<tr><th scope=row>Mazda RX4 Wag</th><td>1</td><td>6</td><td>110</td><td>2.875</td><td>0</td><td>4</td></tr>
-	<tr><th scope=row>Datsun 710</th><td>1</td><td>4</td><td> 93</td><td>2.320</td><td>1</td><td>1</td></tr>
-	<tr><th scope=row>Hornet 4 Drive</th><td>0</td><td>6</td><td>110</td><td>3.215</td><td>1</td><td>1</td></tr>
-	<tr><th scope=row>Hornet Sportabout</th><td>0</td><td>8</td><td>175</td><td>3.440</td><td>0</td><td>2</td></tr>
-	<tr><th scope=row>Valiant</th><td>0</td><td>6</td><td>105</td><td>3.460</td><td>1</td><td>1</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-</section>
-<section id="model-fitting">
-<h2>Model Fitting<a class="headerlink" href="#model-fitting" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model1</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">am</span> <span class="o">~</span> <span class="n">cyl</span> <span class="o">+</span> <span class="n">hp</span> <span class="o">+</span> <span class="n">wt</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">mtcars</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="s">&quot;binomial&quot;</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">model1</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-glm(formula = am ~ cyl + hp + wt, family = &quot;binomial&quot;, data = mtcars)
-
-Coefficients:
-            Estimate Std. Error z value Pr(&gt;|z|)  
-(Intercept) 19.70288    8.11637   2.428   0.0152 *
-cyl          0.48760    1.07162   0.455   0.6491  
-hp           0.03259    0.01886   1.728   0.0840 .
-wt          -9.14947    4.15332  -2.203   0.0276 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-(Dispersion parameter for binomial family taken to be 1)
-
-    Null deviance: 43.2297  on 31  degrees of freedom
-Residual deviance:  9.8415  on 28  degrees of freedom
-AIC: 17.841
-
-Number of Fisher Scoring iterations: 8
-</pre></div>
-</div>
-</div>
-</div>
-<p>The output shows the coefficients for predictors, their standard errors, the z-statistic (sometimes called a Wald z-statistic), and the associated p-values. Both <code class="docutils literal notranslate"><span class="pre">hp</span></code> and <code class="docutils literal notranslate"><span class="pre">wt</span></code> are statistically significant, as their p-values are less than our default significance level (<span class="math notranslate nohighlight">\(\alpha = 0.05\)</span>). The logistic regression coefficients give the change in the log odds of the outcome for a one unit increase in the predictor variable.</p>
-<ul class="simple">
-<li><p>For every one unit change in number of cylinders <code class="docutils literal notranslate"><span class="pre">cyl</span></code>, the log odds of manual transmission (versus automatic transmission) increases by 0.48760.</p></li>
-<li><p>For a one unit increase in gross horsepower <code class="docutils literal notranslate"><span class="pre">hp</span></code>, the log odds of manual transmission increases by 0.03259.</p></li>
-<li><p>For each unit increase in weight (1000 lbs) <code class="docutils literal notranslate"><span class="pre">wt</span></code>, the log odds of manual transmission decreases by 9.14947.</p></li>
-<li><p>For indicator variables, we will have a slightly different interpretation. For example, the categorical variable with value of 1, versus value of 0, changes the log odds of outcome by certain coeffcients amount.</p></li>
-</ul>
-<p>Below the table of coefficients are fit indices, including the null and deviance residuals and the AIC. Later we show an example of how you can use these values to help assess model fit.</p>
-</section>
-<section id="diagnostic-plots">
-<h2>Diagnostic Plots<a class="headerlink" href="#diagnostic-plots" title="Permalink to this heading">#</a></h2>
-<p>Next we see the deviance residuals, which are a measure of model fit. The first part of the above output shows the distribution of the deviance residuals for individual cases used in the model. Below we discuss how to use summaries of the deviance statistic to assess model fit. Let’s look at the residuals from this model. Change type to “deviance” below to get the deviance residuals.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="../_images/86ef7e31cc10d03bc8b759de19816e4d941a8c04a554462789375a5428e8ead1.png" src="../_images/86ef7e31cc10d03bc8b759de19816e4d941a8c04a554462789375a5428e8ead1.png" />
-<img alt="../_images/7c17f8043abe907b1a41c1bb612cde041a2174cc0b155612fd7779e960bc9791.png" src="../_images/7c17f8043abe907b1a41c1bb612cde041a2174cc0b155612fd7779e960bc9791.png" />
-</div>
-</div>
-</section>
-<section id="predictability-of-the-model">
-<h2>Predictability of the Model<a class="headerlink" href="#predictability-of-the-model" title="Permalink to this heading">#</a></h2>
-<p>In the steps above, we briefly evaluated the fitting of the model, now we would like to find the predicted
-probabilities. By setting the parameter type=’response’, R will output probabilities in the form of P(y=1|X). Our decision boundary will be 0.5. If P(y=1|X) &gt; 0.5 then y = 1 otherwise y=0. Note that for some applications different thresholds could be a better option. When we add in <code class="docutils literal notranslate"><span class="pre">type=“response”</span></code> to the code below it indicates that we want the predicted probabilities instead of the predicted log odds.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model1</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
-<span class="n">pred_ys</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span> <span class="o">&gt;</span> <span class="m">0.5</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">,</span> <span class="n">pred_ys</span><span class="p">)</span>
-
-<span class="n">misClasificError</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">pred_ys</span> <span class="o">!=</span> <span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&#39;Accuracy&#39;</span><span class="p">,</span> <span class="m">1</span><span class="o">-</span><span class="n">misClasificError</span><span class="p">))</span>
-<span class="c1"># simple table, sensitivity</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   pred_ys
-     0  1
-  0 18  1
-  1  2 11
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1] &quot;Accuracy 0.90625&quot;
-</pre></div>
-</div>
-</div>
-</div>
-<p>The 0.90626 accuracy on the test set is quite a good result. Then, let’s still observe the accuracy.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">caret</span><span class="p">)</span>
-<span class="nf">confusionMatrix</span><span class="p">(</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">pred_ys</span><span class="p">),</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">),</span> <span class="n">positive</span><span class="o">=</span><span class="s">&#39;1&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(caret): there is no package called ‘caret’
-Traceback:
-
-1. library(caret)
-</pre></div>
-</div>
-</div>
-</div>
-<p>We can also check the calibration. The code below plots a calibration plot. We have to add the predicted
-probabilities to the data frame to use this function.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;predtools&quot;</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">predtools</span><span class="p">)</span>
-<span class="c1"># cut functions</span>
-<span class="c1"># summarize it via tidyverse</span>
-<span class="n">mtcars</span><span class="o">$</span><span class="n">pred</span> <span class="o">&lt;-</span> <span class="n">pred_probs</span>
-<span class="nf">calibration_plot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">mtcars</span><span class="p">,</span> <span class="n">obs</span> <span class="o">=</span> <span class="s">&quot;am&quot;</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="s">&quot;pred&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The downloaded binary packages are in
-	/var/folders/97/764q45kd0qj8hgsn4mm36sx40000gn/T//RtmpkmYVfy/downloaded_packages
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>$calibration_plot
-</pre></div>
-</div>
-<img alt="../_images/38f0c9419ad2946ee5104f25c90451c44aeaf59b3fd7a154bdb2c9b3c81989a8.png" src="../_images/38f0c9419ad2946ee5104f25c90451c44aeaf59b3fd7a154bdb2c9b3c81989a8.png" />
-</div>
-</div>
-<p>As a last step, we are going to plot the <em>ROC</em> curve and calculate the <em>AUC</em> (area under the curve) which are typical performance measurements for a binary classifier. As a rule of thumb, a model with good predictive ability should have an AUC closer to 1 (1 is ideal) than to 0.5.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">install.packages</span><span class="p">(</span><span class="s">&quot;pROC&quot;</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">pROC</span><span class="p">)</span>
-<span class="n">roc_mod</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="n">mtcars</span><span class="o">$</span><span class="n">am</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
-
-<span class="c1"># different cutoff point - at ROC curve </span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The downloaded binary packages are in
-	/var/folders/97/764q45kd0qj8hgsn4mm36sx40000gn/T//RtmpkmYVfy/downloaded_packages
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr    </span> 1.1.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr    </span> 2.1.4
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats  </span> 1.0.0     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr  </span> 1.5.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2  </span> 3.4.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble   </span> 3.2.1
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">lubridate</span> 1.9.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr    </span> 1.3.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr    </span> 1.0.1     
+── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+<span class=" -Color -Color-Cyan">ℹ</span> Use the conflicted package (<span class=" -Color -Color-Blue">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors
+Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.
 
 
 Attaching package: ‘pROC’
@@ -609,23 +404,427 @@ Attaching package: ‘pROC’
 The following objects are masked from ‘package:stats’:
 
     cov, smooth, var
-
-
-Setting levels: control = 0, case = 1
-
-Setting direction: controls &lt; cases
 </pre></div>
 </div>
-<img alt="../_images/9fb114dbde418f3b325140643c8c09263932207e9496f7d45b4a7c35ea4e5c05.png" src="../_images/9fb114dbde418f3b325140643c8c09263932207e9496f7d45b4a7c35ea4e5c05.png" />
+</div>
+</div>
+<section id="generalized-linear-models-in-r">
+<h2>Generalized Linear Models in R<a class="headerlink" href="#generalized-linear-models-in-r" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">glm(formula,</span> <span class="pre">data,</span> <span class="pre">family)</span></code> function in R is used to fit generalized linear models. The three main arguments we must specify to the function are the</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">formula</span></code> - specifies the relationship between the independent variables and the outcome of interest,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> - the dataset used to train the model, and</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">family</span></code> - a description of the error distribution and link function to be used in the model.</p></li>
+</ul>
+<p>In binary logistic regression, we assume a binomial outcome and use the logit link function. We can specify this by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">bimnomial</span></code>. By default, this will assume the link function is the logit function. We can even use the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function to implement linear regression by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">gaussian</span></code>.</p>
+<p>TODO: should I add assumptions and form again?</p>
+<p>Our outcome of interest will be current e-cigarette use, <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code>. We need to create this variable from the variables currently in the data. We set <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code> to 0 if the respondent answered that they have not used e-cigarettes in the last 30 days and 1 otherwise. We can see that there are only 1,435 respondents who reported e-cigarette use. This is a low percentage of overall population and will likely impact our results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="o">==</span><span class="m">0</span><span class="p">,</span> <span class="s">&quot;0&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">))</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    0     1 
+18683  1435 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Looking at the covariate of interest, survey setting, we can see that there are 85 respondents that took the survey in “Some other place”. We will simplify this variable to have two levels: “school” and “home/other”.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="p">)</span>
+<span class="n">nyts</span><span class="o">$</span><span class="n">location</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span> <span class="o">==</span> <span class="s">&quot;In a school building/classroom&quot;</span><span class="p">,</span> <span class="s">&quot;school&quot;</span><span class="p">,</span> <span class="s">&quot;home/other&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    At home (virtual learning) In a school building/classroom 
+                          8738                          10737 
+              Some other place 
+                            85 
+</pre></div>
+</div>
+</div>
+</div>
+<p>To start, we will create a model to predict e-cigarette use from school setting and identified covariates sex, school level, and race and ethnicity. We use the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function again to get a summary of this model. The output has slightly changed. Now, we see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to in the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function and is not demonstrated in this chapter.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_start</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">grade</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">race_and_ethnicity</span> <span class="o">+</span> <span class="n">location</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nyts</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">mod_start</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = e_cig_use ~ grade + sex + race_and_ethnicity + 
+    location, family = binomial, data = nyts)
+
+Coefficients:
+                                          Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)                               -4.60174    0.15388 -29.905  &lt; 2e-16
+grade7th                                   0.44606    0.17532   2.544 0.010951
+grade8th                                   0.96768    0.16071   6.021 1.73e-09
+grade9th                                   1.38300    0.15494   8.926  &lt; 2e-16
+grade10th                                  1.91832    0.15132  12.677  &lt; 2e-16
+grade11th                                  2.13852    0.14913  14.340  &lt; 2e-16
+grade12th                                  2.42858    0.14916  16.282  &lt; 2e-16
+gradeUngraded or Other Grade               2.52132    0.44875   5.619 1.93e-08
+sexFemale                                  0.19221    0.05795   3.316 0.000912
+race_and_ethnicitynon-Hispanic Black      -0.66139    0.11209  -5.900 3.63e-09
+race_and_ethnicitynon-Hispanic other race -0.10205    0.15152  -0.674 0.500606
+race_and_ethnicitynon-Hispanic White       0.19835    0.07388   2.685 0.007260
+locationschool                             0.72234    0.06484  11.141  &lt; 2e-16
+                                             
+(Intercept)                               ***
+grade7th                                  *  
+grade8th                                  ***
+grade9th                                  ***
+grade10th                                 ***
+grade11th                                 ***
+grade12th                                 ***
+gradeUngraded or Other Grade              ***
+sexFemale                                 ***
+race_and_ethnicitynon-Hispanic Black      ***
+race_and_ethnicitynon-Hispanic other race    
+race_and_ethnicitynon-Hispanic White      ** 
+locationschool                            ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 9754.9  on 18746  degrees of freedom
+Residual deviance: 8886.8  on 18734  degrees of freedom
+  (1666 observations deleted due to missingness)
+AIC: 8912.8
+
+Number of Fisher Scoring iterations: 6
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can use the <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> function from the broom package to display the estimated coefficients. This time we add the <code class="docutils literal notranslate"><span class="pre">exponentiate</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> argument to exponentiate our coefficients so we can interpret them as change in odds rather than log odds. For example, those who answered at school had double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 13 × 5</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)                              </td><td> 0.01003438</td><td>0.15387671</td><td>-29.9053614</td><td>1.676009e-196</td></tr>
+	<tr><td>grade7th                                 </td><td> 1.56214571</td><td>0.17532017</td><td>  2.5442613</td><td> 1.095091e-02</td></tr>
+	<tr><td>grade8th                                 </td><td> 2.63183465</td><td>0.16071349</td><td>  6.0211574</td><td> 1.731743e-09</td></tr>
+	<tr><td>grade9th                                 </td><td> 3.98684862</td><td>0.15493973</td><td>  8.9260584</td><td> 4.414575e-19</td></tr>
+	<tr><td>grade10th                                </td><td> 6.80953207</td><td>0.15132448</td><td> 12.6768878</td><td> 7.942319e-37</td></tr>
+	<tr><td>grade11th                                </td><td> 8.48684826</td><td>0.14913207</td><td> 14.3397574</td><td> 1.234864e-46</td></tr>
+	<tr><td>grade12th                                </td><td>11.34276395</td><td>0.14915563</td><td> 16.2821876</td><td> 1.320624e-59</td></tr>
+	<tr><td>gradeUngraded or Other Grade             </td><td>12.44503967</td><td>0.44874868</td><td>  5.6185616</td><td> 1.925538e-08</td></tr>
+	<tr><td>sexFemale                                </td><td> 1.21192205</td><td>0.05795494</td><td>  3.3165000</td><td> 9.115260e-04</td></tr>
+	<tr><td>race_and_ethnicitynon-Hispanic Black     </td><td> 0.51613544</td><td>0.11209354</td><td> -5.9003049</td><td> 3.628303e-09</td></tr>
+	<tr><td>race_and_ethnicitynon-Hispanic other race</td><td> 0.90298050</td><td>0.15151994</td><td> -0.6735372</td><td> 5.006056e-01</td></tr>
+	<tr><td>race_and_ethnicitynon-Hispanic White     </td><td> 1.21938504</td><td>0.07388086</td><td>  2.6846828</td><td> 7.259868e-03</td></tr>
+	<tr><td>locationschool                           </td><td> 2.05924576</td><td>0.06483696</td><td> 11.1408642</td><td> 7.934559e-29</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="residuals-discrimination-and-calibration">
+<h2>Residuals, Discrimination, and Calibration<a class="headerlink" href="#residuals-discrimination-and-calibration" title="Permalink to this heading">#</a></h2>
+<p>Next we look at the distribution of the residuals. The <code class="docutils literal notranslate"><span class="pre">resid()</span></code> function can be used to find the residuals again, but this time we might want to specify the Pearson and deviance residuals by specifying the <code class="docutils literal notranslate"><span class="pre">type</span></code> argument. We plot the histogram for both of these residual types below. In both plots, we can observe a multi-modal distribution, which reflects the binary nature of our outcome.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/f84aa912a48eefc01ba2d20cdd1d66118355f4d4122642c6a7d34e295397fa70.png" src="../_images/f84aa912a48eefc01ba2d20cdd1d66118355f4d4122642c6a7d34e295397fa70.png" />
+</div>
+</div>
+<p>To further evaluate the fit of our model, we may want to observe the predicted probabilities. The <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function by default will return the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If want to find the predicted probabilities, we can update the argument <code class="docutils literal notranslate"><span class="pre">type=&quot;response&quot;</span></code>. Additionally, we can predict on data not used to train the model by using the argument <code class="docutils literal notranslate"><span class="pre">newdata</span></code>. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function (and <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function) drop any observations with NA values when training.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<span class="nf">length</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">18747</div></div>
+</div>
+<p>If want to find the class for each observation used in training, we can use the model’s output, which stores the model matrix <code class="docutils literal notranslate"><span class="pre">x</span></code> and the outcome vector <code class="docutils literal notranslate"><span class="pre">y</span></code>. We plot the distribution of estimated probabilities for each class. Note that all the predicted probabilities are below 0.5, the typical cut-off for prediction. This is in part due to the fact that we have such an imbalanced outcome.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+</pre></div>
+</div>
+<img alt="../_images/15b21584a0824f363786e3a0a21790c1ec6120d50359a8d140315c2be7021e3c.png" src="../_images/15b21584a0824f363786e3a0a21790c1ec6120d50359a8d140315c2be7021e3c.png" />
+</div>
+</div>
+<p>We now plot the receiver operating characteristic (ROC) curve and to compute the area under the curve (AUC). The <code class="docutils literal notranslate"><span class="pre">roc()</span></code> function from the <code class="docutils literal notranslate"><span class="pre">pROC</span></code> package builds an ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector <code class="docutils literal notranslate"><span class="pre">response</span></code> and predictor vector <code class="docutils literal notranslate"><span class="pre">predictor</span></code>. By default, with a 0/1 outcome, the <code class="docutils literal notranslate"><span class="pre">roc()</span></code> function will assume class 0 is controls and class 1 is cases. We can also specify this in the <code class="docutils literal notranslate"><span class="pre">levels</span></code> argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument <code class="docutils literal notranslate"><span class="pre">direction</span> <span class="pre">=</span> <span class="pre">&gt;</span></code> if the opposite is true. We can plot the ROC curve by calling the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> function. We can add some extra information by adding the AUC (<code class="docutils literal notranslate"><span class="pre">print.auc</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>) and the threshold that maximizes sensitivity + specificity (<code class="docutils literal notranslate"><span class="pre">print.thres</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">),</span> <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">print.thres</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/a60d5e353c6b339795657a8f79b699eaf142475a8e680edfbe6a9731684e49bd.png" src="../_images/a60d5e353c6b339795657a8f79b699eaf142475a8e680edfbe6a9731684e49bd.png" />
+</div>
+</div>
+<p>If we want to understand more about the curve, we can use the <code class="docutils literal notranslate"><span class="pre">coords()</span></code> function to find the coordinates for each threshold used. The argument <code class="docutils literal notranslate"><span class="pre">x=</span> <span class="pre">&quot;all&quot;</span></code> specifies we want to find all thresholds but we could also specify only to return local maxima.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span> <span class="o">&lt;-</span> <span class="nf">coords</span><span class="p">(</span><span class="n">roc</span><span class="o">=</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;all&quot;</span><span class="p">)</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">roc_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 3</caption>
+<thead>
+	<tr><th></th><th scope=col>threshold</th><th scope=col>specificity</th><th scope=col>sensitivity</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>       -Inf</td><td>0.000000000</td><td>1.0000000</td></tr>
+	<tr><th scope=row>2</th><td>0.005694962</td><td>0.005233795</td><td>1.0000000</td></tr>
+	<tr><th scope=row>3</th><td>0.007131542</td><td>0.010697648</td><td>1.0000000</td></tr>
+	<tr><th scope=row>4</th><td>0.008502529</td><td>0.015471329</td><td>0.9985294</td></tr>
+	<tr><th scope=row>5</th><td>0.009344669</td><td>0.018347041</td><td>0.9977941</td></tr>
+	<tr><th scope=row>6</th><td>0.009822271</td><td>0.024040950</td><td>0.9963235</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We could use this information to find the threshold for sensitivity to be above 0.75. A threshold of 0.062 is the highest threshold with sensitivity above 0.75 and sensitivity 0.55.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span><span class="p">[</span><span class="n">roc_vals</span><span class="o">$</span><span class="n">sensitivity</span> <span class="o">&gt;</span> <span class="m">0.75</span><span class="p">,</span> <span class="p">]</span> <span class="o">%&gt;%</span> <span class="nf">tail</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 1 × 3</caption>
+<thead>
+	<tr><th></th><th scope=col>threshold</th><th scope=col>specificity</th><th scope=col>sensitivity</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>63</th><td>0.06201043</td><td>0.5551274</td><td>0.7676471</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>We will use the threshold of 0.080 indicates on our ROC curve to create predicted classes for our response. By comparing to our outcome using the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function, we can directly calculate the sensitivity, specificity, and overall accuracy.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_ys</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span> <span class="o">&gt;</span> <span class="m">0.08</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+<span class="n">tab_outcome</span> <span class="o">&lt;-</span> <span class="nf">table</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">,</span> <span class="n">pred_ys</span><span class="p">)</span>
+<span class="n">tab_outcome</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   pred_ys
+        0     1
+  0 11992  5395
+  1   455   905
+</pre></div>
+</div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># ADD stepwise function </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sens</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="nf">round</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span> <span class="m">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.665</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">spec</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.689710703399091</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">acc</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">)</span>
+<span class="n">acc</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">0.687950072011522</div></div>
+</div>
+<p>Another useful plot is a calibration plot. This type of plot groups the data by the estimated probabilities and compares the mean probability with the observed percentage of observations in class 1. In a sense, it visualizes how close our estimated distribution and true distribution are to each other. There are several packages that can create calibration plots, but we demonstrate how to do this using the tidyverse packages. First, we create a data frame with the predicted probabilities and outcome. Additionally, we group this data into <code class="docutils literal notranslate"><span class="pre">num_cuts</span></code> groups based on the predicted probabilities. Then, we find the estimated mean and standard error within each group along with the observed proportion.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">num_cuts</span> <span class="o">&lt;-</span> <span class="m">10</span>
+<span class="n">cut</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="n">num_cuts</span><span class="p">)</span><span class="o">/</span><span class="n">num_cuts</span>
+<span class="n">calib_data</span> <span class="o">&lt;-</span>  <span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span> <span class="o">=</span> <span class="n">pred_probs</span><span class="p">,</span>
+                          <span class="n">bin</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="n">num_cuts</span><span class="p">),</span>
+                          <span class="n">class</span> <span class="o">=</span> <span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+<span class="n">calib_data</span> <span class="o">&lt;-</span> <span class="n">calib_data</span> <span class="o">%&gt;%</span> 
+             <span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+             <span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> <span class="n">expected</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> <span class="n">se</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">expected</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">expected</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 4</caption>
+<thead>
+	<tr><th scope=col>bin</th><th scope=col>observed</th><th scope=col>expected</th><th scope=col>se</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(0.00488,0.0322]</td><td>0.02123323</td><td>0.02028734</td><td>0.001837447</td></tr>
+	<tr><td>(0.0322,0.0592] </td><td>0.04397852</td><td>0.04411129</td><td>0.003283482</td></tr>
+	<tr><td>(0.0592,0.0862] </td><td>0.06212914</td><td>0.07079371</td><td>0.004791716</td></tr>
+	<tr><td>(0.0862,0.113]  </td><td>0.09860248</td><td>0.09884938</td><td>0.005880479</td></tr>
+	<tr><td>(0.113,0.14]    </td><td>0.13122172</td><td>0.12331957</td><td>0.012769676</td></tr>
+	<tr><td>(0.14,0.167]    </td><td>0.17391304</td><td>0.14635393</td><td>0.012283608</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Next, we plot the observed vs expected proportions along with error bars. The red line indicates a perfect fit.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="o">-</span><span class="n">se</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="o">+</span><span class="n">se</span><span class="p">),</span> <span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">observed</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/5acd1e732a1fd263659e7cd3626929c672aaa69a250606543ff99099610d609b.png" src="../_images/5acd1e732a1fd263659e7cd3626929c672aaa69a250606543ff99099610d609b.png" />
+</div>
+</div>
+</section>
+<section id="variable-selection">
+<h2>Variable Selection<a class="headerlink" href="#variable-selection" title="Permalink to this heading">#</a></h2>
+<p>In the last chapter, we introduced the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function to implement stepwise variable selection. This function also works with <code class="docutils literal notranslate"><span class="pre">glm</span></code> objects. In this case, we use this function to implement backward selection from a larger set of covariates. We first remove any observations with NA values to ensure that our training data does not change size as the formula changes.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts_sub</span> <span class="o">&lt;-</span> <span class="n">nyts</span> <span class="o">%&gt;%</span> 
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">sex</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">otherlang</span><span class="p">,</span> <span class="n">grades_in_past_year</span><span class="p">,</span> <span class="n">perceived_e_cig_use</span><span class="p">,</span> 
+                            <span class="n">race_and_ethnicity</span><span class="p">,</span> <span class="n">LGBT</span><span class="p">,</span> <span class="n">psych_distress</span><span class="p">,</span> <span class="n">family_affluence</span><span class="p">,</span> <span class="n">e_cig_use</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">na.omit</span><span class="p">()</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">nyts_sub</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 6 × 11</caption>
+<thead>
+	<tr><th scope=col>location</th><th scope=col>sex</th><th scope=col>grade</th><th scope=col>otherlang</th><th scope=col>grades_in_past_year</th><th scope=col>perceived_e_cig_use</th><th scope=col>race_and_ethnicity</th><th scope=col>LGBT</th><th scope=col>psych_distress</th><th scope=col>family_affluence</th><th scope=col>e_cig_use</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>school</td><td>Male  </td><td>6th</td><td>No</td><td>Mostly A's</td><td>0</td><td>non-Hispanic White</td><td>No      </td><td>mild  </td><td>medium</td><td>0</td></tr>
+	<tr><td>school</td><td>Female</td><td>6th</td><td>No</td><td>Mostly A's</td><td>0</td><td>non-Hispanic White</td><td>Not Sure</td><td>none  </td><td>high  </td><td>0</td></tr>
+	<tr><td>school</td><td>Female</td><td>6th</td><td>No</td><td>Mostly C's</td><td>0</td><td>non-Hispanic Black</td><td>Yes     </td><td>severe</td><td>medium</td><td>0</td></tr>
+	<tr><td>school</td><td>Female</td><td>6th</td><td>No</td><td>Mostly A's</td><td>0</td><td>non-Hispanic White</td><td>No      </td><td>none  </td><td>high  </td><td>0</td></tr>
+	<tr><td>school</td><td>Female</td><td>6th</td><td>No</td><td>Mostly B's</td><td>0</td><td>Hispanic          </td><td>No      </td><td>none  </td><td>high  </td><td>0</td></tr>
+	<tr><td>school</td><td>Male  </td><td>6th</td><td>No</td><td>Not Sure  </td><td>0</td><td>non-Hispanic White</td><td>No      </td><td>mild  </td><td>medium</td><td>0</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>To implement backward selection, we first create a model with all the covariates included. The period <code class="docutils literal notranslate"><span class="pre">.</span></code> in the formula indicates to include all variables. Next, we use the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function. Since we are using backward selection, we only need to specify the lower formula in the scope.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_full</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">.</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nyts_sub</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
+<span class="n">mod_step</span> <span class="o">&lt;-</span> <span class="nf">step</span><span class="p">(</span><span class="n">model_full</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&#39;backward&#39;</span><span class="p">,</span> 
+                 <span class="n">scope</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">lower</span> <span class="o">=</span> <span class="s">&quot;e_cig_use ~ sex + grade + race_and_ethnicity + location&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start:  AIC=6093.41
+e_cig_use ~ location + sex + grade + otherlang + grades_in_past_year + 
+    perceived_e_cig_use + race_and_ethnicity + LGBT + psych_distress + 
+    family_affluence
+
+                      Df Deviance    AIC
+- family_affluence     2   6038.0 6090.0
+&lt;none&gt;                     6037.4 6093.4
+- otherlang            1   6042.5 6096.5
+- LGBT                 2   6051.4 6103.4
+- psych_distress       3   6105.5 6155.5
+- grades_in_past_year  6   6126.2 6170.2
+- perceived_e_cig_use  1   6415.5 6469.5
+
+Step:  AIC=6090
+e_cig_use ~ location + sex + grade + otherlang + grades_in_past_year + 
+    perceived_e_cig_use + race_and_ethnicity + LGBT + psych_distress
+
+                      Df Deviance    AIC
+&lt;none&gt;                     6038.0 6090.0
+- otherlang            1   6043.0 6093.0
+- LGBT                 2   6051.7 6099.7
+- psych_distress       3   6105.6 6151.6
+- grades_in_past_year  6   6128.0 6168.0
+- perceived_e_cig_use  1   6418.4 6468.4
 </pre></div>
 </div>
 </div>
 </div>
+<p>Stepwise selection keeps most variables in the model and only drops family affluence. We can see the AUC for this model has improved to 0.818.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span> <span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span> 
+                    <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">print.thres</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d516c068dda8494da9433a7e02156f984b62267757a93ce5e8c4b87515e5ecb9.png" src="../_images/d516c068dda8494da9433a7e02156f984b62267757a93ce5e8c4b87515e5ecb9.png" />
+</div>
+</div>
+</section>
+<section id="exercises">
+<h2>Exercises:<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Try using <code class="docutils literal notranslate"><span class="pre">lm</span></code> for analyzing the smoking behavior as a function of variables in the <code class="docutils literal notranslate"><span class="pre">nyts</span></code> data. They can be random from your favorite or interested potential predictors. Fit a Logistic regression to your subset of data frame using <code class="docutils literal notranslate"><span class="pre">glm</span></code>. Are the estimated coefficients similar to the true ones we used?</p></li>
+<li><p>What is the estimated probability of an event at x=1,1? Use <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function but make sure to read the documentation on the type argument.</p></li>
+<li><p>Measure accuracy and precision of your model.</p></li>
+</ol>
 </section>
 </section>
 
@@ -696,11 +895,10 @@ Setting direction: controls &lt; cases
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-in-r">Implementation in R</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-dataset">The Dataset</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-fitting">Model Fitting</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots">Diagnostic Plots</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#predictability-of-the-model">Predictability of the Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residuals-discrimination-and-calibration">Residuals, Discrimination, and Calibration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-selection">Variable Selection</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises:</a></li>
 </ul>
   </nav></div>
 

@@ -61,6 +61,8 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'book/13_expanding_r_skills';</script>
     <link rel="canonical" href="https://alicepaul.github.io/r-for-health-data-science/book/13_expanding_r_skills.html" />
     <link rel="shortcut icon" href="../_static/fav.png"/>
@@ -158,12 +160,12 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l1"><a class="reference internal" href="4_exploratory_analysis.html">4. Intro to Exploratory Data Analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="5_data_transformations_summaries.html">5. Data Transformations and Summaries</a></li>
 <li class="toctree-l1"><a class="reference internal" href="6_merging_data.html">6. Merging and Reshaping Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="7_visualization_ggplot.html">7. Visualization with ggplot2</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Random Variables and Simulation</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Distributions and Hypothesis Testing</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="8_distributions_and_tests.html">8. Distributions and Hypothesis Testing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="9_simulation.html">9. Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions and Random Variables in R</a></li>
+<li class="toctree-l1"><a class="reference internal" href="9_hypothesis_tests.html">9. Hypothesis Testing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Regression</span></p>
 <ul class="nav bd-sidenav">
@@ -173,6 +175,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">13. Expanding your R Skills</a></li>
 </ul>
 
@@ -327,7 +330,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -343,6 +348,17 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-documentation-for-new-packages">Reading Documentation for New Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trying-simple-examples">Trying Simple Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deciphering-error-messages-and-warnings">Deciphering Error Messages and Warnings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-programming-tips">General Programming Tips</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -354,6 +370,202 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="expanding-your-r-skills">
 <h1>13. Expanding your R Skills<a class="headerlink" href="#expanding-your-r-skills" title="Permalink to this heading">#</a></h1>
+<p>Throughout this book we have covered some popular packages and specific functions from these packages. However, it is impossible to cover all the packages, functions, and options that R has. Additionally, as you start to apply these tools in new settings you may encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered.</p>
+<p>We will demonstrate these skills using the <code class="docutils literal notranslate"><span class="pre">stringr</span></code> package, which is part of the tidyverse. This package has several functions for dealing with text data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr    </span> 1.1.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr    </span> 2.1.4
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats  </span> 1.0.0     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr  </span> 1.5.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2  </span> 3.4.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble   </span> 3.2.1
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">lubridate</span> 1.9.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr    </span> 1.3.0
+<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr    </span> 1.0.1     
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
+<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
+<span class=" -Color -Color-Cyan">ℹ</span> Use the conflicted package (<span class=" -Color -Color-Blue">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors
+</pre></div>
+</div>
+</div>
+</div>
+<section id="reading-documentation-for-new-packages">
+<h2>Reading Documentation for New Packages<a class="headerlink" href="#reading-documentation-for-new-packages" title="Permalink to this heading">#</a></h2>
+<p>Every published package has a CRAN website. This website contains a reference manual which contains the documentation for the functions and data available in the package. Most often there are also useful vignettes that give examples using the package. The site also tells you the requirements for using the package, the authors, and when it was last updated. Take a look at the CRAN site for <a class="reference external" href="https://cran.r-project.org/web/packages/stringr/index.html">stringr</a> and read the vignette <a class="reference external" href="https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html">Introduction to String R</a>.</p>
+<p>We will use this package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130">Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41</a>. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parantheses or will be a sequence of paranthetical phrases connected with AND or OR. However, there could be other paranthetical text such as “(CENTRAL)” below. We will ignore extra paranthetical text that are more than one word long for our example.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
+<span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
+<span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The first thing we want to do with the text remove any trailing, leading, or multiple spaces. In our example, the string starts with a trailing space and there are multiple spaces right before the search query. Searching for “whitespace” in the stringr reference manual we find the <code class="docutils literal notranslate"><span class="pre">str_trim()</span></code> and <code class="docutils literal notranslate"><span class="pre">str_squish()</span></code> functions. Read the documentation for these two functions. You should find that <code class="docutils literal notranslate"><span class="pre">str_squish()</span></code> is the function we are looking for and it takes two arguments.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
+<span class="n">sample_str</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">'A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), using the following search query: (\'out-of-hospital cardiac arrest\' OR \'OHCA\') AND (\'MIRACLE 2\' OR \'OHCA\' OR \'CAHP\' OR \'C-GRAPH\' OR \'SOFA\' OR \'APACHE\' OR \'SAPS’ OR ’SWAP’ OR ’TTM’).'</div></div>
+</div>
+</section>
+<section id="trying-simple-examples">
+<h2>Trying Simple Examples<a class="headerlink" href="#trying-simple-examples" title="Permalink to this heading">#</a></h2>
+<p>Above is a good example of starting with a simple case. Rather than applying my function to my full data yet, I want to make sure I understand how it works on a simple example on which I can anticipate what the outcome should look like. My next task will be to split the text into words stored as a character vector. Read the documentation to determine why I used the <code class="docutils literal notranslate"><span class="pre">str_split_1()</span></code> function below. I double check that the returned result is indeed a vector and print the result.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str_words</span> <span class="o">&lt;-</span> <span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="nf">class</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">)</span>
+<span class="n">sample_str_words</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">'character'</div><div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'A'</li><li>'systematic'</li><li>'search'</li><li>'will'</li><li>'be'</li><li>'performed'</li><li>'in'</li><li>'PubMed,'</li><li>'Embase,'</li><li>'and'</li><li>'the'</li><li>'Cochrane'</li><li>'Library'</li><li>'(CENTRAL),'</li><li>'using'</li><li>'the'</li><li>'following'</li><li>'search'</li><li>'query:'</li><li>'(\'out-of-hospital'</li><li>'cardiac'</li><li>'arrest\''</li><li>'OR'</li><li>'\'OHCA\')'</li><li>'AND'</li><li>'(\'MIRACLE'</li><li>'2\''</li><li>'OR'</li><li>'\'OHCA\''</li><li>'OR'</li><li>'\'CAHP\''</li><li>'OR'</li><li>'\'C-GRAPH\''</li><li>'OR'</li><li>'\'SOFA\''</li><li>'OR'</li><li>'\'APACHE\''</li><li>'OR'</li><li>'\'SAPS’'</li><li>'OR'</li><li>'’SWAP’'</li><li>'OR'</li><li>'’TTM’).'</li></ol>
+</div></div>
+</div>
+<p>We now want to identify words in this vector that have a starting and/or end parantheses. The function <code class="docutils literal notranslate"><span class="pre">grepl()</span></code> takes in a character vector <code class="docutils literal notranslate"><span class="pre">x</span></code> and a pattern to search for. It returns a logical vector for whether or not each element of x has a match for that pattern.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message in grepl(sample_str_words, &quot;)&quot;):
+“argument &#39;pattern&#39; has length &gt; 1 and only the first element will be used”
+</pre></div>
+</div>
+<div class="output text_html">FALSE</div></div>
+</div>
+<p>Huh, that didn’t match what I expected! I expected to have multiple TRUE/FALSE values outputted - one for each word. Let’s read the documentation again.</p>
+</section>
+<section id="deciphering-error-messages-and-warnings">
+<h2>Deciphering Error Messages and Warnings<a class="headerlink" href="#deciphering-error-messages-and-warnings" title="Permalink to this heading">#</a></h2>
+<p>The warning message will give us a good clue for what went wrong. It says that the inputted pattern has length &gt; 1. However, the pattern I gave it is a single character. In fact, I specified the arguments in the wrong order. Let’s try again. This time I specify <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">pattern</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li></ol>
+</div></div>
+</div>
+<p>That worked! However, it won’t work if we change that to a starting parantheses. Try it out for yourself. The error message says that it is looking for an end parantheses. In this case, the documentation does not help us. Let’s try googling “stringr find start parantheses”. The first search result for me is a <a class="reference external" href="https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r">stack overflow question</a> that helps us out: “The \s will tell R to read the parentheses literally when searching for the pattern”. We need to add the double slashes to the start since these are a special character in regular expressions..</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>TRUE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li><li>FALSE</li></ol>
+</div></div>
+</div>
+<p>When a function doesn’t return what we expected it is a good idea to first test the arguments we gave it match what we expect and then to re-read the documentation. For example, we could check that <code class="docutils literal notranslate"><span class="pre">sample_str_words</span></code> is indeed a character vector. The code below finds words with starting or end parantheses and then finds any AND/ORs. Practice reading through the code to understand what it is doing. The comments are there to help explain the steps but you may also want to print the output to figure out what it is doing.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
+<span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
+<span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
+
+<span class="c1"># remove extra whitespace and split by spaces</span>
+<span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
+<span class="n">sample_str_words</span> <span class="o">&lt;-</span> <span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+
+<span class="c1"># find indices with parentheses or AND/OR</span>
+<span class="n">end_ps</span> <span class="o">&lt;-</span> <span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\)&quot;</span><span class="p">)</span>
+<span class="n">start_ps</span> <span class="o">&lt;-</span> <span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
+<span class="n">and_ors</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">sample_str_words</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;AND&quot;</span><span class="p">,</span> <span class="s">&quot;OR&quot;</span><span class="p">))</span>
+
+<span class="c1"># connect parantheses that are combined with AND or OR</span>
+<span class="n">end_ps</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="nf">lead</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nf">lead</span><span class="p">(</span><span class="n">start_ps</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">end_ps</span><span class="p">)</span>
+<span class="n">start_ps</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="nf">lag</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nf">lag</span><span class="p">(</span><span class="n">end_ps</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">start_ps</span><span class="p">)</span>
+
+<span class="c1"># find paranthetical phrases</span>
+<span class="n">count</span> <span class="o">&lt;-</span> <span class="nf">case_when</span><span class="p">((</span><span class="n">start_ps</span> <span class="o">&amp;</span> <span class="o">!</span><span class="n">end_ps</span><span class="p">)</span> <span class="o">~</span> <span class="m">1</span><span class="p">,</span> <span class="c1"># starting phrase</span>
+                  <span class="p">(</span><span class="o">!</span><span class="n">start_ps</span> <span class="o">&amp;</span> <span class="n">end_ps</span><span class="p">)</span> <span class="o">~</span> <span class="m">-1</span><span class="p">,</span> <span class="c1"># end phrase</span>
+                   <span class="kc">TRUE</span> <span class="o">~</span> <span class="m">0</span><span class="p">)</span> <span class="c1"># no change</span>
+
+<span class="c1"># find search query</span>
+<span class="n">search_query</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">[</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">],</span> <span class="n">collapse</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="n">search_query</span>
+
+<span class="c1"># get terms used</span>
+<span class="nf">str_split</span><span class="p">(</span><span class="n">search_query</span><span class="p">,</span> <span class="s">&quot; AND | OR &quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">'(\'out-of-hospital cardiac arrest\' OR \'OHCA\') AND (\'MIRACLE 2\' OR \'OHCA\' OR \'CAHP\' OR \'C-GRAPH\' OR \'SOFA\' OR \'APACHE\' OR \'SAPS’ OR ’SWAP’ OR ’TTM’).'</div><div class="output text_html"><ol>
+	<li><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'(\'out-of-hospital cardiac arrest\''</li><li>'\'OHCA\')'</li><li>'(\'MIRACLE 2\''</li><li>'\'OHCA\''</li><li>'\'CAHP\''</li><li>'\'C-GRAPH\''</li><li>'\'SOFA\''</li><li>'\'APACHE\''</li><li>'\'SAPS’'</li><li>'’SWAP’'</li><li>'’TTM’).'</li></ol>
+</li>
+</ol>
+</div></div>
+</div>
+<p>The code above is actually incorrect even though the end result gave us close to the result we wanted. We can see this when we try out another example. Substitute in the string below to the above code and see what breaks.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot;Searches will be conducted in MEDLINE via PubMed, Web of Science, </span>
+<span class="s">Scopus and Embase. The following search strategy will</span>
+<span class="s">be used:(child OR infant OR preschool child OR preschool children OR preschooler OR pre-school child </span>
+<span class="s">OR pre-school children OR pre school child OR pre school children OR pre-schooler OR pre schooler </span>
+<span class="s">OR children OR teenager OR adolescent OR adolescents)AND (attention deficit disorder with hyperactivity </span>
+<span class="s">OR ADHD OR attention deficit disorder OR ADD OR hyperkinetic disorder OR minimal brain disorder) Submitted &quot;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The video below will go through how to debug the code above.</p>
+<p>TODO: error messages in code</p>
+</section>
+<section id="general-programming-tips">
+<h2>General Programming Tips<a class="headerlink" href="#general-programming-tips" title="Permalink to this heading">#</a></h2>
+<p>As you write more complex code and functions, it is inevitable that you will run into errors or unexpected behavior. Below are some simple principles that are applicable to debugging in any setting. When it comes to testing code, a good mantra is test early and test often. So avoid writing too much code before running and checking that the results match what you expect.</p>
+<ol class="arabic simple">
+<li><p>Check that all paranthesis (), brackets [], and curly braces {} match.</p></li>
+<li><p>Check that object names are correct.</p></li>
+<li><p>Check if you use the same name for different objects or that you use different names for the same object. You can do this by using the <code class="docutils literal notranslate"><span class="pre">ls()</span></code> function to find all current objects.</p></li>
+<li><p>Check that the input arguments to a function match what is expected.</p></li>
+<li><p>Try simple examples first. You can use the documentation or vignette examples for ideas.</p></li>
+<li><p>Localize your error by checking the values of objects at different points.</p></li>
+<li><p>Modify your code one piece at a time before checking it to avoid introducing new errors.</p></li>
+<li><p>Google error messages you don’t understand. R’s messages can sometimes hint at what the error might stem from but are not always direct.</p></li>
+</ol>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -405,6 +617,23 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-documentation-for-new-packages">Reading Documentation for New Packages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trying-simple-examples">Trying Simple Examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deciphering-error-messages-and-warnings">Deciphering Error Messages and Warnings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#general-programming-tips">General Programming Tips</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
