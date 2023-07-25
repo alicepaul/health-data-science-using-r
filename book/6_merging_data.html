@@ -749,12 +749,49 @@ document.write(`
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># ADD error</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">1</span><span class="n">.</span><span class="w"> </span><span class="n">Why</span><span class="w"> </span><span class="n">does</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="n">fail</span><span class="o">?</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="ow">in</span> <span class="n">parse</span><span class="p">(</span><span class="n">text</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">srcfile</span> <span class="o">=</span> <span class="n">src</span><span class="p">):</span> <span class="o">&lt;</span><span class="n">text</span><span class="o">&gt;</span><span class="p">:</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">:</span> <span class="n">unexpected</span> <span class="n">symbol</span>
+<span class="mi">1</span><span class="p">:</span> <span class="mf">1.</span> <span class="n">Why</span>
+       <span class="o">^</span>
+<span class="ne">Traceback</span>:
 </pre></div>
 </div>
 </div>
 </div>
-<ol class="arabic simple">
+<p>In particular, there are two rows with values for the age of “Phillip Woods”. We could solve the problem by adding a row with a distinct observation count for each combination of name and key. We can make people2 wider because the combination of name and obs will uniquely identify the rows in the wide data frame. Another way to solve this problem is by keeping only distinct rows of the name and key values, and dropping duplicate rows.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">people</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Phillip Woods&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip Woods&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip Woods&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica Cordero&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica Cordero&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">feature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;height&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;height&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">186</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">37</span><span class="p">,</span><span class="w"> </span><span class="m">156</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">people</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">distinct</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">.keep_all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 3</caption>
+<thead>
+	<tr><th scope=col>feature</th><th scope=col>Phillip Woods</th><th scope=col>Jessica Cordero</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>height</td><td> 45</td><td>156</td></tr>
+	<tr><td>age   </td><td>186</td><td> 37</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<ol class="arabic simple" start="2">
 <li><p>First, create a data frame <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> where the columns corresponded to the number of cases for CA, Michigan, Connecticut, RI, Ohio, NY, and MA states and the rows corresponded to the months. Then, manipulate the mobility data to calculate total number of <code class="docutils literal notranslate"><span class="pre">m50</span></code> for each month and merge it with the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> using <code class="docutils literal notranslate"><span class="pre">right_join()</span></code> function. <strong>average m50 and delete function hint</strong>.</p></li>
 </ol>
 <div class="cell docutils container">
@@ -849,7 +886,7 @@ document.write(`
 </table>
 </div></div>
 </div>
-<ol class="arabic simple" start="2">
+<ol class="arabic simple" start="3">
 <li><p>Convert the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> and <code class="docutils literal notranslate"><span class="pre">mob_reshape</span></code> data frames to wide format and create columns of total cases for each state and total <code class="docutils literal notranslate"><span class="pre">m50</span></code> for those selected states in the <code class="docutils literal notranslate"><span class="pre">mob_reshape</span></code> data frames. Using the <code class="docutils literal notranslate"><span class="pre">left_join()</span></code> function to merge them together.</p></li>
 </ol>
 <div class="cell docutils container">

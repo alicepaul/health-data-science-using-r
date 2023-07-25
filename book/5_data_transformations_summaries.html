@@ -975,7 +975,6 @@ Current Smoker   Never Smoked   Quit Smoking
 </section>
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
-<p>TODO: use COVID data for exercises</p>
 <p>TODO: used data table and data frame</p>
 <ol class="arabic simple">
 <li><p>We will use 20-to-29-year-old females to explore some basic facts about blood pressure. Create a <code class="docutils literal notranslate"><span class="pre">AGE_CAT</span></code> is a categorical variable with ages decade. What is the average and standard deviation of systolic blood pressure as saved in the <code class="docutils literal notranslate"><span class="pre">SBP1</span></code> variable? Save it to variables called <code class="docutils literal notranslate"><span class="pre">AVE_SBP</span></code> and <code class="docutils literal notranslate"><span class="pre">SD_ABP</span></code>. Hint: Use filter and summarize and use the na.rm = TRUE argument when computing the average and standard deviation. You can also filter the NA values using filter.</p></li>
@@ -1128,6 +1127,44 @@ Current Smoker   Never Smoked   Quit Smoking
 	<tr><td>Mexican American  </td><td> 579</td><td>122.5474</td><td>13.61925</td></tr>
 	<tr><td>Other Hispanic    </td><td> 188</td><td>124.3068</td><td>15.22168</td></tr>
 	<tr><td>Non-Hispanic Black</td><td> 541</td><td>127.6223</td><td>16.57220</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>We will use <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> dataset for exercises. Construct a new data frame <code class="docutils literal notranslate"><span class="pre">covid_sub</span></code> that calculates the total number of cases confirmed in each county of state and filter the top 10 counties with their both cases and deaths.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+<span class="n">covid_sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">county</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">totalcases</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">),</span>
+<span class="w">            </span><span class="n">totaldeaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">totaldeaths</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">)</span>
+<span class="n">covid_sub</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 10 × 3</caption>
+<thead>
+	<tr><th scope=col>county</th><th scope=col>totalcases</th><th scope=col>totaldeaths</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>New York City</td><td>201698</td><td>20226</td></tr>
+	<tr><td>Providence   </td><td>139025</td><td>10276</td></tr>
+	<tr><td>Bergen       </td><td> 19220</td><td> 7799</td></tr>
+	<tr><td>Middlesex    </td><td> 67845</td><td> 7200</td></tr>
+	<tr><td>Nassau       </td><td> 39435</td><td> 6766</td></tr>
+	<tr><td>Los Angeles  </td><td>204839</td><td> 4720</td></tr>
+	<tr><td>Orange       </td><td> 87576</td><td> 4284</td></tr>
+	<tr><td>Rockland     </td><td> 12258</td><td> 4275</td></tr>
+	<tr><td>Cook         </td><td>110237</td><td> 4141</td></tr>
+	<tr><td>Essex        </td><td> 52243</td><td> 4010</td></tr>
 </tbody>
 </table>
 </div></div>
