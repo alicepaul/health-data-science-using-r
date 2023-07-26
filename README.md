@@ -26,10 +26,7 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 - car_3.1
 - RforHDSdata_0.1.0
 - gtsummary_1.7.1
-- Lubridate_1.9.2
-- MASS_7.3
 - kableExtra_1.3.4
-- lmtest_0.9.40
 
 ## Guideline for this repository
 

@@ -354,6 +354,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tidy-data">Tidy Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reshaping-data">Reshaping Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-data-with-joins">Merging Data with Joins</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
@@ -520,6 +521,70 @@ document.write(`
 </table>
 </div></div>
 </div>
+<section id="tidy-data">
+<h2>Tidy Data<a class="headerlink" href="#tidy-data" title="Permalink to this heading">#</a></h2>
+<p>The tidyverse is designed around interacting with <strong>tidy data</strong> with the premise that a tidy format we can streamline our analysis. Data is considered <strong>tidy</strong> if</p>
+<ol class="arabic simple">
+<li><p>Each variable is associated with a single column.</p></li>
+<li><p>Each observation is associated with a single row.</p></li>
+<li><p>Each value has its own cell.</p></li>
+</ol>
+<p>Take a look at the data below which stores information about the maternal mortality rate for five countries over time (source: <a class="reference external" href="https://ourworldindata.org/maternal-mortality">https://ourworldindata.org/maternal-mortality</a>). This data is <em>not</em> tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mat_mort1</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">country</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Turkey&quot;</span><span class="p">,</span> <span class="s">&quot;United States&quot;</span><span class="p">,</span> <span class="s">&quot;Sweden&quot;</span><span class="p">,</span> <span class="s">&quot;Japan&quot;</span><span class="p">),</span>
+                       <span class="n">y2002</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">64</span><span class="p">,</span> <span class="m">9.9</span><span class="p">,</span> <span class="m">4.17</span><span class="p">,</span> <span class="m">7.8</span><span class="p">),</span>
+                       <span class="n">y2007</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">21.9</span><span class="p">,</span> <span class="m">12.7</span><span class="p">,</span> <span class="m">1.86</span><span class="p">,</span> <span class="m">3.6</span><span class="p">),</span>
+                       <span class="n">y2012</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">15.2</span><span class="p">,</span> <span class="m">16</span><span class="p">,</span> <span class="m">5.4</span><span class="p">,</span> <span class="m">4.8</span><span class="p">))</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">mat_mort1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 4 × 4</caption>
+<thead>
+	<tr><th></th><th scope=col>country</th><th scope=col>y2002</th><th scope=col>y2007</th><th scope=col>y2012</th></tr>
+	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>Turkey       </td><td>64.00</td><td>21.90</td><td>15.2</td></tr>
+	<tr><th scope=row>2</th><td>United States</td><td> 9.90</td><td>12.70</td><td>16.0</td></tr>
+	<tr><th scope=row>3</th><td>Sweden       </td><td> 4.17</td><td> 1.86</td><td> 5.4</td></tr>
+	<tr><th scope=row>4</th><td>Japan        </td><td> 7.80</td><td> 3.60</td><td> 4.8</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>Instead, we could make this data tidy by having columns for country, year, and maternity mortality rate. Now every observation is associated with an individual row.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mat_mort2</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">country</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Turkey&quot;</span><span class="p">,</span> <span class="s">&quot;United States&quot;</span><span class="p">,</span> <span class="s">&quot;Sweden&quot;</span><span class="p">,</span> <span class="s">&quot;Japan&quot;</span><span class="p">),</span> <span class="m">3</span><span class="p">),</span>
+                       <span class="n">year</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">2002</span><span class="p">,</span> <span class="m">4</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">2007</span><span class="p">,</span> <span class="m">4</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">2012</span><span class="p">,</span> <span class="m">4</span><span class="p">)),</span>
+                       <span class="n">mat_mort_rate</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">64.0</span><span class="p">,</span> <span class="m">9.9</span><span class="p">,</span> <span class="m">4.17</span><span class="p">,</span> <span class="m">7.8</span><span class="p">,</span> <span class="m">21.9</span><span class="p">,</span> <span class="m">12.7</span><span class="p">,</span> <span class="m">1.86</span><span class="p">,</span> <span class="m">3.6</span><span class="p">,</span> <span class="m">15.2</span><span class="p">,</span> <span class="m">16</span><span class="p">,</span> <span class="m">5.4</span><span class="p">,</span> <span class="m">4.8</span><span class="p">))</span>
+<span class="nf">head</span><span class="p">(</span><span class="n">mat_mort2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 3</caption>
+<thead>
+	<tr><th></th><th scope=col>country</th><th scope=col>year</th><th scope=col>mat_mort_rate</th></tr>
+	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td>Turkey       </td><td>2002</td><td>64.00</td></tr>
+	<tr><th scope=row>2</th><td>United States</td><td>2002</td><td> 9.90</td></tr>
+	<tr><th scope=row>3</th><td>Sweden       </td><td>2002</td><td> 4.17</td></tr>
+	<tr><th scope=row>4</th><td>Japan        </td><td>2002</td><td> 7.80</td></tr>
+	<tr><th scope=row>5</th><td>Turkey       </td><td>2007</td><td>21.90</td></tr>
+	<tr><th scope=row>6</th><td>United States</td><td>2007</td><td>12.70</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+</section>
 <section id="reshaping-data">
 <h2>Reshaping Data<a class="headerlink" href="#reshaping-data" title="Permalink to this heading">#</a></h2>
 <p>The mobility and covid case data are in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider the lockdown dates to not be in the same form. Another way to represent this data would be to have each observation be the start or end of a stay at home order.</p>
@@ -749,164 +814,8 @@ document.write(`
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>First, create a data frame <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> where the columns corresponded to the number of cases for CA, Michigan, Connecticut, RI, Ohio, NY, and MA states and the rows corresponded to the months. Then, manipulate the mobility data to calculate total number of <code class="docutils literal notranslate"><span class="pre">m50</span></code> for each month and merge it with the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> using <code class="docutils literal notranslate"><span class="pre">right_join()</span></code> function.</p></li>
+<li><p>Why does this code fail?</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sub_cases</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
-  <span class="nf">filter</span><span class="p">(</span><span class="n">state</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;California&quot;</span><span class="p">,</span> <span class="s">&quot;Michigan&quot;</span><span class="p">,</span> <span class="s">&quot;Connecticut&quot;</span><span class="p">,</span> <span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
-                      <span class="s">&quot;Ohio&quot;</span><span class="p">,</span> <span class="s">&quot;New York&quot;</span><span class="p">,</span> <span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">mutate</span><span class="p">(</span><span class="n">month</span> <span class="o">=</span> <span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">total_cases</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">ungroup</span><span class="p">()</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">sub_cases</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;state&#39;. You can override using the
-`.groups` argument.
-</pre></div>
-</div>
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 6 × 3</caption>
-<thead>
-	<tr><th scope=col>state</th><th scope=col>month</th><th scope=col>total_cases</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>California</td><td>3</td><td>  2448</td></tr>
-	<tr><td>California</td><td>4</td><td> 37734</td></tr>
-	<tr><td>California</td><td>5</td><td> 45420</td></tr>
-	<tr><td>California</td><td>6</td><td> 79985</td></tr>
-	<tr><td>California</td><td>7</td><td>241875</td></tr>
-	<tr><td>California</td><td>8</td><td>175692</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mob_reshape</span> <span class="o">&lt;-</span> <span class="n">mobility</span> <span class="o">%&gt;%</span> 
-                 <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">%&gt;%</span>
-                 <span class="nf">mutate</span><span class="p">(</span><span class="n">month</span> <span class="o">=</span> <span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">),</span> <span class="n">mean_m50</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">m50</span><span class="p">))</span> <span class="o">%&gt;%</span>
-                 <span class="nf">filter</span><span class="p">(</span><span class="n">state</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;California&quot;</span><span class="p">,</span> <span class="s">&quot;Michigan&quot;</span><span class="p">,</span> <span class="s">&quot;Connecticut&quot;</span><span class="p">,</span> <span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
-                      <span class="s">&quot;Ohio&quot;</span><span class="p">,</span> <span class="s">&quot;New York&quot;</span><span class="p">,</span> <span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span> 
-<span class="n">mob_reshape</span> <span class="o">&lt;-</span> <span class="n">mob_reshape</span> <span class="o">%&gt;%</span>
-                 <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">month</span><span class="p">)</span><span class="o">%&gt;%</span>
-                 <span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">mob_reshape</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A grouped_df: 6 × 7</caption>
-<thead>
-	<tr><th scope=col>state</th><th scope=col>date</th><th scope=col>samples</th><th scope=col>m50</th><th scope=col>m50_index</th><th scope=col>month</th><th scope=col>mean_m50</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>California</td><td>2020-03-01</td><td> 902406</td><td>9.722800</td><td>312.14545</td><td>3</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>2020-04-01</td><td> 795628</td><td>1.470907</td><td> 22.53704</td><td>4</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>2020-05-01</td><td> 970598</td><td>3.157545</td><td> 49.87273</td><td>5</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>2020-06-01</td><td>1182003</td><td>3.598545</td><td> 56.80000</td><td>6</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>2020-07-01</td><td> 942292</td><td>4.494091</td><td> 73.07273</td><td>7</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>2020-08-01</td><td>1005154</td><td>2.882400</td><td> 52.67273</td><td>8</td><td>3.038449</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covid_mob_sub</span> <span class="o">&lt;-</span> <span class="nf">right_join</span><span class="p">(</span><span class="n">sub_cases</span><span class="p">,</span> <span class="n">mob_reshape</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;month&quot;</span><span class="p">,</span> <span class="s">&quot;state&quot;</span><span class="p">))</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">covid_mob_sub</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 6 × 8</caption>
-<thead>
-	<tr><th scope=col>state</th><th scope=col>month</th><th scope=col>total_cases</th><th scope=col>date</th><th scope=col>samples</th><th scope=col>m50</th><th scope=col>m50_index</th><th scope=col>mean_m50</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;date&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>California</td><td>3</td><td>  2448</td><td>2020-03-01</td><td> 902406</td><td>9.722800</td><td>312.14545</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>4</td><td> 37734</td><td>2020-04-01</td><td> 795628</td><td>1.470907</td><td> 22.53704</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>5</td><td> 45420</td><td>2020-05-01</td><td> 970598</td><td>3.157545</td><td> 49.87273</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>6</td><td> 79985</td><td>2020-06-01</td><td>1182003</td><td>3.598545</td><td> 56.80000</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>7</td><td>241875</td><td>2020-07-01</td><td> 942292</td><td>4.494091</td><td> 73.07273</td><td>3.038449</td></tr>
-	<tr><td>California</td><td>8</td><td>175692</td><td>2020-08-01</td><td>1005154</td><td>2.882400</td><td> 52.67273</td><td>3.038449</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p>Convert the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> and <code class="docutils literal notranslate"><span class="pre">mob_reshape</span></code> data frames to wide format and create columns of total cases for each state and total <code class="docutils literal notranslate"><span class="pre">m50</span></code> for those selected states in the <code class="docutils literal notranslate"><span class="pre">mob_reshape</span></code> data frames. Using the <code class="docutils literal notranslate"><span class="pre">left_join()</span></code> function to merge them together.</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sub_cases_wide</span> <span class="o">&lt;-</span> <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">sub_cases</span><span class="p">,</span> <span class="n">names_from</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">values_from</span><span class="o">=</span><span class="n">total_cases</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mob_reshape_2</span> <span class="o">&lt;-</span> <span class="n">mob_reshape</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">month</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">tot</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">mean_m50</span><span class="p">))</span>
-<span class="n">mob_reshape_2</span>
-<span class="c1"># pivot_wider(mob_reshape, names_from=state, values_from=total_m50)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 7 × 2</caption>
-<thead>
-	<tr><th scope=col>month</th><th scope=col>tot</th></tr>
-	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>3</td><td>28.28727</td></tr>
-	<tr><td>4</td><td>28.28727</td></tr>
-	<tr><td>5</td><td>28.28727</td></tr>
-	<tr><td>6</td><td>28.28727</td></tr>
-	<tr><td>7</td><td>28.28727</td></tr>
-	<tr><td>8</td><td>28.28727</td></tr>
-	<tr><td>9</td><td>28.28727</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">left_join</span><span class="p">(</span><span class="n">sub_cases_wide</span><span class="p">,</span> <span class="n">mob_reshape_2</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;month&quot;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 7 × 9</caption>
-<thead>
-	<tr><th scope=col>month</th><th scope=col>California</th><th scope=col>Connecticut</th><th scope=col>Massachusetts</th><th scope=col>Michigan</th><th scope=col>New York</th><th scope=col>Ohio</th><th scope=col>Rhode Island</th><th scope=col>tot</th></tr>
-	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>3</td><td>  2448</td><td>  579</td><td>  1022</td><td> 1745</td><td> 24619</td><td>  518</td><td>   NA</td><td>28.28727</td></tr>
-	<tr><td>4</td><td> 37734</td><td>20875</td><td> 49717</td><td>31757</td><td>232136</td><td>14640</td><td> 6333</td><td>28.28727</td></tr>
-	<tr><td>5</td><td> 45420</td><td>13211</td><td> 29414</td><td>13925</td><td> 57839</td><td>14722</td><td>14770</td><td>28.28727</td></tr>
-	<tr><td>6</td><td> 79985</td><td> 4237</td><td> 12289</td><td>14290</td><td> 22792</td><td>12447</td><td> 2088</td><td>28.28727</td></tr>
-	<tr><td>7</td><td>241875</td><td> 2812</td><td>  7573</td><td>17573</td><td> 21150</td><td>34987</td><td>48876</td><td>28.28727</td></tr>
-	<tr><td>8</td><td>175692</td><td> 3388</td><td>127787</td><td>18444</td><td> 16184</td><td>25217</td><td>72773</td><td>28.28727</td></tr>
-	<tr><td>9</td><td> 29942</td><td>  900</td><td>  2024</td><td> 4432</td><td>  4174</td><td> 7026</td><td>19809</td><td>28.28727</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
 </section>
 </section>
 
@@ -977,6 +886,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tidy-data">Tidy Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reshaping-data">Reshaping Data</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#merging-data-with-joins">Merging Data with Joins</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
