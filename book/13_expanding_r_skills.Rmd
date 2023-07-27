@@ -1,0 +1,127 @@
+---
+title: An R Markdown document converted from "/Users/jialinliu/Documents/GitHub/r-for-health-data-science/book/13_expanding_r_skills.ipynb"
+output: html_document
+---
+
+# 13. Expanding your R Skills
+
+Throughout this book we have covered some popular packages and specific functions from these packages. However, it is impossible to cover all the packages, functions, and options that R has. Additionally, as you start to apply these tools in new settings you may encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered. 
+
+We will demonstrate these skills using the `stringr` package, which is part of the tidyverse. This package has several functions for dealing with text data. 
+
+```{r}
+library(tidyverse)
+```
+
+## Reading Documentation for New Packages
+
+Every published package has a CRAN website. This website contains a reference manual which contains the documentation for the functions and data available in the package. Most often there are also useful vignettes that give examples using the package. The site also tells you the requirements for using the package, the authors, and when it was last updated. Take a look at the CRAN site for [stringr](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette [Introduction to String R](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html). 
+
+We will use this package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from [Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41](https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130). Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parantheses or will be a sequence of paranthetical phrases connected with AND or OR. However, there could be other paranthetical text such as "(CENTRAL)" below. We will ignore extra paranthetical text that are more than one word long for our example. 
+
+```{r}
+sample_str <- " A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), 
+using the following search query:   ('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 
+'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
+```
+
+The first thing we want to do with the text remove any trailing, leading, or multiple spaces. In our example, the string starts with a trailing space and there are multiple spaces right before the search query. Searching for "whitespace" in the stringr reference manual we find the `str_trim()` and `str_squish()` functions. Read the documentation for these two functions. You should find that `str_squish()` is the function we are looking for and it takes two arguments. 
+
+```{r}
+sample_str <- str_squish(sample_str)
+sample_str
+```
+
+## Trying Simple Examples
+
+Above is a good example of starting with a simple case. Rather than applying my function to my full data yet, I want to make sure I understand how it works on a simple example on which I can anticipate what the outcome should look like. My next task will be to split the text into words stored as a character vector. Read the documentation to determine why I used the `str_split_1()` function below. I double check that the returned result is indeed a vector and print the result.
+
+```{r}
+sample_str_words <- str_split_1(sample_str, " ")
+class(sample_str_words)
+sample_str_words
+```
+
+We now want to identify words in this vector that have a starting and/or end parantheses. The function `grepl()` takes in a character vector `x` and a pattern to search for. It returns a logical vector for whether or not each element of x has a match for that pattern.
+
+```{r}
+grepl(sample_str_words, ")")
+```
+
+Huh, that didn't match what I expected! I expected to have multiple TRUE/FALSE values outputted - one for each word. Let's read the documentation again. 
+
+## Deciphering Error Messages and Warnings
+
+The warning message will give us a good clue for what went wrong. It says that the inputted pattern has length > 1. However, the pattern I gave it is a single character. In fact, I specified the arguments in the wrong order. Let's try again. This time I specify `x` and `pattern`. 
+
+```{r}
+grepl(x=sample_str_words, pattern=")")
+```
+
+That worked! However, it won't work if we change that to a starting parantheses. Try it out for yourself. The error message says that it is looking for an end parantheses. In this case, the documentation does not help us. Let's try googling "stringr find start parantheses". The first search result for me is a [stack overflow question](https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r) that helps us out: "The \\s will tell R to read the parentheses literally when searching for the pattern". We need to add the double slashes to the start since these are a special character in regular expressions..
+
+```{r}
+grepl(x=sample_str_words, pattern="\\(")
+```
+
+When a function doesn't return what we expected it is a good idea to first test the arguments we gave it match what we expect and then to re-read the documentation. For example, we could check that `sample_str_words` is indeed a character vector. The code below finds words with starting or end parantheses and then finds any AND/ORs. Practice reading through the code to understand what it is doing. The comments are there to help explain the steps but you may also want to print the output to figure out what it is doing.
+
+```{r}
+sample_str <- " A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), 
+using the following search query:   ('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 
+'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
+
+# remove extra whitespace and split by spaces
+sample_str <- str_squish(sample_str)
+sample_str_words <- str_split_1(sample_str, " ")
+
+# find indices with parentheses or AND/OR
+end_ps <- grepl(x=sample_str_words, pattern="\\)")
+start_ps <- grepl(x=sample_str_words, pattern="\\(")
+and_ors <- (sample_str_words %in% c("AND", "OR"))
+
+# connect parantheses that are combined with AND or OR
+end_ps <- ifelse(lead(and_ors) & lead(start_ps, 2), FALSE, end_ps)
+start_ps <- ifelse(lag(and_ors) & lag(end_ps, 2), FALSE, start_ps)
+
+# find paranthetical phrases
+count <- case_when((start_ps & !end_ps) ~ 1, # starting phrase
+                  (!start_ps & end_ps) ~ -1, # end phrase
+                   TRUE ~ 0) # no change
+
+# find search query
+search_query <- paste(sample_str_words[cumsum(count) > 0], collapse=" ")
+search_query
+
+# get terms used
+str_split(search_query, " AND | OR ")
+```
+
+The code above is actually incorrect even though the end result gave us close to the result we wanted. We can see this when we try out another example. Substitute in the string below to the above code and see what breaks.
+
+```{r}
+sample_str <- "Searches will be conducted in MEDLINE via PubMed, Web of Science, 
+Scopus and Embase. The following search strategy will
+be used:(child OR infant OR preschool child OR preschool children OR preschooler OR pre-school child 
+OR pre-school children OR pre school child OR pre school children OR pre-schooler OR pre schooler 
+OR children OR teenager OR adolescent OR adolescents)AND (attention deficit disorder with hyperactivity 
+OR ADHD OR attention deficit disorder OR ADD OR hyperkinetic disorder OR minimal brain disorder) Submitted "
+```
+
+The video below will go through how to debug the code above. 
+
+TODO: error messages in code
+
+## General Programming Tips
+
+As you write more complex code and functions, it is inevitable that you will run into errors or unexpected behavior. Below are some simple principles that are applicable to debugging in any setting. When it comes to testing code, a good mantra is test early and test often. So avoid writing too much code before running and checking that the results match what you expect. 
+
+  1.  Check that all paranthesis (), brackets [], and curly braces {} match.  
+  2.  Check that object names are correct.   
+  3.  Check if you use the same name for different objects or that you use different names for the same object. You can do this by using the `ls()` function to find all current objects. 
+  4.  Check that the input arguments to a function match what is expected.  
+  5.  Try simple examples first. You can use the documentation or vignette examples for ideas. 
+  6.  Localize your error by checking the values of objects at different points.  
+  7.  Modify your code one piece at a time before checking it to avoid introducing new errors.  
+  8.  Google error messages you don't understand. R's messages can sometimes hint at what the error might stem from but are not always direct.
+

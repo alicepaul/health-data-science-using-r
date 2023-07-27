@@ -1,0 +1,363 @@
+---
+title: An R Markdown document converted from "/Users/jialinliu/Documents/GitHub/r-for-health-data-science/book/10_linear_regression.ipynb"
+output: html_document
+---
+
+# 10. Linear Regression
+
+This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, checking model assumptions using diagnostic plots, adding transformations and interactions, performance metrics, and variable selection using stepwise selection. 
+
+For this chapter, we will use the a samples from the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)). The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by [Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892](frontiersin.org/articles/10.3389/fpubh.2022.836357/full). Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis. 
+
+We will use the `broom` package to present the estimated coefficients for our regression models and the `car` package to compute variance-inflation factors.
+
+```{r}
+library(RforHDSdata)
+library(tidyverse)
+library(patchwork)
+library(broom)
+library(car)
+data(NHANESsample)
+```
+
+## Linear Regression Model Form and Assumptions
+
+Recall, that linear regression models an outcome variable $y$ as a linear combination of independent variables. Suppose we have $p$ dependent variables, then the model takes the form $$y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon,$$ where $\epsilon$ is an error or noise term. In standard linear regression, we assume that $\epsilon$ is independent and follows a normal distribution $N(0, \sigma^2)$. From this model form we can extract the key assumptions of linear regression. It's important to remember these assumptions when checking the model fit and interpreting the model results. 
+
+- **Linearity**: The relationship between the independent variables and the dependent variables is linear. This means that the change in the dependent variable is proportional to the change in the independent variable(s). We can check for linearity by examining scatter plots or performing diagnostic tests.
+
+- **Independence**: The observations in the dataset are assumed to be independent of each other. There should be no systematic relationship or correlation between the residuals (the differences between the predicted and observed values). Independence can be violated when there is autocorrelation or when observations are clustered or dependent on each other.
+
+- **Homoscedasticity**: The variance of the residuals is constant across all levels of the independent variables. In other words, the spread or dispersion of the residuals should remain consistent throughout the range of the independent variable(s). Violations of homoscedasticity, called heteroscedasticity, can lead to biased standard errors and incorrect hypothesis tests.
+
+- **Normality**: The residuals follow a normal distribution. This assumption allows for valid hypothesis testing, confidence interval estimation, and prediction intervals. Departures from normality can affect the accuracy of statistical inferences, especially when dealing with small sample sizes. However, the central limit theorem helps to mitigate minor departures from normality in large samples.
+
+- **No multicollinearity**: The independent variables should not be highly correlated with each other. High multicollinearity can lead to unstable and unreliable estimates of the coefficients. It becomes challenging to distinguish the individual effects of the independent variables, and the interpretation of the model becomes problematic. Detecting multicollinearity can be done using correlation matrices or variance inflation factor (VIF) calculations. While this is not a direct assumption of the model, it's an important part of model fitting. 
+
+In Chapter 4, we presented some initial exploratory analysis fo this data. In this chapter, we will use linear regression to understand the assocaition between blood lead levels and systolic blood pressure adjusting for possible confounders. To start, we create columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations. 
+
+```{r}
+NHANESsample$SBP <- apply(NHANESsample[,c("SBP1", "SBP2", "SBP3", "SBP4")], 1, 
+                       function(x) case_when(sum(!is.na(x)) == 0 ~ NA, 
+                                             sum(!is.na(x)) == 1 ~ mean(x, na.rm=TRUE),
+                                             sum(!is.na(x)) > 1 ~ mean(x[-1], na.rm=TRUE))) 
+NHANESsample$DBP <- apply(NHANESsample[,c("DBP1", "DBP2", "DBP3", "DBP4")], 1, 
+                       function(x) case_when(sum(!is.na(x)) == 0 ~ NA, 
+                                             sum(!is.na(x)) == 1 ~ mean(x, na.rm=TRUE),
+                                             sum(!is.na(x)) > 1 ~ mean(x[-1], na.rm=TRUE)))                       
+nhanes_df <- na.omit(subset(NHANESsample, select= -c(SBP1, SBP2, SBP3, SBP4, DBP1, DBP2, DBP3, DBP4)))
+dim(nhanes_df)
+```
+
+Next, we make sure any categorical variables are coded as factors.
+
+```{r}
+nhanes_df$SEX <- as.factor(nhanes_df$SEX)
+nhanes_df$RACE <- as.factor(nhanes_df$RACE)
+nhanes_df$EDUCATION <- as.factor(nhanes_df$EDUCATION)
+nhanes_df$BMI_CAT <- as.factor(nhanes_df$BMI_CAT)
+nhanes_df$LEAD_QUANTILE <- as.factor(nhanes_df$LEAD_QUANTILE)
+```
+
+## Simple Linear Regression
+
+We will start with simple linear regression. Below we plot the relationship between blood lead level and our outcome systolic blood pressure using the cateogrical variable `LEAD_QUANTILE` and the continuous variable `LEAD`. It easy to visualize the assumptions of simple linear regression. First, the survey sampling for the NHANES survey allows us to assume that each observation is independent. Now, let's look at the plots below. We expect to see that the average systolic blood pressure increases linearly with blood lead level and that the observations look normally distributed with equal variance along that line. Below, we do not observe that to be the case. We will come back to this in the section on transformations and interactions. 
+
+```{r}
+p1 <- ggplot(nhanes_df)+
+  geom_density(aes(x=SBP, color=LEAD_QUANTILE)) + 
+  labs(x="Systolic Blood Pressure", y="Density")
+p2 <- ggplot(nhanes_df)+
+  geom_point(aes(x=LEAD, y=SBP)) + 
+  labs(x="Blood Lead Level", y="Systolic Blood Pressure")
+p1/p2
+```
+
+Despite our observations, we will fit a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)` fits a linear model in R. The first argument is formula of the linear model. On the left hand side of the `~` we put the outcome variable and on the right hand side we put the dependent variable. When we have multiple depedent variables we separate them with a `+` (e.g. `y~x1+x2`). The output of this function is an `lm` object. The `summary()` function will print a summary of the model including the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. 
+
+```{r}
+simp_model <- lm(formula = SBP~LEAD, data = nhanes_df)
+summary(simp_model)
+```
+
+To visualize this model, we can add the estimated regression line to our scatter plot. In `ggplot`, this can be done with the `geom_smooth()` function. In base R, we use the `abline()` function. 
+
+```{r}
+plot(nhanes_df$LEAD, nhanes_df$SBP, ylab=c("Systolic Blood Pressure"),xlab=c("Blood Lead Level"),pch=16)
+abline(simp_model,col=2,lwd=2)
+```
+
+## Multiple Linear Regression
+
+We now create a model adjusting age and sex. We add these into the model by specifying a new formula. 
+
+```{r}
+adj_model <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
+summary(adj_model)
+```
+
+We can also extract the regression coefficients from the model using the `coef()` function or by using the `tidy` function from the `broom` package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval. Below, we add a 95% confidence interval (which is the default value for `conf.level`). 
+
+```{r}
+tidy(adj_model, conf.int=TRUE, conf.level=0.95)
+```
+
+Some other useful summary functions are `resid()`, which returns the residual values for the model, and `fitted()`, which returns the fitted values. We can also predict on new data using the `predict()` function. Below we find the summary of the residual values and then plot the fitted vs true values.
+
+```{r}
+summary(resid(adj_model))
+```
+
+```{r}
+ggplot()+geom_point(aes(x=nhanes_df$SBP, y=fitted(adj_model)))+
+  labs(x="True Systolic Blood Pressure", y="Predicted Systolic Blood Pressure")
+```
+
+The model summary above shows that the reference level for sex is male. If we want to change our reference level, we can reorder the factor variable by either using the `factor()` function and specifying `Female` as the first level or by using the `relevel()` function. The `ref` argument specifies the new reference level.  
+
+```{r}
+nhanes_df$SEX <- relevel(nhanes_df$SEX, ref="Female")
+adj_model2 <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
+tidy(adj_model2)
+```
+
+## Diagnostic Plots and Measures
+
+We can tell from the above plot that our model doesn't have a great fit. We will use some diagnostic measures to learn more. R has some built-in plots available for a linear regression model. We plot these below using the `plot()` function. The four plots include (a) Residuals vs Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs Fitted, and (d) Standardized Residuals vs Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook’s distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals. So this last plot tries to summarize the outliers, leverage, and influential points. The plots below show that our residuals do not look normally distributed and that we have may have some high leverage points.
+
+```{r}
+par(mfrow=c(2,2)) # plots all four plots together
+plot(adj_model)
+```
+
+### Normality
+
+Beyond the default plots, we can also plot the histogram of the residuals and a qq-plot. The `qqnorm()` and `qqline()` functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot shown, the residuals are positive-skewed, and thus normality of our residuals is not satisfied, we will introduce how we might transform this dataset to satisfy this assumption later in this chapter.
+
+```{r}
+par(mfrow=c(1,2)) # plot next to each other
+hist(resid(adj_model), xlab="Residuals", main="Histogram of Residuals") 
+qqnorm(resid(adj_model))
+qqline(resid(adj_model),col="red") 
+```
+
+Instead of using the direct residuals, we could also use the standardized residuals using the function `rstandard()`. The standardized residuals are the raw residuals divided by an estimate of the standard deviation for the residual, which will be different for each observation.
+
+```{r}
+par(mfrow=c(1,2)) 
+hist(rstandard(adj_model), xlab="Standardized Residuals", main="Histogram of Standardized Residuals") 
+qqnorm(rstandard(adj_model)) 
+qqline(rstandard(adj_model),col="red")
+```
+
+### Homoscedasticity, Linearity, and Collinearity
+
+We can also create a residual vs fitted plot and plot covariates against the residuals. Below, we plot the blood lead level agains the residuals. In both plots, we are looking for the points to be spread roughly evenly around 0 and has no discerning pattern. However, both plots shows a tunnel shape, indicating a growing and shrinking variance of residuals. This indicates that we are violating the homoscedasticity assumption.
+
+```{r}
+par(mfrow=c(1,2))
+plot(fitted(adj_model), resid(adj_model), xlab="Fitted Values", ylab="Residuals")
+plot(nhanes_df$LEAD, resid(adj_model), xlab="Blood Lead Level", ylab="Residuals")
+```
+
+To quantify any collinearity between the included covariates we can use the variance inflation factors. The `vif()` function in the `car` package allows us to calculate the variance inflation factors or generalized variance inflation factors for all covariates. In our case, all the VIF values are around 1, indicating low levels of collinearity. 
+
+```{r}
+vif(adj_model)
+```
+
+### Leverage and Influence
+
+We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation's $y$ value influenes its own predicted value and indicate that an observation has extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to $p+1$, the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. Below we find the ten highest leverage values and then find those observations in the data. 
+
+```{r}
+sort(hatvalues(adj_model), decreasing=TRUE)[1:10]
+nhanes_df[order(hatvalues(adj_model), decreasing=TRUE),] %>% head()
+```
+
+Some other measures of influence are the DFBETAs and the Cook's distance. These measure how much each observation influences the estimated coefficients and the estimated `y` values, respectively. The `influence.measures()` function provides a set of measures, including the DFBETAS for each model variable, DFFITS, covariance ratios, Cook's distances and the leverage values, that quantify the influence of each observation on a linear regression model. The output returns the values in a matrix called `infmat`, which we convert to a data frame below.
+
+```{r}
+inf_mat <- influence.measures(adj_model)[['infmat']]
+as.data.frame(inf_mat) %>% head()
+```
+
+## Interactions and Transformations
+
+We now try to update our model. To start, we look at potential transformations for our outcome variable. We will consider a log transformation for our outcome systolic blood pressure and blood lead level. Both of these variables have a fairly skewed distribution and may benefit from a transformation.
+
+```{r}
+par(mfrow=c(2,2))
+hist(nhanes_df$SBP, xlab="Systolic Blood Pressure", main="")
+hist(log(nhanes_df$SBP), xlab="Log Systolic Blood Pressure", main="")
+hist(nhanes_df$LEAD, xlab="Blood Lead Level", main="")
+hist(log(nhanes_df$LEAD), xlab="Log Blood Lead Level", main="")
+```
+
+To add a transformation to a model we can apply the transformation in the formula. We will calculate the adjusted R-squared for each potential model to compare the fit and plot the four qq-plots. Both indicate that the log-log transformation is the best fit. 
+
+```{r}
+model_nlog_nlog <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
+model_log_nlog <- lm(log(SBP) ~ LEAD + AGE + SEX, data = nhanes_df)
+model_nlog_log <- lm(SBP ~ log(LEAD) + AGE + SEX, data = nhanes_df)
+model_log_log <- lm(log(SBP) ~ log(LEAD) + AGE + SEX, data = nhanes_df)
+```
+
+```{r}
+summary(model_nlog_nlog)$adj.r.squared
+summary(model_log_nlog)$adj.r.squared
+summary(model_nlog_log)$adj.r.squared
+summary(model_log_log)$adj.r.squared
+```
+
+```{r}
+par(mfrow=c(2,2))
+qqnorm(rstandard(model_nlog_nlog), main="Original Model") 
+qqline(rstandard(model_nlog_nlog),col="red")
+qqnorm(rstandard(model_log_nlog), main="Log SBP") 
+qqline(rstandard(model_log_nlog),col="red")
+qqnorm(rstandard(model_nlog_log), main="Log Lead") 
+qqline(rstandard(model_nlog_log),col="red")
+qqnorm(rstandard(model_log_log), main="Log SBP, Log Lead") 
+qqline(rstandard(model_log_log),col="red")
+```
+
+We can modify the above code to add square root transformations or inverse transformations. Additionally, we might consider polynomial transformations. The `poly(x, degree=1)` function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this example but show some example code below to create a cubic transformation for blood lead level.
+
+```{r}
+model_poly <- lm(SBP ~ poly(LEAD, 3) + AGE + SEX, data = nhanes_df)
+```
+
+We can summarize the outcome for our log-log model using the `tidy()` function again. We observe small p-values for each estimated coefficient.
+
+```{r}
+tidy(model_log_log)
+```
+
+Another type of transformation is an interaction term. For example, we may consider an interaction between sex and blood lead level. We add an interaction to the formula using a `:` between the two variables. 
+
+```{r}
+model_interaction <- lm(log(SBP) ~ log(LEAD) + AGE + SEX + SEX:log(LEAD), data=nhanes_df) 
+summary(model_interaction)
+```
+
+## Evaluation Metrics
+
+Besides the adjusted R-squared, there are other metrics that help us to understand how well our model fits the data and to help with model selection. The `AIC()` and `BIC()` functions find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.
+
+```{r}
+AIC(model_log_log)
+AIC(model_interaction)
+```
+
+```{r}
+BIC(model_log_log)
+BIC(model_interaction)
+```
+
+The `predict()` function allows us to calculate the predicted `y` values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the `newdata` argument. The new data provided must contain the columns given in the model formula. We use the `predict()` function to find the predicted values and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. 
+
+```{r}
+pred_y <- predict(model_interaction)
+```
+
+```{r}
+mae <- mean(abs(nhanes_df$SBP - pred_y))
+mae
+```
+
+```{r}
+mse <- mean((nhanes_df$SBP- pred_y)^2)
+mse
+```
+
+## Stepwise Selection
+
+So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We will end this chapter by demonstrating how to implement stepwise selection in R. The `step()` function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper formula to consider. Below we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is all terms in the lower formula must be contained in the upper formula. 
+
+By default, the `step()` function prints each step in the process and uses AIC to . We can set `trace=0` to avoid the print behavior and update the argument `k` to `log(n)` to use BIC, where `n` is the number of observations. Below we see that the algorithm first adds in race, then BMI, then income, then education, then smoking status. In fact, all variables were added to the model! The final output is an lm object that we can use. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.
+
+```{r}
+mod_step <- step(model_interaction, direction = 'forward', 
+                 scope = list(lower = "log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD)", 
+                              upper = "log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + SEX + RACE + EDUCATION + SMOKE +
+              INCOME + BMI_CAT"))
+```
+
+```{r}
+summary(mod_step)
+```
+
+## Recap Video
+
+## Exercises
+
+For these exercises, we will be using the NHANES data.
+
+1. Construct a linear model using `DBP1` as output and `LEAD`, `AGE`, `EVER_SMOKE` as features, and interpretate each estimate in the output.
+
+```{r}
+#solution:
+model_exercise1 <- lm(DBP~LEAD + AGE + SMOKE, data = nhanes_df)
+summary(model_exercise1)
+```
+
+2. Catch the interaction between `AGE` and `EVER_SMOKE` in the linear model.
+
+```{r}
+#solution:
+model_exercise2 <- lm(DBP ~ LEAD + AGE + SMOKE + SMOKE:AGE, data = nhanes_df)
+summary(model_exercise2)
+```
+
+3. Draw a qq plot for the model in exercise 2, and describe the distribution.
+
+```{r}
+#solutions:
+qqnorm(rstandard(model_exercise2)) 
+qqline(rstandard(model_exercise2),col="red") 
+#qq plot shows a fat-tail trend
+```
+
+4. Try some diagnostic plots such as Residual vs. fitted value to see which transformation is fitted for this model.
+
+```{r}
+#solution:
+
+#use log(DBP1 + 1) beacuase DBP1 has 0, and r can't deal with log transformation with 0
+#this transformation creates the most outliers, but it also makes the model more normally
+#distributed and Homoscedasticity
+model_exercise4 <- lm(log(DBP+1) ~ LEAD + AGE + SMOKE + SMOKE:AGE, data=nhanes_df) 
+summary(model_exercise4)
+
+par(mfrow=c(2,2))
+plot(model_exercise4)
+```
+
+5. Check MAE, MSE, and AIC of the model developed in question 2.
+
+```{r}
+#solutions:
+
+#first find the prediction by this model
+predicted <- predict(model_exercise2)
+
+#mae
+mae <- mean(abs(nhanes_df$DBP - predicted))
+cat('MAE: ', mae, '\n')
+
+#mse
+mse <- mean((nhanes_df$DBP- predicted)^2)
+cat('MSE: ', mse, '\n')
+
+#aic
+aic <- AIC(model_exercise2)
+cat('AIC: ', aic)
+```
+
+7. Use `DBP1` as outcome, use forward selection method to choose the best model.
+
+TODO: suppress messages and warnings
+
+TODO: formula . and -
+
