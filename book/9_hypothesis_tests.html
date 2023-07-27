@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>9. Hypothesis Testing &#8212; R for Health Data Science</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -71,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="10. Linear Regression" href="10_linear_regression.html" />
     <link rel="prev" title="8. Probability Distributions and Random Variables in R" href="8_distributions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -372,7 +371,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="hypothesis-testing">
-<h1>9. Hypothesis Testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this heading">#</a></h1>
+<h1>9. Hypothesis Testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this headline">#</a></h1>
 <p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests when comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -416,15 +415,18 @@ document.write(`
     some
 </pre></div>
 </div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>#BlackLivesMatter
+</pre></div>
+</div>
 </div>
 </div>
 <section id="univariate-distributions-and-one-sample-tests">
-<h2>Univariate Distributions and One Sample Tests<a class="headerlink" href="#univariate-distributions-and-one-sample-tests" title="Permalink to this heading">#</a></h2>
+<h2>Univariate Distributions and One Sample Tests<a class="headerlink" href="#univariate-distributions-and-one-sample-tests" title="Permalink to this headline">#</a></h2>
 <p>Let’s begin by looking at a single outcome of interest - the number of induced terminations of pregnancy (referred to as ITOPs or abortions below) in 2021 per 1000 females ages 15-49 in each county. We use the number of females ages 15-49 as a proxy to scale the number of abortions by the population size, though this is not truly reflective of the number of people who can give birth in each county.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_2021</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span><span class="o">$</span><span class="n">total_rate</span><span class="p">[</span><span class="n">tex_itop</span><span class="o">$</span><span class="n">year</span> <span class="o">==</span> <span class="m">2021</span><span class="p">]</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="m">35</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_2021</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="o">$</span><span class="n">total_rate</span><span class="p">[</span><span class="n">tex_itop</span><span class="o">$</span><span class="n">year</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2021</span><span class="p">]</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">35</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -435,10 +437,10 @@ document.write(`
 <p>We can see in the figure that this is a heavy-tailed distribution. Below, we find the 10 counties with highest rates and see that there are some counties with very few total abortions but that have some of the highest abortion rates. This indicates a small population. On the other hand, we also observe Harris county, which contains the city of Houston and has both a high total abortion count and a high abortion rate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_itop</span> <span class="o">%&gt;%</span> 
-  <span class="nf">filter</span><span class="p">(</span><span class="n">year</span><span class="o">==</span><span class="m">2021</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">slice_max</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">total_itop</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">year</span><span class="o">==</span><span class="m">2021</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">total_itop</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -467,7 +469,7 @@ document.write(`
 <p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math notranslate nohighlight">\(\mu\)</span> we can do so by simply using the <code class="docutils literal notranslate"><span class="pre">mean()</span></code> function. For reference, the <a class="reference external" href="https://www.cdc.gov/reproductivehealth/data_stats/abortion.htm">CDC</a> reported the national abortion rate to be 11.2 abortions per 1,000 women aged 15–44 years.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -479,11 +481,11 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>Below, we use this formula to calculate a 95% confidence interval for the mean abortion rate among counties:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">est_mean</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
-<span class="n">est_sd</span> <span class="o">&lt;-</span> <span class="nf">sd</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
-<span class="n">z_alpha</span> <span class="o">&lt;-</span> <span class="nf">dnorm</span><span class="p">(</span><span class="m">1-0.05</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
-<span class="n">n</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
-<span class="nf">c</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">-</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">est_mean</span> <span class="o">+</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">est_mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">est_sd</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
+<span class="n">z_alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">dnorm</span><span class="p">(</span><span class="m">1-0.05</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+<span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
+<span class="nf">c</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">est_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -499,9 +501,9 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>If we want to display this nicely, we can use the <code class="docutils literal notranslate"><span class="pre">round()</span></code> function, which allows us to specify a number of digits to be displayed, and the <code class="docutils literal notranslate"><span class="pre">paste()</span></code> function, which creates a single character string from multiple inputs.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lower</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">-</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
-<span class="n">upper</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">+</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
-<span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Confidence Interval: (&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lower</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
+<span class="n">upper</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
+<span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Confidence Interval: (&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lower</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -511,7 +513,7 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>Suppose that we wanted to run a hypothesis test to compare the mean to a pre-determined value. In particular, the Texas Heartbeat Act was introduced in 2021 and drastically reduced the number of eligible abortions. We could test whether there were significantly fewer abortions in 2021 compared to 2020. Our null hypothesis is that <span class="math notranslate nohighlight">\(\mu \geq 6.23\)</span>, the mean abortion rate in 2020. To run this hypothesis test, we use the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function. For a one sample t-test, we need to specify our sample <code class="docutils literal notranslate"><span class="pre">x</span></code>, the alternative hypothesis <code class="docutils literal notranslate"><span class="pre">alternative</span></code> (default is a two-sided test), the true value of the mean <code class="docutils literal notranslate"><span class="pre">mu</span></code> (default 0), and a confidence level <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> (default 0.95). Below, we run this t-test, and we can see from the result that we reject the null hypothesis and observe a statistically significant difference in the mean abortion rate between 2020 and 2021.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s">&quot;less&quot;</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="m">6.23</span><span class="p">,</span> <span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;less&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6.23</span><span class="p">,</span><span class="w"> </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -533,7 +535,7 @@ mean of x
 <p>One thing to consider is that the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function assumes that the sample <code class="docutils literal notranslate"><span class="pre">x</span></code> comes from a normal distribution. The one-sample Wilcoxon signed rank test is a non-parametric alternative to the one-sample t-test that can be used to compare the median value of a sample to a theoretical value without assuming that the data is normally distributed. This test can be performed using the <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> function and takes in the same arguments as the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function. Below, we can see that we again reject the null hypothesis and conclude that the mean abortion rate in 2021 was significantly lower than that of 2020.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">wilcox.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s">&quot;less&quot;</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="m">6.23</span><span class="p">,</span> <span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">wilcox.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;less&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6.23</span><span class="p">,</span><span class="w"> </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -549,16 +551,16 @@ alternative hypothesis: true location is less than 6.23
 </div>
 </section>
 <section id="correlation-and-covariance">
-<h2>Correlation and Covariance<a class="headerlink" href="#correlation-and-covariance" title="Permalink to this heading">#</a></h2>
+<h2>Correlation and Covariance<a class="headerlink" href="#correlation-and-covariance" title="Permalink to this headline">#</a></h2>
 <p>We now look at two sample tests. To start, we look at the 2020 and 2021 rates by county. We pivot our data into a wider format in order to create 2020 and 2021 rate columns, and, this time, we filter out the Loving and Terrel counties to remove outliers. We then create a scatter plot of 2021 vs 2020 rates and observe a linear correlation between the two.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">county</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Terrell&quot;</span><span class="p">,</span> <span class="s">&quot;Loving&quot;</span><span class="p">)),</span> <span class="n">year</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="m">2021</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">year</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">na.omit</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span> <span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">county</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Terrell&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Loving&quot;</span><span class="p">)),</span><span class="w"> </span><span class="n">year</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span><span class="w"> </span><span class="m">2021</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -583,9 +585,9 @@ alternative hypothesis: true location is less than 6.23
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span> <span class="o">+</span> 
- <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y2020</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y2021</span><span class="p">))</span> <span class="o">+</span>
- <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;2020 ITOP Rates&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;2021 ITOP Rates&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w"> </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y2020</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y2021</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w"> </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;2020 ITOP Rates&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;2021 ITOP Rates&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -596,18 +598,18 @@ alternative hypothesis: true location is less than 6.23
 <p>We have seen before how to calculate the correlation between two columns using the <code class="docutils literal notranslate"><span class="pre">cor()</span></code> function. We can also calculate the covariance using the <code class="docutils literal notranslate"><span class="pre">cov()</span></code> function. As suspected, there is a strong correlation. The estimated covariance is around 5.19.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
-<span class="nf">cov</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<span class="nf">cov</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">0.499567727097001</div><div class="output text_html">5.19853342823301</div></div>
+<div class="output text_html">0.499567727097002</div><div class="output text_html">5.19853342823301</div></div>
 </div>
 <p>Besides calculating the value of the correlation, we can also test whether this correlation is significantly different from zero. The function <code class="docutils literal notranslate"><span class="pre">cor.test()</span></code> tests for association between paired samples, using either Pearson’s product moment correlation coefficient, Kendall’s <span class="math notranslate nohighlight">\(\tau\)</span>, or Spearman’s <span class="math notranslate nohighlight">\(\rho\)</span>. Similar to the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> and <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> functions, we can also specify the <code class="docutils literal notranslate"><span class="pre">alternative</span></code> and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> arguments. Below, we test whether there is a non-zero correlation between the 2020 and 2021 county rates using Pearson’s product-moment correlation. We can see from the resulting p-value that we can reject the null hypothesis that the correlation is zero and conclude that it is instead significantly different than zero.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor.test</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor.test</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -628,11 +630,11 @@ sample estimates:
 </div>
 </section>
 <section id="two-sample-tests-for-continuous-variables">
-<h2>Two Sample Tests for Continuous Variables<a class="headerlink" href="#two-sample-tests-for-continuous-variables" title="Permalink to this heading">#</a></h2>
+<h2>Two Sample Tests for Continuous Variables<a class="headerlink" href="#two-sample-tests-for-continuous-variables" title="Permalink to this headline">#</a></h2>
 <p>If we wanted to directly compare the difference between 2020 and 2021 rates, we could use a two sample test. In this case, because our samples are paired by county, we can use a two sample paired t-test. Specifically, we use a two-sided test to test the null hypothesis that the rates are equal by specifying two different vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Note that we used the default values of <code class="docutils literal notranslate"><span class="pre">mu=0</span></code> and <code class="docutils literal notranslate"><span class="pre">alternative=&quot;two.sided&quot;</span></code>. Additionally, we used the default value <code class="docutils literal notranslate"><span class="pre">var.equal=FALSE</span></code>, which implies that the samples may have different variances. From the results below, we reject the null hypothesis that the two county rates are equal.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -654,13 +656,13 @@ mean of x mean of y
 <p>In the <code class="docutils literal notranslate"><span class="pre">tex_itop</span></code> dataset, each county has also been categorized by whether it was urban or rural. Suppose we want to compare the change in abortion rates from 2020 to 2021 between rural and urban counties. First, we create a variable describing the rate change between these years using the code below. We choose to use the change in rate rather than percent change to avoid infinite or undefined values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_urban</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">urban</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">total_rate</span> <span class="o">&lt;</span> <span class="m">15</span><span class="p">,</span> <span class="n">year</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="m">2021</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">year</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">na.omit</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span> <span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">mutate</span><span class="p">(</span><span class="n">rate_change</span> <span class="o">=</span> <span class="p">(</span><span class="n">y2021</span><span class="o">-</span><span class="n">y2020</span><span class="p">))</span> 
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_urban</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">total_rate</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span><span class="w"> </span><span class="m">2021</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">rate_change</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">y2021</span><span class="o">-</span><span class="n">y2020</span><span class="p">))</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -668,7 +670,7 @@ mean of x mean of y
 <p>We again use a two-sample two-sided t-test, but this time the data is not paired. Below, we show an alternative way to specify a t-test test below using a formula <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">~</span> <span class="pre">rhs</span></code>, where <code class="docutils literal notranslate"><span class="pre">lhs</span></code> is a numeric vector and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> is a factor variable with two levels. We must also specify the data in this case. From the R output in this case, we would fail to reject the null hypothesis and conclude that the rate changes for urban and rural counties are not significantly different.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">county_rates_urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">county_rates_urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -690,7 +692,7 @@ mean in group Rural mean in group Urban
 <p>Besides a t-test, we can also use a two-sample Wilcoxon non-parametric test using the <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> function, which has the same arguments as the function <code class="docutils literal notranslate"><span class="pre">t.test()</span></code>. Both the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> and <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> can only compare two groups. When we want to compare two or more independent samples, we can use a Kruskal-Wallis rank sum test using the <code class="docutils literal notranslate"><span class="pre">kruskal.test()</span></code> function or a one-way analysis of variance (ANOVA) using the <code class="docutils literal notranslate"><span class="pre">aov()</span></code> function. Even though we only have two groups in our example, we show how to run the corresponding tests for these two groups below. For the <code class="docutils literal notranslate"><span class="pre">kruskal.test()</span></code> function, we can either specify the arguments <code class="docutils literal notranslate"><span class="pre">formula</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> or we can specify two vectors: <code class="docutils literal notranslate"><span class="pre">x</span></code>, a numeric vector, and <code class="docutils literal notranslate"><span class="pre">g</span></code>, a factor representing the group. For the <code class="docutils literal notranslate"><span class="pre">aov()</span></code> function, we specify the test using a formula and then specify the data. To see the p-value, we have to use the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function to print the result. Again, both tests suggest that we fail to reject the null hypothesis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">kruskal.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">rate_change</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">kruskal.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">rate_change</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -705,7 +707,7 @@ Kruskal-Wallis chi-squared = 0.053698, df = 1, p-value = 0.8167
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">aov_res</span> <span class="o">&lt;-</span> <span class="nf">aov</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">county_rates_urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">aov_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">aov</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">county_rates_urban</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">aov_res</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -721,7 +723,7 @@ Residuals   246 1553.3   6.314
 <p>We could also test the variance of a continous variable between two groups using an F test. Our null hypothesis for this test is that the variance in both groups is equal. The function <code class="docutils literal notranslate"><span class="pre">var.test()</span></code> implements an F test and has the same main arguments as the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function: vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> OR a <code class="docutils literal notranslate"><span class="pre">formula</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code>, the alternative hypothesis <code class="docutils literal notranslate"><span class="pre">alternative</span></code>, and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code>. Additionally, we can specify the hypothesized ratio of the variances through the arugment <code class="docutils literal notranslate"><span class="pre">ratio</span></code> (default value 1). Note that this function assumes that the two samples come from normally distributed populations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">var.test</span><span class="p">(</span><span class="n">y2021</span> <span class="o">~</span> <span class="n">urban</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">var.test</span><span class="p">(</span><span class="n">y2021</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -743,7 +745,7 @@ ratio of variances
 <p>Lastly, we can consider Levene’s test to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and data set, as below, or by providing two vectors <code class="docutils literal notranslate"><span class="pre">y</span></code>, a numeric vector, and <code class="docutils literal notranslate"><span class="pre">g</span></code>, a vector specifying the groups.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">leveneTest</span><span class="p">(</span><span class="n">y2021</span> <span class="o">~</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">urban</span><span class="p">),</span> <span class="n">county_rates_urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">leveneTest</span><span class="p">(</span><span class="n">y2021</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">urban</span><span class="p">),</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -763,12 +765,12 @@ ratio of variances
 </div>
 </section>
 <section id="two-sample-tests-for-categorical-variables">
-<h2>Two Sample Tests for Categorical Variables<a class="headerlink" href="#two-sample-tests-for-categorical-variables" title="Permalink to this heading">#</a></h2>
+<h2>Two Sample Tests for Categorical Variables<a class="headerlink" href="#two-sample-tests-for-categorical-variables" title="Permalink to this headline">#</a></h2>
 <p>In the two sample tests above, we were comparing the distributions of continuous variables. We now look at comparing distributions of categorical variables. We will first categorize counties by their abortion rate in 2020 being above or below 11.2, which was the national average rate that year. We display the distribution of this variable by the urban/rural grouping using a contingency table below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span> <span class="o">&gt;</span> <span class="m">11.2</span><span class="p">,</span> <span class="s">&quot;Above Nat Avg&quot;</span><span class="p">,</span> <span class="s">&quot;Below Nat Avg&quot;</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">11.2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Above Nat Avg&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Below Nat Avg&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -784,7 +786,7 @@ ratio of variances
 <p>We can use a Fisher’s exact test to test the distribution in this contingency table. The <code class="docutils literal notranslate"><span class="pre">fisher.test()</span></code> function can either take in a contingency table as a matrix or can be specified by two factor vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Additionally, there is the option to specify the <code class="docutils literal notranslate"><span class="pre">alternative</span></code> and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> arguments. Again, we do not see a significant difference between urban and rural counties.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">fisher.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">fisher.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -806,10 +808,10 @@ odds ratio
 <p>An alternative test is a Pearson’s Chi-Squared test, which can be used for large sample sizes. The counts of rural and  urban counties in the ‘Above Nat Avg’ category are very small, so we recategorize our outcome to be at or above Texas’s average to avoid this complication. The <code class="docutils literal notranslate"><span class="pre">chisq.test()</span></code> function also takes in a contingency table as a matrix or can be specified by two factor vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Another useful argument is <code class="docutils literal notranslate"><span class="pre">correct</span></code> (default is TRUE) which indicates whether to apply a continuity correction.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_mean</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span><span class="p">)</span>
-<span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span> <span class="o">&gt;</span> <span class="n">tex_mean</span><span class="p">,</span> 
-                                           <span class="s">&quot;Above Texas Ave&quot;</span><span class="p">,</span> <span class="s">&quot;Below Texas Ave&quot;</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span><span class="p">)</span>
+<span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">y2020</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">tex_mean</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                           </span><span class="s">&quot;Above Texas Ave&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Below Texas Ave&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -824,7 +826,7 @@ odds ratio
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">chisq.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span> <span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">chisq.test</span><span class="p">(</span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_urban</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -839,16 +841,16 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 </div>
 </section>
 <section id="adding-hypothesis-tests-to-summary-tables">
-<h2>Adding Hypothesis Tests to Summary Tables<a class="headerlink" href="#adding-hypothesis-tests-to-summary-tables" title="Permalink to this heading">#</a></h2>
+<h2>Adding Hypothesis Tests to Summary Tables<a class="headerlink" href="#adding-hypothesis-tests-to-summary-tables" title="Permalink to this headline">#</a></h2>
 <p>Earlier, we used the <code class="docutils literal notranslate"><span class="pre">gt</span></code> and <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> packages to create summary tables of variables. When creating a stratified table (done by add the <code class="docutils literal notranslate"><span class="pre">by</span></code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code class="docutils literal notranslate"><span class="pre">add_p()</span></code> function. By default, the <code class="docutils literal notranslate"><span class="pre">add_p()</span></code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code class="docutils literal notranslate"><span class="pre">by</span></code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are dispalyed as footnotes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">tex_itop</span><span class="p">,</span> <span class="n">include</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">total_rate</span><span class="p">,</span> <span class="n">white_rate</span><span class="p">,</span> <span class="n">asian_rate</span><span class="p">,</span> <span class="n">hispanic_rate</span><span class="p">,</span> 
-                                  <span class="n">black_rate</span><span class="p">,</span> <span class="n">native_american_rate</span><span class="p">),</span>
-           <span class="n">by</span> <span class="o">=</span> <span class="s">&quot;year&quot;</span><span class="p">,</span> <span class="n">statistic</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span> <span class="o">~</span> <span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
-  <span class="nf">add_p</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
-  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">tex_itop</span><span class="p">,</span><span class="w"> </span><span class="n">include</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">white_rate</span><span class="p">,</span><span class="w"> </span><span class="n">asian_rate</span><span class="p">,</span><span class="w"> </span><span class="n">hispanic_rate</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                  </span><span class="n">black_rate</span><span class="p">,</span><span class="w"> </span><span class="n">native_american_rate</span><span class="p">),</span>
+<span class="w">           </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;year&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">statistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">add_p</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">as_gt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -860,23 +862,23 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 		
 	</head>
 	<body>
-		<div id="pktrhwwsxq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#pktrhwwsxq table {
+		<div id="eorhnnuqbo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#eorhnnuqbo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#pktrhwwsxq thead, #pktrhwwsxq tbody, #pktrhwwsxq tfoot, #pktrhwwsxq tr, #pktrhwwsxq td, #pktrhwwsxq th {
+#eorhnnuqbo thead, #eorhnnuqbo tbody, #eorhnnuqbo tfoot, #eorhnnuqbo tr, #eorhnnuqbo td, #eorhnnuqbo th {
   border-style: none;
 }
 
-#pktrhwwsxq p {
+#eorhnnuqbo p {
   margin: 0;
   padding: 0;
 }
 
-#pktrhwwsxq .gt_table {
+#eorhnnuqbo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -902,12 +904,12 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-left-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_caption {
+#eorhnnuqbo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#pktrhwwsxq .gt_title {
+#eorhnnuqbo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -919,7 +921,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-width: 0;
 }
 
-#pktrhwwsxq .gt_subtitle {
+#eorhnnuqbo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -931,7 +933,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-top-width: 0;
 }
 
-#pktrhwwsxq .gt_heading {
+#eorhnnuqbo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -943,13 +945,13 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_bottom_border {
+#eorhnnuqbo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_col_headings {
+#eorhnnuqbo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -964,7 +966,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_col_heading {
+#eorhnnuqbo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -984,7 +986,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   overflow-x: hidden;
 }
 
-#pktrhwwsxq .gt_column_spanner_outer {
+#eorhnnuqbo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -996,15 +998,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 4px;
 }
 
-#pktrhwwsxq .gt_column_spanner_outer:first-child {
+#eorhnnuqbo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#pktrhwwsxq .gt_column_spanner_outer:last-child {
+#eorhnnuqbo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#pktrhwwsxq .gt_column_spanner {
+#eorhnnuqbo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1016,11 +1018,11 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   width: 100%;
 }
 
-#pktrhwwsxq .gt_spanner_row {
+#eorhnnuqbo .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#pktrhwwsxq .gt_group_heading {
+#eorhnnuqbo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1046,7 +1048,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   text-align: left;
 }
 
-#pktrhwwsxq .gt_empty_group_heading {
+#eorhnnuqbo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1061,15 +1063,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   vertical-align: middle;
 }
 
-#pktrhwwsxq .gt_from_md > :first-child {
+#eorhnnuqbo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#pktrhwwsxq .gt_from_md > :last-child {
+#eorhnnuqbo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#pktrhwwsxq .gt_row {
+#eorhnnuqbo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1088,7 +1090,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   overflow-x: hidden;
 }
 
-#pktrhwwsxq .gt_stub {
+#eorhnnuqbo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1101,7 +1103,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#pktrhwwsxq .gt_stub_row_group {
+#eorhnnuqbo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1115,15 +1117,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   vertical-align: top;
 }
 
-#pktrhwwsxq .gt_row_group_first td {
+#eorhnnuqbo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#pktrhwwsxq .gt_row_group_first th {
+#eorhnnuqbo .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#pktrhwwsxq .gt_summary_row {
+#eorhnnuqbo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1133,16 +1135,16 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#pktrhwwsxq .gt_first_summary_row {
+#eorhnnuqbo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_first_summary_row.thick {
+#eorhnnuqbo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#pktrhwwsxq .gt_last_summary_row {
+#eorhnnuqbo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1152,7 +1154,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_grand_summary_row {
+#eorhnnuqbo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1162,7 +1164,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#pktrhwwsxq .gt_first_grand_summary_row {
+#eorhnnuqbo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1172,7 +1174,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-top-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_last_grand_summary_row_top {
+#eorhnnuqbo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1182,11 +1184,11 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_striped {
+#eorhnnuqbo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#pktrhwwsxq .gt_table_body {
+#eorhnnuqbo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1195,7 +1197,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_footnotes {
+#eorhnnuqbo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1209,7 +1211,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_footnote {
+#eorhnnuqbo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1218,7 +1220,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#pktrhwwsxq .gt_sourcenotes {
+#eorhnnuqbo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1232,7 +1234,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#pktrhwwsxq .gt_sourcenote {
+#eorhnnuqbo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1240,63 +1242,63 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#pktrhwwsxq .gt_left {
+#eorhnnuqbo .gt_left {
   text-align: left;
 }
 
-#pktrhwwsxq .gt_center {
+#eorhnnuqbo .gt_center {
   text-align: center;
 }
 
-#pktrhwwsxq .gt_right {
+#eorhnnuqbo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#pktrhwwsxq .gt_font_normal {
+#eorhnnuqbo .gt_font_normal {
   font-weight: normal;
 }
 
-#pktrhwwsxq .gt_font_bold {
+#eorhnnuqbo .gt_font_bold {
   font-weight: bold;
 }
 
-#pktrhwwsxq .gt_font_italic {
+#eorhnnuqbo .gt_font_italic {
   font-style: italic;
 }
 
-#pktrhwwsxq .gt_super {
+#eorhnnuqbo .gt_super {
   font-size: 65%;
 }
 
-#pktrhwwsxq .gt_footnote_marks {
+#eorhnnuqbo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#pktrhwwsxq .gt_asterisk {
+#eorhnnuqbo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#pktrhwwsxq .gt_indent_1 {
+#eorhnnuqbo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#pktrhwwsxq .gt_indent_2 {
+#eorhnnuqbo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#pktrhwwsxq .gt_indent_3 {
+#eorhnnuqbo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#pktrhwwsxq .gt_indent_4 {
+#eorhnnuqbo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#pktrhwwsxq .gt_indent_5 {
+#eorhnnuqbo .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1381,8 +1383,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <p>Use different data and ask to recreate summary table p-values</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 </section>
 
