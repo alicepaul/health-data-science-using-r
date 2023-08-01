@@ -5,12 +5,12 @@ output: html_document
 
 # 6. Merging and Reshaping Data
 
-In this chapter, we continue with some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert our data between wide form (more columns, fewer rows) and long form (fewer columns, more rows). For example, we can use these data pivots to put our data into a tidy form. When merging data, we are combining information from multiple data frames into a single data frame. The key idea when merging data is to think about what the common information is between the data frames and which values we want to keep. 
+In this chapter, we continue with some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert our data between wide form (more columns, fewer rows) and long form (fewer columns, more rows). For example, we can use these data pivots to put our data into what is called *tidy form*. Additionally, we will look at combining information from multiple data frames into a single data frame. The key idea when merging data is to think about what the common information is between the data frames and which values we want to keep. 
 
 For this chapter, we will use three data sets. The first data set is `covidcases`, which contains the weekly case and death counts by county in the United States for 2020, the second data set is `mobility`, which contains daily mobility estimates by state in 2020, and lastly we have `lockdowndates`, which contains the start and end dates for statewide stay at home orders. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.
 
 ```{r}
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(RforHDSdata)
 library(lubridate)
 data(covidcases)
@@ -30,7 +30,7 @@ head(mobility)
 head(lockdowndates)
 ```
 
- For each of these data frames, there is a date column. Right now the class of the date column in the lockdown and mobility data is a character value. We can use the `as.Date()` function to tell R to treat these as dates. We need to specify the date format as an argument to this function. In our format `%Y-%M-%D` the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). 
+The mobility and lockdown data frames contain a date column. Right now the class of the date column in the lockdown and mobility data is a character value, which we can see in the printed output above. We can use the `as.Date()` function to tell R to treat these as dates. We need to specify the date format as an argument to this function so R knows how to parse this text to a date. Our format is given as `%Y-%M-%D`, where the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). 
 
 ```{r}
 mobility$date <- as.Date(mobility$date, formula="%Y-%M-%D")
@@ -38,17 +38,21 @@ lockdowndates$Lockdown_Start <- as.Date(lockdowndates$Lockdown_Start, formula="%
 lockdowndates$Lockdown_End <- as.Date(lockdowndates$Lockdown_End, formula="%Y-%M-%D")
 ```
 
-By coding these columns as dates, we can access information such as the day, month, year, or week. These functions are all available in the `lubridate` package, which allows us to manipulate dates. 
+By coding these columns as dates, we can access information such as the day, month, year, or week. These functions are all available in the `lubridate` package, which is a package in the tidyverse that allows us to manipulate dates. 
 
 ```{r}
 month(mobility$date[1])
 week(mobility$date[1])
 ```
 
-Last, we add a date column to the covid cases data. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates in the `lubridate` package. We add the week number recorded to the first day of 2020. 
+Last, we add a date column to `covidcases`. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates in the `lubridate` package. January 1, 2020 was a Wednesday and is counted as the first week. Therefore, to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019. We show a simple example adding one week below before doing this conversion for the entire column.
 
 ```{r}
-covidcases$date <- as.Date("2020-01-01")+weeks(covidcases$week)
+as.Date("2019-12-29")+weeks(1)
+```
+
+```{r}
+covidcases$date <- as.Date("2019-12-29")+weeks(covidcases$week-1)
 head(covidcases)
 ```
 
@@ -60,7 +64,7 @@ The tidyverse is designed around interacting with **tidy data** with the premise
 2.  Each observation is associated with a single row.
 3.  Each value has its own cell.
 
-Take a look at the data below which stores information about the maternal mortality rate for five countries over time (source: https://ourworldindata.org/maternal-mortality). This data is *not* tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.
+Take a look at the sample data below which stores information about the maternal mortality rate for five countries over time (source: https://ourworldindata.org/maternal-mortality). This data is *not* tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.
 
 ```{r}
 mat_mort1 <- data.frame(country = c("Turkey", "United States", "Sweden", "Japan"),
@@ -81,11 +85,13 @@ head(mat_mort2)
 
 ## Reshaping Data
 
-The mobility and covid case data are in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider the lockdown dates to not be in the same form. Another way to represent this data would be to have each observation be the start or end of a stay at home order. 
+The mobility and covid case data are in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order. 
 
-To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. In our case, we want to take the lockdown start and end columns and create two columns: one column will be whether this is the start or end of a lockdown and the other will be the date. These are called the key and value columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values). 
+To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image below shows a picture of some data on whether students have completed a physical, hearing, and eye exam. The data is presented in wide form on the left and long form on the right. To transform to long data, we have identified a subset of columns `cols` that we want to transform. The long form contains a new column `names_to` that contains the exam type and `values_to` that has whether or not each exam was completed. 
 
-TODO: image
+<img src="images/6-pivot-long.png" alt= “” width="500pt" align="center">
+
+In our case, we want to take the lockdown start and end columns and create two columns: one column will be whether this is the start or end of a lockdown and the other will be the date. These are called the key and value columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values). 
 
 The `pivot_longer()` function takes in a data table, the columns `cols` that we are pivoting to longer form, the column name `names_to` that will store the data from the previous column names, and the column name `values_to` for the column that will store the information from the columns gathered. In our case, the first column we will name `Lockdown_Event` since it will contain whether each date is the start or end of a lockdown and the second column we will name `Date`. Take a look at the result below.
 
@@ -118,7 +124,7 @@ ne_cases <- covidcases %>%
 head(ne_cases)
 ```
 
-Now, I need to focus on converting this data to wide format. I want a column for each state. This tells me that my `names_from` argument will be `state`. Next, I want each row to have the case values for each state. This tells me that my `values_from` argument will be total_cases. The format of this data may not be tidy but it allows me to quickly compare cases across states.
+Now, I need to focus on converting this data to wide format. I want a column for each state. This tells me that my `names_from` argument will be `state`. Next, I want each row to have the case values for each state. This tells me that my `values_from` argument will be `total_cases`. The format of this data may not be tidy but it allows me to quickly compare cases across states.
 
 ```{r}
 pivot_wider(ne_cases, names_from=state, values_from=total_cases)
@@ -132,6 +138,15 @@ Something involving pivots
 # Solution:
 ```
 
+The pivots above were relatively simple in that there was one set of values we were pivoting on (e.g. the lockdown date, covid cases). For more complex pivots, the [`tidyr` package](https://tidyr.tidyverse.org/articles/pivot.html) provides examples that follow other common formats. We demonstrate some of these formats in the video below. 
+
+### Pivot Video
+
+
+<div class="video-container">
+    <iframe width="700" height="500" src="https://www.youtube.com/embed/X4JnidcfUJw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+
 ## Merging Data with Joins
 
 Above, we saw how to manipulate our current data into a new format. Now, we will see how we can combine our multiple data sources. Merging two data frames is called joining and the function we will use depends on how we want to match between the data frames. The image below shows an overview of the different joins and the video talks through each join type.
@@ -144,7 +159,11 @@ Above, we saw how to manipulate our current data into a new format. Now, we will
 * `semi_join(table1,table2,by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.  
 * `anti_join(table1,table2,by)`: Keeps all rows in table1 that *do not* have a match in table 2 but does not join to any information from table2. The opposite of a semi join.  
 
-TODO: image and video
+### Types of Joins Video
+
+<div class="video-container">
+    <iframe width="700" height="500" src="https://www.youtube.com/embed/slazeLLQBoY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 We will first demonstate a left join using the `left_join()` function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. We will use a left join to add the lockdown information to our case data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column is slightly different between the two data frames we specify that `state` is equivalent to `State` in the `by` argument.
 
@@ -178,10 +197,6 @@ Something about joins
 ```{r}
 # Solution:
 ```
-
-## Recap Video
-
-TODO: might skip since we have a video up above
 
 ## Exercises
 

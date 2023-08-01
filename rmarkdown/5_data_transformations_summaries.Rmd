@@ -5,7 +5,7 @@ output: html_document
 
 # 5. Data Transformations and Summaries
 
-In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in Chapter 4.
+In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html).
 
 ```{r}
 library(RforHDSdata)
@@ -21,7 +21,7 @@ Take a look at the class of `NHANESsample`. As we might expect, the data is stor
 class(NHANESsample)
 ```
 
-However, the tidyverse also works with another data structure called a **tibble**. A **tibble** has all the properties of data frames that we have learned so far but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()` function. In practice, there are only very slight difference between the two data structures and you do not need to convert to a tibble. Below we convert our data from a data frame and print the head of the data before converting back to a data frame and repeating. You can see the two structures have a slightly different print statement.
+However, the tidyverse also works with another data structure called a **tibble**. A **tibble** has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()` function. In practice, there are only very slight difference between the two data structures, and you generally do not need to convert data frames to tibbles. Below we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.
 
 ```{r}
 nhanes_df <- as_tibble(NHANESsample)
@@ -33,30 +33,30 @@ nhanes_df <- as.data.frame(nhanes_df)
 print(head(nhanes_df))
 ```
 
-We mention tibbles since some functions in the tidyverse package convert the data to a tibble. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure and to know that we can always convert back if needed. 
+We mention tibbles here since some functions in the `tidyverse` package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed. 
 
 ## Subsetting Data using `select`, `filter`, and `slice`
 
-In earlier chapters, we have seen how to select and filter data by using row and column indices as well as the `subset()` function. The `dplyr` package has its own functions that are useful to subset the data. The `select()` function allows us to select a subset of columns. The function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level we could specify these two columns. To display the result of this selection we use the pipe operator `%>%`. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. This shows that there are only two columns in the filtered data.  
+In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()` function. The `dplyr` package has its own functions that are useful to subset the data. The `select()` function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%`. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.  
 
 ```{r}
 select(nhanes_df, c(RACE, LEAD)) %>% head()
 ```
 
-The `select()` function can also be used to *remove* columns by using a vector of column names with a negative sign. For example, below we keep all columns except `ID` and `LEAD_QUANTILE`. Note that in this case we have saved the selected data back to our data frame `nhanes_df`. Additionally, this time I used a pipe operator to pipe the data to the select function itself.
+The `select()` function can also be used to *remove* columns by adding a negative sign in front of the vector of column names in its arguments. For example, below we keep all columns except `ID` and `LEAD_QUANTILE`. Note that in this case we have saved the selected data back to our data frame `nhanes_df`. Additionally, this time we used a pipe operator to pipe the data to the select function itself.
 
 ```{r}
 nhanes_df <- nhanes_df %>% select(-c(ID, LEAD_QUANTILE))
 names(nhanes_df)
 ```
 
-While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows.  The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in Chapter 4. Below, we choose the data after 2008.
+While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows.  The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html). Below, we choose to filter the data to only observations after 2008.
 
 ```{r}
 nhanes_df_recent <- nhanes_df %>% filter(YEAR >= 2008)
 ```
 
-We can combine conditions by using multiple `filter` calls, creating a more complicated conditional statement by using the `&` (and), `|` (or), and `%in%` (in) operators, or by separating the conditions with commas within filter. Below, we show three ways to find all the data for males between 2008 and 2012. Note that the `between()` function allows us to capture the logic `YEAR >= 2008 & YEAR <= 2012`. The parentheses here are important to capture the logic we want. In all these examples, we broke our code up into multiple lines. This makes it easier to read. A good rule of thumb is to not go more than 80 characters in a line and R Studio conveinently has a vertical gray line at this limit. To create a new line you can hit enter after an operator (e.g. `%>%`, `+`, `|`) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet. 
+We can combine conditions by using multiple `filter` calls, by creating a more complicated conditional statement using the `&` (and), `|` (or), and `%in%` (in) operators, or by separating the conditions with commas within filter. Below, we demonstrate these three ways to filter the data to males between 2008 and 2012. Note that the `between()` function allows us to capture the logic `YEAR >= 2008 & YEAR <= 2012`. 
 
 ```{r}
 # Example 1: multiple filter calls
@@ -74,13 +74,15 @@ nhanes_df_males3 <- nhanes_df %>%
   filter(between(YEAR, 2008, 2012), SEX == "Male")
 ```
 
-Last, we can subset the data using the `slice()` function to select a slice of rows by their index. The function takes the data set and a vector of indices. Below, we find the first and last rows of the data. 
+The use of parentheses in the code above is especially important in order to capture our desired logic. In all these examples, we broke our code up into multiple lines, which makes it easier to read. A good rule of thumb is to not go past 80 characters in a line, and R Studio conveniently has a vertical gray line at this limit. To create a new line, you can hit enter either after an operator (e.g. `%>%`, `+`, `|`) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet. 
+
+Lastly, we can subset the data using the `slice()` function to select a slice of rows by their index. The function takes in the data set and a vector of indices. Below, we find the first and last rows of the data. 
 
 ```{r}
 slice(nhanes_df, c(1, nrow(nhanes_df)))
 ```
 
-A few other useful slice functions are `slice_sample()`, `slice_max()`, and `slice_min()`. The first takes in an argument `n` which specifies the number of *random* rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument `order_by` and returns the `n` rows with either the highest or lowest values. Below we find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.
+A few other useful slice functions are `slice_sample()`, `slice_max()`, and `slice_min()`. The first takes in an argument `n` which specifies the number of *random* rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument `order_by` and return the `n` rows with either the highest or lowest values in that column. Below we find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.
 
 ```{r}
 # three male observations with highest blood lead level in 2007
@@ -106,20 +108,20 @@ Filter the data to only those with an education level of more than HS who report
 
 ## Updating Rows and Columns using `rename`, `mutate`, and `arrange`
 
-The next few functions we will look at will allow us to update the rows and columns in our data. For example, the `rename()` function allows us to change the names of columns. Below, we change the name of `INCOME` to `PIR` since this variable is the poverty income ratio and also update the name of `SMOKE` to be `SMOKE_STATUS`. In specifying these names, the new name is on the left and the old name on the right.
+The next few functions we will look at will allow us to update the rows and columns in our data. For example, the `rename()` function allows us to change the names of columns. Below, we change the name of `INCOME` to `PIR` since this variable is the poverty income ratio and also update the name of `SMOKE` to be `SMOKE_STATUS`. When specifying these names, the new name is on the left of the `=` and the old name is on the right.
 
 ```{r}
 nhanes_df <- nhanes_df %>% rename(PIR = INCOME, SMOKE_STATUS = SMOKE)
 names(nhanes_df)
 ```
 
-In the last chapter, we created a new variable called `EVER_SMOKE` based on the smoking status variable. We use the `ifelse()` function to create this variable. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 observations that never smoked. 
+In the last chapter, we created a new variable called `EVER_SMOKE` based on the smoking status variable using the `ifelse()` function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked. 
 
 ```{r}
 ifelse(nhanes_df$SMOKE_STATUS == "NeverSmoke", "No", "Yes") %>% table()
 ```
 
-Another useful function is the `case_when()` function from the tidyverse. This function is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel these entries. For each condition, we use the right side of the `~` to specify the value associated with a TRUE for that condition. 
+Another useful function from the tidyverse is the `case_when()` function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value associated with a TRUE for that condition. 
 
 ```{r}
 case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
@@ -127,7 +129,7 @@ case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
           nhanes_df$SMOKE_STATUS == "StillSmoke" ~ "Current Smoker") %>% table()
 ```
 
-Above we did not store the columns we created. To do so, we could use the `$` operator or the  `cbind()` function. The tidyverse also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and it will interpret it as that column.
+Above, we did not store the columns we created. To do so, we could use the `$` operator or the  `cbind()` function. The tidyverse also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and it will interpret it as that column.
 
 ```{r}
 nhanes_df <- nhanes_df %>% 
@@ -137,7 +139,7 @@ nhanes_df <- nhanes_df %>%
                                   SMOKE_STATUS == "StillSmoke" ~ "Current Smoker")) 
 ```
 
-The last function we will demonstrate in this section is the `arrange()` function. This function takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts in increasing order. We can use the `desc()` function to instead use a descending order. The code below filters to male smokers before sorting by decreasing systolic and diastolic blood pressure. 
+The last function we will demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the code below filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order. 
 
 ```{r}
 nhanes_df %>% 
@@ -157,14 +159,14 @@ Create a new column called `DBP_CHANGE` that is equal to the difference between 
 
 ## Summarizing using `summarize` and `group_by`
 
-If we wanted to understand how many observations there are for each given race category, we could use the `table()` function. Another similar function is the `count()` function. This function takes in a data frame and one or more variables and counts the number of rows for each combination of unique value. If no columns are specified, it counts the total number of rows. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!
+If we wanted to understand how many observations there are for each given race category, we could use the `table()` function as we described in earlier chapters. Another similar function is the `count()` function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!
 
 ```{r}
 count(nhanes_df)
 count(nhanes_df, RACE, YEAR)
 ```
 
-Finding the count is a form of a summary statistic for our data. The `summarize()` function is used to compute summary statistics of the data and allows us to compute multiple statistics. The `summarize()` function takes in a data frame and one or more summary functions based on the given column variables. In the example below, we find the total number of observations and the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()` function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing the value (otherwise we could get NA as our output).
+Finding the counts like we did above is a form of a summary statistic for our data. The `summarize()` function in the tidyverse is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the example below, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()` function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing these values (otherwise we could get NA as our output).
 
 ```{r}
 nhanes_df %>%
@@ -172,7 +174,7 @@ nhanes_df %>%
   summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
-If we wanted to repeat this for the other race groups, we would have to change our filter each time. To avoid doing so, the `group_by()` function which takes a data frame and one or more columns with which to group data with the same values by. Below we group using the `RACE` variable. When we look at printed output it looks like before but we see that it is a grouped data frame as the class printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the `slice()` function with index 1 it will return the first row for each group.
+If we wanted to repeat this for the other race groups, we would have to change the arguments to the `filter()` function each time. To avoid having to repeat our code and/or do this multiple times, we can use the `group_by()` function, which takes a data frame and one or more columns with which to group the data by. Below, we group using the `RACE` variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the `slice()` function with index 1, it will return the first row for each group.
 
 ```{r}
 nhanes_df %>% 
@@ -180,7 +182,7 @@ nhanes_df %>%
   slice(1)
 ```
 
-Grouping data is very helpful in combination with the summarize function. Like with the `slice()` function, `summarize()` will calculate the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each group. Note that the returned summarized data is in a tibble. 
+Grouping data is very helpful in combination with the `summarize()` function. Like with the `slice()` function, `summarize()` will calculate the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each racial group. Note that the returned summarized data is in a tibble. 
 
 ```{r}
 nhanes_df %>% 
@@ -188,7 +190,7 @@ nhanes_df %>%
   summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
-After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the `ungroup()` function. This restores it to a single data frame. After ungrouping by race below, we get a single observation returned by the `slice()` function.
+After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the `ungroup()` function, which restores the data to a single data frame. After ungrouping by race below, we can see that we get a single observation returned by the `slice()` function.
 
 ```{r}
 nhanes_df %>% 
@@ -207,78 +209,117 @@ Create a data frame summarizing the percent of patients with hypertension by age
 # Solution:
 ```
 
-## Review Video
+## Recap Video
 
-Show creating the blood pressure variables! Then find mean by race and sex
-
-Resummarize by year and show how blood pressure has changed using lag/lead
-
-Grouped data and ungroup (slice by group!)
-
-Documentation .by .preserve .drop or .add
-
-distinct from cheat sheet
+<div class="video-container">
+    <iframe width="700" height="500" src="https://www.youtube.com/embed/-N7wWwXjQaQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 ## Exercises
 
-1. Suppose we are interested in the distribution of blood pressure by age among females. First, create a new column in `nhanes_df` called `AGE_CAT` containing the age categories "20-29" through "80-89". Then, use the `filter()` and `summarize()` functions to create a data frame summarizing the average and standard deviation of the first systolic blood pressure reading among females between the ages of 20 and 29. 
-
-```{r}
-df_1 <- nhanes_df %>%
-          mutate(AGE_CAT = ifelse(AGE < 29, "20-29", 
-                                  ifelse(AGE < 39, "30-39",
-                                  ifelse(AGE < 49, "40-49",
-                                  ifelse(AGE < 59, "50-59",
-                                  ifelse(AGE < 69, "60-69",
-                                  ifelse(AGE < 79, "70-79",
-                                  ifelse(AGE < 89, "80-89"))))))))
-df_1 %>%
-  filter(AGE_CAT == "20-29" & SEX == "Female") %>%
-  summarize(NUM_OBS = n(), AVG_SBP = mean(SBP1, na.rm=TRUE), SD_SBP = sd(SBP1, na.rm=TRUE))
-```
-
-2. Now, create two data frames - one for each sex - with the average and standard deviation summarized separately for each age group rather than for just one selected age group as in question 1. 
-
-```{r}
-df_1 %>%
-  group_by(AGE_CAT) %>%
-  filter(SEX == "Female") %>% 
-  summarize(NUM_OBS = n(), AVG_SBP = mean(SBP1, na.rm=TRUE), SD_SBP = sd(SBP1, na.rm=TRUE))
-
-df_1 %>%
-  group_by(AGE_CAT) %>%
-  filter(SEX == "Male") %>% 
-  summarize(NUM_OBS = n(), AVG_SBP = mean(SBP1, na.rm=TRUE), SD_SBP = sd(SBP1, na.rm=TRUE))
-```
-
-3. Try to combine the creation of the two summary tables in exercises 2 into just one line of code. This is possible because `group_by` permits us to group by more than one variable, yielding one big summary table.
-
-```{r}
-df_1 %>%
-  group_by(AGE_CAT, SEX) %>%
-  summarize(NUM_OBS = n(), AVG_SBP = mean(SBP1, na.rm=TRUE), SD_SBP = sd(SBP1, na.rm=TRUE))
-```
-
-4. For males between the ages of 40 and 49, compare systolic blood pressure across race as reported in the `RACE` variable. Order the resulting table from lowest to highest average systolic blood pressure.
-
-```{r}
-df_1 %>%
-  filter(SEX == "Male", AGE_CAT == "40-49") %>%
-  group_by(RACE) %>%
-  summarize(NUM_OBS = n(), AVE_SBP = mean(SBP1, na.rm=TRUE), SD_SBP = sd(SBP1, na.rm=TRUE)) %>%
-  arrange(AVE_SBP)
-```
-
-5. We will use `covidcases` dataset for exercises. Construct a new data frame `covid_sub` that calculates the total number of cases confirmed in each county of state and filter the top 10 counties with their both cases and deaths. 
+The following exercises use the **covidcases** dataset from the `RforHDSdata` package.
 
 ```{r}
 data(covidcases)
-covid_sub <- covidcases %>%
-  group_by(county) %>%
-  summarize(totalcases  = sum(weekly_cases),
-            totaldeaths = sum(weekly_deaths)) %>%
-  arrange(desc(totaldeaths)) %>%
-  slice(1:10)
-covid_sub
+names(covidcases)
+```
+
+1. Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West. Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast. 
+
+```{r}
+##link to wikipedia or do state.region
+
+covidcases <- covidcases %>%
+          mutate(region = case_when(state %in% c("Connecticut", 
+                                                 "Maine", 
+                                                 "Massachusetts", 
+                                                 "New Hampshire", 
+                                                 "Rhode Island", 
+                                                 "Vermont", 
+                                                 "New Jersey", 
+                                                 "New York", 
+                                                 "Pennsylvania") ~ "Northeast",
+                                   state %in% c("Illinois",
+                                               "Indiana",
+                                               "Michigan",
+                                               "Ohio", 
+                                               "Wisconsin",
+                                               "Iowa",
+                                               "Kansas",
+                                               "Minnesota",
+                                               "Missouri",
+                                               "Nebraska",
+                                               "North Dakota",
+                                               "South Dakota") ~ "Midwest",
+                                   state %in% c("Delaware",
+                                               "Florida",
+                                               "Georgia",
+                                               "Maryland",
+                                               "North Carolina",
+                                               "South Carolina", 
+                                               "Virginia", 
+                                               "District of Columbia",
+                                               "West Virginia",
+                                               "Alabama",
+                                               "Kentucky",
+                                               "Mississippi",
+                                               "Tennessee",
+                                               "Arkansas",
+                                               "Louisiana",
+                                               "Oklahoma",
+                                               "Texas") ~ "South",
+                                   state %in% c("Arizona",
+                                                "Colorado",
+                                                "Idaho", 
+                                                "Montana",
+                                                "Nevada", 
+                                                "New Mexico", 
+                                                "Utah", 
+                                                "Wyoming", 
+                                                "Alaska", 
+                                                "California", 
+                                                "Hawaii", 
+                                                "Oregon", 
+                                                "Washington") ~ "West"))
+
+covidcases %>% ungroup() %>%
+filter(region == "Northeast") %>% 
+summarize(avg = mean(weekly_cases, na.rm=TRUE), sd = sd(weekly_cases, na.rm=TRUE))
+```
+
+2. Now, create a data frame with the average and standard deviation summarized for each region rather than for just one selected region as in Question 1. Sort this data frame from highest to lowest average weekly cases. What other information would you need in order to more accurately compare these regions in terms of their average cases?
+
+```{r}
+covidcases %>% 
+group_by(region) %>% 
+summarize(avg = mean(weekly_cases, na.rm=TRUE), 
+          sd = sd(weekly_cases, na.rm=TRUE)) %>%
+arrange(desc(avg)) 
+```
+
+3. Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data.
+
+```{r}
+covidcases %>% ungroup() %>%
+  filter(region == "Midwest" & week == 15) %>%
+  slice_min(order_by = weekly_deaths, n=10)
+```
+
+4. Create new variables specifying the monthly cases and deaths for each county, and then display the counties with the 5 highest monthly cases.
+
+```{r}
+covidcases %>%
+  mutate(month = case_when(between(week, 9, 12) ~ "March",
+                           between(week, 13, 16) ~ "April",
+                           between(week, 17, 20) ~ "May",
+                           between(week, 21, 24) ~ "June",
+                           between(week, 25, 28) ~ "July",
+                           between(week, 29, 32) ~ "August",
+                           between(week, 33, 36) ~ "September")) %>%
+  group_by(region, state, county, month) %>%
+  summarize(monthly_cases = sum(weekly_cases),
+            monthly_deaths = sum(weekly_deaths)) %>%
+  ungroup() %>% 
+  slice_max(order_by = monthly_cases, n = 5)
 ```
 

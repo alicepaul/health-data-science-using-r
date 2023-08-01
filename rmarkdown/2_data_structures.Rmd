@@ -11,7 +11,7 @@ In this chapter, we will demonstrate the key **data structures** in R. Data stru
 ex_num <- 4
 ```
 
-The main data structures in R are **vectors**, **factors**, **matrices**, **arrays**, **lists**, and **data frames**. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.
+The main data structures in R are **vectors**, **factors**, **matrices**, **arrays**, **lists**, and **data frames**. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In the image below, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.
 
 <img src="images/2-data-structures.png" alt= “” width="500pt" align="center">
 
@@ -74,7 +74,7 @@ Remember, vectors cannot store objects of different types. Because of this, in t
 c("Monday", 5)
 ```
 
-If we check the classes of these two objects using the `class()` function, we will see that R tells us the type of the data (character and numeric). 
+The `class()` function returns the data structure of an object. If we check the classes of these two objects using the `class()` function, we will see that R tells us that the first is a character vector and the second is a numeric vector. This matches the data type in this case. 
 
 ```{r}
 class(days)
@@ -173,7 +173,7 @@ We can also call some useful functions on vectors. For example, the `sum()`, `ma
 
 ### Practice Question
 
-Create a vector of the odd numbers from 1 to 11 using the `seq()` function. Then, find the third value in the vector using indexing. 
+Create a vector of the odd numbers from 1 to 11 using the `seq()` function. Then, find the third value in the vector using indexing, which should have value 3.
 
 ```{r}
 # Insert your solution here:
@@ -343,7 +343,7 @@ exp(C)
 ```
 
 ### Practice Question
-Create a 3x4 matrix of all 1's using the `rep()` and `matrix()` functions. Then select the first and third columns using indexing.
+Create a 3x4 matrix of all 1's using the `rep()` and `matrix()` functions. Then select the first and third columns using indexing which will return a 3x2 matrix of all ones.
 
 ```{r}
 # Insert your solution here:
@@ -432,7 +432,7 @@ weather_data
 Add a column to `weather_data` called `air_quality_index` using the `rep()` function so that all values are `NA` (the missing value in R). Then, index the second value of this column and set the value to be 57.
 
 ```{r}
-# Solution:
+# Insert your solution here:
 ```
 
 ## Lists
@@ -462,7 +462,7 @@ ex_list$supplements[2] <- "collagen"
 ex_list
 ```
 
-## Data Structures Review
+## Recap Video
 
 
 <div class="video-container">
@@ -472,7 +472,9 @@ ex_list
 
 ## Exercises
 
-1. Create and print a new data frame named `city_air_quality` containing variables named `city`, `country`, `temperature`, and `co2` using the following fake information: the average high temperatures in January 2008 were 35, 88, 42, 84, 81, 55, and 30 degrees Fahrenheit for Beijing, Shanghai, Paris, Rome, London, San Francisco, and Toronto, respectively. The average $CO_2$ concentrations for these cities were 2.6, 2.2, 1.6, 1.2, 0.9, 0.7 and 1.7 $mg/m^3$. 
+1. Recreate the following data frame in R, where `temperature` and `co2` represent the average $\cdot F$ and $CO_2$ concentrations in $mg/m^3$ for the month of January 2008, and name it `city_air_quality`. 
+
+<img src="images/2-exercise1df.png" alt= “” width="250pt" align="center">
 
 ```{r}
 city_air_quality <- data.frame(city = c("Beijing", "Shanghai", "Paris", "Rome", 
@@ -484,25 +486,38 @@ city_air_quality <- data.frame(city = c("Beijing", "Shanghai", "Paris", "Rome",
 city_air_quality 
 ```
 
-2. Create a character vector named `rain` with entries `Yes` or `No` indicating whether or not it rained more than average in January 2008 in these cities (you can make this information up yourself). Then, append this vector to the `city_air_quality` data frame as a new column.
+2. Create a character vector named `precipitation` with entries `Yes` or `No` indicating whether or not there was more precipitation than average in January 2008 in these cities (you can make this information up yourself). Then, append this vector to the `city_air_quality` data frame as a new column.
 
 ```{r}
-rain <- c('Yes', 'No', 'No', 'Yes', 'Yes', 'Yes', 'No')
-city_air_quality$rain <- rain 
+precipitation <- c('Yes', 'No', 'No', 'Yes', 'Yes', 'Yes', 'No')
+city_air_quality$precipitation <- precipitation
 ```
 
-3. Use single square brackets to access the rain and $\text{CO}_2$ concentration entries for San Francisco in your data frame.
+3. Convert the categorical variable `precipitation` to a factor. Then, add the following row to the data frame `city_air_quality` using the `rbind()` function:
+
+<img src="images/2-exercise4newrow.png" alt= “” width="250pt" align="center">
 
 ```{r}
-city_air_quality$rain[city_air_quality$city=="San Francisco"]
-city_air_quality$CO2[city_air_quality$city=="San Francisco"]
+city_air_quality$precipitation <- as.factor(city_air_quality$precipitation)
+new_row <- data.frame(city = "Reykjavik", 
+                      country = "Iceland", 
+                      temperature = 56, 
+                      co2 = 1.3,
+                      precipitation = "No")
+city_air_quality <- rbind(city_air_quality, new_row)
+city_air_quality
 ```
 
-4. Convert the categorical variable `rain` to a factor. 
+4. Use single square brackets to access the precipitation and $\text{CO}_2$ concentration entries for San Francisco and Paris in your data frame. Then, create a list of lists called `city_list` containing the city, precipitation, and  $\text{CO}_2$ concentration information for both San Francisco and Paris.
 
 ```{r}
-city_air_quality$rain <- as.factor(city_air_quality$rain)
-table(city_air_quality$rain)
+city_air_quality[c(3,6), c(4, 5)]
+city_list <- list()
+city_list[[1]] = list(city = "San Francisco", precipitation = "Yes", 
+                co2 = 0.7)
+city_list[[2]] = list(city = "Paris", precipitation = "No", 
+                co2 = 1.6)
+city_list
 ```
 
 TODO: where to put cheat sheet link?
