@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>13. Expanding your R Skills &#8212; R for Health Data Science</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +69,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="12. Writing Reports with R Markdown" href="12_rmarkdown_reports.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -164,7 +163,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Distributions and Hypothesis Testing</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions and Random Variables in R</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions in R</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9_hypothesis_tests.html">9. Hypothesis Testing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Regression</span></p>
@@ -371,7 +370,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="expanding-your-r-skills">
-<h1>13. Expanding your R Skills<a class="headerlink" href="#expanding-your-r-skills" title="Permalink to this heading">#</a></h1>
+<h1>13. Expanding your R Skills<a class="headerlink" href="#expanding-your-r-skills" title="Permalink to this headline">#</a></h1>
 <p>Throughout this book we have covered some popular packages and specific functions from these packages. However, it would be impossible to cover all the packages, functions, and options that R has. As you start to apply the tools from this book to you own work or in new settings you may need new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered here.</p>
 <p>We will demonstrate these skills using the <code class="docutils literal notranslate"><span class="pre">stringr</span></code> package, which is a package that is part of the tidyverse that has several functions for dealing with text data.</p>
 <div class="cell docutils container">
@@ -382,12 +381,12 @@ document.write(`
 </div>
 </div>
 <section id="reading-documentation-for-new-packages">
-<h2>Reading Documentation for New Packages<a class="headerlink" href="#reading-documentation-for-new-packages" title="Permalink to this heading">#</a></h2>
+<h2>Reading Documentation for New Packages<a class="headerlink" href="#reading-documentation-for-new-packages" title="Permalink to this headline">#</a></h2>
 <p>Every published package has a CRAN website. This website contains a reference manual which contains the documentation for the functions and data available in the package. Most often there are also useful vignettes that give examples using the package. The site also tells you the requirements for using the package, the authors, and when it was last updated. Take a look at the CRAN site for <a class="reference external" href="https://cran.r-project.org/web/packages/stringr/index.html">stringr</a> and read the vignette <a class="reference external" href="https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html">Introduction to String R</a>.</p>
 <p>We will use this package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130">Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41</a>. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parantheses or will be a sequence of paranthetical phrases connected with AND or OR. However, there could be other paranthetical text such as “(CENTRAL)” below. We will assume that any extra paranthetical text contains at most one word.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
 <span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
 <span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
 </pre></div>
@@ -397,7 +396,7 @@ document.write(`
 <p>The first thing we want to do with the text is clean up the whitespace by remove any trailing, leading, or multiple spaces. In our example, the string starts with a trailing space and there are multiple spaces right before the search query. Searching for “whitespace” in the stringr reference manual we find the <code class="docutils literal notranslate"><span class="pre">str_trim()</span></code> and <code class="docutils literal notranslate"><span class="pre">str_squish()</span></code> functions. Read the documentation for these two functions. You should find that <code class="docutils literal notranslate"><span class="pre">str_squish()</span></code> is the function we are looking for and it takes a single arguments.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
 <span class="n">sample_str</span>
 </pre></div>
 </div>
@@ -407,11 +406,11 @@ document.write(`
 </div>
 </section>
 <section id="trying-simple-examples">
-<h2>Trying Simple Examples<a class="headerlink" href="#trying-simple-examples" title="Permalink to this heading">#</a></h2>
+<h2>Trying Simple Examples<a class="headerlink" href="#trying-simple-examples" title="Permalink to this headline">#</a></h2>
 <p>Above is a good example of starting with a simple case. Rather than applying my function to my full data yet, I want to make sure I understand how it works on a simple example on which I can anticipate what the outcome should look like. My next task will be to split the text into words stored as a character vector. Read the documentation to determine why I used the <code class="docutils literal notranslate"><span class="pre">str_split_1()</span></code> function below. I double check that the returned result is indeed a vector and print the result.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str_words</span> <span class="o">&lt;-</span> <span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str_words</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">)</span>
 <span class="nf">class</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">)</span>
 <span class="n">sample_str_words</span>
 </pre></div>
@@ -429,7 +428,7 @@ document.write(`
 <p>We now want to identify words in this vector that have a starting and/or end parantheses. The function <code class="docutils literal notranslate"><span class="pre">grepl()</span></code> takes in a character vector <code class="docutils literal notranslate"><span class="pre">x</span></code> and a pattern to search for. It returns a logical vector for whether or not each element of x has a match for that pattern.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -443,11 +442,11 @@ document.write(`
 <p>Huh, that didn’t match what I expected! I expected to have multiple TRUE/FALSE values outputted - one for each word. Let’s read the documentation again.</p>
 </section>
 <section id="deciphering-error-messages-and-warnings">
-<h2>Deciphering Error Messages and Warnings<a class="headerlink" href="#deciphering-error-messages-and-warnings" title="Permalink to this heading">#</a></h2>
+<h2>Deciphering Error Messages and Warnings<a class="headerlink" href="#deciphering-error-messages-and-warnings" title="Permalink to this headline">#</a></h2>
 <p>The warning message will give us a good clue for what went wrong. It says that the inputted pattern has length &gt; 1. However, the pattern I gave it is a single character. In fact, I specified the arguments in the wrong order. Let’s try again. This time I specify <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">pattern</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;)&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -463,7 +462,7 @@ document.write(`
 <p>That worked! However, it won’t work if we change that to a starting parantheses. Try it out for yourself. The error message says that it is looking for an end parantheses. In this case, the documentation does not help us. Let’s try googling “stringr find start parantheses”. The first search result for me is a <a class="reference external" href="https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r">stack overflow question</a> that helps us out. We read that we need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -479,34 +478,34 @@ document.write(`
 <p>When a function doesn’t return what we expected it is a good idea to first test the arguments we gave it match what we expect and then to re-read the documentation. For example, we could check that <code class="docutils literal notranslate"><span class="pre">sample_str_words</span></code> is indeed a character vector. The code below finds words with starting or end parantheses and then finds any AND/ORs. Practice reading through the code to understand what it is doing. The comments are there to help explain the steps but you may also want to print the output to figure out what it is doing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library (CENTRAL), </span>
 <span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
 <span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
 
 <span class="c1"># remove extra whitespace and split by spaces</span>
-<span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
-<span class="n">sample_str_words</span> <span class="o">&lt;-</span> <span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">str_squish</span><span class="p">(</span><span class="n">sample_str</span><span class="p">)</span>
+<span class="n">sample_str_words</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">str_split_1</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">)</span>
 
 <span class="c1"># find indices with parentheses or AND/OR</span>
-<span class="n">end_ps</span> <span class="o">&lt;-</span> <span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\)&quot;</span><span class="p">)</span>
-<span class="n">start_ps</span> <span class="o">&lt;-</span> <span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
-<span class="n">and_ors</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">sample_str_words</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;AND&quot;</span><span class="p">,</span> <span class="s">&quot;OR&quot;</span><span class="p">))</span>
+<span class="n">end_ps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\)&quot;</span><span class="p">)</span>
+<span class="n">start_ps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">grepl</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">sample_str_words</span><span class="p">,</span><span class="w"> </span><span class="n">pattern</span><span class="o">=</span><span class="s">&quot;\\(&quot;</span><span class="p">)</span>
+<span class="n">and_ors</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">sample_str_words</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;AND&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;OR&quot;</span><span class="p">))</span>
 
 <span class="c1"># connect parantheses that are combined with AND or OR</span>
-<span class="n">end_ps</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="nf">lead</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nf">lead</span><span class="p">(</span><span class="n">start_ps</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">end_ps</span><span class="p">)</span>
-<span class="n">start_ps</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="nf">lag</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nf">lag</span><span class="p">(</span><span class="n">end_ps</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="kc">FALSE</span><span class="p">,</span> <span class="n">start_ps</span><span class="p">)</span>
+<span class="n">end_ps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">lead</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">lead</span><span class="p">(</span><span class="n">start_ps</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">end_ps</span><span class="p">)</span>
+<span class="n">start_ps</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">lag</span><span class="p">(</span><span class="n">and_ors</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">lag</span><span class="p">(</span><span class="n">end_ps</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span><span class="w"> </span><span class="n">start_ps</span><span class="p">)</span>
 
 <span class="c1"># find paranthetical phrases</span>
-<span class="n">count</span> <span class="o">&lt;-</span> <span class="nf">case_when</span><span class="p">((</span><span class="n">start_ps</span> <span class="o">&amp;</span> <span class="o">!</span><span class="n">end_ps</span><span class="p">)</span> <span class="o">~</span> <span class="m">1</span><span class="p">,</span> <span class="c1"># starting phrase</span>
-                  <span class="p">(</span><span class="o">!</span><span class="n">start_ps</span> <span class="o">&amp;</span> <span class="n">end_ps</span><span class="p">)</span> <span class="o">~</span> <span class="m">-1</span><span class="p">,</span> <span class="c1"># end phrase</span>
-                   <span class="kc">TRUE</span> <span class="o">~</span> <span class="m">0</span><span class="p">)</span> <span class="c1"># no change</span>
+<span class="n">count</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">case_when</span><span class="p">((</span><span class="n">start_ps</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">end_ps</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="c1"># starting phrase</span>
+<span class="w">                  </span><span class="p">(</span><span class="o">!</span><span class="n">start_ps</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">end_ps</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">-1</span><span class="p">,</span><span class="w"> </span><span class="c1"># end phrase</span>
+<span class="w">                   </span><span class="kc">TRUE</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w"> </span><span class="c1"># no change</span>
 
 <span class="c1"># find search query</span>
-<span class="n">search_query</span> <span class="o">&lt;-</span> <span class="nf">paste</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">[</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">],</span> <span class="n">collapse</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="n">search_query</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">paste</span><span class="p">(</span><span class="n">sample_str_words</span><span class="p">[</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">count</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">],</span><span class="w"> </span><span class="n">collapse</span><span class="o">=</span><span class="s">&quot; &quot;</span><span class="p">)</span>
 <span class="n">search_query</span>
 
 <span class="c1"># get terms used</span>
-<span class="nf">str_split</span><span class="p">(</span><span class="n">search_query</span><span class="p">,</span> <span class="s">&quot; AND | OR &quot;</span><span class="p">)</span>
+<span class="nf">str_split</span><span class="p">(</span><span class="n">search_query</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; AND | OR &quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -525,7 +524,7 @@ document.write(`
 <p>The code above is actually incorrect even though the end result gave us close to the result we wanted. We can see this when we try out another example. Substitute in the string below to the above code and see what breaks.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span> <span class="o">&lt;-</span> <span class="s">&quot;Searches will be conducted in MEDLINE via PubMed, Web of Science, </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Searches will be conducted in MEDLINE via PubMed, Web of Science, </span>
 <span class="s">Scopus and Embase. The following search strategy will</span>
 <span class="s">be used:(child OR infant OR preschool child OR preschool children OR preschooler OR pre-school child </span>
 <span class="s">OR pre-school children OR pre school child OR pre school children OR pre-schooler OR pre schooler </span>
@@ -537,11 +536,11 @@ document.write(`
 </div>
 </section>
 <section id="video-solution">
-<h2>Video Solution<a class="headerlink" href="#video-solution" title="Permalink to this heading">#</a></h2>
+<h2>Video Solution<a class="headerlink" href="#video-solution" title="Permalink to this headline">#</a></h2>
 <p>We will show how we can test and fix this code by using some simple debugging principles.</p>
 </section>
 <section id="general-programming-tips">
-<h2>General Programming Tips<a class="headerlink" href="#general-programming-tips" title="Permalink to this heading">#</a></h2>
+<h2>General Programming Tips<a class="headerlink" href="#general-programming-tips" title="Permalink to this headline">#</a></h2>
 <p>As you write more complex code and functions, it is inevitable that you will run into errors or unexpected behavior. Below are some simple principles that are applicable to debugging in any setting. When it comes to testing code, a good mantra is test early and test often. So avoid writing too much code before running and checking that the results match what you expect.</p>
 <ol class="arabic simple">
 <li><p>Check that all paranthesis (), brackets [], and curly braces {} match.</p></li>
@@ -555,7 +554,7 @@ document.write(`
 </ol>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <p>TODO: two exercises - one with brackets and logic off and misuse function str_sub, one with arguments wrong for calibration plot (used wrong name)</p>
 </section>
 </section>
