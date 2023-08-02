@@ -10,7 +10,7 @@ The `ggplot2` package is another useful package in the tidyverse. Statisticians 
 The three packages we will use in this chapter are `tidyverse`, `RforHDSdata`, and `patchwork`. The package `patchwork` is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic introduced in Chapter 2 to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we will take a sample of 5,000 patients from this data and use only those rows that are complete cases at baseline.
 
 ```{r}
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(RforHDSdata)
 library(patchwork)
 data(pain)
@@ -29,23 +29,23 @@ We'll begin with a scatter plot in `ggplot2` to introduce the three key elements
 ggplot()
 ```
 
-Now we can start adding layers to our `ggplot` object. We start by adding the data as an argument to our first `ggplot()` function. This passes the data on to any future layers. One type of layer is a **geom**. These layers create a geometric object. Below, we use the `geom_point()` to add a scatter plot layer. Within this function, we need to tell the **geom** how to use the data to create the scatter plot through the `aes()` function which creates an **aesthetic**. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. The image shows a fairly linear relationship between anxiety and depression.
+Now we can start adding layers to our `ggplot` object. One type of layer is a **geom**. These layers create a geometric object. Below, we use the `geom_point()` to add a scatter plot layer. For this function, we need to specify the data and tell R how to use the data to create the scatter plot through the `aes()` function which creates an **aesthetic**. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. Both the data and the aesthetic can either be specified in our initial `ggplot()` function, which will pass this information to all future layers, or in the `geom_point()` function itself. We specify the aesthetic in the geom function but also include two alternative ways to code the same image that are commented out. The image shows a fairly linear relationship between anxiety and depression.
 
 ```{r}
 ggplot(pain_df)+geom_point(aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))
+# ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))+geom_point()
+# ggplot()+geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))
 ```
 
-If we want to improve our plot, we may want to add different labels and a title. To do so, we use the `labs()` function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color and size. These two things are specified outside of the `aes()` function since they do not come from the data - every point has the same color and size. 
+If we want to improve our plot, we may want to add different labels and a title. To do so, we use the `labs()` function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color, size, and shape of the points. These things are specified outside of the `aes()` function since they do not come from the data - every point has the same color, size, and shape in this example. 
 
 ```{r}
 ggplot(pain_df)+
-  geom_point(aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION), color="blue", size=0.4) + 
+  geom_point(aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION), color="blue", size=2, shape = 5) + 
   labs(x="PROMIS Anxiety Score", ylab="PROMIS Depression Score", title = "Depression vs Anxiety Scores")
 ```
 
 Let's create another example. This time, I will create a histogram for initial recorded pain level. To find the corresponding geom for the type of plot we'd like to make, we can use the [data visualization cheat sheet from Posit]( https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf). The first page lists all the geom options available along with what aesthetics we can set. For example, we are interested in plotting the distribution of one continuous variable. Under the `geom_histogram()` function we can see that we can specify `x` (the variable whose distribution we want to plot) as well as `binwidth`, `y`, `alpha`, `color`, `fill`, `linetype`, `size`, and `weight`. By default the `y` value in a histogram is the count for each bin.
-
-TODO: image of cheat sheet
 
 In the code below, you can see that we updated the color (`color`), fill (`fill`), and opacity (`alpha`) of our histogram bars and updated the number of bins to be 11 (to account for the possible values 0-10). Additionally, we used the `theme_minimal()` function to change the background colors used. You can find the available themes on the second page of the cheat sheet. Try changing the theme to `theme_bw()`. 
 
@@ -58,7 +58,7 @@ ggplot(pain_df)+
 
 ## Adjusting the Axes and Aesthetics
 
-For every part of the aesthetic used in a plot, we have control over how these values are displayed. We will start with the function above. These are controled using **scale** functions. Suppose that I wanted to update the plot above. In particular, I first want to update the x-axis to display all the values 0 to 10. To update the x-axis, I need to find the corresponding scale function for x with continuous values. This function is `scale_x_continuous()`. This function allows me to specify the limits (`limits`), breaks (`breaks`), and labels (`labels`). The scale functions can be found on the second sheet of the cheat sheet. In this case, I just want to update the breaks to be all values 0 to 10. 
+For every part of the aesthetic used in a plot, we have control over how these values are displayed. These are controled using **scale** functions. Suppose that I wanted to update the plot above. In particular, I first want to update the x-axis to display all the values 0 to 10. To update the x-axis, I need to find the corresponding scale function for x with continuous values. This function is `scale_x_continuous()`. This function allows me to specify the limits (`limits`), breaks (`breaks`), and labels (`labels`). The scale functions can be found on the second sheet of the cheat sheet. In this case, I just want to update the breaks to be all values 0 to 10. 
 
 ```{r}
 ggplot(pain_df)+
@@ -78,7 +78,7 @@ ggplot(pain_df)+
 
 Suppose that we wanted to visualize the pain intensity and sleep disturbance for patients with below average physical function. Note that both sleep disturbance and physical function are reported as T-Scores, meaning that the raw scores have been converted to a standardized score with mean 50 and standard deviation 10 within the population. We can use the scale functions to update our axes and labels to reflect this information. As before, we need to use the `scale_x_continuous()` function to update the x-axis for a continuous variable. In this case, we update the limits (to restrict to below average physical function), breaks, and labels. We similarly update the y-axis. 
 
-Last, we want to update the color aesthetic. As before, this aesthetic corresponds to a continuous variable. The cheat sheet provides several possible scale functions depending on how we want to specify the color gradient. We choose the `scale_color_gradient()` function since this allows us to specify the low and high end colors. We can also specify the breaks for the legend values similar to on the x and y axes. The argument `name` also allows us to rename this legend. The palette then converts this to a continuous color gradient. The functions `scale_color_gradient2()` and `scale_color_gradientn()` allow you to specify more color points in the gradient. 
+Last, we want to update the color aesthetic. As before, this aesthetic corresponds to a continuous variable. The cheat sheet provides several possible scale functions depending on how we want to specify the color gradient. We choose the `scale_color_gradient()` function since this allows us to specify the low and high end colors. We can also specify the breaks for the legend values similar to on the x and y axes. The argument `name` also allows us to rename this legend. The palette then converts this to a continuous color gradient. The functions `scale_color_gradient2()` and `scale_color_gradientn()` allow you to specify more color points in the gradient rather than just the two extreme colors. 
 
 Note that this time we received a warning message. This is because our axis limits have cut off some points. To avoid this message we could use the function `coord_cartesian()` to specify our limits which clips the values rather than removing points outside the limits. 
 
@@ -93,7 +93,7 @@ ggplot(pain_df)+
   theme_minimal()
 ```
 
-We now demonstrate the scale functions for discrete variables. In the example below, we first create a new race variable that as three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis. The function `scale_y_continuous()`
+We now demonstrate the scale functions for discrete variables. In the example below, we first create a new race variable that as three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis. 
 
 ```{r}
 pain_df$PAT_RACE_CAT <- as.factor(ifelse(pain_df$PAT_RACE %in% c("BLACK", "WHITE"), pain_df$PAT_RACE, "OTHER"))
@@ -105,7 +105,7 @@ ggplot(pain_df)+
   theme_minimal()
 ```
 
- The function `scale_y_discrete()` is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels. To update the order we could either refactor the variable using `factor()`, specifying the levels, or we can use the `limits` argument to the scale function. The function `scale_fill_brewer()` is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the [color palette](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) (`palette`) and to specify that that we do not want a legend (`guide`). Since we do not have a legend, we do not update the values and labels.
+ The function `scale_y_discrete()` is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels. To update the order we could either refactor the variable using `factor()` prior to plotting or we can use the `limits` argument to the scale function. The function `scale_fill_brewer()` is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the [color palette](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) (`palette`) and to specify that that we do not want a legend (`guide`). Since we do not have a legend, we do not update the values and labels.
 
 ```{r}
 ggplot(pain_df)+
@@ -154,11 +154,11 @@ pain_df_grp <- pain_df %>%
 head(pain_df_grp)
 ```
 
-We can now use the `geom_col()` function to create a bar plot of the proportions. By default, this function will stack the bars on top of each other when there is grouping. We add `position="dodge"` to place them side by side. 
+We can now use the `geom_col()` function to create a bar plot of the proportions. By default, this function will stack the bars on top of each other when there is grouping. Try adding `position="dodge"` to the `geom_col()` function to place them side by side instead. 
 
 ```{r}
 ggplot(pain_df_grp)+
-  geom_col(aes(x=PAIN_INTENSITY_AVERAGE, y=prop, fill=HAS_FOLLOW_UP), position="dodge") +
+  geom_col(aes(x=PAIN_INTENSITY_AVERAGE, y=prop, fill=HAS_FOLLOW_UP)) +
   scale_x_continuous(breaks=c(0:10)) + 
   scale_fill_discrete(name="Seen at Follow Up", labels=c("No", "Yes")) +
   labs(x="Reported Pain Intensity", y = "Proportion") +
@@ -204,7 +204,7 @@ pain_body_map$region <- case_when(
 head(pain_body_map)
 ```
 
-Within the theme we've chosen, we are able to update any of the [theme options](https://ggplot2.tidyverse.org/reference/theme.html). Below we use the `theme()` function to update the legend position to the bottom and the grid lines to light pink. Additionally, I add a horizontal line using the `geom_hline()` function (there are also functions for vertical or other lines) and add a text annotation using the `annotate()` function. These show the average pain value for a body part.
+Within the theme we've chosen, we are able to update any of the [theme options](https://ggplot2.tidyverse.org/reference/theme.html). Below we use the `theme()` function to update the legend position to the bottom and the grid lines to light pink. Additionally, I add a horizontal line using the `geom_hline()` function (`geom_vline()` and `geom_abline()` can add vertical or diagonal lines respectively) and add a text annotation using the `annotate()` function. These show the average pain value for a body part.
 
 ```{r}
 ggplot(pain_body_map) +
@@ -242,15 +242,11 @@ p1/p2
 ggsave("myplot.png") 
 ```
 
-VIDEO:
+## Recap Video
 
-Emphasize where to find things
-The `geom` layers all have to do with displaying data points on the graph. 
-The `scale` functions correspond to changing how an aspect of the graph is displayed. For example, `scale_color_continuous` would specify how to display colors that are used on a continuous scale. On the other hand, `scale_x_discrete` would specify how to display the x-axis when x is discrete. 
-Last, the `theme` and `annotate` functions help to finetune the display. 
-Warnings are not errors.
-
-Percentages using stat and position dodge
+<div class="video-container">
+    <iframe width="700" height="500" src="https://www.youtube.com/embed/0atAxk6Yk10" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 ## Exercises
 

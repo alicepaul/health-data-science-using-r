@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>5. Data Transformations and Summaries &#8212; R for Health Data Science</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -71,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="6. Merging and Reshaping Data" href="6_merging_data.html" />
     <link rel="prev" title="4. Intro to Exploratory Data Analysis" href="4_exploratory_analysis.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -165,7 +164,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Distributions and Hypothesis Testing</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions and Random Variables in R</a></li>
+<li class="toctree-l1"><a class="reference internal" href="8_distributions.html">8. Probability Distributions in R</a></li>
 <li class="toctree-l1"><a class="reference internal" href="9_hypothesis_tests.html">9. Hypothesis Testing</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Regression</span></p>
@@ -381,8 +380,8 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="data-transformations-and-summaries">
-<h1>5. Data Transformations and Summaries<a class="headerlink" href="#data-transformations-and-summaries" title="Permalink to this heading">#</a></h1>
-<p>In this chapter, we will introduce the <code class="docutils literal notranslate"><span class="pre">dyplr</span></code> package, which is part of the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. We will use the same sample of the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) as in Chapter 4.</p>
+<h1>5. Data Transformations and Summaries<a class="headerlink" href="#data-transformations-and-summaries" title="Permalink to this headline">#</a></h1>
+<p>In this chapter, we will introduce the <code class="docutils literal notranslate"><span class="pre">dyplr</span></code> package, which is part of the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. We will use the same sample of the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) as in <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html">Chapter 4</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
@@ -393,7 +392,7 @@ document.write(`
 </div>
 </div>
 <section id="tibbles-and-data-frames">
-<h2>Tibbles and Data Frames<a class="headerlink" href="#tibbles-and-data-frames" title="Permalink to this heading">#</a></h2>
+<h2>Tibbles and Data Frames<a class="headerlink" href="#tibbles-and-data-frames" title="Permalink to this headline">#</a></h2>
 <p>Take a look at the class of <code class="docutils literal notranslate"><span class="pre">NHANESsample</span></code>. As we might expect, the data is stored as a data frame.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -404,10 +403,10 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output text_html">'data.frame'</div></div>
 </div>
-<p>However, the tidyverse also works with another data structure called a <strong>tibble</strong>. A <strong>tibble</strong> has all the properties of data frames that we have learned so far but they are a more modern version of a data frame. To convert our data to this data structure we use the <code class="docutils literal notranslate"><span class="pre">as_tibble()</span></code> function. In practice, there are only very slight difference between the two data structures and you do not need to convert to a tibble. Below we convert our data from a data frame and print the head of the data before converting back to a data frame and repeating. You can see the two structures have a slightly different print statement.</p>
+<p>However, the tidyverse also works with another data structure called a <strong>tibble</strong>. A <strong>tibble</strong> has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the <code class="docutils literal notranslate"><span class="pre">as_tibble()</span></code> function. In practice, there are only very slight difference between the two data structures, and you generally do not need to convert data frames to tibbles. Below we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="nf">as_tibble</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as_tibble</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 <span class="nf">print</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -431,7 +430,7 @@ document.write(`
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="nf">as.data.frame</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.data.frame</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
 <span class="nf">print</span><span class="p">(</span><span class="nf">head</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -455,14 +454,14 @@ document.write(`
 </div>
 </div>
 </div>
-<p>We mention tibbles since some functions in the tidyverse package convert the data to a tibble. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure and to know that we can always convert back if needed.</p>
+<p>We mention tibbles here since some functions in the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.</p>
 </section>
 <section id="subsetting-data-using-select-filter-and-slice">
-<h2>Subsetting Data using <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice</span></code><a class="headerlink" href="#subsetting-data-using-select-filter-and-slice" title="Permalink to this heading">#</a></h2>
-<p>In earlier chapters, we have seen how to select and filter data by using row and column indices as well as the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">dplyr</span></code> package has its own functions that are useful to subset the data. The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function allows us to select a subset of columns. The function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level we could specify these two columns. To display the result of this selection we use the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. This shows that there are only two columns in the filtered data.</p>
+<h2>Subsetting Data using <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice</span></code><a class="headerlink" href="#subsetting-data-using-select-filter-and-slice" title="Permalink to this headline">#</a></h2>
+<p>In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">dplyr</span></code> package has its own functions that are useful to subset the data. The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">select</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span> <span class="n">LEAD</span><span class="p">))</span> <span class="o">%&gt;%</span> <span class="nf">head</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">select</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -484,10 +483,10 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function can also be used to <em>remove</em> columns by using a vector of column names with a negative sign. For example, below we keep all columns except <code class="docutils literal notranslate"><span class="pre">ID</span></code> and <code class="docutils literal notranslate"><span class="pre">LEAD_QUANTILE</span></code>. Note that in this case we have saved the selected data back to our data frame <code class="docutils literal notranslate"><span class="pre">nhanes_df</span></code>. Additionally, this time I used a pipe operator to pipe the data to the select function itself.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function can also be used to <em>remove</em> columns by adding a negative sign in front of the vector of column names in its arguments. For example, below we keep all columns except <code class="docutils literal notranslate"><span class="pre">ID</span></code> and <code class="docutils literal notranslate"><span class="pre">LEAD_QUANTILE</span></code>. Note that in this case we have saved the selected data back to our data frame <code class="docutils literal notranslate"><span class="pre">nhanes_df</span></code>. Additionally, this time we used a pipe operator to pipe the data to the select function itself.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span> <span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span> <span class="n">LEAD_QUANTILE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">select</span><span class="p">(</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">ID</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD_QUANTILE</span><span class="p">))</span>
 <span class="nf">names</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -501,38 +500,39 @@ document.write(`
 <ol class=list-inline><li>'AGE'</li><li>'SEX'</li><li>'RACE'</li><li>'EDUCATION'</li><li>'INCOME'</li><li>'SMOKE'</li><li>'YEAR'</li><li>'LEAD'</li><li>'BMI_CAT'</li><li>'HYP'</li><li>'ALC'</li><li>'DBP1'</li><li>'DBP2'</li><li>'DBP3'</li><li>'DBP4'</li><li>'SBP1'</li><li>'SBP2'</li><li>'SBP3'</li><li>'SBP4'</li></ol>
 </div></div>
 </div>
-<p>While <code class="docutils literal notranslate"><span class="pre">select()</span></code> allows us to choose a subset of columns, the <code class="docutils literal notranslate"><span class="pre">filter()</span></code> function allows us to choose a subset of rows.  The <code class="docutils literal notranslate"><span class="pre">filter()</span></code> function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in Chapter 4. Below, we choose the data after 2008.</p>
+<p>While <code class="docutils literal notranslate"><span class="pre">select()</span></code> allows us to choose a subset of columns, the <code class="docutils literal notranslate"><span class="pre">filter()</span></code> function allows us to choose a subset of rows.  The <code class="docutils literal notranslate"><span class="pre">filter()</span></code> function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html">Chapter 4</a>. Below, we choose to filter the data to only observations after 2008.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df_recent</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span> <span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span> <span class="o">&gt;=</span> <span class="m">2008</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df_recent</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">2008</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>We can combine conditions by using multiple <code class="docutils literal notranslate"><span class="pre">filter</span></code> calls, creating a more complicated conditional statement by using the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> (and), <code class="docutils literal notranslate"><span class="pre">|</span></code> (or), and <code class="docutils literal notranslate"><span class="pre">%in%</span></code> (in) operators, or by separating the conditions with commas within filter. Below, we show three ways to find all the data for males between 2008 and 2012. Note that the <code class="docutils literal notranslate"><span class="pre">between()</span></code> function allows us to capture the logic <code class="docutils literal notranslate"><span class="pre">YEAR</span> <span class="pre">&gt;=</span> <span class="pre">2008</span> <span class="pre">&amp;</span> <span class="pre">YEAR</span> <span class="pre">&lt;=</span> <span class="pre">2012</span></code>. The parentheses here are important to capture the logic we want. In all these examples, we broke our code up into multiple lines. This makes it easier to read. A good rule of thumb is to not go more than 80 characters in a line and R Studio conveinently has a vertical gray line at this limit. To create a new line you can hit enter after an operator (e.g. <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">|</span></code>) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet.</p>
+<p>We can combine conditions by using multiple <code class="docutils literal notranslate"><span class="pre">filter</span></code> calls, by creating a more complicated conditional statement using the <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> (and), <code class="docutils literal notranslate"><span class="pre">|</span></code> (or), and <code class="docutils literal notranslate"><span class="pre">%in%</span></code> (in) operators, or by separating the conditions with commas within filter. Below, we demonstrate these three ways to filter the data to males between 2008 and 2012. Note that the <code class="docutils literal notranslate"><span class="pre">between()</span></code> function allows us to capture the logic <code class="docutils literal notranslate"><span class="pre">YEAR</span> <span class="pre">&gt;=</span> <span class="pre">2008</span> <span class="pre">&amp;</span> <span class="pre">YEAR</span> <span class="pre">&lt;=</span> <span class="pre">2012</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example 1: multiple filter calls</span>
-<span class="n">nhanes_df_males1</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span> <span class="o">&lt;=</span> <span class="m">2012</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span> <span class="o">&gt;=</span> <span class="m">2008</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">)</span>
+<span class="n">nhanes_df_males1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">2012</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">2008</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">)</span>
 
 <span class="c1"># Example 2: combine with &amp; operator</span>
-<span class="n">nhanes_df_males2</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">((</span><span class="n">YEAR</span> <span class="o">&lt;=</span> <span class="m">2012</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">YEAR</span> <span class="o">&gt;=</span> <span class="m">2008</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">))</span>
+<span class="n">nhanes_df_males2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">((</span><span class="n">YEAR</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">2012</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="m">2008</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">))</span>
 
 <span class="c1"># Example 3: combine into one filter call with commas</span>
-<span class="n">nhanes_df_males3</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="nf">between</span><span class="p">(</span><span class="n">YEAR</span><span class="p">,</span> <span class="m">2008</span><span class="p">,</span> <span class="m">2012</span><span class="p">),</span> <span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">)</span>
+<span class="n">nhanes_df_males3</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="nf">between</span><span class="p">(</span><span class="n">YEAR</span><span class="p">,</span><span class="w"> </span><span class="m">2008</span><span class="p">,</span><span class="w"> </span><span class="m">2012</span><span class="p">),</span><span class="w"> </span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Last, we can subset the data using the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function to select a slice of rows by their index. The function takes the data set and a vector of indices. Below, we find the first and last rows of the data.</p>
+<p>The use of parentheses in the code above is especially important in order to capture our desired logic. In all these examples, we broke our code up into multiple lines, which makes it easier to read. A good rule of thumb is to not go past 80 characters in a line, and R Studio conveniently has a vertical gray line at this limit. To create a new line, you can hit enter either after an operator (e.g. <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">|</span></code>) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet.</p>
+<p>Lastly, we can subset the data using the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function to select a slice of rows by their index. The function takes in the data set and a vector of indices. Below, we find the first and last rows of the data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">slice</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="nf">nrow</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">slice</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
@@ -550,20 +550,20 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>A few other useful slice functions are <code class="docutils literal notranslate"><span class="pre">slice_sample()</span></code>, <code class="docutils literal notranslate"><span class="pre">slice_max()</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice_min()</span></code>. The first takes in an argument <code class="docutils literal notranslate"><span class="pre">n</span></code> which specifies the number of <em>random</em> rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument <code class="docutils literal notranslate"><span class="pre">order_by</span></code> and returns the <code class="docutils literal notranslate"><span class="pre">n</span></code> rows with either the highest or lowest values. Below we find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.</p>
+<p>A few other useful slice functions are <code class="docutils literal notranslate"><span class="pre">slice_sample()</span></code>, <code class="docutils literal notranslate"><span class="pre">slice_max()</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice_min()</span></code>. The first takes in an argument <code class="docutils literal notranslate"><span class="pre">n</span></code> which specifies the number of <em>random</em> rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument <code class="docutils literal notranslate"><span class="pre">order_by</span></code> and return the <code class="docutils literal notranslate"><span class="pre">n</span></code> rows with either the highest or lowest values in that column. Below we find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># three male observations with highest blood lead level in 2007</span>
-<span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span> <span class="o">==</span> <span class="m">2007</span><span class="p">,</span> <span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span> <span class="n">EDUCATION</span><span class="p">,</span> <span class="n">SMOKE</span><span class="p">,</span> <span class="n">LEAD</span><span class="p">,</span> <span class="n">SBP1</span><span class="p">,</span> <span class="n">DBP1</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">slice_max</span><span class="p">(</span><span class="n">order_by</span> <span class="o">=</span> <span class="n">LEAD</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+<span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2007</span><span class="p">,</span><span class="w"> </span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">EDUCATION</span><span class="p">,</span><span class="w"> </span><span class="n">SMOKE</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
 
 <span class="c1"># three male observations with lowest blood lead level in 2007</span>
-<span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span> <span class="o">==</span> <span class="m">2007</span><span class="p">,</span> <span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span> <span class="n">EDUCATION</span><span class="p">,</span> <span class="n">SMOKE</span><span class="p">,</span> <span class="n">LEAD</span><span class="p">,</span> <span class="n">SBP1</span><span class="p">,</span> <span class="n">DBP1</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">slice_min</span><span class="p">(</span><span class="n">order_by</span> <span class="o">=</span> <span class="n">LEAD</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+<span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">YEAR</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2007</span><span class="p">,</span><span class="w"> </span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">EDUCATION</span><span class="p">,</span><span class="w"> </span><span class="n">SMOKE</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice_min</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -595,7 +595,7 @@ document.write(`
 </div></div>
 </div>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
 <p>Filter the data to only those with an education level of more than HS who report alcohol use, select the diastolic blood pressure variables, and display the 4th and 10th rows.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -607,11 +607,11 @@ document.write(`
 </section>
 </section>
 <section id="updating-rows-and-columns-using-rename-mutate-and-arrange">
-<h2>Updating Rows and Columns using <code class="docutils literal notranslate"><span class="pre">rename</span></code>, <code class="docutils literal notranslate"><span class="pre">mutate</span></code>, and <code class="docutils literal notranslate"><span class="pre">arrange</span></code><a class="headerlink" href="#updating-rows-and-columns-using-rename-mutate-and-arrange" title="Permalink to this heading">#</a></h2>
-<p>The next few functions we will look at will allow us to update the rows and columns in our data. For example, the <code class="docutils literal notranslate"><span class="pre">rename()</span></code> function allows us to change the names of columns. Below, we change the name of <code class="docutils literal notranslate"><span class="pre">INCOME</span></code> to <code class="docutils literal notranslate"><span class="pre">PIR</span></code> since this variable is the poverty income ratio and also update the name of <code class="docutils literal notranslate"><span class="pre">SMOKE</span></code> to be <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. In specifying these names, the new name is on the left and the old name on the right.</p>
+<h2>Updating Rows and Columns using <code class="docutils literal notranslate"><span class="pre">rename</span></code>, <code class="docutils literal notranslate"><span class="pre">mutate</span></code>, and <code class="docutils literal notranslate"><span class="pre">arrange</span></code><a class="headerlink" href="#updating-rows-and-columns-using-rename-mutate-and-arrange" title="Permalink to this headline">#</a></h2>
+<p>The next few functions we will look at will allow us to update the rows and columns in our data. For example, the <code class="docutils literal notranslate"><span class="pre">rename()</span></code> function allows us to change the names of columns. Below, we change the name of <code class="docutils literal notranslate"><span class="pre">INCOME</span></code> to <code class="docutils literal notranslate"><span class="pre">PIR</span></code> since this variable is the poverty income ratio and also update the name of <code class="docutils literal notranslate"><span class="pre">SMOKE</span></code> to be <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. When specifying these names, the new name is on the left of the <code class="docutils literal notranslate"><span class="pre">=</span></code> and the old name is on the right.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span> <span class="nf">rename</span><span class="p">(</span><span class="n">PIR</span> <span class="o">=</span> <span class="n">INCOME</span><span class="p">,</span> <span class="n">SMOKE_STATUS</span> <span class="o">=</span> <span class="n">SMOKE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">rename</span><span class="p">(</span><span class="n">PIR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INCOME</span><span class="p">,</span><span class="w"> </span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SMOKE</span><span class="p">)</span>
 <span class="nf">names</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -625,10 +625,10 @@ document.write(`
 <ol class=list-inline><li>'AGE'</li><li>'SEX'</li><li>'RACE'</li><li>'EDUCATION'</li><li>'PIR'</li><li>'SMOKE_STATUS'</li><li>'YEAR'</li><li>'LEAD'</li><li>'BMI_CAT'</li><li>'HYP'</li><li>'ALC'</li><li>'DBP1'</li><li>'DBP2'</li><li>'DBP3'</li><li>'DBP4'</li><li>'SBP1'</li><li>'SBP2'</li><li>'SBP3'</li><li>'SBP4'</li></ol>
 </div></div>
 </div>
-<p>In the last chapter, we created a new variable called <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> based on the smoking status variable. We use the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function to create this variable. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 observations that never smoked.</p>
+<p>In the last chapter, we created a new variable called <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> based on the smoking status variable using the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;NeverSmoke&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">table</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;NeverSmoke&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">table</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -640,12 +640,12 @@ document.write(`
 </div>
 </div>
 </div>
-<p>Another useful function is the <code class="docutils literal notranslate"><span class="pre">case_when()</span></code> function from the tidyverse. This function is an extension of the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel these entries. For each condition, we use the right side of the <code class="docutils literal notranslate"><span class="pre">~</span></code> to specify the value associated with a TRUE for that condition.</p>
+<p>Another useful function from the tidyverse is the <code class="docutils literal notranslate"><span class="pre">case_when()</span></code> function, which is an extension of the <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code> column. For each condition, we use the right side of the <code class="docutils literal notranslate"><span class="pre">~</span></code> to specify the value associated with a TRUE for that condition.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">case_when</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;NeverSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Never Smoked&quot;</span><span class="p">,</span>
-          <span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;QuitSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Quit Smoking&quot;</span><span class="p">,</span>
-          <span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;StillSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Current Smoker&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">table</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">case_when</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;NeverSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Never Smoked&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;QuitSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Quit Smoking&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;StillSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Current Smoker&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">table</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -657,26 +657,26 @@ Current Smoker   Never Smoked   Quit Smoking
 </div>
 </div>
 </div>
-<p>Above we did not store the columns we created. To do so, we could use the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator or the  <code class="docutils literal notranslate"><span class="pre">cbind()</span></code> function. The tidyverse also includes an alternative function to add columns called <code class="docutils literal notranslate"><span class="pre">mutate()</span></code>. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> and update the column <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. Within the <code class="docutils literal notranslate"><span class="pre">mutate()</span></code> function we do not have to use the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator to reference the column <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. Instead, we can specify just the column name and it will interpret it as that column.</p>
+<p>Above, we did not store the columns we created. To do so, we could use the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator or the  <code class="docutils literal notranslate"><span class="pre">cbind()</span></code> function. The tidyverse also includes an alternative function to add columns called <code class="docutils literal notranslate"><span class="pre">mutate()</span></code>. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> and update the column <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. Within the <code class="docutils literal notranslate"><span class="pre">mutate()</span></code> function, we do not have to use the <code class="docutils literal notranslate"><span class="pre">$</span></code> operator to reference the column <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. Instead, we can specify just the column name and it will interpret it as that column.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span> 
-  <span class="nf">mutate</span><span class="p">(</span><span class="n">EVER_SMOKE</span> <span class="o">=</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;NeverSmoke&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">),</span> 
-         <span class="n">SMOKE_STATUS</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span><span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;NeverSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Never Smoked&quot;</span><span class="p">,</span>
-                                  <span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;QuitSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Quit Smoking&quot;</span><span class="p">,</span>
-                                  <span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;StillSmoke&quot;</span> <span class="o">~</span> <span class="s">&quot;Current Smoker&quot;</span><span class="p">))</span> 
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">EVER_SMOKE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;NeverSmoke&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;No&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Yes&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">         </span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;NeverSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Never Smoked&quot;</span><span class="p">,</span>
+<span class="w">                                  </span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;QuitSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Quit Smoking&quot;</span><span class="p">,</span>
+<span class="w">                                  </span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;StillSmoke&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Current Smoker&quot;</span><span class="p">))</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>The last function we will demonstrate in this section is the <code class="docutils literal notranslate"><span class="pre">arrange()</span></code> function. This function takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the <code class="docutils literal notranslate"><span class="pre">arrange()</span></code> function sorts in increasing order. We can use the <code class="docutils literal notranslate"><span class="pre">desc()</span></code> function to instead use a descending order. The code below filters to male smokers before sorting by decreasing systolic and diastolic blood pressure.</p>
+<p>The last function we will demonstrate in this section is the <code class="docutils literal notranslate"><span class="pre">arrange()</span></code> function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the <code class="docutils literal notranslate"><span class="pre">arrange()</span></code> function sorts the data in increasing order, but we can use the <code class="docutils literal notranslate"><span class="pre">desc()</span></code> function to instead sort in descending order. For example, the code below filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">%&gt;%</span> 
-  <span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">YEAR</span><span class="p">,</span> <span class="n">SEX</span><span class="p">,</span> <span class="n">SMOKE_STATUS</span><span class="p">,</span> <span class="n">SBP1</span><span class="p">,</span> <span class="n">DBP1</span><span class="p">,</span> <span class="n">LEAD</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span> <span class="n">SMOKE_STATUS</span> <span class="o">==</span> <span class="s">&quot;Current Smoker&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">SBP1</span><span class="p">),</span> <span class="nf">desc</span><span class="p">(</span><span class="n">DBP1</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">head</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">YEAR</span><span class="p">,</span><span class="w"> </span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="n">SMOKE_STATUS</span><span class="p">,</span><span class="w"> </span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">SMOKE_STATUS</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Current Smoker&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">SBP1</span><span class="p">),</span><span class="w"> </span><span class="nf">desc</span><span class="p">(</span><span class="n">DBP1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">head</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -703,7 +703,7 @@ Current Smoker   Never Smoked   Quit Smoking
 </div></div>
 </div>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
 <p>Create a new column called <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> that is equal to the difference between a patient’s first and last diastolic blood pressure readings. Then, sort the dataframe by this new column in increasing order.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -715,12 +715,12 @@ Current Smoker   Never Smoked   Quit Smoking
 </section>
 </section>
 <section id="summarizing-using-summarize-and-group-by">
-<h2>Summarizing using <code class="docutils literal notranslate"><span class="pre">summarize</span></code> and <code class="docutils literal notranslate"><span class="pre">group_by</span></code><a class="headerlink" href="#summarizing-using-summarize-and-group-by" title="Permalink to this heading">#</a></h2>
-<p>If we wanted to understand how many observations there are for each given race category, we could use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function. Another similar function is the <code class="docutils literal notranslate"><span class="pre">count()</span></code> function. This function takes in a data frame and one or more variables and counts the number of rows for each combination of unique value. If no columns are specified, it counts the total number of rows. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!</p>
+<h2>Summarizing using <code class="docutils literal notranslate"><span class="pre">summarize</span></code> and <code class="docutils literal notranslate"><span class="pre">group_by</span></code><a class="headerlink" href="#summarizing-using-summarize-and-group-by" title="Permalink to this headline">#</a></h2>
+<p>If we wanted to understand how many observations there are for each given race category, we could use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function as we described in earlier chapters. Another similar function is the <code class="docutils literal notranslate"><span class="pre">count()</span></code> function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">count</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
-<span class="nf">count</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span> <span class="n">RACE</span><span class="p">,</span> <span class="n">YEAR</span><span class="p">)</span>
+<span class="nf">count</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">,</span><span class="w"> </span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">YEAR</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -796,12 +796,12 @@ Current Smoker   Never Smoked   Quit Smoking
 </table>
 </div></div>
 </div>
-<p>Finding the count is a form of a summary statistic for our data. The <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> function is used to compute summary statistics of the data and allows us to compute multiple statistics. The <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> function takes in a data frame and one or more summary functions based on the given column variables. In the example below, we find the total number of observations and the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the <code class="docutils literal notranslate"><span class="pre">n()</span></code> function is the function within <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> that finds the number of observations. In the <code class="docutils literal notranslate"><span class="pre">mean()</span></code> and <code class="docutils literal notranslate"><span class="pre">median()</span></code> functions we set <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> to remove NAs before computing the value (otherwise we could get NA as our output).</p>
+<p>Finding the counts like we did above is a form of a summary statistic for our data. The <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> function in the tidyverse is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the example below, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the <code class="docutils literal notranslate"><span class="pre">n()</span></code> function is the function within <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> that finds the number of observations. In the <code class="docutils literal notranslate"><span class="pre">mean()</span></code> and <code class="docutils literal notranslate"><span class="pre">median()</span></code> functions we set <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> to remove NAs before computing these values (otherwise we could get NA as our output).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">RACE</span> <span class="o">==</span> <span class="s">&quot;Non-Hispanic Black&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">MEAN_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">MEAN_DBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">RACE</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Non-Hispanic Black&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -818,12 +818,12 @@ Current Smoker   Never Smoked   Quit Smoking
 </table>
 </div></div>
 </div>
-<p>If we wanted to repeat this for the other race groups, we would have to change our filter each time. To avoid doing so, the <code class="docutils literal notranslate"><span class="pre">group_by()</span></code> function which takes a data frame and one or more columns with which to group data with the same values by. Below we group using the <code class="docutils literal notranslate"><span class="pre">RACE</span></code> variable. When we look at printed output it looks like before but we see that it is a grouped data frame as the class printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function with index 1 it will return the first row for each group.</p>
+<p>If we wanted to repeat this for the other race groups, we would have to change the arguments to the <code class="docutils literal notranslate"><span class="pre">filter()</span></code> function each time. To avoid having to repeat our code and/or do this multiple times, we can use the <code class="docutils literal notranslate"><span class="pre">group_by()</span></code> function, which takes a data frame and one or more columns with which to group the data by. Below, we group using the <code class="docutils literal notranslate"><span class="pre">RACE</span></code> variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function with index 1, it will return the first row for each group.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">%&gt;%</span> 
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -844,12 +844,12 @@ Current Smoker   Never Smoked   Quit Smoking
 </table>
 </div></div>
 </div>
-<p>Grouping data is very helpful in combination with the summarize function. Like with the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function, <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> will calculate the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each group. Note that the returned summarized data is in a tibble.</p>
+<p>Grouping data is very helpful in combination with the <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> function. Like with the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function, <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> will calculate the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each racial group. Note that the returned summarized data is in a tibble.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">%&gt;%</span> 
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">MEAN_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">MEAN_DBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -870,15 +870,15 @@ Current Smoker   Never Smoked   Quit Smoking
 </table>
 </div></div>
 </div>
-<p>After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the <code class="docutils literal notranslate"><span class="pre">ungroup()</span></code> function. This restores it to a single data frame. After ungrouping by race below, we get a single observation returned by the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function.</p>
+<p>After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the <code class="docutils literal notranslate"><span class="pre">ungroup()</span></code> function, which restores the data to a single data frame. After ungrouping by race below, we can see that we get a single observation returned by the <code class="docutils literal notranslate"><span class="pre">slice()</span></code> function.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span> <span class="o">%&gt;%</span> 
-  <span class="nf">select</span><span class="p">(</span><span class="n">SEX</span><span class="p">,</span> <span class="n">RACE</span><span class="p">,</span> <span class="n">SBP1</span><span class="p">,</span> <span class="n">DBP1</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">ungroup</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">SBP1</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP1</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ungroup</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">SBP1</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -896,7 +896,7 @@ Current Smoker   Never Smoked   Quit Smoking
 </div></div>
 </div>
 <section id="id2">
-<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <p>Create a data frame summarizing the percent of patients with hypertension by age and smoking status.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -908,202 +908,260 @@ Current Smoker   Never Smoked   Quit Smoking
 </section>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/-N7wWwXjQaQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p>The following exercises use the <strong>covidcases</strong> dataset from the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'state'</li><li>'county'</li><li>'week'</li><li>'weekly_cases'</li><li>'weekly_deaths'</li></ol>
+</div></div>
+</div>
 <ol class="arabic simple">
-<li><p>Suppose we are interested in the distribution of blood pressure by age among females. First, create a new column in <code class="docutils literal notranslate"><span class="pre">nhanes_df</span></code> called <code class="docutils literal notranslate"><span class="pre">AGE_CAT</span></code> containing the age categories “20-29” through “80-89”. Then, use the <code class="docutils literal notranslate"><span class="pre">filter()</span></code> and <code class="docutils literal notranslate"><span class="pre">summarize()</span></code> functions to create a data frame summarizing the average and standard deviation of the first systolic blood pressure reading among females between the ages of 20 and 29.</p></li>
+<li><p>Suppose we are interested in the distribution of weekly cases by state. First, create a new column in <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> called <code class="docutils literal notranslate"><span class="pre">region</span></code> specifying whether each state is in the Northeast, Midwest, South, or West. Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df_1</span> <span class="o">&lt;-</span> <span class="n">nhanes_df</span> <span class="o">%&gt;%</span>
-          <span class="nf">mutate</span><span class="p">(</span><span class="n">AGE_CAT</span> <span class="o">=</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">29</span><span class="p">,</span> <span class="s">&quot;20-29&quot;</span><span class="p">,</span> 
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">39</span><span class="p">,</span> <span class="s">&quot;30-39&quot;</span><span class="p">,</span>
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">49</span><span class="p">,</span> <span class="s">&quot;40-49&quot;</span><span class="p">,</span>
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">59</span><span class="p">,</span> <span class="s">&quot;50-59&quot;</span><span class="p">,</span>
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">69</span><span class="p">,</span> <span class="s">&quot;60-69&quot;</span><span class="p">,</span>
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">79</span><span class="p">,</span> <span class="s">&quot;70-79&quot;</span><span class="p">,</span>
-                                  <span class="nf">ifelse</span><span class="p">(</span><span class="n">AGE</span> <span class="o">&lt;</span> <span class="m">89</span><span class="p">,</span> <span class="s">&quot;80-89&quot;</span><span class="p">))))))))</span>
-<span class="n">df_1</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">AGE_CAT</span> <span class="o">==</span> <span class="s">&quot;20-29&quot;</span> <span class="o">&amp;</span> <span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">NUM_OBS</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">AVG_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">SD_SBP</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">##link to wikipedia or do state.region</span>
+
+<span class="n">covidcases</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">          </span><span class="nf">mutate</span><span class="p">(</span><span class="n">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Connecticut&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;Maine&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;Massachusetts&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;New Hampshire&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;Vermont&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;New Jersey&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;New York&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                 </span><span class="s">&quot;Pennsylvania&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Northeast&quot;</span><span class="p">,</span>
+<span class="w">                                   </span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Illinois&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Indiana&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Michigan&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Ohio&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                               </span><span class="s">&quot;Wisconsin&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Iowa&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Kansas&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Minnesota&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Missouri&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Nebraska&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;North Dakota&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;South Dakota&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;Midwest&quot;</span><span class="p">,</span>
+<span class="w">                                   </span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Delaware&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Florida&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Georgia&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Maryland&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;North Carolina&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;South Carolina&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                               </span><span class="s">&quot;Virginia&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                               </span><span class="s">&quot;District of Columbia&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;West Virginia&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Alabama&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Kentucky&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Mississippi&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Tennessee&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Arkansas&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Louisiana&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Oklahoma&quot;</span><span class="p">,</span>
+<span class="w">                                               </span><span class="s">&quot;Texas&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;South&quot;</span><span class="p">,</span>
+<span class="w">                                   </span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Arizona&quot;</span><span class="p">,</span>
+<span class="w">                                                </span><span class="s">&quot;Colorado&quot;</span><span class="p">,</span>
+<span class="w">                                                </span><span class="s">&quot;Idaho&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Montana&quot;</span><span class="p">,</span>
+<span class="w">                                                </span><span class="s">&quot;Nevada&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;New Mexico&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Utah&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Wyoming&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Alaska&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;California&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Hawaii&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Oregon&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="s">&quot;Washington&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;West&quot;</span><span class="p">))</span>
+
+<span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">ungroup</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="nf">filter</span><span class="p">(</span><span class="n">region</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Northeast&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="nf">summarize</span><span class="p">(</span><span class="n">avg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 1 × 3</caption>
+<caption>A tibble: 1 × 2</caption>
 <thead>
-	<tr><th scope=col>NUM_OBS</th><th scope=col>AVG_SBP</th><th scope=col>SD_SBP</th></tr>
-	<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+	<tr><th scope=col>avg</th><th scope=col>sd</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>2475</td><td>109.5777</td><td>10.07101</td></tr>
+	<tr><td>218.8027</td><td>1281.62</td></tr>
 </tbody>
 </table>
 </div></div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Now, create two data frames - one for each sex - with the average and standard deviation summarized separately for each age group rather than for just one selected age group as in question 1.</p></li>
+<li><p>Now, create a data frame with the average and standard deviation summarized for each region rather than for just one selected region as in Question 1. Sort this data frame from highest to lowest average weekly cases. What other information would you need in order to more accurately compare these regions in terms of their average cases?</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df_1</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">AGE_CAT</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Female&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">NUM_OBS</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">AVG_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">SD_SBP</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
-
-<span class="n">df_1</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">AGE_CAT</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">NUM_OBS</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">AVG_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">SD_SBP</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="nf">group_by</span><span class="p">(</span><span class="n">region</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="nf">summarize</span><span class="p">(</span><span class="n">avg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span>
+<span class="w">          </span><span class="n">sd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">avg</span><span class="p">))</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html"><table class="dataframe">
-<caption>A tibble: 7 × 4</caption>
+<caption>A tibble: 4 × 3</caption>
 <thead>
-	<tr><th scope=col>AGE_CAT</th><th scope=col>NUM_OBS</th><th scope=col>AVG_SBP</th><th scope=col>SD_SBP</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+	<tr><th scope=col>region</th><th scope=col>avg</th><th scope=col>sd</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>20-29</td><td>2475</td><td>109.5777</td><td>10.07101</td></tr>
-	<tr><td>30-39</td><td>2701</td><td>111.7855</td><td>12.15760</td></tr>
-	<tr><td>40-49</td><td>2651</td><td>118.3425</td><td>15.87204</td></tr>
-	<tr><td>50-59</td><td>2304</td><td>125.5809</td><td>18.96571</td></tr>
-	<tr><td>60-69</td><td>2325</td><td>133.8368</td><td>20.43897</td></tr>
-	<tr><td>70-79</td><td>1445</td><td>139.1925</td><td>22.15939</td></tr>
-	<tr><td>80-89</td><td> 896</td><td>147.3547</td><td>23.36094</td></tr>
-</tbody>
-</table>
-</div><div class="output text_html"><table class="dataframe">
-<caption>A tibble: 7 × 4</caption>
-<thead>
-	<tr><th scope=col>AGE_CAT</th><th scope=col>NUM_OBS</th><th scope=col>AVG_SBP</th><th scope=col>SD_SBP</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>20-29</td><td>2336</td><td>118.6879</td><td>10.90715</td></tr>
-	<tr><td>30-39</td><td>2726</td><td>120.5680</td><td>12.59130</td></tr>
-	<tr><td>40-49</td><td>2831</td><td>122.9359</td><td>14.35871</td></tr>
-	<tr><td>50-59</td><td>2633</td><td>127.0484</td><td>16.63128</td></tr>
-	<tr><td>60-69</td><td>2863</td><td>133.1562</td><td>19.43038</td></tr>
-	<tr><td>70-79</td><td>1964</td><td>136.1728</td><td>20.27739</td></tr>
-	<tr><td>80-89</td><td>1115</td><td>139.9807</td><td>22.21069</td></tr>
+	<tr><td>Northeast</td><td>218.80271</td><td>1281.6196</td></tr>
+	<tr><td>West     </td><td>120.11181</td><td> 685.1325</td></tr>
+	<tr><td>South    </td><td> 75.23662</td><td> 362.2401</td></tr>
+	<tr><td>Midwest  </td><td> 39.28500</td><td> 203.5628</td></tr>
 </tbody>
 </table>
 </div></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>Try to combine the creation of the two summary tables in exercises 2 into just one line of code. This is possible because <code class="docutils literal notranslate"><span class="pre">group_by</span></code> permits us to group by more than one variable, yielding one big summary table.</p></li>
+<li><p>Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df_1</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">AGE_CAT</span><span class="p">,</span> <span class="n">SEX</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">NUM_OBS</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">AVG_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">SD_SBP</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">ungroup</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">region</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Midwest&quot;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">week</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">15</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">slice_min</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weekly_deaths</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;AGE_CAT&#39;. You can override using the
-`.groups` argument.
-</pre></div>
-</div>
 <div class="output text_html"><table class="dataframe">
-<caption>A grouped_df: 14 × 5</caption>
+<caption>A tibble: 523 × 6</caption>
 <thead>
-	<tr><th scope=col>AGE_CAT</th><th scope=col>SEX</th><th scope=col>NUM_OBS</th><th scope=col>AVG_SBP</th><th scope=col>SD_SBP</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+	<tr><th scope=col>state</th><th scope=col>county</th><th scope=col>week</th><th scope=col>weekly_cases</th><th scope=col>weekly_deaths</th><th scope=col>region</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>20-29</td><td>Male  </td><td>2336</td><td>118.6879</td><td>10.90715</td></tr>
-	<tr><td>20-29</td><td>Female</td><td>2475</td><td>109.5777</td><td>10.07101</td></tr>
-	<tr><td>30-39</td><td>Male  </td><td>2726</td><td>120.5680</td><td>12.59130</td></tr>
-	<tr><td>30-39</td><td>Female</td><td>2701</td><td>111.7855</td><td>12.15760</td></tr>
-	<tr><td>40-49</td><td>Male  </td><td>2831</td><td>122.9359</td><td>14.35871</td></tr>
-	<tr><td>40-49</td><td>Female</td><td>2651</td><td>118.3425</td><td>15.87204</td></tr>
-	<tr><td>50-59</td><td>Male  </td><td>2633</td><td>127.0484</td><td>16.63128</td></tr>
-	<tr><td>50-59</td><td>Female</td><td>2304</td><td>125.5809</td><td>18.96571</td></tr>
-	<tr><td>60-69</td><td>Male  </td><td>2863</td><td>133.1562</td><td>19.43038</td></tr>
-	<tr><td>60-69</td><td>Female</td><td>2325</td><td>133.8368</td><td>20.43897</td></tr>
-	<tr><td>70-79</td><td>Male  </td><td>1964</td><td>136.1728</td><td>20.27739</td></tr>
-	<tr><td>70-79</td><td>Female</td><td>1445</td><td>139.1925</td><td>22.15939</td></tr>
-	<tr><td>80-89</td><td>Male  </td><td>1115</td><td>139.9807</td><td>22.21069</td></tr>
-	<tr><td>80-89</td><td>Female</td><td> 896</td><td>147.3547</td><td>23.36094</td></tr>
+	<tr><td>Wisconsin</td><td>Ozaukee   </td><td>15</td><td> 3</td><td>-2</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Montgomery</td><td>15</td><td> 5</td><td>-1</td><td>Midwest</td></tr>
+	<tr><td>Ohio     </td><td>Clinton   </td><td>15</td><td> 7</td><td>-1</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Adams     </td><td>15</td><td>18</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Bond      </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Bureau    </td><td>15</td><td> 2</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Calhoun   </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Clark     </td><td>15</td><td> 4</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Clay      </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Clinton   </td><td>15</td><td>25</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Coles     </td><td>15</td><td> 6</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Crawford  </td><td>15</td><td> 4</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Cumberland</td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>De Witt   </td><td>15</td><td> 2</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Douglas   </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Franklin  </td><td>15</td><td> 2</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Fulton    </td><td>15</td><td>-1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Gallatin  </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Greene    </td><td>15</td><td>-1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Grundy    </td><td>15</td><td>12</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Hancock   </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Henry     </td><td>15</td><td> 7</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Iroquois  </td><td>15</td><td> 2</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Jefferson </td><td>15</td><td> 5</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Jersey    </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Jo Daviess</td><td>15</td><td> 3</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Johnson   </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Knox      </td><td>15</td><td> 1</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Lawrence  </td><td>15</td><td> 2</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>Illinois </td><td>Lee       </td><td>15</td><td> 7</td><td> 0</td><td>Midwest</td></tr>
+	<tr><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td></tr>
+	<tr><td>Wisconsin</td><td>Dunn       </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Eau Claire </td><td>15</td><td>21</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Florence   </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Green      </td><td>15</td><td> 9</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Green Lake </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Iowa       </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Jefferson  </td><td>15</td><td> 8</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>La Crosse  </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Lafayette  </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Manitowoc  </td><td>15</td><td> 4</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Marinette  </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Marquette  </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Menominee  </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Monroe     </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Oconto     </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Oneida     </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Pierce     </td><td>15</td><td> 7</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Polk       </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Portage    </td><td>15</td><td> 4</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Price      </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Richland   </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Rusk       </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Sawyer     </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Shawano    </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>St. Croix  </td><td>15</td><td> 3</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Trempealeau</td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Vilas      </td><td>15</td><td> 4</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Washburn   </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Waushara   </td><td>15</td><td> 1</td><td>0</td><td>Midwest</td></tr>
+	<tr><td>Wisconsin</td><td>Wood       </td><td>15</td><td> 2</td><td>0</td><td>Midwest</td></tr>
 </tbody>
 </table>
 </div></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>For males between the ages of 40 and 49, compare systolic blood pressure across race as reported in the <code class="docutils literal notranslate"><span class="pre">RACE</span></code> variable. Order the resulting table from lowest to highest average systolic blood pressure.</p></li>
+<li><p>Create new variables specifying the monthly cases and deaths for each county, and then display the counties with the 5 highest monthly cases.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df_1</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">SEX</span> <span class="o">==</span> <span class="s">&quot;Male&quot;</span><span class="p">,</span> <span class="n">AGE_CAT</span> <span class="o">==</span> <span class="s">&quot;40-49&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">NUM_OBS</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">AVE_SBP</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span> <span class="n">SD_SBP</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">arrange</span><span class="p">(</span><span class="n">AVE_SBP</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">month</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;March&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">13</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;April&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">17</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;May&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="m">24</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;June&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">28</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;July&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">29</span><span class="p">,</span><span class="w"> </span><span class="m">32</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;August&quot;</span><span class="p">,</span>
+<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">33</span><span class="p">,</span><span class="w"> </span><span class="m">36</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;September&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">region</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">monthly_cases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">),</span>
+<span class="w">            </span><span class="n">monthly_deaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ungroup</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">monthly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A tibble: 5 × 4</caption>
-<thead>
-	<tr><th scope=col>RACE</th><th scope=col>NUM_OBS</th><th scope=col>AVE_SBP</th><th scope=col>SD_SBP</th></tr>
-	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>Other Race        </td><td> 227</td><td>119.2420</td><td>13.84683</td></tr>
-	<tr><td>Non-Hispanic White</td><td>1296</td><td>121.6624</td><td>13.18456</td></tr>
-	<tr><td>Mexican American  </td><td> 579</td><td>122.5474</td><td>13.61925</td></tr>
-	<tr><td>Other Hispanic    </td><td> 188</td><td>124.3068</td><td>15.22168</td></tr>
-	<tr><td>Non-Hispanic Black</td><td> 541</td><td>127.6223</td><td>16.57220</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
-<ol class="arabic simple" start="5">
-<li><p>We will use <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> dataset for exercises. Construct a new data frame <code class="docutils literal notranslate"><span class="pre">covid_sub</span></code> that calculates the total number of cases confirmed in each county of state and filter the top 10 counties with their both cases and deaths.</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
-<span class="n">covid_sub</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span>
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">county</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">totalcases</span>  <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">),</span>
-            <span class="n">totaldeaths</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">totaldeaths</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">slice</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">)</span>
-<span class="n">covid_sub</span>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;region&#39;, &#39;state&#39;, &#39;county&#39;. You can
+override using the `.groups` argument.
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
 <div class="output text_html"><table class="dataframe">
-<caption>A tibble: 10 × 3</caption>
+<caption>A tibble: 5 × 6</caption>
 <thead>
-	<tr><th scope=col>county</th><th scope=col>totalcases</th><th scope=col>totaldeaths</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+	<tr><th scope=col>region</th><th scope=col>state</th><th scope=col>county</th><th scope=col>month</th><th scope=col>monthly_cases</th><th scope=col>monthly_deaths</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>New York City</td><td>201698</td><td>20226</td></tr>
-	<tr><td>Providence   </td><td>139025</td><td>10276</td></tr>
-	<tr><td>Bergen       </td><td> 19220</td><td> 7799</td></tr>
-	<tr><td>Middlesex    </td><td> 67845</td><td> 7200</td></tr>
-	<tr><td>Nassau       </td><td> 39435</td><td> 6766</td></tr>
-	<tr><td>Los Angeles  </td><td>204839</td><td> 4720</td></tr>
-	<tr><td>Orange       </td><td> 87576</td><td> 4284</td></tr>
-	<tr><td>Rockland     </td><td> 12258</td><td> 4275</td></tr>
-	<tr><td>Cook         </td><td>110237</td><td> 4141</td></tr>
-	<tr><td>Essex        </td><td> 52243</td><td> 4010</td></tr>
+	<tr><td>Northeast</td><td>New York    </td><td>New York City</td><td>April </td><td>105894</td><td>12291</td></tr>
+	<tr><td>West     </td><td>California  </td><td>Los Angeles  </td><td>August</td><td> 58563</td><td>  905</td></tr>
+	<tr><td>West     </td><td>California  </td><td>Los Angeles  </td><td>July  </td><td> 57447</td><td>  773</td></tr>
+	<tr><td>Northeast</td><td>Rhode Island</td><td>Providence   </td><td>August</td><td> 57303</td><td> 3218</td></tr>
+	<tr><td>South    </td><td>Florida     </td><td>Miami-Dade   </td><td>August</td><td> 56044</td><td>  609</td></tr>
 </tbody>
 </table>
 </div></div>
