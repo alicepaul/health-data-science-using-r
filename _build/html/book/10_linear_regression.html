@@ -353,7 +353,6 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-regression-model-form-and-assumptions">Linear Regression Model Form and Assumptions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression">Multiple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots-and-measures">Diagnostic Plots and Measures</a><ul class="nav section-nav flex-column">
@@ -380,64 +379,23 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="linear-regression">
 <h1>10. Linear Regression<a class="headerlink" href="#linear-regression" title="Permalink to this headline">#</a></h1>
-<p>This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, checking model assumptions using diagnostic plots, adding transformations and interactions, performance metrics, and variable selection using stepwise selection.</p>
+<p>This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, checking model assumptions using diagnostic plots, changing the model formula by adding transformations and interactions, performance metrics, and variable selection using stepwise selection.</p>
 <p>For this chapter, we will use the a samples from the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>). The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="xref myst">Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892</span>. Use the help operator <code class="docutils literal notranslate"><span class="pre">?NHANESsample</span></code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
-<p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package to present the estimated coefficients for our regression models and the <code class="docutils literal notranslate"><span class="pre">car</span></code> package to compute variance-inflation factors.</p>
+<p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package to present the estimated coefficients for our regression models and the <code class="docutils literal notranslate"><span class="pre">car</span></code> package to compute variance inflation factors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">patchwork</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span><span class="w"> </span>
+<span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">car</span><span class="p">)</span>
+<span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">car</span><span class="p">))</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr    </span> 1.1.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr    </span> 2.1.4
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats  </span> 1.0.0     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr  </span> 1.5.0
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2  </span> 3.4.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble   </span> 3.2.1
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">lubridate</span> 1.9.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr    </span> 1.3.0
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr    </span> 1.0.1     
-</pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──
-<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
-<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
-<span class=" -Color -Color-Cyan">ℹ</span> Use the conflicted package (<span class=" -Color -Color-Blue">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Loading required package: carData
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Attaching package: ‘car’
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:dplyr’:
-
-    recode
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The following object is masked from ‘package:purrr’:
-
-    some
-</pre></div>
-</div>
-</div>
-</div>
-<section id="linear-regression-model-form-and-assumptions">
-<h2>Linear Regression Model Form and Assumptions<a class="headerlink" href="#linear-regression-model-form-and-assumptions" title="Permalink to this headline">#</a></h2>
-<p>Recall, that linear regression models an outcome variable <span class="math notranslate nohighlight">\(y\)</span> as a linear combination of independent variables. Suppose we have <span class="math notranslate nohighlight">\(p\)</span> dependent variables, then the model takes the form $<span class="math notranslate nohighlight">\(y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \ldots + \beta_p x_p + \epsilon,\)</span><span class="math notranslate nohighlight">\( where \)</span>\epsilon<span class="math notranslate nohighlight">\( is an error or noise term. In standard linear regression, we assume that \)</span>\epsilon<span class="math notranslate nohighlight">\( is independent and follows a normal distribution \)</span>N(0, \sigma^2)$. From this model form we can extract the key assumptions of linear regression. It’s important to remember these assumptions when checking the model fit and interpreting the model results.</p>
-<ul class="simple">
-<li><p><strong>Linearity</strong>: The relationship between the independent variables and the dependent variables is linear. This means that the change in the dependent variable is proportional to the change in the independent variable(s). We can check for linearity by examining scatter plots or performing diagnostic tests.</p></li>
-<li><p><strong>Independence</strong>: The observations in the dataset are assumed to be independent of each other. There should be no systematic relationship or correlation between the residuals (the differences between the predicted and observed values). Independence can be violated when there is autocorrelation or when observations are clustered or dependent on each other.</p></li>
-<li><p><strong>Homoscedasticity</strong>: The variance of the residuals is constant across all levels of the independent variables. In other words, the spread or dispersion of the residuals should remain consistent throughout the range of the independent variable(s). Violations of homoscedasticity, called heteroscedasticity, can lead to biased standard errors and incorrect hypothesis tests.</p></li>
-<li><p><strong>Normality</strong>: The residuals follow a normal distribution. This assumption allows for valid hypothesis testing, confidence interval estimation, and prediction intervals. Departures from normality can affect the accuracy of statistical inferences, especially when dealing with small sample sizes. However, the central limit theorem helps to mitigate minor departures from normality in large samples.</p></li>
-<li><p><strong>No multicollinearity</strong>: The independent variables should not be highly correlated with each other. High multicollinearity can lead to unstable and unreliable estimates of the coefficients. It becomes challenging to distinguish the individual effects of the independent variables, and the interpretation of the model becomes problematic. Detecting multicollinearity can be done using correlation matrices or variance inflation factor (VIF) calculations. While this is not a direct assumption of the model, it’s an important part of model fitting.</p></li>
-</ul>
-<p>In Chapter 4, we presented some initial exploratory analysis fo this data. In this chapter, we will use linear regression to understand the assocaition between blood lead levels and systolic blood pressure adjusting for possible confounders. To start, we create columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
+<section id="simple-linear-regression">
+<h2>Simple Linear Regression<a class="headerlink" href="#simple-linear-regression" title="Permalink to this headline">#</a></h2>
+<p>In Chapter 4, we presented some initial exploratory analysis fo this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure adjusting for possible confounders. To start, we create columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">SBP</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP4&quot;</span><span class="p">)],</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
@@ -448,7 +406,8 @@ document.write(`
 <span class="w">                       </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span>
 <span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)))</span><span class="w">                       </span>
-<span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="n">select</span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">SBP2</span><span class="p">,</span><span class="w"> </span><span class="n">SBP3</span><span class="p">,</span><span class="w"> </span><span class="n">SBP4</span><span class="p">,</span><span class="w"> </span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP2</span><span class="p">,</span><span class="w"> </span><span class="n">DBP3</span><span class="p">,</span><span class="w"> </span><span class="n">DBP4</span><span class="p">)))</span>
+<span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="n">select</span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">SBP2</span><span class="p">,</span><span class="w"> </span><span class="n">SBP3</span><span class="p">,</span><span class="w"> </span><span class="n">SBP4</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                     </span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP2</span><span class="p">,</span><span class="w"> </span><span class="n">DBP3</span><span class="p">,</span><span class="w"> </span><span class="n">DBP4</span><span class="p">)))</span>
 <span class="nf">dim</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -474,27 +433,19 @@ document.write(`
 </div>
 </div>
 </div>
-</section>
-<section id="simple-linear-regression">
-<h2>Simple Linear Regression<a class="headerlink" href="#simple-linear-regression" title="Permalink to this headline">#</a></h2>
-<p>We will start with simple linear regression. Below we plot the relationship between blood lead level and our outcome systolic blood pressure using the cateogrical variable <code class="docutils literal notranslate"><span class="pre">LEAD_QUANTILE</span></code> and the continuous variable <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>. It easy to visualize the assumptions of simple linear regression. First, the survey sampling for the NHANES survey allows us to assume that each observation is independent. Now, let’s look at the plots below. We expect to see that the average systolic blood pressure increases linearly with blood lead level and that the observations look normally distributed with equal variance along that line. Below, we do not observe that to be the case. We will come back to this in the section on transformations and interactions.</p>
+<p>We will start with simple linear regression. Below we plot the relationship between blood lead level. For simple linear regression with a continuous independent variable, a scatter plot allows us to easily visualize whether we meet the assumptions underlying simple linear regression. The survey sampling for the NHANES survey allows us to assume that each observation is independent. Looking at the plots below, we expect to see that the average systolic blood pressure increases linearly with blood lead level and that the observations look normally distributed with equal variance along that line. Below, we do not observe that to be the case. We will come back to this in the section on transformations and interactions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">p1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span><span class="o">+</span>
-<span class="w">  </span><span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="n">LEAD_QUANTILE</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Density&quot;</span><span class="p">)</span>
-<span class="n">p2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ggplot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span><span class="o">+</span>
-<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">SBP</span><span class="p">))</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Blood Lead Level&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">)</span>
-<span class="n">p1</span><span class="o">/</span><span class="n">p2</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span>
+<span class="w">     </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Blood Lead Level&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/3bedc93ceae7b92dcd116b55b94648cfadcbe3b64380d9f48d482277e0885da3.png" src="../_images/3bedc93ceae7b92dcd116b55b94648cfadcbe3b64380d9f48d482277e0885da3.png" />
+<img alt="../_images/8c6820847520fd5e8b673927a82333a7559411bf96ece640c587f3f70ea8b9d7.png" src="../_images/8c6820847520fd5e8b673927a82333a7559411bf96ece640c587f3f70ea8b9d7.png" />
 </div>
 </div>
-<p>Despite our observations, we will fit a simple linear regression model to explain the association between <code class="docutils literal notranslate"><span class="pre">SBP</span></code> and <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>. The function <code class="docutils literal notranslate"><span class="pre">lm(formula</span> <span class="pre">=</span> <span class="pre">y</span> <span class="pre">~</span> <span class="pre">x,</span> <span class="pre">data)</span></code> fits a linear model in R. The first argument is formula of the linear model. On the left hand side of the <code class="docutils literal notranslate"><span class="pre">~</span></code> we put the outcome variable and on the right hand side we put the dependent variable. When we have multiple depedent variables we separate them with a <code class="docutils literal notranslate"><span class="pre">+</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">y~x1+x2</span></code>). The output of this function is an <code class="docutils literal notranslate"><span class="pre">lm</span></code> object. The <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function will print a summary of the model including the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic.</p>
+<p>Despite our observations, we will fit a simple linear regression model to explain the association between <code class="docutils literal notranslate"><span class="pre">SBP</span></code> and <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>. The function <code class="docutils literal notranslate"><span class="pre">lm(formula</span> <span class="pre">=</span> <span class="pre">y</span> <span class="pre">~</span> <span class="pre">x,</span> <span class="pre">data)</span></code> fits a linear model in R. The first argument is the formula of the linear model. On the left hand side of the <code class="docutils literal notranslate"><span class="pre">~</span></code> we put the outcome variable and on the right hand side we put the independent variable. When we have multiple indepedent variables we separate them with a <code class="docutils literal notranslate"><span class="pre">+</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">y~x1+x2</span></code>). The output of this function is an <code class="docutils literal notranslate"><span class="pre">lm</span></code> object. We can call the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function on this object to print a summary of the model including the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">simp_model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SBP</span><span class="o">~</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
@@ -524,11 +475,13 @@ F-statistic: 866.8 on 1 and 30403 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 </div>
-<p>To visualize this model, we can add the estimated regression line to our scatter plot. In <code class="docutils literal notranslate"><span class="pre">ggplot</span></code>, this can be done with the <code class="docutils literal notranslate"><span class="pre">geom_smooth()</span></code> function. In base R, we use the <code class="docutils literal notranslate"><span class="pre">abline()</span></code> function.</p>
+<p>To visualize this model, we can add the estimated regression line to our scatter plot. In <code class="docutils literal notranslate"><span class="pre">ggplot</span></code>, this can be done with the <code class="docutils literal notranslate"><span class="pre">geom_smooth()</span></code> function. In base R, we use the <code class="docutils literal notranslate"><span class="pre">abline()</span></code> function, which can take in a regression model as an input.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">),</span><span class="n">xlab</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Blood Lead Level&quot;</span><span class="p">),</span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
-<span class="nf">abline</span><span class="p">(</span><span class="n">simp_model</span><span class="p">,</span><span class="n">col</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span>
+<span class="w">     </span><span class="n">ylab</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Systolic Blood Pressure&quot;</span><span class="p">),</span>
+<span class="w">     </span><span class="n">xlab</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Blood Lead Level&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">simp_model</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -571,7 +524,7 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 </div>
-<p>We can also extract the regression coefficients from the model using the <code class="docutils literal notranslate"><span class="pre">coef()</span></code> function or by using the <code class="docutils literal notranslate"><span class="pre">tidy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval. Below, we add a 95% confidence interval (which is the default value for <code class="docutils literal notranslate"><span class="pre">conf.level</span></code>).</p>
+<p>We can also extract the estimated regression coefficients from the model using the <code class="docutils literal notranslate"><span class="pre">coef()</span></code> function or by using the <code class="docutils literal notranslate"><span class="pre">tidy</span></code> function from the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval. Below, we add a 95% confidence interval (which is the default value for <code class="docutils literal notranslate"><span class="pre">conf.level</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">adj_model</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
@@ -594,7 +547,7 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </table>
 </div></div>
 </div>
-<p>Some other useful summary functions are <code class="docutils literal notranslate"><span class="pre">resid()</span></code>, which returns the residual values for the model, and <code class="docutils literal notranslate"><span class="pre">fitted()</span></code>, which returns the fitted values. We can also predict on new data using the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function. Below we find the summary of the residual values and then plot the fitted vs true values.</p>
+<p>Some other useful summary functions are <code class="docutils literal notranslate"><span class="pre">resid()</span></code>, which returns the residual values for the model, and <code class="docutils literal notranslate"><span class="pre">fitted()</span></code>, which returns the fitted values or estimated y values. We can also predict on new data using the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function. Below we find the summary of the residual values and then plot the fitted vs true values. We observe some extreme residual values as well as the fact that the absolute residual values increase with increased blood pressure values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">adj_model</span><span class="p">))</span>
@@ -610,16 +563,38 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">()</span><span class="o">+</span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="nf">fitted</span><span class="p">(</span><span class="n">adj_model</span><span class="p">)))</span><span class="o">+</span>
-<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;True Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Predicted Systolic Blood Pressure&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="nf">fitted</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span>
+<span class="w">     </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;True Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Predicted Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
+<span class="nf">abline</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/439d4188c0075e452b2cbaf46889b69ef7aa405f00d1889bdddd9e343f802ed4.png" src="../_images/439d4188c0075e452b2cbaf46889b69ef7aa405f00d1889bdddd9e343f802ed4.png" />
+<img alt="../_images/14cb59d621550b23021df78d29b70654a29f2ea4a7928c5a5f7571ae148b07de.png" src="../_images/14cb59d621550b23021df78d29b70654a29f2ea4a7928c5a5f7571ae148b07de.png" />
 </div>
 </div>
-<p>The model summary above shows that the reference level for sex is male. If we want to change our reference level, we can reorder the factor variable by either using the <code class="docutils literal notranslate"><span class="pre">factor()</span></code> function and specifying <code class="docutils literal notranslate"><span class="pre">Female</span></code> as the first level or by using the <code class="docutils literal notranslate"><span class="pre">relevel()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">ref</span></code> argument specifies the new reference level.</p>
+<p>We can perform a nested hypothesis test between our simple linear regresion model and our adjusted model using the <code class="docutils literal notranslate"><span class="pre">anova()</span></code> function. We pass both models to this function along with the argument <code class="docutils literal notranslate"><span class="pre">test=&quot;F&quot;</span></code> to indicate that we are performing an F-test. The <code class="docutils literal notranslate"><span class="pre">print()</span></code> function shows the two tested models along with the p-value, which indicates a significantly better fit for the adjusted model.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">print</span><span class="p">(</span><span class="nf">anova</span><span class="p">(</span><span class="n">simp_model</span><span class="p">,</span><span class="w"> </span><span class="n">adj_model</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="o">=</span><span class="s">&quot;F&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Analysis of Variance Table
+
+Model 1: SBP ~ LEAD
+Model 2: SBP ~ LEAD + AGE + SEX
+  Res.Df      RSS Df Sum of Sq      F    Pr(&gt;F)    
+1  30403 10375769                                  
+2  30401  8413303  2   1962467 3545.6 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+</pre></div>
+</div>
+</div>
+</div>
+<p>The model summary above displays the estimated coefficient for <code class="docutils literal notranslate"><span class="pre">sex</span></code> as <code class="docutils literal notranslate"><span class="pre">sexFemale</span></code>. This indicates that the reference level for sex is male. If we want to change our reference level, we can reorder the factor variable by either using the <code class="docutils literal notranslate"><span class="pre">factor()</span></code> function and specifying <code class="docutils literal notranslate"><span class="pre">Female</span></code> as the first level or by using the <code class="docutils literal notranslate"><span class="pre">relevel()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">ref</span></code> argument specifies the new reference level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">relevel</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="n">ref</span><span class="o">=</span><span class="s">&quot;Female&quot;</span><span class="p">)</span>
@@ -644,10 +619,31 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </table>
 </div></div>
 </div>
+<p>The formula passed to the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function also allows us to use the <code class="docutils literal notranslate"><span class="pre">.</span></code> to indicate that we would like to include all remaining columns as independent variables or the <code class="docutils literal notranslate"><span class="pre">-</span></code> to exclude variables. Below, we show how we could use these to fit a model with <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>, <code class="docutils literal notranslate"><span class="pre">AGE</span></code>, and <code class="docutils literal notranslate"><span class="pre">SEX</span></code> as included covariates by excluding all other variables instead.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">lm</span><span class="p">(</span><span class="n">SBP</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ID</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">RACE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">EDUCATION</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">INCOME</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">SMOKE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">YEAR</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">BMI_CAT</span><span class="w"> </span><span class="o">-</span><span class="w"> </span>
+<span class="w">   </span><span class="n">LEAD_QUANTILE</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">DBP</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">ALC</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">HYP</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">RACE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = SBP ~ . - ID - RACE - EDUCATION - INCOME - SMOKE - 
+    YEAR - BMI_CAT - LEAD_QUANTILE - DBP - ALC - HYP - RACE, 
+    data = nhanes_df)
+
+Coefficients:
+(Intercept)          AGE      SEXMale         LEAD  
+    99.0077       0.4619       2.7777       0.4001  
+</pre></div>
+</div>
+</div>
+</div>
 </section>
 <section id="diagnostic-plots-and-measures">
 <h2>Diagnostic Plots and Measures<a class="headerlink" href="#diagnostic-plots-and-measures" title="Permalink to this headline">#</a></h2>
-<p>We can tell from the above plot that our model doesn’t have a great fit. We will use some diagnostic measures to learn more. R has some built-in plots available for a linear regression model. We plot these below using the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> function. The four plots include (a) Residuals vs Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs Fitted, and (d) Standardized Residuals vs Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook’s distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals. So this last plot tries to summarize the outliers, leverage, and influential points. The plots below show that our residuals do not look normally distributed and that we have may have some high leverage points.</p>
+<p>We can tell from the above plot that our model doesn’t have a great fit. We will use some diagnostic plots and measures to learn more. R has some built-in plots available for a linear regression model. We plot these below using the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> function. The four plots include (a) Residuals vs Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs Fitted, and (d) Standardized Residuals vs Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook’s distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals. So this last plot tries to summarize the outliers, leverage, and influential points. The plots below show that our residuals do not look normally distributed and that we have may have some high leverage points.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w"> </span><span class="c1"># plots all four plots together</span>
@@ -679,7 +675,8 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span><span class="w"> </span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">rstandard</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Standardized Residuals&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Standardized Residuals&quot;</span><span class="p">)</span><span class="w"> </span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">rstandard</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span><span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Standardized Residuals&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">     </span><span class="n">main</span><span class="o">=</span><span class="s">&quot;Histogram of Standardized Residuals&quot;</span><span class="p">)</span><span class="w"> </span>
 <span class="nf">qqnorm</span><span class="p">(</span><span class="nf">rstandard</span><span class="p">(</span><span class="n">adj_model</span><span class="p">))</span><span class="w"> </span>
 <span class="nf">qqline</span><span class="p">(</span><span class="nf">rstandard</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span>
 </pre></div>
@@ -692,7 +689,7 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </section>
 <section id="homoscedasticity-linearity-and-collinearity">
 <h3>Homoscedasticity, Linearity, and Collinearity<a class="headerlink" href="#homoscedasticity-linearity-and-collinearity" title="Permalink to this headline">#</a></h3>
-<p>We can also create a residual vs fitted plot and plot covariates against the residuals. Below, we plot the blood lead level agains the residuals. In both plots, we are looking for the points to be spread roughly evenly around 0 and has no discerning pattern. However, both plots shows a tunnel shape, indicating a growing and shrinking variance of residuals. This indicates that we are violating the homoscedasticity assumption.</p>
+<p>We can also create a residual vs fitted plot or plot the residuals against included covariates. Below, we plot the blood lead level agains the residuals. In both plots, we are looking for the points to be spread roughly evenly around 0 and has no discerning pattern. However, both plots shows a tunnel shape, indicating a growing and shrinking variance of residuals by level, respectively. This indicates that we are violating the homoscedasticity assumption.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
@@ -724,11 +721,12 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 </section>
 <section id="leverage-and-influence">
 <h3>Leverage and Influence<a class="headerlink" href="#leverage-and-influence" title="Permalink to this headline">#</a></h3>
-<p>We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation’s <span class="math notranslate nohighlight">\(y\)</span> value influenes its own predicted value and indicate that an observation has extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to <span class="math notranslate nohighlight">\(p+1\)</span>, the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. Below we find the ten highest leverage values and then find those observations in the data.</p>
+<p>We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation’s <span class="math notranslate nohighlight">\(y\)</span> value influenes its own predicted value and indicate that an observation has extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. Below we find the ten highest leverage values and then find those observations in the data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">sort</span><span class="p">(</span><span class="nf">hatvalues</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span><span class="n">decreasing</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">]</span>
-<span class="n">nhanes_df</span><span class="p">[</span><span class="nf">order</span><span class="p">(</span><span class="nf">hatvalues</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span><span class="n">decreasing</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">head</span><span class="p">()</span>
+<span class="n">nhanes_df</span><span class="p">[</span><span class="nf">order</span><span class="p">(</span><span class="nf">hatvalues</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span><span class="n">decreasing</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">SEX</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">head</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -740,18 +738,22 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
 </style><dl class=dl-inline><dt>23016</dt><dd>0.0389860573783624</dd><dt>2511</dt><dd>0.0293594356273351</dd><dt>3091</dt><dd>0.0226987995842635</dd><dt>21891</dt><dd>0.01484172720611</dd><dt>3661</dt><dd>0.0144327193083266</dd><dt>511</dt><dd>0.0139931863681548</dd><dt>21892</dt><dd>0.0115872145092206</dd><dt>15321</dt><dd>0.0107977666330377</dd><dt>6511</dt><dd>0.0102200419694232</dd><dt>3452</dt><dd>0.00967912154365124</dd></dl>
 </div><div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 6 × 15</caption>
+<caption>A data.frame: 10 × 4</caption>
 <thead>
-	<tr><th></th><th scope=col>ID</th><th scope=col>AGE</th><th scope=col>SEX</th><th scope=col>RACE</th><th scope=col>EDUCATION</th><th scope=col>INCOME</th><th scope=col>SMOKE</th><th scope=col>YEAR</th><th scope=col>LEAD</th><th scope=col>BMI_CAT</th><th scope=col>LEAD_QUANTILE</th><th scope=col>HYP</th><th scope=col>ALC</th><th scope=col>SBP</th><th scope=col>DBP</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+	<tr><th></th><th scope=col>SBP</th><th scope=col>LEAD</th><th scope=col>AGE</th><th scope=col>SEX</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><th scope=row>23016</th><td>69212</td><td>38</td><td>Male</td><td><span style=white-space:pre-wrap>Mexican American  </span></td><td>LessThanHS</td><td>1.03</td><td>NeverSmoke</td><td>2011</td><td>61.29</td><td><span style=white-space:pre-wrap>BMI&gt;=30  </span></td><td>Q4</td><td>0</td><td>Yes</td><td>129</td><td>59</td></tr>
-	<tr><th scope=row>2511</th><td> 8942</td><td>61</td><td>Male</td><td><span style=white-space:pre-wrap>Other Hispanic    </span></td><td>MoreThanHS</td><td>2.25</td><td>NeverSmoke</td><td>1999</td><td>54.00</td><td>25&lt;BMI&lt;30</td><td>Q4</td><td>1</td><td>Yes</td><td>139</td><td>74</td></tr>
-	<tr><th scope=row>3091</th><td>10802</td><td>72</td><td>Male</td><td>Non-Hispanic White</td><td>MoreThanHS</td><td>5.00</td><td>QuitSmoke </td><td>2001</td><td>48.00</td><td><span style=white-space:pre-wrap>BMI&lt;=25  </span></td><td>Q4</td><td>1</td><td>Yes</td><td>154</td><td>82</td></tr>
-	<tr><th scope=row>21891</th><td>66079</td><td>54</td><td>Male</td><td>Non-Hispanic Black</td><td><span style=white-space:pre-wrap>HS        </span></td><td>1.65</td><td>StillSmoke</td><td>2011</td><td>38.90</td><td><span style=white-space:pre-wrap>BMI&gt;=30  </span></td><td>Q4</td><td>1</td><td>No </td><td>123</td><td>74</td></tr>
-	<tr><th scope=row>3661</th><td>12848</td><td>39</td><td>Male</td><td><span style=white-space:pre-wrap>Mexican American  </span></td><td>MoreThanHS</td><td>4.14</td><td>NeverSmoke</td><td>2001</td><td>38.00</td><td><span style=white-space:pre-wrap>BMI&lt;=25  </span></td><td>Q4</td><td>0</td><td>Yes</td><td>101</td><td>54</td></tr>
-	<tr><th scope=row>511</th><td> 1882</td><td>34</td><td>Male</td><td>Non-Hispanic White</td><td><span style=white-space:pre-wrap>HS        </span></td><td>1.36</td><td>StillSmoke</td><td>1999</td><td>37.30</td><td><span style=white-space:pre-wrap>BMI&lt;=25  </span></td><td>Q4</td><td>1</td><td>Yes</td><td>118</td><td>80</td></tr>
+	<tr><th scope=row>23016</th><td>129</td><td>61.29</td><td>38</td><td>Male</td></tr>
+	<tr><th scope=row>2511</th><td>139</td><td>54.00</td><td>61</td><td>Male</td></tr>
+	<tr><th scope=row>3091</th><td>154</td><td>48.00</td><td>72</td><td>Male</td></tr>
+	<tr><th scope=row>21891</th><td>123</td><td>38.90</td><td>54</td><td>Male</td></tr>
+	<tr><th scope=row>3661</th><td>101</td><td>38.00</td><td>39</td><td>Male</td></tr>
+	<tr><th scope=row>511</th><td>118</td><td>37.30</td><td>34</td><td>Male</td></tr>
+	<tr><th scope=row>21892</th><td>107</td><td>33.67</td><td>21</td><td>Male</td></tr>
+	<tr><th scope=row>15321</th><td>104</td><td>33.10</td><td>39</td><td>Male</td></tr>
+	<tr><th scope=row>6511</th><td>175</td><td>33.00</td><td>71</td><td>Male</td></tr>
+	<tr><th scope=row>3452</th><td>113</td><td>31.40</td><td>38</td><td>Male</td></tr>
 </tbody>
 </table>
 </div></div>
@@ -842,7 +844,7 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 <img alt="../_images/e7d5eb951508328d4b9c997afa5beeac05acbb01f1d7587c1370d0746fb12434.png" src="../_images/e7d5eb951508328d4b9c997afa5beeac05acbb01f1d7587c1370d0746fb12434.png" />
 </div>
 </div>
-<p>We can modify the above code to add square root transformations or inverse transformations. Additionally, we might consider polynomial transformations. The <code class="docutils literal notranslate"><span class="pre">poly(x,</span> <span class="pre">degree=1)</span></code> function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this example but show some example code below to create a cubic transformation for blood lead level.</p>
+<p>We can modify the above code to add square root transformations <code class="docutils literal notranslate"><span class="pre">sqrt(LEAD)</span></code> or inverse transformations <code class="docutils literal notranslate"><span class="pre">1/LEAD</span></code> by including that transformation in the formula. Additionally, we might consider polynomial transformations. The <code class="docutils literal notranslate"><span class="pre">poly(x,</span> <span class="pre">degree=1)</span></code> function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this example but show some example code below to create a cubic transformation for blood lead level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_poly</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">SBP</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">poly</span><span class="p">(</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
@@ -931,7 +933,7 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <div class="cell_output docutils container">
 <div class="output text_html">-38568.8611664623</div><div class="output text_html">-38710.0234938422</div></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function allows us to calculate the predicted <code class="docutils literal notranslate"><span class="pre">y</span></code> values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the <code class="docutils literal notranslate"><span class="pre">newdata</span></code> argument. The new data provided must contain the columns given in the model formula. We use the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function to find the predicted values and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function allows us to calculate the predicted <code class="docutils literal notranslate"><span class="pre">y</span></code> values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the <code class="docutils literal notranslate"><span class="pre">newdata</span></code> argument. The new data provided must contain the columns given in the model formula. We use the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function to find the predicted values and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. The mean absolute error indicates that our model has fairly high residuals on average. While this model may be helpful to understand the relationship between blood lead level and systolic blood pressure, it would not be useful to predict the latter.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model_interaction</span><span class="p">)</span>
@@ -963,7 +965,7 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <section id="stepwise-selection">
 <h2>Stepwise Selection<a class="headerlink" href="#stepwise-selection" title="Permalink to this headline">#</a></h2>
 <p>So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We will end this chapter by demonstrating how to implement stepwise selection in R. The <code class="docutils literal notranslate"><span class="pre">step()</span></code> function takes in an initial model to perform stepwise selection on along with a direction <code class="docutils literal notranslate"><span class="pre">direction</span></code> (“forward”, “backward”, or “both”), and a scope <code class="docutils literal notranslate"><span class="pre">scope</span></code>. The scope specifies the lower and upper formula to consider. Below we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is all terms in the lower formula must be contained in the upper formula.</p>
-<p>By default, the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function prints each step in the process and uses AIC to . We can set <code class="docutils literal notranslate"><span class="pre">trace=0</span></code> to avoid the print behavior and update the argument <code class="docutils literal notranslate"><span class="pre">k</span></code> to <code class="docutils literal notranslate"><span class="pre">log(n)</span></code> to use BIC, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations. Below we see that the algorithm first adds in race, then BMI, then income, then education, then smoking status. In fact, all variables were added to the model! The final output is an lm object that we can use. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.</p>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function prints each step in the process and uses AIC to guide its decisions. We can set <code class="docutils literal notranslate"><span class="pre">trace=0</span></code> to avoid the print behavior and update the argument <code class="docutils literal notranslate"><span class="pre">k</span></code> to <code class="docutils literal notranslate"><span class="pre">log(n)</span></code> to use BIC, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations. Below we see that the algorithm first adds in race, then BMI, then income, then education, then smoking status. In fact, all variables were added to the model! The final output is an <code class="docutils literal notranslate"><span class="pre">lm</span></code> object that we can use. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">model_interaction</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;forward&#39;</span><span class="p">,</span><span class="w"> </span>
@@ -1074,6 +1076,8 @@ F-statistic: 669.1 on 15 and 30389 DF,  p-value: &lt; 2.2e-16
 </section>
 <section id="recap-video">
 <h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<p>covid data?
+anova after stepwise selection</p>
 </section>
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
@@ -1253,8 +1257,6 @@ F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
 <ol class="arabic simple" start="7">
 <li><p>Use <code class="docutils literal notranslate"><span class="pre">DBP1</span></code> as outcome, use forward selection method to choose the best model.</p></li>
 </ol>
-<p>TODO: suppress messages and warnings</p>
-<p>TODO: formula . and -</p>
 </section>
 </section>
 
@@ -1325,7 +1327,6 @@ F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-regression-model-form-and-assumptions">Linear Regression Model Form and Assumptions</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression">Multiple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots-and-measures">Diagnostic Plots and Measures</a><ul class="nav section-nav flex-column">
