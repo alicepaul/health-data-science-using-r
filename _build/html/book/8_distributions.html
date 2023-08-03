@@ -383,6 +383,7 @@ document.write(`
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -637,7 +638,7 @@ $<span class="math notranslate nohighlight">\( P(X = x) = \binom{size}{x} p^x (1
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
-<li><p>Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 3 inches. If we pick a female at random, what is the probability that she is 5 feet or shorter? If we pick a female at random, what is the probability that she is 6 feet or taller?</p></li>
+<li><p>Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 3 inches. If we pick a female at random, what is the probability that she is 5 feet or shorter? If we pick a female at random, what is the probability that she is 6 feet or taller? Generate 5 random females following the same disrtibution. Then, find the 0.15 quantile for this same distribution.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -656,6 +657,35 @@ $<span class="math notranslate nohighlight">\( P(X = x) = \binom{size}{x} p^x (1
 </div>
 <div class="cell_output docutils container">
 <div class="output text_html">0.00383038056758978</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
+
+<span class="n">x_norm</span> <span class="o">&lt;-</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">5</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">x_norm</span>
+<span class="n">q_15</span> <span class="o">&lt;-</span> <span class="nf">qnorm</span><span class="p">(</span><span class="m">0.15</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">q_15</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>64.0562385128255</li><li>63.4472423737928</li><li>59.8860083502325</li><li>62.2024968526488</li><li>64.8836353797025</li></ol>
+</div><div class="output text_html">60.8906998315186</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Uncomment to test code</span>
+<span class="n">testthat</span><span class="o">::</span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">x_norm</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="m">64.056</span><span class="p">,</span> <span class="m">63.447</span><span class="p">,</span> <span class="m">59.886</span><span class="p">,</span> <span class="m">62.202</span><span class="p">,</span> <span class="m">64.884</span><span class="p">),</span> <span class="m">3</span><span class="p">)</span>
+<span class="n">testthat</span><span class="o">::</span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">q_15</span><span class="p">,</span> <span class="m">60.8906998</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <ol class="arabic simple" start="2">
 <li><p>Compute the probability that the height of a randomly chosen female is within 1 SD from the average height.</p></li>
@@ -684,29 +714,41 @@ $<span class="math notranslate nohighlight">\( P(X = x) = \binom{size}{x} p^x (1
 <div class="output text_html">0.682689492137086</div></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>The distribution of IQ scores is approximately normally distributed. The expected value is 100 and the standard deviation is 15. Suppose you want to know the distribution of the person with the highest IQ in your school district, where 10,000 people are born each year.</p></li>
+<li><p>Suppose that we had a model for a certain drug effected certain patients. We believe those who are not given the drug have a reduction in tumor size that is randomly distributed as <span class="math notranslate nohighlight">\(X\sim100*exp(mean = R)\)</span>, where <span class="math notranslate nohighlight">\(R\)</span> follows the uniform distribution with mean 0 and sd 1. Further, we believe those that are given the drug see a reduction in tumor size distributed as <span class="math notranslate nohighlight">\(X \sim 100*exp(mean = 2)\)</span>. Simulate 100 patients and plot distributions of reduction in tumor size for both groups.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate 10,000 IQ scores 1,000 times using simulation. Make a histogram of the highest IQ scores.</span>
-<span class="n">N</span> <span class="o">&lt;-</span> <span class="m">1000</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">&lt;-</span> <span class="m">100</span> <span class="c1"># simulate 100 patients</span>
+<span class="n">mu_drug</span> <span class="o">&lt;-</span> <span class="m">2</span>
+<span class="n">mu_nodrug</span> <span class="o">&lt;-</span> <span class="nf">runif</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="c1"># default mean =0, sd=1, with 100 sample size</span>
+<span class="n">x_drug</span> <span class="o">&lt;-</span> <span class="m">100</span><span class="o">*</span><span class="nf">rexp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="m">1</span><span class="o">/</span><span class="n">mu_drug</span><span class="p">)</span> <span class="c1"># generate expo distibutions</span>
+<span class="n">x_nodrug</span> <span class="o">&lt;-</span> <span class="m">100</span><span class="o">*</span><span class="nf">rexp</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="m">1</span><span class="o">/</span><span class="n">mu_nodrug</span><span class="p">)</span>
 
-<span class="c1"># Use the `set.seed` function to make sure your answer matches the expected result after random number generation.</span>
-<span class="nf">set.seed</span><span class="p">(</span><span class="m">12</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">x_drug</span><span class="p">)</span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">x_nodrug</span><span class="p">)</span> <span class="c1"># significant difference between two treatments</span>
 
-<span class="c1"># Create an object called `highestIQ` that contains the highest IQ score from each random distribution of 10,000 people.</span>
-<span class="n">highestIQ</span> <span class="o">&lt;-</span> <span class="nf">replicate</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="p">{</span>
-    <span class="n">sim</span> <span class="o">&lt;-</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">10000</span><span class="p">,</span><span class="m">100</span><span class="p">,</span><span class="m">15</span><span class="p">)</span>
-    <span class="nf">max</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
-<span class="p">})</span>
-
-<span class="c1"># Make a histogram of the highest IQ scores.</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">highestIQ</span><span class="p">)</span>
+<span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> <span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x_drug</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">after_stat</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">fill</span> <span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0.3</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span> <span class="o">+</span> 
+<span class="c1"># after_stat(density) after capture histogram and change to density</span>
+<span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_nodrug</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">after_stat</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">fill</span> <span class="o">=</span> <span class="s">&quot;blue&quot;</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0.3</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span> <span class="o">+</span>
+<span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_drug</span><span class="p">),</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span>
+<span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_nodrug</span><span class="p">),</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;blue&quot;</span><span class="p">)</span> <span class="o">+</span>
+<span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Reduction in Tumor Size&quot;</span><span class="p">)</span> <span class="o">+</span>
+<span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Density&quot;</span><span class="p">)</span> <span class="o">+</span>
+<span class="nf">scale_fill_identity</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Treatment&quot;</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="s">&quot;blue&quot;</span><span class="p">),</span> <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Drug&quot;</span><span class="p">,</span> <span class="s">&quot;No Drug&quot;</span><span class="p">),</span> <span class="n">guide</span> <span class="o">=</span> <span class="s">&quot;legend&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/2ed552eb9d14a5d556718503ce5133afbf336786ffd7e9021336a24d48eb737c.png" src="../_images/2ed552eb9d14a5d556718503ce5133afbf336786ffd7e9021336a24d48eb737c.png" />
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   4.05   59.15  153.74  197.34  291.19  966.56 
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+  0.07744  10.54420  35.17789  52.83845  61.57333 301.55553 
+</pre></div>
+</div>
+<img alt="../_images/8ca2727a9621b0fd3fb5d09c1437db3301803317277942ea7b5a664d061eedf0.png" src="../_images/8ca2727a9621b0fd3fb5d09c1437db3301803317277942ea7b5a664d061eedf0.png" />
 </div>
 </div>
 </section>

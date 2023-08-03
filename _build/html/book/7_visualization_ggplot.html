@@ -358,6 +358,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adjusting-the-axes-and-aesthetics">Adjusting the Axes and Aesthetics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-groups">Adding Groups</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-options">Extra Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>
             </nav>
@@ -376,7 +377,7 @@ document.write(`
 <p>The three packages we will use in this chapter are <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code>, <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code>, and <code class="docutils literal notranslate"><span class="pre">patchwork</span></code>. The package <code class="docutils literal notranslate"><span class="pre">patchwork</span></code> is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic introduced in Chapter 2 to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we will take a sample of 5,000 patients from this data and use only those rows that are complete cases at baseline.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
 <span class="nf">library</span><span class="p">(</span><span class="n">patchwork</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
@@ -385,22 +386,6 @@ document.write(`
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">5</span><span class="p">)</span>
 <span class="n">pain_df</span> <span class="o">&lt;-</span> <span class="n">pain</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span> <span class="n">select</span><span class="o">=-</span><span class="nf">c</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">))),</span> <span class="p">]</span>
 <span class="n">pain_df</span> <span class="o">&lt;-</span> <span class="n">pain_df</span><span class="p">[</span><span class="nf">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pain_df</span><span class="p">),</span> <span class="m">5000</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">),]</span> 
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Attaching core tidyverse packages</span> ──────────────────────── tidyverse 2.0.0 ──
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">dplyr    </span> 1.1.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">readr    </span> 2.1.4
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">forcats  </span> 1.0.0     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">stringr  </span> 1.5.0
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">ggplot2  </span> 3.4.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tibble   </span> 3.2.1
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">lubridate</span> 1.9.2     <span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">tidyr    </span> 1.3.0
-<span class=" -Color -Color-Green">✔</span> <span class=" -Color -Color-Blue">purrr    </span> 1.0.1     
-</pre></div>
-</div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>── <span class=" -Color -Color-Bold">Conflicts</span> ────────────────────────────────────────── tidyverse_conflicts() ──
-<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">filter()</span> masks <span class=" -Color -Color-Blue">stats</span>::filter()
-<span class=" -Color -Color-Red">✖</span> <span class=" -Color -Color-Blue">dplyr</span>::<span class=" -Color -Color-Green">lag()</span>    masks <span class=" -Color -Color-Blue">stats</span>::lag()
-<span class=" -Color -Color-Cyan">ℹ</span> Use the conflicted package (<span class=" -Color -Color-Blue">&lt;http://conflicted.r-lib.org/&gt;</span>) to force all conflicts to become errors
 </pre></div>
 </div>
 </div>
@@ -418,10 +403,12 @@ document.write(`
 <img alt="../_images/1ca959aec4afccf325e13648a682ae165ac7aeb32da6e40a4949f6bc6ab5881a.png" src="../_images/1ca959aec4afccf325e13648a682ae165ac7aeb32da6e40a4949f6bc6ab5881a.png" />
 </div>
 </div>
-<p>Now we can start adding layers to our <code class="docutils literal notranslate"><span class="pre">ggplot</span></code> object. We start by adding the data as an argument to our first <code class="docutils literal notranslate"><span class="pre">ggplot()</span></code> function. This passes the data on to any future layers. One type of layer is a <strong>geom</strong>. These layers create a geometric object. Below, we use the <code class="docutils literal notranslate"><span class="pre">geom_point()</span></code> to add a scatter plot layer. Within this function, we need to tell the <strong>geom</strong> how to use the data to create the scatter plot through the <code class="docutils literal notranslate"><span class="pre">aes()</span></code> function which creates an <strong>aesthetic</strong>. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. The image shows a fairly linear relationship between anxiety and depression.</p>
+<p>Now we can start adding layers to our <code class="docutils literal notranslate"><span class="pre">ggplot</span></code> object. One type of layer is a <strong>geom</strong>. These layers create a geometric object. Below, we use the <code class="docutils literal notranslate"><span class="pre">geom_point()</span></code> to add a scatter plot layer. For this function, we need to specify the data and tell R how to use the data to create the scatter plot through the <code class="docutils literal notranslate"><span class="pre">aes()</span></code> function which creates an <strong>aesthetic</strong>. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. Both the data and the aesthetic can either be specified in our initial <code class="docutils literal notranslate"><span class="pre">ggplot()</span></code> function, which will pass this information to all future layers, or in the <code class="docutils literal notranslate"><span class="pre">geom_point()</span></code> function itself. We specify the aesthetic in the geom function but also include two alternative ways to code the same image that are commented out. The image shows a fairly linear relationship between anxiety and depression.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span><span class="o">+</span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PROMIS_ANXIETY</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">PROMIS_DEPRESSION</span><span class="p">))</span>
+<span class="c1"># ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))+geom_point()</span>
+<span class="c1"># ggplot()+geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))</span>
 </pre></div>
 </div>
 </div>
@@ -429,21 +416,20 @@ document.write(`
 <img alt="../_images/d2eb530050b8dc63ad4650eb19739ff77ef99d97034c3a447f2938a029acebac.png" src="../_images/d2eb530050b8dc63ad4650eb19739ff77ef99d97034c3a447f2938a029acebac.png" />
 </div>
 </div>
-<p>If we want to improve our plot, we may want to add different labels and a title. To do so, we use the <code class="docutils literal notranslate"><span class="pre">labs()</span></code> function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color and size. These two things are specified outside of the <code class="docutils literal notranslate"><span class="pre">aes()</span></code> function since they do not come from the data - every point has the same color and size.</p>
+<p>If we want to improve our plot, we may want to add different labels and a title. To do so, we use the <code class="docutils literal notranslate"><span class="pre">labs()</span></code> function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color, size, and shape of the points. These things are specified outside of the <code class="docutils literal notranslate"><span class="pre">aes()</span></code> function since they do not come from the data - every point has the same color, size, and shape in this example.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span><span class="o">+</span>
-  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PROMIS_ANXIETY</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">PROMIS_DEPRESSION</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">0.4</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PROMIS_ANXIETY</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">PROMIS_DEPRESSION</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;blue&quot;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">2</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="m">5</span><span class="p">)</span> <span class="o">+</span> 
   <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;PROMIS Anxiety Score&quot;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s">&quot;PROMIS Depression Score&quot;</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="s">&quot;Depression vs Anxiety Scores&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/35739ab2d737412f0eb7c8cca9fc07261ef2b46c8016b056b1a25511b290d402.png" src="../_images/35739ab2d737412f0eb7c8cca9fc07261ef2b46c8016b056b1a25511b290d402.png" />
+<img alt="../_images/d788217aaee2b4d24b9436977e30fdbe00668035a32dd0a363163b0463282c82.png" src="../_images/d788217aaee2b4d24b9436977e30fdbe00668035a32dd0a363163b0463282c82.png" />
 </div>
 </div>
 <p>Let’s create another example. This time, I will create a histogram for initial recorded pain level. To find the corresponding geom for the type of plot we’d like to make, we can use the <a class="reference external" href="https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf">data visualization cheat sheet from Posit</a>. The first page lists all the geom options available along with what aesthetics we can set. For example, we are interested in plotting the distribution of one continuous variable. Under the <code class="docutils literal notranslate"><span class="pre">geom_histogram()</span></code> function we can see that we can specify <code class="docutils literal notranslate"><span class="pre">x</span></code> (the variable whose distribution we want to plot) as well as <code class="docutils literal notranslate"><span class="pre">binwidth</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">color</span></code>, <code class="docutils literal notranslate"><span class="pre">fill</span></code>, <code class="docutils literal notranslate"><span class="pre">linetype</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, and <code class="docutils literal notranslate"><span class="pre">weight</span></code>. By default the <code class="docutils literal notranslate"><span class="pre">y</span></code> value in a histogram is the count for each bin.</p>
-<p>TODO: image of cheat sheet</p>
 <p>In the code below, you can see that we updated the color (<code class="docutils literal notranslate"><span class="pre">color</span></code>), fill (<code class="docutils literal notranslate"><span class="pre">fill</span></code>), and opacity (<code class="docutils literal notranslate"><span class="pre">alpha</span></code>) of our histogram bars and updated the number of bins to be 11 (to account for the possible values 0-10). Additionally, we used the <code class="docutils literal notranslate"><span class="pre">theme_minimal()</span></code> function to change the background colors used. You can find the available themes on the second page of the cheat sheet. Try changing the theme to <code class="docutils literal notranslate"><span class="pre">theme_bw()</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -461,7 +447,7 @@ document.write(`
 </section>
 <section id="adjusting-the-axes-and-aesthetics">
 <h2>Adjusting the Axes and Aesthetics<a class="headerlink" href="#adjusting-the-axes-and-aesthetics" title="Permalink to this heading">#</a></h2>
-<p>For every part of the aesthetic used in a plot, we have control over how these values are displayed. We will start with the function above. These are controled using <strong>scale</strong> functions. Suppose that I wanted to update the plot above. In particular, I first want to update the x-axis to display all the values 0 to 10. To update the x-axis, I need to find the corresponding scale function for x with continuous values. This function is <code class="docutils literal notranslate"><span class="pre">scale_x_continuous()</span></code>. This function allows me to specify the limits (<code class="docutils literal notranslate"><span class="pre">limits</span></code>), breaks (<code class="docutils literal notranslate"><span class="pre">breaks</span></code>), and labels (<code class="docutils literal notranslate"><span class="pre">labels</span></code>). The scale functions can be found on the second sheet of the cheat sheet. In this case, I just want to update the breaks to be all values 0 to 10.</p>
+<p>For every part of the aesthetic used in a plot, we have control over how these values are displayed. These are controled using <strong>scale</strong> functions. Suppose that I wanted to update the plot above. In particular, I first want to update the x-axis to display all the values 0 to 10. To update the x-axis, I need to find the corresponding scale function for x with continuous values. This function is <code class="docutils literal notranslate"><span class="pre">scale_x_continuous()</span></code>. This function allows me to specify the limits (<code class="docutils literal notranslate"><span class="pre">limits</span></code>), breaks (<code class="docutils literal notranslate"><span class="pre">breaks</span></code>), and labels (<code class="docutils literal notranslate"><span class="pre">labels</span></code>). The scale functions can be found on the second sheet of the cheat sheet. In this case, I just want to update the breaks to be all values 0 to 10.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span><span class="o">+</span>
@@ -490,7 +476,7 @@ document.write(`
 </div>
 </div>
 <p>Suppose that we wanted to visualize the pain intensity and sleep disturbance for patients with below average physical function. Note that both sleep disturbance and physical function are reported as T-Scores, meaning that the raw scores have been converted to a standardized score with mean 50 and standard deviation 10 within the population. We can use the scale functions to update our axes and labels to reflect this information. As before, we need to use the <code class="docutils literal notranslate"><span class="pre">scale_x_continuous()</span></code> function to update the x-axis for a continuous variable. In this case, we update the limits (to restrict to below average physical function), breaks, and labels. We similarly update the y-axis.</p>
-<p>Last, we want to update the color aesthetic. As before, this aesthetic corresponds to a continuous variable. The cheat sheet provides several possible scale functions depending on how we want to specify the color gradient. We choose the <code class="docutils literal notranslate"><span class="pre">scale_color_gradient()</span></code> function since this allows us to specify the low and high end colors. We can also specify the breaks for the legend values similar to on the x and y axes. The argument <code class="docutils literal notranslate"><span class="pre">name</span></code> also allows us to rename this legend. The palette then converts this to a continuous color gradient. The functions <code class="docutils literal notranslate"><span class="pre">scale_color_gradient2()</span></code> and <code class="docutils literal notranslate"><span class="pre">scale_color_gradientn()</span></code> allow you to specify more color points in the gradient.</p>
+<p>Last, we want to update the color aesthetic. As before, this aesthetic corresponds to a continuous variable. The cheat sheet provides several possible scale functions depending on how we want to specify the color gradient. We choose the <code class="docutils literal notranslate"><span class="pre">scale_color_gradient()</span></code> function since this allows us to specify the low and high end colors. We can also specify the breaks for the legend values similar to on the x and y axes. The argument <code class="docutils literal notranslate"><span class="pre">name</span></code> also allows us to rename this legend. The palette then converts this to a continuous color gradient. The functions <code class="docutils literal notranslate"><span class="pre">scale_color_gradient2()</span></code> and <code class="docutils literal notranslate"><span class="pre">scale_color_gradientn()</span></code> allow you to specify more color points in the gradient rather than just the two extreme colors.</p>
 <p>Note that this time we received a warning message. This is because our axis limits have cut off some points. To avoid this message we could use the function <code class="docutils literal notranslate"><span class="pre">coord_cartesian()</span></code> to specify our limits which clips the values rather than removing points outside the limits.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -513,7 +499,7 @@ document.write(`
 <img alt="../_images/b88d4656119192bd48c1554a3283ab6c89465218c0be3b13f9de63093dd59f99.png" src="../_images/b88d4656119192bd48c1554a3283ab6c89465218c0be3b13f9de63093dd59f99.png" />
 </div>
 </div>
-<p>We now demonstrate the scale functions for discrete variables. In the example below, we first create a new race variable that as three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis. The function <code class="docutils literal notranslate"><span class="pre">scale_y_continuous()</span></code></p>
+<p>We now demonstrate the scale functions for discrete variables. In the example below, we first create a new race variable that as three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;BLACK&quot;</span><span class="p">,</span> <span class="s">&quot;WHITE&quot;</span><span class="p">),</span> <span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">,</span> <span class="s">&quot;OTHER&quot;</span><span class="p">))</span>
@@ -533,7 +519,7 @@ document.write(`
 <img alt="../_images/aa433109ac566d118e6a7de1d63858ee6dd882102210f7694ef41b54b699bbea.png" src="../_images/aa433109ac566d118e6a7de1d63858ee6dd882102210f7694ef41b54b699bbea.png" />
 </div>
 </div>
-<p>The function <code class="docutils literal notranslate"><span class="pre">scale_y_discrete()</span></code> is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels. To update the order we could either refactor the variable using <code class="docutils literal notranslate"><span class="pre">factor()</span></code>, specifying the levels, or we can use the <code class="docutils literal notranslate"><span class="pre">limits</span></code> argument to the scale function. The function <code class="docutils literal notranslate"><span class="pre">scale_fill_brewer()</span></code> is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the <a class="reference external" href="https://r-graph-gallery.com/38-rcolorbrewers-palettes.html">color palette</a> (<code class="docutils literal notranslate"><span class="pre">palette</span></code>) and to specify that that we do not want a legend (<code class="docutils literal notranslate"><span class="pre">guide</span></code>). Since we do not have a legend, we do not update the values and labels.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">scale_y_discrete()</span></code> is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels. To update the order we could either refactor the variable using <code class="docutils literal notranslate"><span class="pre">factor()</span></code> prior to plotting or we can use the <code class="docutils literal notranslate"><span class="pre">limits</span></code> argument to the scale function. The function <code class="docutils literal notranslate"><span class="pre">scale_fill_brewer()</span></code> is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the <a class="reference external" href="https://r-graph-gallery.com/38-rcolorbrewers-palettes.html">color palette</a> (<code class="docutils literal notranslate"><span class="pre">palette</span></code>) and to specify that that we do not want a legend (<code class="docutils literal notranslate"><span class="pre">guide</span></code>). Since we do not have a legend, we do not update the values and labels.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span><span class="o">+</span>
@@ -631,11 +617,11 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>We can now use the <code class="docutils literal notranslate"><span class="pre">geom_col()</span></code> function to create a bar plot of the proportions. By default, this function will stack the bars on top of each other when there is grouping. We add <code class="docutils literal notranslate"><span class="pre">position=&quot;dodge&quot;</span></code> to place them side by side.</p>
+<p>We can now use the <code class="docutils literal notranslate"><span class="pre">geom_col()</span></code> function to create a bar plot of the proportions. By default, this function will stack the bars on top of each other when there is grouping. Try adding <code class="docutils literal notranslate"><span class="pre">position=&quot;dodge&quot;</span></code> to the <code class="docutils literal notranslate"><span class="pre">geom_col()</span></code> function to place them side by side instead.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df_grp</span><span class="p">)</span><span class="o">+</span>
-  <span class="nf">geom_col</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">HAS_FOLLOW_UP</span><span class="p">),</span> <span class="n">position</span><span class="o">=</span><span class="s">&quot;dodge&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_col</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">prop</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">HAS_FOLLOW_UP</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">breaks</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="o">:</span><span class="m">10</span><span class="p">))</span> <span class="o">+</span> 
   <span class="nf">scale_fill_discrete</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Seen at Follow Up&quot;</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;No&quot;</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Reported Pain Intensity&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Proportion&quot;</span><span class="p">)</span> <span class="o">+</span>
@@ -644,7 +630,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/c773ff99ee3c76631e2a54553e0ff196ae71c1cd6d6b9f3a30eaf9dc25df7d3f.png" src="../_images/c773ff99ee3c76631e2a54553e0ff196ae71c1cd6d6b9f3a30eaf9dc25df7d3f.png" />
+<img alt="../_images/146719c0d03fcfa8bc5fc212b6e4c28baf1650ed74647bb2268a3f6409a1780c.png" src="../_images/146719c0d03fcfa8bc5fc212b6e4c28baf1650ed74647bb2268a3f6409a1780c.png" />
 </div>
 </div>
 <p>Another way to visualize by group is by adding a facet wrap. Facets divide a plot into subplots based on one or more discrete variable values. We can either arrange these plots as a grid where the rows and/or columns correspond to variables we are grouping by or wrap the plots into a rectangular format. Below, we take a previous plot and add a facet grid by race.</p>
@@ -721,7 +707,7 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>Within the theme we’ve chosen, we are able to update any of the <a class="reference external" href="https://ggplot2.tidyverse.org/reference/theme.html">theme options</a>. Below we use the <code class="docutils literal notranslate"><span class="pre">theme()</span></code> function to update the legend position to the bottom and the grid lines to light pink. Additionally, I add a horizontal line using the <code class="docutils literal notranslate"><span class="pre">geom_hline()</span></code> function (there are also functions for vertical or other lines) and add a text annotation using the <code class="docutils literal notranslate"><span class="pre">annotate()</span></code> function. These show the average pain value for a body part.</p>
+<p>Within the theme we’ve chosen, we are able to update any of the <a class="reference external" href="https://ggplot2.tidyverse.org/reference/theme.html">theme options</a>. Below we use the <code class="docutils literal notranslate"><span class="pre">theme()</span></code> function to update the legend position to the bottom and the grid lines to light pink. Additionally, I add a horizontal line using the <code class="docutils literal notranslate"><span class="pre">geom_hline()</span></code> function (<code class="docutils literal notranslate"><span class="pre">geom_vline()</span></code> and <code class="docutils literal notranslate"><span class="pre">geom_abline()</span></code> can add vertical or diagonal lines respectively) and add a text annotation using the <code class="docutils literal notranslate"><span class="pre">annotate()</span></code> function. These show the average pain value for a body part.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_body_map</span><span class="p">)</span> <span class="o">+</span>
@@ -786,13 +772,56 @@ document.write(`
 </div>
 </div>
 </div>
-<p>VIDEO:</p>
+</section>
+<section id="recap-video">
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
 <p>Emphasize where to find things
 The <code class="docutils literal notranslate"><span class="pre">geom</span></code> layers all have to do with displaying data points on the graph.
 The <code class="docutils literal notranslate"><span class="pre">scale</span></code> functions correspond to changing how an aspect of the graph is displayed. For example, <code class="docutils literal notranslate"><span class="pre">scale_color_continuous</span></code> would specify how to display colors that are used on a continuous scale. On the other hand, <code class="docutils literal notranslate"><span class="pre">scale_x_discrete</span></code> would specify how to display the x-axis when x is discrete.
 Last, the <code class="docutils literal notranslate"><span class="pre">theme</span></code> and <code class="docutils literal notranslate"><span class="pre">annotate</span></code> functions help to finetune the display.
 Warnings are not errors.</p>
 <p>Percentages using stat and position dodge</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="o">$</span><span class="n">BACK</span> <span class="o">&lt;-</span> <span class="nf">rowSums</span><span class="p">(</span><span class="n">pain_df</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;X208&quot;</span><span class="p">,</span> <span class="s">&quot;X209&quot;</span><span class="p">,</span> <span class="s">&quot;X218&quot;</span><span class="p">,</span><span class="s">&quot;X219&quot;</span><span class="p">,</span><span class="s">&quot;X212&quot;</span><span class="p">,</span><span class="s">&quot;X213&quot;</span><span class="p">)])</span> <span class="o">&gt;</span> <span class="m">1</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span> <span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">))</span>
+
+<span class="n">pain_back</span> <span class="o">&lt;-</span> <span class="n">pain_df</span> <span class="o">%&gt;%</span>
+  <span class="nf">group_by</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> <span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">summarize</span><span class="p">(</span><span class="n">num_pat</span> <span class="o">=</span> <span class="nf">n</span><span class="p">(),</span> <span class="n">perc_back</span> <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">PROMIS_PHYSICAL_FUNCTION</span><span class="p">))</span> <span class="o">%&gt;%</span>
+  <span class="nf">na.omit</span><span class="p">()</span> <span class="o">%&gt;%</span>
+  <span class="nf">ungroup</span><span class="p">()</span>
+
+<span class="nf">range</span><span class="p">(</span><span class="n">pain_back</span><span class="o">$</span><span class="n">num_pat</span><span class="p">)</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_back</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span> <span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">num_pat</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">perc_back</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">scale_size_continuous</span><span class="p">(</span><span class="n">range</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">15</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="nf">scale_color_gradient</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;bottom&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+“Removed 3604 rows containing missing values (`geom_point()`).”
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;PAIN_INTENSITY_AVERAGE&#39;. You can override
+using the `.groups` argument.
+</pre></div>
+</div>
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>1</li><li>91</li></ol>
+</div><img alt="../_images/5fda7f97593fc90aa0a1810fe617ee2db03e645fb7b00bc66a2f91b722b7f6ff.png" src="../_images/5fda7f97593fc90aa0a1810fe617ee2db03e645fb7b00bc66a2f91b722b7f6ff.png" />
+<img alt="../_images/68056249434b4b23cd18c561c64ffdfe8d1e2850b2d76253798ea89587ffaa92.png" src="../_images/68056249434b4b23cd18c561c64ffdfe8d1e2850b2d76253798ea89587ffaa92.png" />
+</div>
+</div>
 </section>
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
@@ -800,6 +829,16 @@ Warnings are not errors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
+<span class="n">cols</span><span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;#e7f0fa&quot;</span><span class="p">,</span> <span class="c1">#lighter than light blue</span>
+             <span class="s">&quot;#c9e2f6&quot;</span><span class="p">,</span> <span class="c1">#light blue</span>
+             <span class="s">&quot;#95cbee&quot;</span><span class="p">,</span> <span class="c1">#blue</span>
+             <span class="s">&quot;#0099dc&quot;</span><span class="p">,</span> <span class="c1">#darker blue</span>
+             <span class="s">&quot;#4ab04a&quot;</span><span class="p">,</span> <span class="c1">#green</span>
+             <span class="s">&quot;#ffd73e&quot;</span><span class="p">,</span> <span class="c1">#yellow</span>
+             <span class="s">&quot;#eec73a&quot;</span><span class="p">,</span> <span class="c1">#mustard</span>
+             <span class="s">&quot;#e29421&quot;</span><span class="p">,</span> <span class="c1">#dark khaki (?)</span>
+             <span class="s">&quot;#f05336&quot;</span><span class="p">,</span> <span class="c1">#orange red</span>
+             <span class="s">&quot;#ce472e&quot;</span><span class="p">)</span> <span class="c1">#red</span>
 <span class="nf">ggplot</span><span class="p">(</span><span class="n">covidcases</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">state</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">week</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">weekly_cases</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">geom_tile</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#39;white&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">.</span><span class="m">9</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">.</span><span class="m">9</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">scale_fill_gradientn</span><span class="p">(</span><span class="n">colours</span> <span class="o">=</span> <span class="n">cols</span><span class="p">,</span>
@@ -810,15 +849,15 @@ Warnings are not errors.</p>
                        <span class="n">values</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">0.01</span><span class="p">,</span> <span class="m">0.02</span><span class="p">,</span> <span class="m">0.03</span><span class="p">,</span> <span class="m">0.09</span><span class="p">,</span> <span class="m">0.1</span><span class="p">,</span> <span class="n">.</span><span class="m">15</span><span class="p">,</span> <span class="n">.</span><span class="m">25</span><span class="p">,</span> <span class="n">.</span><span class="m">4</span><span class="p">,</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="m">1</span><span class="p">),</span>
                        <span class="c1"># specify colors which change quickly at the beginning but slow down at the end</span>
                        <span class="n">guide</span> <span class="o">=</span> <span class="nf">guide_colourbar</span><span class="p">(</span><span class="n">ticks</span> <span class="o">=</span> <span class="bp">T</span><span class="p">,</span> <span class="n">nbin</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">barheight</span> <span class="o">=</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">T</span><span class="p">,</span> <span class="n">barwidth</span> <span class="o">=</span> <span class="m">15</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="m">25</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1.5</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">annotate</span><span class="p">(</span><span class="n">geom</span> <span class="o">=</span> <span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">25</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">51</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Vaccine Introduced&quot;</span><span class="p">,</span><span class="n">size</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">-0.1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="m">25</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">annotate</span><span class="p">(</span><span class="n">geom</span> <span class="o">=</span> <span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">25</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">51</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Vaccine Introduced&quot;</span><span class="p">,</span><span class="n">size</span> <span class="o">=</span> <span class="m">3</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">-0.1</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">scale_y_discrete</span><span class="p">(</span><span class="n">position</span> <span class="o">=</span> <span class="s">&#39;left&#39;</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">coord_equal</span><span class="p">()</span> <span class="o">+</span>
   <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">),</span> <span class="n">breaks</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="m">5</span><span class="p">))</span> <span class="o">+</span>
   <span class="nf">theme_minimal</span><span class="p">()</span> <span class="o">+</span>
   <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
         <span class="n">legend.direction</span> <span class="o">=</span> <span class="s">&#39;horizontal&#39;</span><span class="p">,</span>
-        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">20</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#39;bold&#39;</span><span class="p">,</span> <span class="n">vjust</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">),</span>
+        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#39;bold&#39;</span><span class="p">,</span> <span class="n">vjust</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">),</span>
         <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">8</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="n">vjust</span> <span class="o">=</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#39;plain&#39;</span><span class="p">),</span>
         <span class="n">axis.text.y</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">6</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="n">vjust</span> <span class="o">=</span> <span class="n">.</span><span class="m">5</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#39;plain&#39;</span><span class="p">),</span>
         <span class="n">panel.grid.major</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(),</span>
@@ -834,61 +873,12 @@ Warnings are not errors.</p>
 <span class=" -Color -Color-Cyan">ℹ</span> Please use `linewidth` instead.”
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ERROR while rich displaying an object: Error in rep(no, length.out = len): attempt to replicate an object of type &#39;closure&#39;
-
-Traceback:
-1. tryCatch(withCallingHandlers({
- .     if (!mime %in% names(repr::mime2repr)) 
- .         stop(&quot;No repr_* for mimetype &quot;, mime, &quot; in repr::mime2repr&quot;)
- .     rpr &lt;- repr::mime2repr[[mime]](obj)
- .     if (is.null(rpr)) 
- .         return(NULL)
- .     prepare_content(is.raw(rpr), rpr)
- . }, error = error_handler), error = outer_handler)
-2. tryCatchList(expr, classes, parentenv, handlers)
-3. tryCatchOne(expr, names, parentenv, handlers[[1L]])
-4. doTryCatch(return(expr), name, parentenv, handler)
-5. withCallingHandlers({
- .     if (!mime %in% names(repr::mime2repr)) 
- .         stop(&quot;No repr_* for mimetype &quot;, mime, &quot; in repr::mime2repr&quot;)
- .     rpr &lt;- repr::mime2repr[[mime]](obj)
- .     if (is.null(rpr)) 
- .         return(NULL)
- .     prepare_content(is.raw(rpr), rpr)
- . }, error = error_handler)
-6. repr::mime2repr[[mime]](obj)
-7. repr_text.default(obj)
-8. paste(capture.output(print(obj)), collapse = &quot;\n&quot;)
-9. capture.output(print(obj))
-10. withVisible(...elt(i))
-11. print(obj)
-12. print.ggplot(obj)
-13. ggplot_build(x)
-14. ggplot_build.ggplot(x)
-15. lapply(data, scales_map_df, scales = npscales)
-16. FUN(X[[i]], ...)
-17. unlist(lapply(scales$scales, function(scale) scale$map_df(df = df)), 
-  .     recursive = FALSE)
-18. lapply(scales$scales, function(scale) scale$map_df(df = df))
-19. FUN(X[[i]], ...)
-20. scale$map_df(df = df)
-21. map_df(..., self = self)
-22. lapply(aesthetics, function(j) self$map(df[[j]]))
-23. FUN(X[[i]], ...)
-24. self$map(df[[j]])
-25. map(..., self = self)
-26. self$palette(uniq)
-27. palette(...)
-28. ramp(x)
-29. ifelse(is.na(x), na.color, colors)
-</pre></div>
-</div>
+<img alt="../_images/f430a2f51e6114db783b01e4099589ffe6f507ef9651afa964fe6c2d91c3a54b.png" src="../_images/f430a2f51e6114db783b01e4099589ffe6f507ef9651afa964fe6c2d91c3a54b.png" />
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
-
 
 <span class="n">deaths</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
   <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">%&gt;%</span>
@@ -908,10 +898,8 @@ Traceback:
 <span class="n">df</span><span class="o">$</span><span class="n">date</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">week</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="s">&quot;%Y-%U-%u&quot;</span><span class="p">)</span>
 
 <span class="nf">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">totaldeaths</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">top10</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_area</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.7</span> <span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">0.1</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span>
-<span class="c1"># put specific colors instead of using brewer.pal</span>
-  <span class="nf">scale_fill_manual</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="nf">brewer.pal</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Paired&quot;</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="m">12</span><span class="p">)[</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="m">12</span><span class="p">)],</span><span class="s">&quot;grey&quot;</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">theme_classic</span><span class="p">(</span><span class="n">base_size</span> <span class="o">=</span> <span class="m">12</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_area</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">0.8</span> <span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">0.3</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme_classic</span><span class="p">(</span><span class="n">base_size</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span> <span class="o">+</span>
   <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">date_breaks</span> <span class="o">=</span> <span class="s">&quot;1 month&quot;</span><span class="p">)</span><span class="o">+</span>
  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span>
         <span class="n">axis.line</span> <span class="o">=</span> <span class="nf">element_line</span><span class="p">(</span><span class="n">colour</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="m">0.8</span><span class="p">),</span>
@@ -931,15 +919,12 @@ Traceback:
 `.groups` argument.
 </pre></div>
 </div>
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">Error</span> <span class="ow">in</span> <span class="n">brewer</span><span class="o">.</span><span class="n">pal</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Paired&quot;</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">12</span><span class="p">):</span> <span class="n">could</span> <span class="ow">not</span> <span class="n">find</span> <span class="n">function</span> <span class="s2">&quot;brewer.pal&quot;</span>
-<span class="ne">Traceback</span>:
-
-<span class="mi">1</span><span class="o">.</span> <span class="n">scale_fill_manual</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">brewer</span><span class="o">.</span><span class="n">pal</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Paired&quot;</span><span class="p">,</span> 
- <span class="o">.</span>     <span class="n">n</span> <span class="o">=</span> <span class="mi">12</span><span class="p">)[</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="mi">12</span><span class="p">)],</span> <span class="s2">&quot;grey&quot;</span><span class="p">))</span>
-<span class="mi">2</span><span class="o">.</span> <span class="n">manual_scale</span><span class="p">(</span><span class="n">aesthetics</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">breaks</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">na</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-<span class="mi">3</span><span class="o">.</span> <span class="n">is_missing</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning message:
+“The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0.
+<span class=" -Color -Color-Cyan">ℹ</span> Please use the `linewidth` argument instead.”
 </pre></div>
 </div>
+<img alt="../_images/973b61691f5ed0bad7c9397a52e8313c6e813a31cceb2e21f8cf24b776e7bb81.png" src="../_images/973b61691f5ed0bad7c9397a52e8313c6e813a31cceb2e21f8cf24b776e7bb81.png" />
 </div>
 </div>
 </section>
@@ -1016,6 +1001,7 @@ Traceback:
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adjusting-the-axes-and-aesthetics">Adjusting the Axes and Aesthetics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-groups">Adding Groups</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extra-options">Extra Options</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>
   </nav></div>
