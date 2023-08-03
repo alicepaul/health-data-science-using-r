@@ -3,93 +3,136 @@ title: An R Markdown document converted from "./book/8_distributions.ipynb"
 output: html_document
 ---
 
-# 8. Probability Distributions and Random Variables in R
+# 8. Probability Distributions in R
 
-In this chapter, we will cover how to generate random variables in R from known probability distributions and empirical distributions. All of the common probability distributions have a set of four functions in R to generate random variables from that distribution and calculate the corresponding density, quantile, and cumulative functions. Additionally, we will cover creating confidence intervals.  
+In this chapter, we will cover how to generate random samples in R from known probability distributions and empirical distributions. All of the common probability distributions have a set of four functions in base R used to generate random samples from that distribution and calculate the corresponding density, quantile, and cumulative functions. 
 
 ```{r}
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 library(RforHDSdata)
 data(NHANESsample)
-library(ggplot2)
 ```
 
-Below we will generate random variables and sample random subsets from our data. Anytime we do something where the outcome has some randomness, we are using R's random number generator under the hood. This means that the results will change every time we run our code. In order to make sure our code is replicable, we set a random seed. This means that the results will be the same every time. The `set.seed()` function takes in a numeric seed value. You can use any number as the seed. 
+Below we will draw random samples. Anytime we do something where the outcome has some randomness, we are using R's random number generator under the hood. This means that the results will change every time we run our code. In order to make sure our code is replicable, we set a random seed. This means that the results will be the same every time. The `set.seed()` function takes in a numeric seed value. You can use any number as the seed. Below, we sample a random value from the numbers 1 to 10. Every time you run this code chunk the output can change. However, in the second code chunk we set a seed. This means that the result will always be 2.
+
+```{r}
+sample(1:10, 1)
+```
 
 ```{r}
 set.seed(5)
+sample(1:10, 1)
 ```
 
 ## Probability Distributions in R
 
 All of the common discrete (e.g. bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:  
 
-  -  `r[dist]()`: generates random variables (e.g. `rnorm()`, `runif()`)  
-  -  `d[dist]()`: density function (e.g. `dnorm()`, `dunif()`)  
-  -  `p[dist]()`: cumulative distribution function (e.g. `pnorm()`, `punif()`)  
-  -  `q[dist]()`: quantile function (e.g. `qnorm()`, `qunif()`)  
+  -  `r[dist]()`: generates random samples from the given distributino (e.g. `rnorm()`, `runif()`)  
+  -  `d[dist]()`: density function for the distribution (e.g. `dnorm()`, `dunif()`)  
+  -  `p[dist]()`: cumulative distribution function for the distribution (e.g. `pnorm()`, `punif()`)  
+  -  `q[dist]()`: quantile function for the distribution (e.g. `qnorm()`, `qunif()`)  
   
-Let's see how these work in practice, using the normal and binomial distributions as examples. The code below generates 100 random variables following a normal distribution with mean 5 and standard deviation 1. As you can see, the function takes in `n` (the number of observations), `mean` (the mean with default value 0), and `sd` (the standard deviation with default value 1). A histogram plot (using the built-in `hist` function) shows that the generated values look roughly normally distributed.
+Let's see how these work in practice, using the normal and binomial distributions as examples. 
+
+### Random Samples
+The code below generates a 100 random numbers following a normal distribution with mean 5 and standard deviation 1. As you can see, the function takes in `n` (the number of observations), `mean` (the mean with default value 0), and `sd` (the standard deviation with default value 1). A histogram plot (using the built-in `hist` function) shows that the generated values look roughly normally distributed.
 
 ```{r}
 x <- rnorm(n = 100, mean = 5, sd = 1)
 hist(x)
 ```
 
-We can also input a vector for `mean` or `sd` if we want each observation to come from its own normal distribution. Below, we generate 100 observations with the default standard deviation of 1 where half of the observations have mean 0 and the other half have mean 5.
+We can also input a vector for `mean` or `sd` if we want each sample to come from its own normal distribution. Below, we generate 100 random numbers with the default standard deviation of 1 where half of the samples have mean 0 and the other half have mean 5.
 
 ```{r}
 x <- rnorm(n = 100, mean = rep(c(0,5),50))
 hist(x)
 ```
 
-Next, we look at the density function. Recall that the probability density function for a normal distribution with mean $\mu$ and standard deviation $\sigma$ is given by the formula below. 
-$$ f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) $$
-Below, we can compare some of the values from the `dnorm()` function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function, but we will use the default values (mean = 0 and sd = 1).
-
-```{r}
-dnorm(0) == 1/sqrt(2*pi)
-dnorm(1) == exp(-1/2)/sqrt(2*pi)
-dnorm(1) == 1/sqrt(2*pi*exp(1))
-```
-
-Next, we take a look at the cumulative distribution and quantile distribution functions. The cumulative distribution function `pnorm()` takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this will be a fifty percent probability because the normal distribution is symmetric (so its mean is also its median). Below, we verify this for two different values of the mean.
-
-```{r}
-pnorm(0)
-pnorm(5, mean = 5, sd = 1)
-```
-
-The quantile distribution function is the inverse of the cumulative distribution. This function takes in a probability `x`, a `mean`, and a `sd` and returns the value for which the cumulative distribution function is equal to `x`. Thus, when `x` is equal to 0.5, the `qnorm()` function returns the mean of the distribution.
-
-```{r}
-qnorm(0.5)
-qnorm(0.5, mean = 5, sd = 1)
-```
-
-The examples above used the normal distribution, but these four functions can be used very similarly for other distributions. For the binomial distribution, the difference is that we need to specify a probability `p` and number of trials `size` (rather than `mean` and `sd` in the normal case) to specify the distribution. Below, we generate 100 binomial random variables with 10 trials and probability 0.5.
+For the binomial distribution, the difference is that we need to specify a probability `p` and number of trials `size` (rather than `mean` and `sd` in the normal case) to specify the distribution. Below, we generate 100 binomial random variates with 10 trials and probability 0.5.
 
 ```{r}
 x <- rbinom(n = 100, p = 0.5, size = 10)
 hist(x)
 ```
 
-In terms of the density function for the binomial distribution, `dbinom()` will correspond to the density function given below. Note that x must be a positive integer value.
-$$ P(X = x) = \binom{size}{x} p^x (1-p)^{size-x}. $$
+We can also specify a different size or probability of success for each sample. Below, we repeat our sample but this time let the probability of success be 0.25 for half of the sample and 0.75 for the other half. 
+
+```{r}
+x <- rbinom(n = 100, p = rep(c(0.25, 0.75), 50), size = 10)
+hist(x)
+```
+
+### Density Function
+
+Next, we look at the density function. Recall that the probability density function for a normal distribution with mean $\mu$ and standard deviation $\sigma$ is given by the formula below. 
+$$ f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) $$
+Below, we can compare some of the values from the `dnorm()` function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function. Below we use the default values (mean = 0 and sd = 1).
+
+```{r}
+dnorm(0) == 1/sqrt(2*pi)
+dnorm(1) == exp(-1/2)/sqrt(2*pi)
+```
+
+If we wanted to find the density function for several values, we can input a vector. Below we find the values of the density function for a normal distribution with mean 1 and standard deviation 2 for values `c(-1, 0, 1, 2, 3)`. 
+
+```{r}
+dnorm(c(-1,0,1,2,3), mean = 1, sd = 2)
+```
+
+For the binomial distribution, `dbinom()` will return the probability of a certain number of successes and corresponds to the probability density function $$ P(X = x) = \binom{size}{x} p^x (1-p)^{size-x}. $$ Below, we find the probability that we get exactly 3 heads if we flipped 10 coins each with a probability of 0.5 for heads. 
 
 ```{r}
 dbinom(3, size = 10, p = 0.5)
 ```
 
-Further, the quantile and probability density functions work as above, but we have to consider the fact that the binomial distribution is discrete (it can only take integer values, rather than the entire real line). This means that, for example, the `pbinom()` function will return the same value for 3, 3.5, 3.6, all the way up to, but not including, 4 - this is because the binomial distribution can take the value 3 and the value 4, but nothing in between these two values, so $P(X \leq 3) = P(X \leq 3.2) = P(X \leq 3.5) = P(X \leq 3.6)$ and so on. In particular, the `qbinom()` function returns the largest integer value for which the probability of being less than or equal to that value is at most the inputted value x.
+While `dnorm()` allows us to specify any continuous values for $x$, `dbinom()` will give us a warning if `x` contains non-integer values. 
 
 ```{r}
-pbinom(3, size = 10, p = 0.5)
-pbinom(3.5, size = 10, p = 0.5)
-pbinom(4, size = 10, p = 0.5)
+dbinom(-2.4, size = 10, p = 0.5)
+```
 
-qbinom(0.2, size = 10, p = 0.5)
-qbinom(0.3, size = 10, p = 0.5)
+We can specify a vector for a distribution's parameters to find the distribution function for different distributions. For example, below I find the the probability density function for $X=4$ for the distribution with $p=0.25$ and $p=0.5$. 
+
+```{r}
+dbinom(4, size = 10, p = c(0.25, 0.5))
+```
+
+### Cumulative Distribution
+
+Next, we take a look at the cumulative distribution. The cumulative distribution function `pnorm()` takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this will be a fifty percent probability because the normal distribution is symmetric with mean equal to the median. Below, we verify this for two different values of the mean.
+
+```{r}
+pnorm(0)
+pnorm(5, mean = 5, sd = 1)
+```
+
+Since the binomial distribution is discrete, it can only take on integer values from 0 to `size`. This means that, for example, the `pbinom()` function will return the same value for 3, 3.5, 3.6, all the way up to, but not including, 4 - this is because $P(X \leq 3) = P(X \leq 3.2) = P(X \leq 3.5) = P(X \leq 3.6)$ and so on. Note that here we passed in a vector of values `x`. 
+
+```{r}
+pbinom(c(3, 3.5, 3.6, 4), size = 10, p = 0.5)
+```
+
+We can also vary the parameters for the distribution by passing a vector for `size` and/or `p`. Below, we find the probability $X \leq 3$ and the probability $X \leq 4$ for with 12 trials and probability 0.25 and with with 10 trials and probability 0.5. 
+
+```{r}
+pbinom(c(3, 3, 4, 4), size = c(12, 10, 12, 10), p=c(0.25, 0.5, 0.25, 0.5))
+```
+
+### Quantile Distribution
+
+The quantile distribution function is the inverse of the cumulative distribution. This function takes in a probability `x`, a `mean`, and a `sd` and returns the value for which the cumulative distribution function is equal to `x`. Thus, when `x` is equal to 0.5, the `qnorm()` function returns the median of the distribution, which is equal to the mean.
+
+```{r}
+qnorm(0.5)
+qnorm(0.5, mean = 5, sd = 1)
+```
+
+For the discrete binomial distribution, the `qbinom()` function returns the largest integer value for which the probability of being less than or equal to that value is at most the inputted value x. 
+
+```{r}
+qbinom(c(0.2, 0.3), size = 10, p = 0.5)
 ```
 
 ### Reference List for Probability Distributions
@@ -121,7 +164,7 @@ Generate 5 random numbers following a [uniform distribution](https://www.rdocume
 
 ## Empirical Distributions and Sampling Data
 
-In a previous chapter, we sampled from our data at the start of the chapter but didn't explain this process. That was  an example of sampling from an empirical distribution. We used the `sample(x, size, replace=FALSE, prob=NULL)` function, which takes in the values we want to sample from `x`, the number of observations we want to sample `size`, and whether we want to sample with replacement `replace`. If we don't want to sample such that each value has an equal probability of being chosen, we can also set a probability vector `prob`, which must have the same length as `x`. Below we sample 500 rows without replacement from the NHANES data. To do so, we select 500 values from the indices 1 to the number of rows in the data. We then select rows of the data using these indices.
+At the start of this chapter, we used the `sample()` function. This function can also be used to sample from an empirical distribution. The `sample(x, size, replace=FALSE, prob=NULL)` function takes in the values we want to sample from `x`, the number of observations we want to sample `size`, and whether we want to sample with replacement `replace`. If we don't want to sample such that each value has an equal probability of being chosen, we can also set a probability vector `prob`, which must have the same length as `x`. Below we sample 500 rows without replacement from the NHANES data. To do so, we select 500 values from the indices 1 to the number of rows in the data. We then select rows of the data using these indices.
 
 ```{r}
 nhanes_sample_ids <- sample(1:nrow(NHANESsample), 500, replace=FALSE)
@@ -129,7 +172,7 @@ nhanes_sample <- NHANESsample[nhanes_sample_ids, ]
 dim(nhanes_sample)
 ```
 
-Below, we now sample with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*. 
+We now demonstrate sampling with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*. 
 
 ```{r}
 nhanes_sample_ids <- sample(1:nrow(NHANESsample), nrow(NHANESsample), replace=TRUE)
@@ -147,14 +190,26 @@ dim(nhanes_sample)
 
 ### Practice Question 2
 
-Beyond sampling, we can also find the empirical cumulative distribution. That is, we can use a given vector to infer a distribution. In the case below, we draw a random normal vector and plot it using the `ecdf()` function, which returns a function representing the empirical cumulative distribution. In red, we also plot the actual cdf using the `pnorm()` function. 
+TODO
+
+Beyond sampling, we can also find the empirical cumulative distribution. That is, we can use a given vector to infer a distribution. In the case below, we draw a random sample from a normal distribution `vec` and then find its empirical cumulative distribution using the `ecdf()` function. This function can then be used to find the sample cumulative distribution for different values. Below, we find the sample probability that $X \leq 0$. 
 
 ```{r}
-vec <- rnorm(100) #standard normal
-ggplot(data.frame(x = c(-3, 3)), aes(x = x)) + 
-  stat_function(fun = pnorm, color = "red") + 
-  stat_function(fun=ecdf(vec))  + # the stat function geom lets you plot a function
-  xlab("x")
+vec <- rnorm(100) 
+ecdf_vec <- ecdf(vec)
+ecdf_vec(0)
+```
+
+We plot this empirical distribution against the actual cdf using the `pnorm()` function below. We create a sequence of possible `x` values to pass to both `pnorm()` and `ecdf_vec()`.
+
+```{r}
+df <- data.frame(x = seq(-3, 3, 0.05))
+df$ecdf <- ecdf_vec(df$x)
+df$distn = pnorm(df$x)
+
+ggplot(df) + 
+  geom_line(aes(x=x, y=ecdf), color = "black") + 
+  geom_line(aes(x=x, y=distn), color= "red") 
 ```
 
 In practice, the empirical cumulative distribution might involve data from a given data set that you want to use to represent the population's distribution. Below, we find the empirical distribution of blood lead level. A blood lead level of 5 µg/dL or above is considered elevated. We can see 96.4% of observations have a blood lead level below this threshold. 
@@ -163,6 +218,12 @@ In practice, the empirical cumulative distribution might involve data from a giv
 ecdf_lead <- ecdf(nhanes_sample$LEAD)
 ecdf_lead(5)
 ```
+
+## Recap Video
+
+Set seed example
+Poisson distribution
+Number of abortions and compare to estimated distribution?
 
 ## Exercises
 
