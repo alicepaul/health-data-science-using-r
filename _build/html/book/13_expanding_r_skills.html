@@ -67,7 +67,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="shortcut icon" href="../_static/fav.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="12. Writing Reports with R Markdown" href="12_rmarkdown_reports.html" />
+    <link rel="prev" title="12. Writing Reports in R Markdown" href="12_rmarkdown_reports.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="None"/>
   </head>
@@ -173,7 +173,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
 
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">13. Expanding your R Skills</a></li>
 </ul>
@@ -389,9 +389,10 @@ document.write(`
 <p>We will use this <code class="docutils literal notranslate"><span class="pre">stringr</span></code> package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from <a class="reference external" href="https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130">Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41</a>. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of paranthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library, </span>
-<span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
-<span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the </span>
+<span class="s">Cochrane Library, using the following search query:   (&#39;out-of-hospital cardiac </span>
+<span class="s">arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR &#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; </span>
+<span class="s">OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -484,9 +485,10 @@ document.write(`
 <p>The code below is supposed to extract the search query from the text as well as find the invididual search terms used in the query. However, the code is incorrect. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the Cochrane Library, </span>
-<span class="s">using the following search query:   (&#39;out-of-hospital cardiac arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR </span>
-<span class="s">&#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot; A systematic search will be performed in PubMed, Embase, and the </span>
+<span class="s">Cochrane Library, using the following search query:   (&#39;out-of-hospital cardiac </span>
+<span class="s">arrest&#39; OR &#39;OHCA&#39;) AND (&#39;MIRACLE 2&#39; OR &#39;OHCA&#39; OR &#39;CAHP&#39; OR &#39;C-GRAPH&#39; OR &#39;SOFA&#39; </span>
+<span class="s">OR &#39;APACHE&#39; OR &#39;SAPS’ OR ’SWAP’ OR ’TTM’).&quot;</span>
 
 <span class="c1"># separate parentheses, remove extra whitespace, and split into words</span>
 <span class="n">sample_str</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">str_replace</span><span class="p">(</span><span class="n">sample_str</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;\\)&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot; \\) &quot;</span><span class="p">)</span>
@@ -545,7 +547,6 @@ document.write(`
 </section>
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
-<p>TODO: two exercises - one with brackets and logic off and misuse function str_sub, one with arguments wrong for calibration plot (used wrong name)</p>
 </section>
 </section>
 
@@ -586,7 +587,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">12. Writing Reports with R Markdown</p>
+        <p class="prev-next-title">12. Writing Reports in R Markdown</p>
       </div>
     </a>
 </div></div>
