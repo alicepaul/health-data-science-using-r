@@ -174,7 +174,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
@@ -353,15 +353,22 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression">Multiple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots-and-measures">Diagnostic Plots and Measures</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normality">Normality</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#homoscedasticity-linearity-and-collinearity">Homoscedasticity, Linearity, and Collinearity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leverage-and-influence">Leverage and Influence</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactions-and-transformations">Interactions and Transformations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactions-and-transformations">Interactions and Transformations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics">Evaluation Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stepwise-selection">Stepwise Selection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
@@ -384,9 +391,9 @@ document.write(`
 <p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package to present the estimated coefficients for our regression models and the <code class="docutils literal notranslate"><span class="pre">car</span></code> package to compute variance inflation factors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">))</span>
 <span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">)</span>
+<span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">broom</span><span class="p">))</span>
 <span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">car</span><span class="p">))</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 </pre></div>
@@ -399,13 +406,13 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">NHANESsample</span><span class="o">$</span><span class="n">SBP</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;SBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SBP4&quot;</span><span class="p">)],</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                       </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span>
-<span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)))</span><span class="w"> </span>
+<span class="w">    </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                          </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">                          </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)))</span><span class="w"> </span>
 <span class="n">NHANESsample</span><span class="o">$</span><span class="n">DBP</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;DBP1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;DBP4&quot;</span><span class="p">)],</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                       </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span>
-<span class="w">                                             </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)))</span><span class="w">                       </span>
+<span class="w">    </span><span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                          </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span>
+<span class="w">                          </span><span class="nf">sum</span><span class="p">(</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="m">-1</span><span class="p">],</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)))</span><span class="w"> </span>
 <span class="n">nhanes_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">na.omit</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">,</span><span class="w"> </span><span class="n">select</span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">SBP2</span><span class="p">,</span><span class="w"> </span><span class="n">SBP3</span><span class="p">,</span><span class="w"> </span><span class="n">SBP4</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                                                     </span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">DBP2</span><span class="p">,</span><span class="w"> </span><span class="n">DBP3</span><span class="p">,</span><span class="w"> </span><span class="n">DBP4</span><span class="p">)))</span>
 <span class="nf">dim</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span>
@@ -489,6 +496,17 @@ F-statistic: 866.8 on 1 and 30403 DF,  p-value: &lt; 2.2e-16
 <img alt="../_images/4bf625b1b7e9de376b915091f94c636df59bb991cb2fc4041bfb17d08236ca0d.png" src="../_images/4bf625b1b7e9de376b915091f94c636df59bb991cb2fc4041bfb17d08236ca0d.png" />
 </div>
 </div>
+<section id="practice-question">
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<p>Fit a simple linear regression model with <code class="docutils literal notranslate"><span class="pre">SBP</span></code> as the outcome and <code class="docutils literal notranslate"><span class="pre">AGE</span></code> as the independent variable. The coefficient for <code class="docutils literal notranslate"><span class="pre">AGE</span></code> should be 0.47693. Then, plot these two variables against each other and add the estimated regression line to the plot, as we did above. You should see that this regression has a better fit than the previous one.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="multiple-linear-regression">
 <h2>Multiple Linear Regression<a class="headerlink" href="#multiple-linear-regression" title="Permalink to this headline">#</a></h2>
@@ -564,7 +582,8 @@ F-statistic:  2720 on 3 and 30401 DF,  p-value: &lt; 2.2e-16
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">SBP</span><span class="p">,</span><span class="w"> </span><span class="nf">fitted</span><span class="p">(</span><span class="n">adj_model</span><span class="p">),</span><span class="w"> </span>
-<span class="w">     </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;True Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Predicted Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
+<span class="w">     </span><span class="n">xlab</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;True Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">     </span><span class="n">ylab</span><span class="o">=</span><span class="s">&quot;Predicted Systolic Blood Pressure&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="o">=</span><span class="m">16</span><span class="p">)</span>
 <span class="nf">abline</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="o">=</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -719,6 +738,18 @@ Coefficients:
 </div></div>
 </div>
 </section>
+<section id="id1">
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>Fit a linear regression model with <code class="docutils literal notranslate"><span class="pre">SBP</span></code> as the outcome and with <code class="docutils literal notranslate"><span class="pre">INCOME</span></code>, <code class="docutils literal notranslate"><span class="pre">RACE</span></code>, <code class="docutils literal notranslate"><span class="pre">EDUCATION</span></code>, and <code class="docutils literal notranslate"><span class="pre">ALC</span></code> as independent variables. Then, plot the residuals vs. the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like this:</p>
+<a class="reference internal image-reference" href="../_images/10-practicequestion2answer.png"><img alt="“”" class="align-center" src="../_images/10-practicequestion2answer.png" style="width: 400pt;" /></a>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here: </span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 <section id="leverage-and-influence">
 <h3>Leverage and Influence<a class="headerlink" href="#leverage-and-influence" title="Permalink to this headline">#</a></h3>
 <p>We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation’s <span class="math notranslate nohighlight">\(y\)</span> value influences its own predicted value and indicate whether observations have extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. Below we find the ten highest leverage values and then find those observations in the data.</p>
@@ -844,7 +875,11 @@ Coefficients:
 <img alt="../_images/e7d5eb951508328d4b9c997afa5beeac05acbb01f1d7587c1370d0746fb12434.png" src="../_images/e7d5eb951508328d4b9c997afa5beeac05acbb01f1d7587c1370d0746fb12434.png" />
 </div>
 </div>
-<p>We could have alternatively modified the above code to add square root transformations <code class="docutils literal notranslate"><span class="pre">sqrt(LEAD)</span></code> or inverse transformations <code class="docutils literal notranslate"><span class="pre">1/LEAD</span></code> by including those transformations in the formula. Additionally, we might consider polynomial transformations. The <code class="docutils literal notranslate"><span class="pre">poly(x,</span> <span class="pre">degree=1)</span></code> function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this particular example, but we show some example code below for creating such a transformation (in this case, a cubic transformation for blood lead level).</p>
+<section id="id2">
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<p>Instead of adding in a log transformation for <code class="docutils literal notranslate"><span class="pre">LEAD</span></code> like we did above, try a square root transformation <code class="docutils literal notranslate"><span class="pre">sqrt(LEAD)</span></code> and an inverse transformation <code class="docutils literal notranslate"><span class="pre">1/LEAD</span></code> while keeping the log transformation for the outcome <code class="docutils literal notranslate"><span class="pre">log(SBP)</span></code>. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like this:</p>
+<a class="reference internal image-reference" href="../_images/10-practicequestion3answer.png"><img alt="“”" class="align-center" src="../_images/10-practicequestion3answer.png" style="width: 400pt;" /></a>
+<p>Additionally, we might consider polynomial transformations. The <code class="docutils literal notranslate"><span class="pre">poly(x,</span> <span class="pre">degree=1)</span></code> function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this particular example, but we show some example code below for creating such a transformation (in this case, a cubic transformation for blood lead level).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_poly</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">SBP</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">poly</span><span class="p">(</span><span class="n">LEAD</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
@@ -878,7 +913,8 @@ Coefficients:
 <p>Another component that we may want to add to our model is an interaction term. For example, we may consider an interaction between sex and blood lead level. We add an interaction to the formula using a <code class="docutils literal notranslate"><span class="pre">:</span></code> between the two variables. The output below shows that the coefficient for this interaction is indeed significant.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_interaction</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">SBP</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="o">:</span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">),</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span><span class="w"> </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_interaction</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">SBP</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SEX</span><span class="o">:</span><span class="nf">log</span><span class="p">(</span><span class="n">LEAD</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                        </span><span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span><span class="w"> </span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model_interaction</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -909,6 +945,7 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 </div>
+</section>
 </section>
 <section id="evaluation-metrics">
 <h2>Evaluation Metrics<a class="headerlink" href="#evaluation-metrics" title="Permalink to this headline">#</a></h2>
@@ -970,8 +1007,8 @@ F-statistic:  2131 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">model_interaction</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;forward&#39;</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                 </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD)&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                              </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + SEX + RACE + EDUCATION + SMOKE +</span>
-<span class="s">              INCOME + BMI_CAT&quot;</span><span class="p">))</span>
+<span class="w">                              </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + </span>
+<span class="s">                              SEX + RACE + EDUCATION + SMOKE + INCOME + BMI_CAT&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1084,7 +1121,7 @@ F-statistic: 669.1 on 15 and 30389 DF,  p-value: &lt; 2.2e-16
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <p>For these exercises, we will continue using the <code class="docutils literal notranslate"><span class="pre">NHANESsample</span></code> data.</p>
 <ol class="arabic simple">
-<li><p>Construct a linear model using <code class="docutils literal notranslate"><span class="pre">DBP</span></code> as the output and <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>, <code class="docutils literal notranslate"><span class="pre">AGE</span></code>, and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> as features, and interpret each estimate in the output.</p></li>
+<li><p>Construct a linear model using <code class="docutils literal notranslate"><span class="pre">DBP</span></code> as the output and <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>, <code class="docutils literal notranslate"><span class="pre">AGE</span></code>, and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> as features, and print the output.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1119,38 +1156,71 @@ F-statistic: 27.72 on 4 and 30400 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <ol class="arabic simple" start="2">
-<li><p>Include an interaction between <code class="docutils literal notranslate"><span class="pre">AGE</span></code> and <code class="docutils literal notranslate"><span class="pre">EVER_SMOKE</span></code> in the linear model from Question 1.</p></li>
+<li><p>Use forward stepwise selection to add interactions to the linear model from the previous question.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_exercise2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">DBP</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">LEAD</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SMOKE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_int</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="n">DBP</span><span class="o">~</span><span class="w"> </span><span class="n">LEAD</span><span class="o">*</span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LEAD</span><span class="o">*</span><span class="n">SMOKE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="o">*</span><span class="n">SMOKE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nhanes_df</span><span class="p">)</span>
+<span class="n">model_exercise2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">model_exercise1</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_exercise1</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_int</span><span class="p">),</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;forward&quot;</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start:  AIC=157630.6
+DBP ~ LEAD + AGE + SMOKE
+
+             Df Sum of Sq     RSS    AIC
++ AGE:SMOKE   2     38998 5385292 157415
++ LEAD:AGE    1     18941 5405349 157526
++ LEAD:SMOKE  2      2882 5421408 157618
+&lt;none&gt;                    5424290 157631
+
+Step:  AIC=157415.2
+DBP ~ LEAD + AGE + SMOKE + AGE:SMOKE
+
+             Df Sum of Sq     RSS    AIC
++ LEAD:AGE    1   17291.8 5368000 157319
++ LEAD:SMOKE  2    2597.3 5382695 157405
+&lt;none&gt;                    5385292 157415
+
+Step:  AIC=157319.4
+DBP ~ LEAD + AGE + SMOKE + AGE:SMOKE + LEAD:AGE
+
+             Df Sum of Sq     RSS    AIC
++ LEAD:SMOKE  2    8368.8 5359632 157276
+&lt;none&gt;                    5368000 157319
+
+Step:  AIC=157276
+DBP ~ LEAD + AGE + SMOKE + AGE:SMOKE + LEAD:AGE + LEAD:SMOKE
+</pre></div>
+</div>
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = DBP ~ LEAD + AGE + SMOKE + SMOKE:AGE, data = nhanes_df)
+lm(formula = DBP ~ LEAD + AGE + SMOKE + AGE:SMOKE + LEAD:AGE + 
+    LEAD:SMOKE, data = nhanes_df)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--77.199  -7.265   0.487   7.848  59.681 
+-74.389  -7.154   0.507   7.877  59.426 
 
 Coefficients:
-                     Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)         70.654988   0.309311 228.427  &lt; 2e-16 ***
-LEAD                 0.303901   0.044021   6.904 5.17e-12 ***
-AGE                 -0.009102   0.006298  -1.445    0.148    
-SMOKEQuitSmoke       6.207891   0.590710  10.509  &lt; 2e-16 ***
-SMOKEStillSmoke     -2.747224   0.572464  -4.799 1.60e-06 ***
-AGE:SMOKEQuitSmoke  -0.125788   0.010497 -11.984  &lt; 2e-16 ***
-AGE:SMOKEStillSmoke  0.056366   0.012086   4.664 3.12e-06 ***
+                      Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)          68.574569   0.363204 188.804  &lt; 2e-16 ***
+LEAD                  1.552367   0.146653  10.585  &lt; 2e-16 ***
+AGE                   0.045604   0.007753   5.882 4.10e-09 ***
+SMOKEQuitSmoke        5.213190   0.595584   8.753  &lt; 2e-16 ***
+SMOKEStillSmoke      -3.692704   0.577567  -6.394 1.64e-10 ***
+AGE:SMOKEQuitSmoke   -0.133346   0.010859 -12.280  &lt; 2e-16 ***
+AGE:SMOKEStillSmoke   0.065437   0.012584   5.200 2.00e-07 ***
+LEAD:AGE             -0.030357   0.002654 -11.437  &lt; 2e-16 ***
+LEAD:SMOKEQuitSmoke   0.797330   0.115738   6.889 5.72e-12 ***
+LEAD:SMOKEStillSmoke  0.307386   0.103440   2.972  0.00296 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 13.31 on 30398 degrees of freedom
-Multiple R-squared:  0.0108,	Adjusted R-squared:  0.0106 
-F-statistic:  55.3 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
+Residual standard error: 13.28 on 30395 degrees of freedom
+Multiple R-squared:  0.01551,	Adjusted R-squared:  0.01522 
+F-statistic: 53.21 on 9 and 30395 DF,  p-value: &lt; 2.2e-16
 </pre></div>
 </div>
 </div>
@@ -1168,63 +1238,15 @@ F-statistic:  55.3 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/6017c0733efc466cb3a72be4c11648068a1f8ec048b3eee40f17255075622407.png" src="../_images/6017c0733efc466cb3a72be4c11648068a1f8ec048b3eee40f17255075622407.png" />
+<img alt="../_images/abe7ba0bfc97f3eea101231b75259ad33c6681de99f735371b2200aa0ee4ae83.png" src="../_images/abe7ba0bfc97f3eea101231b75259ad33c6681de99f735371b2200aa0ee4ae83.png" />
 </div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Look at some diagnostic plots such as the residuals vs. the fitted values and use what you observe from these plots to choose a transformation that will improve the fit of this model. Then, fit and summarize this new model with the transformation included.</p></li>
+<li><p>Report the MAE and MSE of the model developed in Question 2. Then, find the row numbers of the observations with the top 5 Cook’s Distance values for this model.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solution:</span>
-
-<span class="c1">#use log(DBP1 + 1) beacuase DBP1 has 0, and r can&#39;t deal with log transformation with 0</span>
-<span class="c1">#this transformation creates the most outliers, but it also makes the model more normally</span>
-<span class="c1">#distributed and Homoscedasticity</span>
-<span class="n">model_exercise4</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">DBP</span><span class="m">+1</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">LEAD</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SMOKE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SMOKE</span><span class="o">:</span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span><span class="w"> </span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise4</span><span class="p">)</span>
-
-<span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">model_exercise4</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
-lm(formula = log(DBP + 1) ~ LEAD + AGE + SMOKE + SMOKE:AGE, data = nhanes_df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--4.3384 -0.0748  0.0414  0.1423  0.6465 
-
-Coefficients:
-                      Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)          4.2886416  0.0085825 499.697  &lt; 2e-16 ***
-LEAD                 0.0032962  0.0012215   2.699  0.00697 ** 
-AGE                 -0.0011359  0.0001747  -6.501 8.13e-11 ***
-SMOKEQuitSmoke       0.1172809  0.0163905   7.155 8.53e-13 ***
-SMOKEStillSmoke     -0.0511110  0.0158842  -3.218  0.00129 ** 
-AGE:SMOKEQuitSmoke  -0.0022883  0.0002912  -7.857 4.07e-15 ***
-AGE:SMOKEStillSmoke  0.0010002  0.0003354   2.983  0.00286 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 0.3693 on 30398 degrees of freedom
-Multiple R-squared:  0.00883,	Adjusted R-squared:  0.008634 
-F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
-</pre></div>
-</div>
-<img alt="../_images/af3b822c073768d9a0a2bd7b157147f9b28f2ff68600d7607ad2d506dcaeda6f.png" src="../_images/af3b822c073768d9a0a2bd7b157147f9b28f2ff68600d7607ad2d506dcaeda6f.png" />
-</div>
-</div>
-<ol class="arabic simple" start="5">
-<li><p>Check the MAE, MSE, and AIC of the model developed in Question 2.</p></li>
-</ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#solutions:</span>
-
-<span class="c1">#first find the prediction by this model</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#first find the prediction by this model</span>
 <span class="n">predicted</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)</span>
 
 <span class="c1">#mae</span>
@@ -1235,27 +1257,84 @@ F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
 <span class="n">mse</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">((</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">DBP</span><span class="o">-</span><span class="w"> </span><span class="n">predicted</span><span class="p">)</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
 <span class="nf">cat</span><span class="p">(</span><span class="s">&#39;MSE: &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">mse</span><span class="p">,</span><span class="w"> </span><span class="s">&#39;\n&#39;</span><span class="p">)</span>
 
-<span class="c1">#aic</span>
-<span class="n">aic</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">AIC</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)</span>
-<span class="nf">cat</span><span class="p">(</span><span class="s">&#39;AIC: &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">aic</span><span class="p">)</span>
+<span class="c1">#cooks distance</span>
+<span class="n">inf_mat</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">influence.measures</span><span class="p">(</span><span class="n">model_exercise2</span><span class="p">)[[</span><span class="s">&#39;infmat&#39;</span><span class="p">]]</span>
+<span class="nf">as.data.frame</span><span class="p">(</span><span class="n">inf_mat</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">cook.d</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MAE:  9.748759 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MAE:  9.715737 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE:  177.1186 
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>MSE:  176.2747 
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>AIC:  243702.9
-</pre></div>
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 14</caption>
+<thead>
+	<tr><th></th><th scope=col>dfb.1_</th><th scope=col>dfb.LEAD</th><th scope=col>dfb.AGE</th><th scope=col>dfb.SMOKEQ</th><th scope=col>dfb.SMOKES</th><th scope=col>dfb.AGE:SMOKEQ</th><th scope=col>dfb.AGE:SMOKES</th><th scope=col>dfb.LEAD:A</th><th scope=col>dfb.LEAD:SMOKEQ</th><th scope=col>dfb.LEAD:SMOKES</th><th scope=col>dffit</th><th scope=col>cov.r</th><th scope=col>cook.d</th><th scope=col>hat</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>23016</th><td> 0.2640335</td><td>-0.81321257</td><td> 0.009289248</td><td> 0.005131562</td><td> 0.003504752</td><td>-0.164028634</td><td>-0.182284678</td><td> 0.3764125</td><td> 0.4967113</td><td> 0.6885572</td><td>-1.0608948</td><td>1.133891</td><td>0.11252298</td><td>0.12017868</td></tr>
+	<tr><th scope=row>21771</th><td> 0.2342671</td><td>-0.39064903</td><td>-0.251391750</td><td> 0.054821190</td><td> 0.042760407</td><td>-0.007779010</td><td> 0.117563624</td><td> 0.4478615</td><td>-0.1400314</td><td>-0.4133489</td><td>-0.7321156</td><td>1.040380</td><td>0.05357971</td><td>0.04232476</td></tr>
+	<tr><th scope=row>21892</th><td> 0.2543334</td><td>-0.64174304</td><td>-0.137683215</td><td> 0.052413689</td><td> 0.051816990</td><td>-0.098278536</td><td>-0.135686720</td><td> 0.4701306</td><td> 0.1465568</td><td> 0.3298365</td><td>-0.6685233</td><td>1.064477</td><td>0.04468393</td><td>0.06233858</td></tr>
+	<tr><th scope=row>27328</th><td>-0.1184920</td><td> 0.04527057</td><td> 0.282658654</td><td>-0.085672504</td><td>-0.086646583</td><td>-0.052203542</td><td>-0.006329413</td><td>-0.3578025</td><td> 0.4499684</td><td> 0.3772355</td><td>-0.6550011</td><td>1.013075</td><td>0.04287370</td><td>0.01954587</td></tr>
+	<tr><th scope=row>15207</th><td> 0.1710424</td><td>-0.28521946</td><td>-0.183545366</td><td> 0.040025877</td><td> 0.021956925</td><td>-0.005679587</td><td> 0.084942301</td><td> 0.3269913</td><td>-0.1022393</td><td>-0.2784658</td><td>-0.5102955</td><td>1.030810</td><td>0.02603427</td><td>0.03207522</td></tr>
+	<tr><th scope=row>3661</th><td> 0.1131579</td><td>-0.37404953</td><td> 0.015738301</td><td> 0.003067133</td><td> 0.002387665</td><td>-0.079515173</td><td>-0.086288968</td><td> 0.1632868</td><td> 0.2424361</td><td> 0.3288641</td><td>-0.5014283</td><td>1.044462</td><td>0.02513934</td><td>0.04397503</td></tr>
+</tbody>
+</table>
+</div></div>
 </div>
-</div>
-</div>
-<ol class="arabic simple" start="7">
-<li><p>Next, use the forward stepwise selection method to choose the best model.</p></li>
+<ol class="arabic simple" start="5">
+<li><p>Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that will improve the fit of this model. Then, fit and summarize this new model with the transformation included. How do the AIC and BIC of the new model compare to the previous one?</p></li>
 </ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#use log(DBP1 + 1) beacuase DBP1 has 0, and r can&#39;t deal with log transformation with 0</span>
+<span class="c1">#this transformation creates the most outliers, but it also makes the model more normally</span>
+<span class="c1">#distributed and improves homoscedasticity</span>
+<span class="n">model_exercise5</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">lm</span><span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="n">DBP</span><span class="m">+1</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">LEAD</span><span class="o">*</span><span class="n">AGE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">LEAD</span><span class="o">*</span><span class="n">SMOKE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">SMOKE</span><span class="o">*</span><span class="n">AGE</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">nhanes_df</span><span class="p">)</span><span class="w"> </span>
+<span class="nf">summary</span><span class="p">(</span><span class="n">model_exercise5</span><span class="p">)</span>
+
+<span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">model_exercise5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+lm(formula = log(DBP + 1) ~ LEAD * AGE + LEAD * SMOKE + SMOKE * 
+    AGE, data = nhanes_df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.3180 -0.0734  0.0412  0.1405  0.6559 
+
+Coefficients:
+                       Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)           4.243e+00  1.009e-02 420.669  &lt; 2e-16 ***
+LEAD                  3.040e-02  4.073e-03   7.465 8.54e-14 ***
+AGE                   6.792e-05  2.153e-04   0.315 0.752437    
+SMOKEQuitSmoke        9.514e-02  1.654e-02   5.752 8.91e-09 ***
+SMOKEStillSmoke      -7.180e-02  1.604e-02  -4.476 7.62e-06 ***
+LEAD:AGE             -6.650e-04  7.372e-05  -9.020  &lt; 2e-16 ***
+LEAD:SMOKEQuitSmoke   1.833e-02  3.214e-03   5.701 1.20e-08 ***
+LEAD:SMOKEStillSmoke  6.733e-03  2.873e-03   2.344 0.019091 *  
+AGE:SMOKEQuitSmoke   -2.477e-03  3.016e-04  -8.213 2.24e-16 ***
+AGE:SMOKEStillSmoke   1.203e-03  3.495e-04   3.441 0.000579 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.3688 on 30395 degrees of freedom
+Multiple R-squared:  0.01182,	Adjusted R-squared:  0.01152 
+F-statistic: 40.38 on 9 and 30395 DF,  p-value: &lt; 2.2e-16
+</pre></div>
+</div>
+<img alt="../_images/d66bd7849f4a93c924eda0e61edc72185e0df8686b88e85c5c414abf139b6079.png" src="../_images/d66bd7849f4a93c924eda0e61edc72185e0df8686b88e85c5c414abf139b6079.png" />
+</div>
+</div>
 </section>
 </section>
 
@@ -1326,15 +1405,22 @@ F-statistic: 45.13 on 6 and 30398 DF,  p-value: &lt; 2.2e-16
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-linear-regression">Simple Linear Regression</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-linear-regression">Multiple Linear Regression</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#diagnostic-plots-and-measures">Diagnostic Plots and Measures</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#normality">Normality</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#homoscedasticity-linearity-and-collinearity">Homoscedasticity, Linearity, and Collinearity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#leverage-and-influence">Leverage and Influence</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactions-and-transformations">Interactions and Transformations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactions-and-transformations">Interactions and Transformations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluation-metrics">Evaluation Metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stepwise-selection">Stepwise Selection</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
