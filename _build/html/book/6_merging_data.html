@@ -655,7 +655,7 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>Here’s another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the <code class="docutils literal notranslate"><span class="pre">month()</span></code> function to be able to group by month and state. Additionally, you can see that I add an <code class="docutils literal notranslate"><span class="pre">ungroup()</span></code> at the end since the summarized output will still be grouped by state (as shown in the warning message).</p>
+<p>Here’s another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the <code class="docutils literal notranslate"><span class="pre">month()</span></code> function to be able to group by month and state. Additionally, you can see that I add an <code class="docutils literal notranslate"><span class="pre">ungroup()</span></code> at the end. When we summarize on data grouped by more than one variable, the summarized output will still be grouped. In this case, the warning message states that the data is still grouped by state.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">ne_cases</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
@@ -719,7 +719,7 @@ document.write(`
 </div>
 <section id="practice-question">
 <h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
-<p>Create a similar data frame as we did above, but this time using the <code class="docutils literal notranslate"><span class="pre">mobility</span></code> dataset: in other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like this:</p>
+<p>Create a similar data frame as we did above but this time using the <code class="docutils literal notranslate"><span class="pre">mobility</span></code> dataset. In other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like this:</p>
 <a class="reference internal image-reference" href="../_images/6-practicequestion1answer.png"><img alt="“”" class="align-center" src="../_images/6-practicequestion1answer.png" style="width: 400pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -728,7 +728,7 @@ document.write(`
 </div>
 </div>
 </div>
-<p>The pivots above were relatively simple in that there was only one set of values we were pivoting on (e.g. the lockdown date, covid cases). The <a class="reference external" href="https://tidyr.tidyverse.org/articles/pivot.html"><code class="docutils literal notranslate"><span class="pre">tidyr</span></code> package</a> provides examples of more complex pivots that you might want to apply to your data, some of which are demonstrated in the video below.</p>
+<p>The pivots above were relatively simple in that there was only one set of values we were pivoting on (e.g. the lockdown date, covid cases). The <a class="reference external" href="https://tidyr.tidyverse.org/articles/pivot.html"><code class="docutils literal notranslate"><span class="pre">tidyr</span></code> package</a> provides examples of more complex pivots that you might want to apply to your data. In the video below, we demonstrate a pivot longer when there is information in the column names, a pivot wider with multiple value columns, and a pivot longer with many variables in the columns.</p>
 </section>
 <section id="pivot-video">
 <h3>Pivot Video<a class="headerlink" href="#pivot-video" title="Permalink to this headline">#</a></h3>
@@ -738,15 +738,40 @@ document.write(`
 </section>
 <section id="merging-data-with-joins">
 <h2>Merging Data with Joins<a class="headerlink" href="#merging-data-with-joins" title="Permalink to this headline">#</a></h2>
-<p>Above, we saw how to manipulate our current data into new formats. Now, we will see how we can combine multiple data sources. Merging two data frames is called <em>joining</em>, and the functions we will use to perform this joining depends on how we want to match values between the data frames. The image below shows an overview of the different possible joins, and the video talks through each join type.</p>
+<p>Above, we saw how to manipulate our current data into new formats. Now, we will see how we can combine multiple data sources. Merging two data frames is called <em>joining</em>, and the functions we will use to perform this joining depends on how we want to match values between the data frames. For example, below we join information about age and statin use from <code class="docutils literal notranslate"><span class="pre">table1</span></code> and <code class="docutils literal notranslate"><span class="pre">table2</span></code> matching by name.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">table1</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">age</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">14</span><span class="p">,</span><span class="w"> </span><span class="m">26</span><span class="p">,</span><span class="w"> </span><span class="m">32</span><span class="p">),</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Alice&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Alice&quot;</span><span class="p">))</span>
+<span class="n">table2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Carol&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Bob&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">statins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">))</span>
+<span class="nf">full_join</span><span class="p">(</span><span class="n">table1</span><span class="p">,</span><span class="w"> </span><span class="n">table2</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 4 × 3</caption>
+<thead>
+	<tr><th scope=col>age</th><th scope=col>name</th><th scope=col>statins</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>14</td><td>Alice</td><td>   NA</td></tr>
+	<tr><td>26</td><td>Bob  </td><td>FALSE</td></tr>
+	<tr><td>32</td><td>Alice</td><td>   NA</td></tr>
+	<tr><td>NA</td><td>Carol</td><td> TRUE</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<p>The list below shows an overview of the different possible joins, and the video talks through each join type. For each join type, we specify two tables, <code class="docutils literal notranslate"><span class="pre">table1</span></code> and <code class="docutils literal notranslate"><span class="pre">table2</span></code>, and the <code class="docutils literal notranslate"><span class="pre">by</span></code> argument, which specifies the columns used to match rows between tables.</p>
 <p><strong>Types of Joins</strong>:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">left_join(table1,table2,by)</span></code>: Joins each row of table1 with all matches in table2</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">right_join(table1,table2,by)</span></code>: Joins each row of table2 with all matches in table1 (the opposite of a left join)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">inner_join(table1,table2,by)</span></code>: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">full_join(table1,table2,by)</span></code>: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">semi_join(table1,table2,by)</span></code>: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">anti_join(table1,table2,by)</span></code>: Keeps all rows in table1 that <em>do not</em> have a match in table 2 but does not join to any information from table2. The opposite of a semi join.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">left_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Joins each row of table1 with all matches in table2</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">right_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Joins each row of table2 with all matches in table1 (the opposite of a left join)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inner_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">semi_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">anti_join(table1,</span> <span class="pre">table2,</span> <span class="pre">by)</span></code>: Keeps all rows in table1 that <em>do not</em> have a match in table 2 but does not join to any information from table2. The opposite of a semi join.</p></li>
 </ul>
 <section id="types-of-joins-video">
 <h3>Types of Joins Video<a class="headerlink" href="#types-of-joins-video" title="Permalink to this headline">#</a></h3>
@@ -778,7 +803,7 @@ document.write(`
 </table>
 </div></div>
 </div>
-<p>These two new columns will allow us to determine whether a given day was during a lockdown. We use the <code class="docutils literal notranslate"><span class="pre">between</span></code> function to create a new column <code class="docutils literal notranslate"><span class="pre">lockdown</span></code> before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.</p>
+<p>These two new columns will allow us to determine whether the start of each recorded week was during a lockdown. We use the <code class="docutils literal notranslate"><span class="pre">between</span></code> function to create a new column <code class="docutils literal notranslate"><span class="pre">lockdown</span></code> before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases_full</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covidcases_full</span><span class="w"> </span><span class="o">%&gt;%</span>
@@ -906,7 +931,12 @@ document.write(`
 <ol class="arabic simple">
 <li><p>Take a look at the code below. Why does this code fail? In other words, what causes the warning message?</p></li>
 </ol>
-<p>Solve this problem in the following three ways and look at the results of each: 1) add a row with a distinct observation count for each combination of name and key; 2) keep only distinct rows of the name and key values, and drop duplicate rows; 3) change the names of the duplicate rows to make all names unique. In what situations (or for what kind of data) do you think each of these solutions would be most useful?</p>
+<p>Solve this problem in the following three ways and look at the results of each:</p>
+<ol class="arabic simple">
+<li><p>Add an id column that has a unique value for each row;</p></li>
+<li><p>Keep only distinct rows of the name and key values, and drop duplicate rows using the <code class="docutils literal notranslate"><span class="pre">distinct()</span></code> function;</p></li>
+<li><p>Change the names of the duplicate rows to make all names unique by adding in last names.</p></li>
+</ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#1 </span>
@@ -1076,7 +1106,7 @@ document.write(`
 </div></div>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>Convert the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> data frame from the previous exercise to wide format so that each row displays the cases in each state for a single month. Then, add on the average m50 overall for each month as an additional column using  a joining function.</p></li>
+<li><p>Convert the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> data frame from the previous exercise to wide format so that each row displays the cases in each state for a single month. Then, add on the average m50 overall for each month as an additional column using  a join function.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
