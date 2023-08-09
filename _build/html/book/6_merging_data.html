@@ -174,7 +174,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
@@ -383,8 +383,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">lubridate</span><span class="p">)</span>
+<span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">))</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">lockdowndates</span><span class="p">)</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">mobility</span><span class="p">)</span>
@@ -563,9 +562,11 @@ document.write(`
 <p>However, we can make this data tidy by creating separate columns for country, year, and maternity mortality rate as we demonstrate below. Now every observation is associated with an individual row.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mat_mort2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">country</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Turkey&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;United States&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sweden&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Japan&quot;</span><span class="p">),</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
-<span class="w">                       </span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">2002</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">2007</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">2012</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)),</span>
-<span class="w">                       </span><span class="n">mat_mort_rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">64.0</span><span class="p">,</span><span class="w"> </span><span class="m">9.9</span><span class="p">,</span><span class="w"> </span><span class="m">4.17</span><span class="p">,</span><span class="w"> </span><span class="m">7.8</span><span class="p">,</span><span class="w"> </span><span class="m">21.9</span><span class="p">,</span><span class="w"> </span><span class="m">12.7</span><span class="p">,</span><span class="w"> </span><span class="m">1.86</span><span class="p">,</span><span class="w"> </span><span class="m">3.6</span><span class="p">,</span><span class="w"> </span><span class="m">15.2</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">5.4</span><span class="p">,</span><span class="w"> </span><span class="m">4.8</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mat_mort2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">    </span><span class="n">country</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Turkey&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;United States&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Sweden&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Japan&quot;</span><span class="p">),</span><span class="w"> </span><span class="m">3</span><span class="p">),</span>
+<span class="w">    </span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">2002</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">2007</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">),</span><span class="w"> </span><span class="nf">rep</span><span class="p">(</span><span class="m">2012</span><span class="p">,</span><span class="w"> </span><span class="m">4</span><span class="p">)),</span>
+<span class="w">    </span><span class="n">mat_mort_rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">64.0</span><span class="p">,</span><span class="w"> </span><span class="m">9.9</span><span class="p">,</span><span class="w"> </span><span class="m">4.17</span><span class="p">,</span><span class="w"> </span><span class="m">7.8</span><span class="p">,</span><span class="w"> </span><span class="m">21.9</span><span class="p">,</span><span class="w"> </span><span class="m">12.7</span><span class="p">,</span><span class="w"> </span><span class="m">1.86</span><span class="p">,</span><span class="w"> </span><span class="m">3.6</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                      </span><span class="m">15.2</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">,</span><span class="w"> </span><span class="m">5.4</span><span class="p">,</span><span class="w"> </span><span class="m">4.8</span><span class="p">))</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">mat_mort2</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -599,9 +600,11 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lockdown_long</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">lockdowndates</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Lockdown_End&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">names_to</span><span class="o">=</span><span class="s">&quot;Lockdown_Event&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_to</span><span class="o">=</span><span class="s">&quot;Date&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_longer</span><span class="p">(</span><span class="n">cols</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Lockdown_End&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">               </span><span class="n">names_to</span><span class="o">=</span><span class="s">&quot;Lockdown_Event&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_to</span><span class="o">=</span><span class="s">&quot;Date&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
 <span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">Date</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">as.Date</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span><span class="w"> </span><span class="n">formula</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;%Y-%M-%D&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">         </span><span class="n">Lockdown_Event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Lockdown_Event</span><span class="o">==</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Start&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;End&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">         </span><span class="n">Lockdown_Event</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">Lockdown_Event</span><span class="o">==</span><span class="s">&quot;Lockdown_Start&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                 </span><span class="s">&quot;Start&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;End&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
 <span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">lockdown_long</span><span class="p">)</span>
 </pre></div>
@@ -628,7 +631,8 @@ document.write(`
 <p>In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form)  using the function <code class="docutils literal notranslate"><span class="pre">pivot_wider()</span></code>. This function again first takes in a data table but now we specify the arguments <code class="docutils literal notranslate"><span class="pre">names_from</span></code> and <code class="docutils literal notranslate"><span class="pre">values_from</span></code>. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form below, we specify that <code class="docutils literal notranslate"><span class="pre">names_from</span></code> is the lockdown event and <code class="docutils literal notranslate"><span class="pre">values_from</span></code> is the date itself. Now we are back to the same form as before!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lockdown_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">lockdown_long</span><span class="p">,</span><span class="w"> </span><span class="n">names_from</span><span class="o">=</span><span class="n">Lockdown_Event</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="o">=</span><span class="n">Date</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lockdown_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">lockdown_long</span><span class="p">,</span><span class="w"> </span><span class="n">names_from</span><span class="o">=</span><span class="n">Lockdown_Event</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                             </span><span class="n">values_from</span><span class="o">=</span><span class="n">Date</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">lockdown_wide</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -715,10 +719,11 @@ document.write(`
 </div>
 <section id="practice-question">
 <h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
-<p>Create a similar data frame as we did above, but this time using the <code class="docutils literal notranslate"><span class="pre">mobility</span></code> dataset: in other words, create a data frame where the columns correspond to the mobility for each state in New England and the rows correspond to the numbered months.</p>
+<p>Create a similar data frame as we did above, but this time using the <code class="docutils literal notranslate"><span class="pre">mobility</span></code> dataset: in other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like this:</p>
+<a class="reference internal image-reference" href="../_images/6-practicequestion1answer.png"><img alt="“”" class="align-center" src="../_images/6-practicequestion1answer.png" style="width: 400pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution:</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
 </pre></div>
 </div>
 </div>
@@ -836,10 +841,60 @@ document.write(`
 </section>
 <section id="id1">
 <h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
-<p>Something about joins - maybe show them two data frames and a bunch of merge results and ask them to match the result to the type of merge?</p>
+<p>Look at the two data frames, df_A and df_B, created in the below code. What kind of join would produce the following data frame? Perform this join yourself.</p>
+<a class="reference internal image-reference" href="../_images/6-practicequestion2answer.png"><img alt="“”" class="align-center" src="../_images/6-practicequestion2answer.png" style="width: 300pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution:</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">df_A</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">patient_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                  </span><span class="n">visit_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                  </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">97.5</span><span class="p">,</span><span class="w"> </span><span class="m">96</span><span class="p">,</span><span class="w"> </span><span class="m">98</span><span class="p">,</span><span class="w"> </span><span class="m">99</span><span class="p">,</span><span class="w"> </span><span class="m">102</span><span class="p">,</span><span class="w"> </span><span class="m">98.6</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                  </span><span class="n">systolic_bp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">120</span><span class="p">,</span><span class="w"> </span><span class="m">138</span><span class="p">,</span><span class="w"> </span><span class="m">113</span><span class="p">,</span><span class="w"> </span><span class="m">182</span><span class="p">,</span><span class="w"> </span><span class="m">132</span><span class="p">,</span><span class="w"> </span><span class="m">146</span><span class="p">))</span>
+<span class="n">df_A</span>
+<span class="n">df_B</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">patient_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">,</span><span class="w"> </span><span class="m">14</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                   </span><span class="n">visit_num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">),</span>
+<span class="w">                   </span><span class="n">digit_span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">,</span><span class="w"> </span><span class="m">7</span><span class="p">))</span>
+<span class="n">df_B</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 6 × 4</caption>
+<thead>
+	<tr><th scope=col>patient_id</th><th scope=col>visit_num</th><th scope=col>temp</th><th scope=col>systolic_bp</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>12</td><td>1</td><td> 97.5</td><td>120</td></tr>
+	<tr><td> 9</td><td>1</td><td> 96.0</td><td>138</td></tr>
+	<tr><td>12</td><td>2</td><td> 98.0</td><td>113</td></tr>
+	<tr><td> 8</td><td>1</td><td> 99.0</td><td>182</td></tr>
+	<tr><td>14</td><td>1</td><td>102.0</td><td>132</td></tr>
+	<tr><td> 8</td><td>2</td><td> 98.6</td><td>146</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 8 × 3</caption>
+<thead>
+	<tr><th scope=col>patient_id</th><th scope=col>visit_num</th><th scope=col>digit_span</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>12</td><td>1</td><td>3</td></tr>
+	<tr><td>12</td><td>2</td><td>5</td></tr>
+	<tr><td>12</td><td>3</td><td>7</td></tr>
+	<tr><td> 8</td><td>1</td><td>7</td></tr>
+	<tr><td> 8</td><td>2</td><td>9</td></tr>
+	<tr><td> 8</td><td>3</td><td>5</td></tr>
+	<tr><td>14</td><td>1</td><td>8</td></tr>
+	<tr><td>14</td><td>2</td><td>7</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
 </pre></div>
 </div>
 </div>
@@ -849,8 +904,249 @@ document.write(`
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <ol class="arabic simple">
-<li><p>Why does this code fail?</p></li>
+<li><p>Take a look at the code below. Why does this code fail? In other words, what causes the warning message?</p></li>
 </ol>
+<p>Solve this problem in the following three ways and look at the results of each: 1) add a row with a distinct observation count for each combination of name and key; 2) keep only distinct rows of the name and key values, and drop duplicate rows; 3) change the names of the duplicate rows to make all names unique. In what situations (or for what kind of data) do you think each of these solutions would be most useful?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#1 </span>
+<span class="n">people</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">feature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;height&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;height&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">186</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">37</span><span class="p">,</span><span class="w"> </span><span class="m">156</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">people</span><span class="o">$</span><span class="n">id</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">5</span>
+<span class="n">people</span>
+<span class="nf">pivot_wider</span><span class="p">(</span><span class="n">people</span><span class="p">,</span><span class="w"> </span><span class="n">names_from</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+
+<span class="c1">#2 </span>
+<span class="n">people</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">feature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;height&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;height&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">186</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">37</span><span class="p">,</span><span class="w"> </span><span class="m">156</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">people</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">distinct</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">feature</span><span class="p">,</span><span class="w"> </span><span class="n">.keep_all</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+
+<span class="c1">#3</span>
+<span class="n">people</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span>
+<span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Phillip&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;John&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Mark&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Jessica&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Margaret&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">feature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;height&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;age&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;height&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="w"> </span><span class="m">186</span><span class="p">,</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w"> </span><span class="m">37</span><span class="p">,</span><span class="w"> </span><span class="m">156</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="nf">pivot_wider</span><span class="p">(</span><span class="n">people</span><span class="p">,</span><span class="w"> </span><span class="n">names_from</span><span class="o">=</span><span class="s">&quot;name&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;value&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 5 × 4</caption>
+<thead>
+	<tr><th scope=col>name</th><th scope=col>feature</th><th scope=col>value</th><th scope=col>id</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Phillip</td><td>height</td><td> 45</td><td>1</td></tr>
+	<tr><td>Phillip</td><td>age   </td><td>186</td><td>2</td></tr>
+	<tr><td>Phillip</td><td>age   </td><td> 50</td><td>3</td></tr>
+	<tr><td>Jessica</td><td>age   </td><td> 37</td><td>4</td></tr>
+	<tr><td>Jessica</td><td>height</td><td>156</td><td>5</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 5 × 4</caption>
+<thead>
+	<tr><th scope=col>feature</th><th scope=col>id</th><th scope=col>Phillip</th><th scope=col>Jessica</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>height</td><td>1</td><td> 45</td><td> NA</td></tr>
+	<tr><td>age   </td><td>2</td><td>186</td><td> NA</td></tr>
+	<tr><td>age   </td><td>3</td><td> 50</td><td> NA</td></tr>
+	<tr><td>age   </td><td>4</td><td> NA</td><td> 37</td></tr>
+	<tr><td>height</td><td>5</td><td> NA</td><td>156</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 2 × 6</caption>
+<thead>
+	<tr><th scope=col>feature</th><th scope=col>Phillip</th><th scope=col>John</th><th scope=col>Mark</th><th scope=col>Jessica</th><th scope=col>Margaret</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>height</td><td>45</td><td> NA</td><td>NA</td><td>NA</td><td>156</td></tr>
+	<tr><td>age   </td><td>NA</td><td>186</td><td>50</td><td>37</td><td> NA</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>First, use the <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> data to create a new data frame called <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> containing the total number of cases by month for the states of California, Michigan, Connecticut, Rhode Island, Ohio, New York, and Massachusetts. Then, manipulate the <code class="docutils literal notranslate"><span class="pre">mobility</span></code> data to calculate the average <code class="docutils literal notranslate"><span class="pre">m50</span></code> mobility measure for each month. Finally, merge these two data sets using an appropriate joining function.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sub_cases</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;California&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Michigan&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Connecticut&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
+<span class="w">                      </span><span class="s">&quot;Ohio&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New York&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">month</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">total_cases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">ungroup</span><span class="p">()</span>
+
+<span class="n">mob_reshape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mobility</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">month</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;California&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Michigan&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Connecticut&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
+<span class="w">                      </span><span class="s">&quot;Ohio&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New York&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">avg_m50</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">m50</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">))</span>
+
+<span class="n">covid_mob_sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">right_join</span><span class="p">(</span><span class="n">sub_cases</span><span class="p">,</span><span class="w"> </span><span class="n">mob_reshape</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;month&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;state&quot;</span><span class="p">))</span>
+<span class="n">covid_mob_sub</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;state&#39;. You can override using the
+`.groups` argument.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;state&#39;. You can override using the
+`.groups` argument.
+</pre></div>
+</div>
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 49 × 4</caption>
+<thead>
+	<tr><th scope=col>state</th><th scope=col>month</th><th scope=col>total_cases</th><th scope=col>avg_m50</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>California   </td><td>3</td><td> 15506</td><td>3.9338749</td></tr>
+	<tr><td>California   </td><td>4</td><td> 34811</td><td>1.2891823</td></tr>
+	<tr><td>California   </td><td>5</td><td> 68520</td><td>2.2596020</td></tr>
+	<tr><td>California   </td><td>6</td><td>130998</td><td>4.0101139</td></tr>
+	<tr><td>California   </td><td>7</td><td>198815</td><td>3.4461971</td></tr>
+	<tr><td>California   </td><td>8</td><td>164412</td><td>3.1796657</td></tr>
+	<tr><td>Connecticut  </td><td>3</td><td>  6872</td><td>4.3532330</td></tr>
+	<tr><td>Connecticut  </td><td>4</td><td> 18575</td><td>0.9553716</td></tr>
+	<tr><td>Connecticut  </td><td>5</td><td> 11936</td><td>2.5084593</td></tr>
+	<tr><td>Connecticut  </td><td>6</td><td>  2619</td><td>4.5542111</td></tr>
+	<tr><td>Connecticut  </td><td>7</td><td>  2290</td><td>5.2684875</td></tr>
+	<tr><td>Connecticut  </td><td>8</td><td>  3710</td><td>4.9877706</td></tr>
+	<tr><td>Massachusetts</td><td>3</td><td> 13118</td><td>2.8208228</td></tr>
+	<tr><td>Massachusetts</td><td>4</td><td> 47499</td><td>0.3332677</td></tr>
+	<tr><td>Massachusetts</td><td>5</td><td> 28798</td><td>1.4697511</td></tr>
+	<tr><td>Massachusetts</td><td>6</td><td>  5545</td><td>3.0946111</td></tr>
+	<tr><td>Massachusetts</td><td>7</td><td>  7621</td><td>3.7516151</td></tr>
+	<tr><td>Massachusetts</td><td>8</td><td>127243</td><td>3.5173742</td></tr>
+	<tr><td>Michigan     </td><td>3</td><td> 16312</td><td>4.5195207</td></tr>
+	<tr><td>Michigan     </td><td>4</td><td> 21278</td><td>0.8738068</td></tr>
+	<tr><td>Michigan     </td><td>5</td><td> 19934</td><td>4.2310561</td></tr>
+	<tr><td>Michigan     </td><td>6</td><td>  9391</td><td>7.6465206</td></tr>
+	<tr><td>Michigan     </td><td>7</td><td> 16778</td><td>8.0514168</td></tr>
+	<tr><td>Michigan     </td><td>8</td><td> 18473</td><td>7.9672156</td></tr>
+	<tr><td>New York     </td><td>3</td><td>125054</td><td>3.2353647</td></tr>
+	<tr><td>New York     </td><td>4</td><td>153447</td><td>0.5622280</td></tr>
+	<tr><td>New York     </td><td>5</td><td> 49789</td><td>2.2970177</td></tr>
+	<tr><td>New York     </td><td>6</td><td> 17184</td><td>4.3118473</td></tr>
+	<tr><td>New York     </td><td>7</td><td> 17193</td><td>4.9044376</td></tr>
+	<tr><td>New York     </td><td>8</td><td> 16226</td><td>4.4823382</td></tr>
+	<tr><td>Ohio         </td><td>3</td><td>  4247</td><td>6.0744115</td></tr>
+	<tr><td>Ohio         </td><td>4</td><td> 14727</td><td>2.9665770</td></tr>
+	<tr><td>Ohio         </td><td>5</td><td> 16658</td><td>6.0955071</td></tr>
+	<tr><td>Ohio         </td><td>6</td><td> 17926</td><td>8.7790109</td></tr>
+	<tr><td>Ohio         </td><td>7</td><td> 30985</td><td>8.5671867</td></tr>
+	<tr><td>Ohio         </td><td>8</td><td> 25014</td><td>8.0495817</td></tr>
+	<tr><td>Rhode Island </td><td>3</td><td>   827</td><td>3.5644032</td></tr>
+	<tr><td>Rhode Island </td><td>4</td><td>  6843</td><td>0.6791034</td></tr>
+	<tr><td>Rhode Island </td><td>5</td><td> 14653</td><td>2.1930056</td></tr>
+	<tr><td>Rhode Island </td><td>6</td><td>  1426</td><td>3.9479722</td></tr>
+	<tr><td>Rhode Island </td><td>7</td><td> 65562</td><td>4.4329086</td></tr>
+	<tr><td>Rhode Island </td><td>8</td><td> 75338</td><td>3.9650753</td></tr>
+	<tr><td>California   </td><td>9</td><td>    NA</td><td>3.2066182</td></tr>
+	<tr><td>Connecticut  </td><td>9</td><td>    NA</td><td>5.3254444</td></tr>
+	<tr><td>Massachusetts</td><td>9</td><td>    NA</td><td>3.8391333</td></tr>
+	<tr><td>Michigan     </td><td>9</td><td>    NA</td><td>7.3039868</td></tr>
+	<tr><td>New York     </td><td>9</td><td>    NA</td><td>4.6041774</td></tr>
+	<tr><td>Ohio         </td><td>9</td><td>    NA</td><td>8.6239438</td></tr>
+	<tr><td>Rhode Island </td><td>9</td><td>    NA</td><td>4.3196667</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Convert the <code class="docutils literal notranslate"><span class="pre">sub_cases</span></code> data frame from the previous exercise to wide format so that each row displays the cases in each state for a single month. Then, add on the average m50 overall for each month as an additional column using  a joining function.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sub_cases_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">sub_cases</span><span class="p">,</span><span class="w"> </span><span class="n">names_from</span><span class="o">=</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="o">=</span><span class="n">total_cases</span><span class="p">)</span>
+<span class="n">sub_cases_wide</span>
+
+
+<span class="n">mob_reshape</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">mobility</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">month</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">month</span><span class="p">(</span><span class="n">date</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;California&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Michigan&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Connecticut&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Rhode Island&quot;</span><span class="p">,</span>
+<span class="w">                      </span><span class="s">&quot;Ohio&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;New York&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Massachusetts&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">avg_m50</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">m50</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">T</span><span class="p">))</span>
+<span class="n">mob_reshape</span>
+
+<span class="nf">left_join</span><span class="p">(</span><span class="n">sub_cases_wide</span><span class="p">,</span><span class="w"> </span><span class="n">mob_reshape</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;month&quot;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 7 × 8</caption>
+<thead>
+	<tr><th scope=col>month</th><th scope=col>California</th><th scope=col>Connecticut</th><th scope=col>Massachusetts</th><th scope=col>Michigan</th><th scope=col>New York</th><th scope=col>Ohio</th><th scope=col>Rhode Island</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>2</td><td>    34</td><td>   NA</td><td>     2</td><td>   NA</td><td>     1</td><td>   NA</td><td>   NA</td></tr>
+	<tr><td>3</td><td> 15506</td><td> 6872</td><td> 13118</td><td>16312</td><td>125054</td><td> 4247</td><td>  827</td></tr>
+	<tr><td>4</td><td> 34811</td><td>18575</td><td> 47499</td><td>21278</td><td>153447</td><td>14727</td><td> 6843</td></tr>
+	<tr><td>5</td><td> 68520</td><td>11936</td><td> 28798</td><td>19934</td><td> 49789</td><td>16658</td><td>14653</td></tr>
+	<tr><td>6</td><td>130998</td><td> 2619</td><td>  5545</td><td> 9391</td><td> 17184</td><td>17926</td><td> 1426</td></tr>
+	<tr><td>7</td><td>198815</td><td> 2290</td><td>  7621</td><td>16778</td><td> 17193</td><td>30985</td><td>65562</td></tr>
+	<tr><td>8</td><td>164412</td><td> 3710</td><td>127243</td><td>18473</td><td> 16226</td><td>25014</td><td>75338</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 7 × 2</caption>
+<thead>
+	<tr><th scope=col>month</th><th scope=col>avg_m50</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>3</td><td>4.071662</td></tr>
+	<tr><td>4</td><td>1.094220</td></tr>
+	<tr><td>5</td><td>3.007771</td></tr>
+	<tr><td>6</td><td>5.192041</td></tr>
+	<tr><td>7</td><td>5.488893</td></tr>
+	<tr><td>8</td><td>5.164146</td></tr>
+	<tr><td>9</td><td>5.317567</td></tr>
+</tbody>
+</table>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 7 × 9</caption>
+<thead>
+	<tr><th scope=col>month</th><th scope=col>California</th><th scope=col>Connecticut</th><th scope=col>Massachusetts</th><th scope=col>Michigan</th><th scope=col>New York</th><th scope=col>Ohio</th><th scope=col>Rhode Island</th><th scope=col>avg_m50</th></tr>
+	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>2</td><td>    34</td><td>   NA</td><td>     2</td><td>   NA</td><td>     1</td><td>   NA</td><td>   NA</td><td>      NA</td></tr>
+	<tr><td>3</td><td> 15506</td><td> 6872</td><td> 13118</td><td>16312</td><td>125054</td><td> 4247</td><td>  827</td><td>4.071662</td></tr>
+	<tr><td>4</td><td> 34811</td><td>18575</td><td> 47499</td><td>21278</td><td>153447</td><td>14727</td><td> 6843</td><td>1.094220</td></tr>
+	<tr><td>5</td><td> 68520</td><td>11936</td><td> 28798</td><td>19934</td><td> 49789</td><td>16658</td><td>14653</td><td>3.007771</td></tr>
+	<tr><td>6</td><td>130998</td><td> 2619</td><td>  5545</td><td> 9391</td><td> 17184</td><td>17926</td><td> 1426</td><td>5.192041</td></tr>
+	<tr><td>7</td><td>198815</td><td> 2290</td><td>  7621</td><td>16778</td><td> 17193</td><td>30985</td><td>65562</td><td>5.488893</td></tr>
+	<tr><td>8</td><td>164412</td><td> 3710</td><td>127243</td><td>18473</td><td> 16226</td><td>25014</td><td>75338</td><td>5.164146</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
 </section>
 </section>
 

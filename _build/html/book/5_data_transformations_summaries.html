@@ -174,7 +174,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports with R Markdown</a></li>
+<li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
@@ -354,15 +354,15 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tibbles-and-data-frames">Tibbles and Data Frames</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsetting-data-using-select-filter-and-slice">Subsetting Data using <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsetting-data">Subsetting Data</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-rows-and-columns-using-rename-mutate-and-arrange">Updating Rows and Columns using <code class="docutils literal notranslate"><span class="pre">rename</span></code>, <code class="docutils literal notranslate"><span class="pre">mutate</span></code>, and <code class="docutils literal notranslate"><span class="pre">arrange</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-rows-and-columns">Updating Rows and Columns</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-using-summarize-and-group-by">Summarizing using <code class="docutils literal notranslate"><span class="pre">summarize</span></code> and <code class="docutils literal notranslate"><span class="pre">group_by</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-and-grouping">Summarizing and Grouping</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question</a></li>
 </ul>
 </li>
@@ -384,7 +384,7 @@ document.write(`
 <p>In this chapter, we will introduce the <code class="docutils literal notranslate"><span class="pre">dyplr</span></code> package, which is part of the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. We will use the same sample of the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) as in <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html">Chapter 4</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">))</span>
 <span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
 </pre></div>
@@ -456,8 +456,8 @@ document.write(`
 </div>
 <p>We mention tibbles here since some functions in the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.</p>
 </section>
-<section id="subsetting-data-using-select-filter-and-slice">
-<h2>Subsetting Data using <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice</span></code><a class="headerlink" href="#subsetting-data-using-select-filter-and-slice" title="Permalink to this headline">#</a></h2>
+<section id="subsetting-data">
+<h2>Subsetting Data<a class="headerlink" href="#subsetting-data" title="Permalink to this headline">#</a></h2>
 <p>In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">dplyr</span></code> package has its own functions that are useful to subset the data. The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -596,18 +596,19 @@ document.write(`
 </div>
 <section id="practice-question">
 <h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
-<p>Filter the data to only those with an education level of more than HS who report alcohol use, select the diastolic blood pressure variables, and display the 4th and 10th rows.</p>
+<p>Filter the data to only those with an education level of more than HS who report alcohol use, select the diastolic blood pressure variables, and display the 4th and 10th rows. This is what they should look like:</p>
+<a class="reference internal image-reference" href="../_images/5-practicequestion1answer.png"><img alt="“”" class="align-center" src="../_images/5-practicequestion1answer.png" style="width: 200pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution:</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 </section>
-<section id="updating-rows-and-columns-using-rename-mutate-and-arrange">
-<h2>Updating Rows and Columns using <code class="docutils literal notranslate"><span class="pre">rename</span></code>, <code class="docutils literal notranslate"><span class="pre">mutate</span></code>, and <code class="docutils literal notranslate"><span class="pre">arrange</span></code><a class="headerlink" href="#updating-rows-and-columns-using-rename-mutate-and-arrange" title="Permalink to this headline">#</a></h2>
+<section id="updating-rows-and-columns">
+<h2>Updating Rows and Columns<a class="headerlink" href="#updating-rows-and-columns" title="Permalink to this headline">#</a></h2>
 <p>The next few functions we will look at will allow us to update the rows and columns in our data. For example, the <code class="docutils literal notranslate"><span class="pre">rename()</span></code> function allows us to change the names of columns. Below, we change the name of <code class="docutils literal notranslate"><span class="pre">INCOME</span></code> to <code class="docutils literal notranslate"><span class="pre">PIR</span></code> since this variable is the poverty income ratio and also update the name of <code class="docutils literal notranslate"><span class="pre">SMOKE</span></code> to be <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. When specifying these names, the new name is on the left of the <code class="docutils literal notranslate"><span class="pre">=</span></code> and the old name is on the right.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -704,18 +705,18 @@ Current Smoker   Never Smoked   Quit Smoking
 </div>
 <section id="id1">
 <h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
-<p>Create a new column called <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> that is equal to the difference between a patient’s first and last diastolic blood pressure readings. Then, sort the dataframe by this new column in increasing order.</p>
+<p>Create a new column called <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> that is equal to the difference between a patient’s first and fourth diastolic blood pressure readings. Then, sort the dataframe by this new column in increasing order. The first four <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> values in the head of the resulting dataset should be -66, -64, -64, and -62.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution:</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:                    </span>
 </pre></div>
 </div>
 </div>
 </div>
 </section>
 </section>
-<section id="summarizing-using-summarize-and-group-by">
-<h2>Summarizing using <code class="docutils literal notranslate"><span class="pre">summarize</span></code> and <code class="docutils literal notranslate"><span class="pre">group_by</span></code><a class="headerlink" href="#summarizing-using-summarize-and-group-by" title="Permalink to this headline">#</a></h2>
+<section id="summarizing-and-grouping">
+<h2>Summarizing and Grouping<a class="headerlink" href="#summarizing-and-grouping" title="Permalink to this headline">#</a></h2>
 <p>If we wanted to understand how many observations there are for each given race category, we could use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function as we described in earlier chapters. Another similar function is the <code class="docutils literal notranslate"><span class="pre">count()</span></code> function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -801,7 +802,8 @@ Current Smoker   Never Smoked   Quit Smoking
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span>
 <span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">RACE</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;Non-Hispanic Black&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span>
+<span class="w">            </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -849,7 +851,8 @@ Current Smoker   Never Smoked   Quit Smoking
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nhanes_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
 <span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">RACE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">TOT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span><span class="n">MEAN_SBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">),</span><span class="w"> </span>
+<span class="w">            </span><span class="n">MEAN_DBP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -897,10 +900,11 @@ Current Smoker   Never Smoked   Quit Smoking
 </div>
 <section id="id2">
 <h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
-<p>Create a data frame summarizing the percent of patients with hypertension by age and smoking status.</p>
+<p>Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like this:</p>
+<a class="reference internal image-reference" href="../_images/5-practicequestion3answer.png"><img alt="“”" class="align-center" src="../_images/5-practicequestion3answer.png" style="width: 200pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution:</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
 </pre></div>
 </div>
 </div>
@@ -1123,43 +1127,83 @@ Current Smoker   Never Smoked   Quit Smoking
 </div></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Create new variables specifying the monthly cases and deaths for each county, and then display the counties with the 5 highest monthly cases.</p></li>
+<li><p>Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">covidcases</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">month</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">12</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;March&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">13</span><span class="p">,</span><span class="w"> </span><span class="m">16</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;April&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">17</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;May&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="m">24</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;June&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="m">28</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;July&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">29</span><span class="p">,</span><span class="w"> </span><span class="m">32</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;August&quot;</span><span class="p">,</span>
-<span class="w">                           </span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">33</span><span class="p">,</span><span class="w"> </span><span class="m">36</span><span class="p">)</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;September&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">region</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">month</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">monthly_cases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">),</span>
-<span class="w">            </span><span class="n">monthly_deaths</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="nf">between</span><span class="p">(</span><span class="n">week</span><span class="p">,</span><span class="w"> </span><span class="m">9</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">county</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">summarize</span><span class="p">(</span><span class="n">total_cases</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
 <span class="w">  </span><span class="nf">ungroup</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">monthly_cases</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span>
+<span class="w">  </span><span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">order_by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_cases</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;region&#39;, &#39;state&#39;, &#39;county&#39;. You can
-override using the `.groups` argument.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;state&#39;. You can override using the
+`.groups` argument.
 </pre></div>
 </div>
 <div class="output text_html"><table class="dataframe">
-<caption>A tibble: 5 × 6</caption>
+<caption>A grouped_df: 51 × 3</caption>
 <thead>
-	<tr><th scope=col>region</th><th scope=col>state</th><th scope=col>county</th><th scope=col>month</th><th scope=col>monthly_cases</th><th scope=col>monthly_deaths</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+	<tr><th scope=col>state</th><th scope=col>county</th><th scope=col>total_cases</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>
 </thead>
 <tbody>
-	<tr><td>Northeast</td><td>New York    </td><td>New York City</td><td>April </td><td>105894</td><td>12291</td></tr>
-	<tr><td>West     </td><td>California  </td><td>Los Angeles  </td><td>August</td><td> 58563</td><td>  905</td></tr>
-	<tr><td>West     </td><td>California  </td><td>Los Angeles  </td><td>July  </td><td> 57447</td><td>  773</td></tr>
-	<tr><td>Northeast</td><td>Rhode Island</td><td>Providence   </td><td>August</td><td> 57303</td><td> 3218</td></tr>
-	<tr><td>South    </td><td>Florida     </td><td>Miami-Dade   </td><td>August</td><td> 56044</td><td>  609</td></tr>
+	<tr><td>Alabama             </td><td>Mobile              </td><td>  1474</td></tr>
+	<tr><td>Alaska              </td><td>Fairbanks North Star</td><td>   234</td></tr>
+	<tr><td>Arizona             </td><td>Maricopa            </td><td>  6610</td></tr>
+	<tr><td>Arkansas            </td><td>Lincoln             </td><td>   801</td></tr>
+	<tr><td>California          </td><td>Los Angeles         </td><td> 32919</td></tr>
+	<tr><td>Colorado            </td><td>Denver              </td><td>  4227</td></tr>
+	<tr><td>Connecticut         </td><td>Fairfield           </td><td> 11908</td></tr>
+	<tr><td>Delaware            </td><td>Sussex              </td><td>  3171</td></tr>
+	<tr><td>District of Columbia</td><td>District of Columbia</td><td>  6459</td></tr>
+	<tr><td>Florida             </td><td>Miami-Dade          </td><td> 14377</td></tr>
+	<tr><td>Georgia             </td><td>Fulton              </td><td>  3376</td></tr>
+	<tr><td>Hawaii              </td><td>Honolulu            </td><td>   340</td></tr>
+	<tr><td>Idaho               </td><td>Ada                 </td><td>   686</td></tr>
+	<tr><td>Illinois            </td><td>Cook                </td><td> 56539</td></tr>
+	<tr><td>Indiana             </td><td>Marion              </td><td>  7418</td></tr>
+	<tr><td>Iowa                </td><td>Polk                </td><td>  2784</td></tr>
+	<tr><td>Kansas              </td><td>Finney              </td><td>  1293</td></tr>
+	<tr><td>Kentucky            </td><td>Jefferson           </td><td>  1918</td></tr>
+	<tr><td>Louisiana           </td><td>Jefferson           </td><td>  6329</td></tr>
+	<tr><td>Maine               </td><td>Cumberland          </td><td>   750</td></tr>
+	<tr><td>Maryland            </td><td>Prince George's     </td><td> 10848</td></tr>
+	<tr><td>Massachusetts       </td><td>Middlesex           </td><td> 16873</td></tr>
+	<tr><td>Michigan            </td><td>Wayne               </td><td> 16467</td></tr>
+	<tr><td>Minnesota           </td><td>Hennepin            </td><td>  5109</td></tr>
+	<tr><td>Mississippi         </td><td>Hinds               </td><td>   657</td></tr>
+	<tr><td>Missouri            </td><td>St. Louis           </td><td>  3747</td></tr>
+	<tr><td>Montana             </td><td>Gallatin            </td><td>   431</td></tr>
+	<tr><td>Nebraska            </td><td>Douglas             </td><td>  2337</td></tr>
+	<tr><td>Nevada              </td><td>Clark               </td><td>  4764</td></tr>
+	<tr><td>New Hampshire       </td><td>Hillsborough        </td><td>  1549</td></tr>
+	<tr><td>New Jersey          </td><td>Hudson              </td><td> 15676</td></tr>
+	<tr><td>New Mexico          </td><td>McKinley            </td><td>  1621</td></tr>
+	<tr><td>New York            </td><td>New York City       </td><td>166883</td></tr>
+	<tr><td>North Carolina      </td><td>Mecklenburg         </td><td>  2344</td></tr>
+	<tr><td>North Dakota        </td><td>Cass                </td><td>  1050</td></tr>
+	<tr><td>Ohio                </td><td>Franklin            </td><td>  4098</td></tr>
+	<tr><td>Oklahoma            </td><td>Oklahoma            </td><td>   948</td></tr>
+	<tr><td>Oregon              </td><td>Multnomah           </td><td>   861</td></tr>
+	<tr><td>Pennsylvania        </td><td>Philadelphia        </td><td> 17980</td></tr>
+	<tr><td>Rhode Island        </td><td>Providence          </td><td> 17223</td></tr>
+	<tr><td>South Carolina      </td><td>Richland            </td><td>  1077</td></tr>
+	<tr><td>South Dakota        </td><td>Minnehaha           </td><td>  2717</td></tr>
+	<tr><td>Tennessee           </td><td>Davidson            </td><td>  3963</td></tr>
+	<tr><td>Texas               </td><td>Harris              </td><td>  8676</td></tr>
+	<tr><td>Utah                </td><td>Salt Lake           </td><td>  3422</td></tr>
+	<tr><td>Vermont             </td><td>Chittenden          </td><td>   387</td></tr>
+	<tr><td>Virginia            </td><td>Fairfax             </td><td>  7269</td></tr>
+	<tr><td>Washington          </td><td>King                </td><td>  6589</td></tr>
+	<tr><td>West Virginia       </td><td>Jackson             </td><td>   261</td></tr>
+	<tr><td>Wisconsin           </td><td>Milwaukee           </td><td>  4378</td></tr>
+	<tr><td>Wyoming             </td><td>Teton               </td><td>   191</td></tr>
 </tbody>
 </table>
 </div></div>
@@ -1235,15 +1279,15 @@ override using the `.groups` argument.
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tibbles-and-data-frames">Tibbles and Data Frames</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsetting-data-using-select-filter-and-slice">Subsetting Data using <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, and <code class="docutils literal notranslate"><span class="pre">slice</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#subsetting-data">Subsetting Data</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-rows-and-columns-using-rename-mutate-and-arrange">Updating Rows and Columns using <code class="docutils literal notranslate"><span class="pre">rename</span></code>, <code class="docutils literal notranslate"><span class="pre">mutate</span></code>, and <code class="docutils literal notranslate"><span class="pre">arrange</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#updating-rows-and-columns">Updating Rows and Columns</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-using-summarize-and-group-by">Summarizing using <code class="docutils literal notranslate"><span class="pre">summarize</span></code> and <code class="docutils literal notranslate"><span class="pre">group_by</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summarizing-and-grouping">Summarizing and Grouping</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Practice Question</a></li>
 </ul>
 </li>
