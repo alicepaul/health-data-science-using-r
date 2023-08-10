@@ -1,0 +1,246 @@
+---
+title: "Day2"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-08-03"
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+remotes::install_github("joannamwalsh/RforHDSdata") 
+
+```{r}
+library(RforHDSdata) 
+library(patchwork)
+suppressPackageStartupMessages(library(GGally)) 
+suppressPackageStartupMessages(library(gt))
+suppressPackageStartupMessages(library(gtsummary))
+suppressPackageStartupMessages(library(tidyverse))
+data(NHANESsample)
+data(pain)
+data(covidcases)
+
+data(covidcases)
+names(covidcases)
+```
+
+## Chapter 4 Exercise 3
+
+For males between the ages of 50-59, compare blood pressure across race as reported in the race variable. Then, create a summary table stratified by the RACE categories and report the mean, standard deviation, minimum and maximum values for all continuous variables.
+
+```{r}
+nhanes_df <- na.omit(subset(NHANESsample, select= -c(SBP2, SBP3, SBP4, DBP2, DBP3, DBP4)))
+
+subset.males <- subset(nhanes_df, 
+                       nhanes_df$SEX=="Male" & nhanes_df$AGE>=50 & nhanes_df$AGE<=59)
+subset.males$RACE <- as.factor(subset.males$RACE)
+boxplot(subset.males$DBP1 ~ subset.males$RACE, 
+        xlab = "Race", ylab = "Diastolic Blood Pressure", col = "pink")
+
+tbl_summary(subset.males, include= c("SEX", "RACE", "AGE", "EDUCATION", "SMOKE",
+                                  "BMI_CAT", "LEAD", "SBP1", "DBP1", "HYP"),
+           by = "RACE", statistic = list(all_continuous() ~ "{mean} ({sd}, {min}, {max})")) %>% 
+  as_gt() %>% 
+  gt:::as.tags.gt_tbl()
+```
+
+## Chapter4 Exercise 4
+
+Recreate the following two plots in R. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two variables against each other. 
+
+<img src="images/4-exercise4plot1.png" alt= “” width="420pt" align="left">
+<img src="images/4-exercise4plot2.png" alt= “” width="420pt" align="right">
+
+```{r}
+nhanes_subset <- NHANESsample[NHANESsample$YEAR %in% c(1999, 2005, 2011, 2017), ]
+ed_year <- table(nhanes_subset$EDUCATION, nhanes_subset$YEAR)
+barplot(height = ed_year, 
+        beside = TRUE, 
+        legend.text = T, 
+        col = c("red", "orange", "blue"), 
+        args.legend = list(x = "topleft",
+                           inset = c(0.05, 0)),
+        xlab = "Year",
+        ylab = "Count")
+
+boxplot(nhanes_subset$LEAD ~ nhanes_subset$EDUCATION, 
+        xlab = "Education Level", 
+        ylab = "Blood Lead Level", 
+        ylim = c(0, 10), 
+        col = c("red", "orange", "blue"))
+
+boxplot(nhanes_subset$LEAD ~ nhanes_subset$YEAR, 
+        xlab = "Year", 
+        ylab = "Blood Lead Level", 
+        ylim = c(0, 10))
+```
+
+## Chapter 5 Exercise 1
+
+The following exercises use the covidcases dataset from the RforHDSdata package.
+
+Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West. Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast. 
+
+```{r}
+##link to wikipedia or do state.region
+
+covidcases <- covidcases %>%
+          mutate(region = case_when(state %in% c("Connecticut", 
+                                                 "Maine", 
+                                                 "Massachusetts", 
+                                                 "New Hampshire", 
+                                                 "Rhode Island", 
+                                                 "Vermont", 
+                                                 "New Jersey", 
+                                                 "New York", 
+                                                 "Pennsylvania") ~ "Northeast",
+                                   state %in% c("Illinois",
+                                               "Indiana",
+                                               "Michigan",
+                                               "Ohio", 
+                                               "Wisconsin",
+                                               "Iowa",
+                                               "Kansas",
+                                               "Minnesota",
+                                               "Missouri",
+                                               "Nebraska",
+                                               "North Dakota",
+                                               "South Dakota") ~ "Midwest",
+                                   state %in% c("Delaware",
+                                               "Florida",
+                                               "Georgia",
+                                               "Maryland",
+                                               "North Carolina",
+                                               "South Carolina", 
+                                               "Virginia", 
+                                               "District of Columbia",
+                                               "West Virginia",
+                                               "Alabama",
+                                               "Kentucky",
+                                               "Mississippi",
+                                               "Tennessee",
+                                               "Arkansas",
+                                               "Louisiana",
+                                               "Oklahoma",
+                                               "Texas") ~ "South",
+                                   state %in% c("Arizona",
+                                                "Colorado",
+                                                "Idaho", 
+                                                "Montana",
+                                                "Nevada", 
+                                                "New Mexico", 
+                                                "Utah", 
+                                                "Wyoming", 
+                                                "Alaska", 
+                                                "California", 
+                                                "Hawaii", 
+                                                "Oregon", 
+                                                "Washington") ~ "West"))
+
+covidcases %>% ungroup() %>%
+filter(region == "Northeast") %>% 
+summarize(avg = mean(weekly_cases, na.rm=TRUE), sd = sd(weekly_cases, na.rm=TRUE))
+```
+
+## Chapter 5 Exercise 4
+
+Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases.
+
+```{r}
+covidcases %>%
+  mutate(month = case_when(between(week, 9, 12) ~ "March",
+                           between(week, 13, 16) ~ "April",
+                           between(week, 17, 20) ~ "May",
+                           between(week, 21, 24) ~ "June",
+                           between(week, 25, 28) ~ "July",
+                           between(week, 29, 32) ~ "August",
+                           between(week, 33, 36) ~ "September")) %>%
+  group_by(region, state, county, month) %>%
+  summarize(monthly_cases = sum(weekly_cases),
+            monthly_deaths = sum(weekly_deaths)) %>%
+  ungroup() %>% 
+  slice_max(order_by = monthly_cases, n = 5)
+```
+
+
+
+## Chapter 7 Exercise 1
+
+For this chapter's exercises, use the covidcases data set that we first introduced in Chapter 5 to recreate the plots below. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.
+
+```{r}
+cols<- c("#e7f0fa", #lighter than light blue
+             "#c9e2f6", #light blue
+             "#95cbee", #blue
+             "#0099dc", #darker blue
+             "#4ab04a", #green
+             "#ffd73e", #yellow
+             "#eec73a", #mustard
+             "#e29421", #dark khaki (?)
+             "#f05336", #orange red
+             "#ce472e") #red
+ggplot(covidcases, aes(y = state, x = week, fill = weekly_cases)) +
+  geom_tile(color = 'white', width = .9, height = .9) +
+  scale_fill_gradientn(colours = cols,
+                       limits = c(0, 1000),
+                       na.value = 'white', name = "", 
+                       breaks = c(0,100,200,300,400,500,600,700,800,900,1000),
+                       labels = c("0","100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"), 
+                       values=c(0, 0.01, 0.02, 0.03, 0.09, 0.1, .15, .25, .4, .5, 1),
+                       # specify colors which change quickly at the beginning but slow down at the end
+                       guide = guide_colourbar(ticks = T, nbin = 30, barheight = .5, label = T, barwidth = 15)) +
+  geom_vline(xintercept = 25, color = "black", size = 1) +
+  annotate(geom = "text", x = 25, y = 51, label = "Vaccine Introduced",size = 3, hjust = -0.1) +
+  scale_y_discrete(position = 'left') +
+  coord_equal() +
+  scale_x_continuous(expand = c(0,0.5), breaks=seq(10, 35, 5)) +
+  theme_minimal() +
+  theme(legend.position = 'bottom',
+        legend.direction = 'horizontal',
+        plot.title = element_text(size = 8, face = 'bold', vjust = 2, hjust = 0.5),
+        axis.text.x = element_text(size = 8, hjust = .5, vjust = .5, face = 'plain'),
+        axis.text.y = element_text(size = 6, hjust = .5, vjust = .5, face = 'plain'),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+  ) +
+  ggtitle('Worldwide COVID-19 spread: weekly cases')
+```
+
+## Chapter 7 Exercise 2
+
+```{r}
+deaths <- covidcases %>% 
+  group_by(state) %>%
+  summarize(deaths = sum(weekly_cases))
+
+df <- covidcases %>% 
+  group_by(state) %>% 
+  summarise(totaldeaths = sum(weekly_deaths)) %>%
+  arrange(desc(totaldeaths))
+top10states <- c(df$state[1:10])
+
+df <- covidcases %>% 
+  mutate(top10 = replace(state, !state %in% top10states, "others")) %>% 
+  group_by(top10, week) %>% 
+  summarise(totaldeaths = sum(weekly_deaths))
+df$top10 = factor(df$top10, levels = c(top10states, "others"))
+df$date <- as.Date(paste(2020, df$week, 1, sep="-"), "%Y-%U-%u")
+
+ggplot(df, aes(date, totaldeaths, fill = top10)) +
+  geom_area(alpha=0.8 , size=0.3, colour="black") +
+  theme_classic(base_size = 20) +
+  scale_x_date(date_breaks = "1 month")+
+ theme(legend.position="bottom",
+        axis.line = element_line(colour = "black",size=0.8),
+        text = element_text(size=10),
+        axis.text.x = element_text(angle = 30, hjust = 1),
+        axis.text = element_text(colour = "black",size = 8,face="bold"),
+        axis.title = element_text(size = 10,face="bold"),
+        axis.ticks.length=unit(.25, "cm"),
+        axis.ticks = element_line(colour = "black", size = 1),
+      plot.title = element_text(size = 15, face =  "bold"))+
+ labs(title="Stacked area chart for total deaths by top 10 states ",x="Date", y = "Total Deaths")
+```
