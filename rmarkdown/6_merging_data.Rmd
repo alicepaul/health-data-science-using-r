@@ -5,14 +5,13 @@ output: html_document
 
 # 6. Merging and Reshaping Data
 
-In this chapter, we continue with some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert our data between wide form (more columns, fewer rows) and long form (fewer columns, more rows). For example, we can use these data pivots to put our data into what is called *tidy form*. Additionally, we will look at combining information from multiple data frames into a single data frame. The key idea when merging data is to think about what the common information is between the data frames and which values we want to keep. 
+In this chapter, we continue to look at some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert between *wide form* (more columns, fewer rows) and *long form* (fewer columns, more rows). We can also use data pivots to put our data into what is called *tidy form*. Additionally, we will look at combining information from multiple data frames into a single data frame. The key ideas when merging data are to think about what the common information is between the data frames and to consider which values we want to keep. 
 
-For this chapter, we will use three data sets. The first data set is `covidcases`, which contains the weekly case and death counts by county in the United States for 2020, the second data set is `mobility`, which contains daily mobility estimates by state in 2020, and lastly we have `lockdowndates`, which contains the start and end dates for statewide stay at home orders. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.
+For this chapter, we will use three data sets. The first data set is `covidcases`, which contains the weekly case and death counts by county in the United States for 2020; the second data set is `mobility`, which contains daily mobility estimates by state in 2020; and the third data set is `lockdowndates`, which contains the start and end dates for statewide stay at home orders. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
-library(RforHDSdata)
-library(lubridate)
+suppressPackageStartupMessages(library(RforHDSdata))
 data(covidcases)
 data(lockdowndates)
 data(mobility)
@@ -30,22 +29,25 @@ head(mobility)
 head(lockdowndates)
 ```
 
-The mobility and lockdown data frames contain a date column. Right now the class of the date column in the lockdown and mobility data is a character value, which we can see in the printed output above. We can use the `as.Date()` function to tell R to treat these as dates. We need to specify the date format as an argument to this function so R knows how to parse this text to a date. Our format is given as `%Y-%M-%D`, where the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). 
+Both the mobility and lockdown data frames contain date columns. Right now, these columns in both data sets are of the class character, which we can see in the printed output above. We can use the `as.Date()` function to tell R to treat these columns as dates instead of characters. When using this function, we need to specify the date format as an argument so that R knows how to parse this text to a date. Our format is given as `%Y-%M-%D`, where the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). Below, we convert the classes of these columns to 'Date'. 
 
 ```{r}
 mobility$date <- as.Date(mobility$date, formula="%Y-%M-%D")
 lockdowndates$Lockdown_Start <- as.Date(lockdowndates$Lockdown_Start, formula="%Y-%M-%D")
 lockdowndates$Lockdown_End <- as.Date(lockdowndates$Lockdown_End, formula="%Y-%M-%D")
+class(mobility$date)
+class(lockdowndates$Lockdown_Start)
+class(lockdowndates$Lockdown_End)
 ```
 
-By coding these columns as dates, we can access information such as the day, month, year, or week. These functions are all available in the `lubridate` package, which is a package in the tidyverse that allows us to manipulate dates. 
+After coding these columns as dates, we can access information such as the day, month, year, or week from them. These functions are all available in the `lubridate` package, which is a package in the tidyverse that allows us to manipulate dates. 
 
 ```{r}
 month(mobility$date[1])
 week(mobility$date[1])
 ```
 
-Last, we add a date column to `covidcases`. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates in the `lubridate` package. January 1, 2020 was a Wednesday and is counted as the first week. Therefore, to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019. We show a simple example adding one week below before doing this conversion for the entire column.
+Next, we add a date column to `covidcases`. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates in the `lubridate` package. January 1, 2020 was a Wednesday and is counted as the first week, so to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019 (the last Sunday before 2020). We show a simple example of adding one week to this date below before doing this conversion for the entire column.
 
 ```{r}
 as.Date("2019-12-29")+weeks(1)
@@ -58,7 +60,7 @@ head(covidcases)
 
 ## Tidy Data 
 
-The tidyverse is designed around interacting with **tidy data** with the premise that a tidy format we can streamline our analysis. Data is considered **tidy** if
+The tidyverse is designed around interacting with **tidy data** with the premise that using data in a tidy format can streamline our analysis. Data is considered **tidy** if
 
 1.  Each variable is associated with a single column.
 2.  Each observation is associated with a single row.
@@ -74,44 +76,49 @@ mat_mort1 <- data.frame(country = c("Turkey", "United States", "Sweden", "Japan"
 head(mat_mort1)
 ```
 
-Instead, we could make this data tidy by having columns for country, year, and maternity mortality rate. Now every observation is associated with an individual row. 
+However, we can make this data tidy by creating separate columns for country, year, and maternity mortality rate as we demonstrate below. Now every observation is associated with an individual row. 
 
 ```{r}
-mat_mort2 <- data.frame(country = rep(c("Turkey", "United States", "Sweden", "Japan"), 3),
-                       year = c(rep(2002, 4), rep(2007, 4), rep(2012, 4)),
-                       mat_mort_rate = c(64.0, 9.9, 4.17, 7.8, 21.9, 12.7, 1.86, 3.6, 15.2, 16, 5.4, 4.8))
+mat_mort2 <- data.frame(
+    country = rep(c("Turkey", "United States", "Sweden", "Japan"), 3),
+    year = c(rep(2002, 4), rep(2007, 4), rep(2012, 4)),
+    mat_mort_rate = c(64.0, 9.9, 4.17, 7.8, 21.9, 12.7, 1.86, 3.6, 
+                      15.2, 16, 5.4, 4.8))
 head(mat_mort2)
 ```
 
 ## Reshaping Data
 
-The mobility and covid case data are in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order. 
+The mobility and covid case data are both already in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order. 
 
-To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image below shows a picture of some data on whether students have completed a physical, hearing, and eye exam. The data is presented in wide form on the left and long form on the right. To transform to long data, we have identified a subset of columns `cols` that we want to transform. The long form contains a new column `names_to` that contains the exam type and `values_to` that has whether or not each exam was completed. 
+To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to what is called **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image below shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns `cols` that we want to transform (these `cols` are shown in light purple on the left). The long form contains a new column `names_to` that contains the exam type and `values_to` that contains a binary variable indicating whether or not each exam was completed. 
 
 <img src="images/6-pivot-long.png" alt= “” width="500pt" align="center">
 
-In our case, we want to take the lockdown start and end columns and create two columns: one column will be whether this is the start or end of a lockdown and the other will be the date. These are called the key and value columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values). 
+In our case, we want to take the lockdown start and end columns and create two new columns: one column will indicate whether or not a date represents the start or end of a lockdown, and the other will contain the date itself. These are called the *key* and *value* columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values). 
 
-The `pivot_longer()` function takes in a data table, the columns `cols` that we are pivoting to longer form, the column name `names_to` that will store the data from the previous column names, and the column name `values_to` for the column that will store the information from the columns gathered. In our case, the first column we will name `Lockdown_Event` since it will contain whether each date is the start or end of a lockdown and the second column we will name `Date`. Take a look at the result below.
+The `pivot_longer()` function takes in a data table, the columns `cols` that we are pivoting to longer form, the column name `names_to` that will store the data from the previous column names, and the column name `values_to` for the column that will store the information from the columns gathered. In our case, we will name the first column `Lockdown_Event` since it will contain whether each date is the start or end of a lockdown, and we will name the second column `Date`. Take a look at the result below.
 
 ```{r}
 lockdown_long <- lockdowndates %>%
-  pivot_longer(cols=c("Lockdown_Start", "Lockdown_End"), names_to="Lockdown_Event", values_to="Date") %>%
+  pivot_longer(cols=c("Lockdown_Start", "Lockdown_End"), 
+               names_to="Lockdown_Event", values_to="Date") %>%
   mutate(Date = as.Date(Date, formula ="%Y-%M-%D"), 
-         Lockdown_Event = ifelse(Lockdown_Event=="Lockdown_Start", "Start", "End")) %>%
+         Lockdown_Event = ifelse(Lockdown_Event=="Lockdown_Start", 
+                                 "Start", "End")) %>%
   na.omit()
 head(lockdown_long)
 ```
 
-We can also transform our data in the opposite direction. The function `pivot_wider()` converts data in long form to wide form. This function again takes in the the data frame but now we specify the arguments `names_from` and `values_from`. The former is the column to get the new column names from and the latter is where the row values will be taken from. To pivot our lockdown data back to wider form, we specify that `names_from` is the lockdown event and `values_from` is the date itself. Now we are back to the same form as before!
+In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form)  using the function `pivot_wider()`. This function again first takes in a data table but now we specify the arguments `names_from` and `values_from`. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form below, we specify that `names_from` is the lockdown event and `values_from` is the date itself. Now we are back to the same form as before!
 
 ```{r}
-lockdown_wide <- pivot_wider(lockdown_long, names_from=Lockdown_Event, values_from=Date)
+lockdown_wide <- pivot_wider(lockdown_long, names_from=Lockdown_Event, 
+                             values_from=Date)
 head(lockdown_wide)
 ```
 
-Let's show another example. Suppose that I wanted to create a data frame where the columns corresponded to the number of cases for each state in New England and the rows corresponded to the months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the `month()` function to be able to group by month and state. Additionally, you can see that I add an `ungroup()` at the end since the summarized output will still be grouped by state (as shown in the warning message). 
+Here's another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the `month()` function to be able to group by month and state. Additionally, you can see that I add an `ungroup()` at the end. When we summarize on data grouped by more than one variable, the summarized output will still be grouped. In this case, the warning message states that the data is still grouped by state.
 
 ```{r}
 ne_cases <- covidcases %>% 
@@ -124,7 +131,7 @@ ne_cases <- covidcases %>%
 head(ne_cases)
 ```
 
-Now, I need to focus on converting this data to wide format. I want a column for each state. This tells me that my `names_from` argument will be `state`. Next, I want each row to have the case values for each state. This tells me that my `values_from` argument will be `total_cases`. The format of this data may not be tidy but it allows me to quickly compare cases across states.
+Now, I need to convert this data to wide format with a column for each state, so my `names_from` argument will be `state`. Further, I want each row to have the case values for each state, so my `values_from` argument will be `total_cases`. The format of this data may not be tidy, but it allows me to quickly compare cases across states.
 
 ```{r}
 pivot_wider(ne_cases, names_from=state, values_from=total_cases)
@@ -132,13 +139,15 @@ pivot_wider(ne_cases, names_from=state, values_from=total_cases)
 
 ### Practice Question 
 
-Something involving pivots
+Create a similar data frame as we did above but this time using the `mobility` dataset. In other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like this:
+
+<img src="images/6-practicequestion1answer.png" alt= “” width="400pt" align="center">
 
 ```{r}
-# Solution:
+# Insert your solution here:
 ```
 
-The pivots above were relatively simple in that there was one set of values we were pivoting on (e.g. the lockdown date, covid cases). For more complex pivots, the [`tidyr` package](https://tidyr.tidyverse.org/articles/pivot.html) provides examples that follow other common formats. We demonstrate some of these formats in the video below. 
+The pivots above were relatively simple in that there was only one set of values we were pivoting on (e.g. the lockdown date, covid cases). The [`tidyr` package](https://tidyr.tidyverse.org/articles/pivot.html) provides examples of more complex pivots that you might want to apply to your data. In the video below, we demonstrate a pivot longer when there is information in the column names, a pivot wider with multiple value columns, and a pivot longer with many variables in the columns.
 
 ### Pivot Video
 
@@ -149,15 +158,23 @@ The pivots above were relatively simple in that there was one set of values we w
 
 ## Merging Data with Joins
 
-Above, we saw how to manipulate our current data into a new format. Now, we will see how we can combine our multiple data sources. Merging two data frames is called joining and the function we will use depends on how we want to match between the data frames. The image below shows an overview of the different joins and the video talks through each join type.
+Above, we saw how to manipulate our current data into new formats. Now, we will see how we can combine multiple data sources. Merging two data frames is called *joining*, and the functions we will use to perform this joining depends on how we want to match values between the data frames. For example, below we join information about age and statin use from `table1` and `table2` matching by name.
+
+```{r}
+table1 <- data.frame(age = c(14, 26, 32), name = c("Alice", "Bob", "Alice"))
+table2 <- data.frame(name = c("Carol", "Bob"), statins = c(TRUE, FALSE))
+full_join(table1, table2, by = "name")
+```
+
+The list below shows an overview of the different possible joins, and the video talks through each join type. For each join type, we specify two tables, `table1` and `table2`, and the `by` argument, which specifies the columns used to match rows between tables. 
 
 **Types of Joins**:
-* `left_join(table1,table2,by)`: Joins each row of table1 with all matches in table2 
-*  `right_join(table1,table2,by)`: Joins each row of table2 with all matches in table1 (the opposite of a left join) 
-* `inner_join(table1,table2,by)`: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.  
-* `full_join(table1,table2,by)`: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.   
-* `semi_join(table1,table2,by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.  
-* `anti_join(table1,table2,by)`: Keeps all rows in table1 that *do not* have a match in table 2 but does not join to any information from table2. The opposite of a semi join.  
+* `left_join(table1, table2, by)`: Joins each row of table1 with all matches in table2 
+*  `right_join(table1, table2, by)`: Joins each row of table2 with all matches in table1 (the opposite of a left join) 
+* `inner_join(table1, table2, by)`: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.  
+* `full_join(table1, table2, by)`: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.   
+* `semi_join(table1, table2, by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.  
+* `anti_join(table1, table2, by)`: Keeps all rows in table1 that *do not* have a match in table 2 but does not join to any information from table2. The opposite of a semi join.  
 
 ### Types of Joins Video
 
@@ -165,14 +182,14 @@ Above, we saw how to manipulate our current data into a new format. Now, we will
     <iframe width="700" height="500" src="https://www.youtube.com/embed/slazeLLQBoY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
-We will first demonstate a left join using the `left_join()` function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. We will use a left join to add the lockdown information to our case data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column is slightly different between the two data frames we specify that `state` is equivalent to `State` in the `by` argument.
+We will first demonstate a left join using the `left_join()` function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. Below, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
 
 ```{r}
 covidcases_full <- left_join(covidcases, lockdowndates, by=c("state"="State"))
 head(covidcases_full)
 ```
 
-These two new columns will allow us to determine whether a given day was during a lockdown. We use the `between` function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at. 
+These two new columns will allow us to determine whether the start of each recorded week was during a lockdown. We use the `between` function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at. 
 
 ```{r}
 covidcases_full <- covidcases_full %>%
@@ -182,7 +199,7 @@ covidcases_full %>%
   filter(state == "Alabama", county == "Jefferson", date <= as.Date("2020-05-10"))
 ```
 
-We now want to add in the mobility data. In the last case, we wanted to keep any observation in `covidcases` regardless if it was in the `lockdowndates` data frame. Therefore, we used a left join. In this case, we will only want to keep observations that have mobility date for that state on each date. This indicates that we want to use an *inner join*. The function `inner_join()` takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by state and date.
+We now want to add in the mobility data. In the join above, we wanted to keep any observation in `covidcases` regardless if it was in the `lockdowndates` data frame. Therefore, we used a left join. In this case, we will only want to keep observations that have mobility date for that state on each date. This indicates that we want to use an *inner join*. The function `inner_join()` takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by both state and date.
 
 ```{r}
 covidcases_full <- inner_join(covidcases_full, mobility, by = c("state", "date")) %>%
@@ -192,13 +209,103 @@ head(covidcases_full)
 
 ### Practice Question
 
-Something about joins
+Look at the two data frames, df_A and df_B, created in the below code. What kind of join would produce the following data frame? Perform this join yourself.
+
+<img src="images/6-practicequestion2answer.png" alt= “” width="300pt" align="center">
 
 ```{r}
-# Solution:
+df_A <- data.frame(patient_id = c(12, 9, 12, 8, 14, 8), 
+                  visit_num = c(1, 1, 2, 1, 1, 2), 
+                  temp = c(97.5, 96, 98, 99, 102, 98.6), 
+                  systolic_bp = c(120, 138, 113, 182, 132, 146))
+df_A
+df_B <- data.frame(patient_id = c(12, 12, 12, 8, 8, 8, 14, 14), 
+                   visit_num = c(1, 2, 3, 1, 2, 3, 1, 2),
+                   digit_span = c(3, 5, 7, 7, 9, 5, 8, 7))
+df_B
+```
+
+```{r}
+# Insert your solution here:
 ```
 
 ## Exercises
 
-1. Why does this code fail?
+1. Take a look at the code below. Why does this code fail? In other words, what causes the warning message?
+
+
+Solve this problem in the following three ways and look at the results of each: 
+  1. Add an id column that has a unique value for each row;
+  2. Keep only distinct rows of the name and key values, and drop duplicate rows using the `distinct()` function; 
+  3. Change the names of the duplicate rows to make all names unique by adding in last names. 
+
+```{r}
+#1 
+people <- data.frame(
+  name = c("Phillip", "Phillip", "Phillip", "Jessica", "Jessica"),
+  feature = c("height", "age", "age", "age", "height"),
+  value = c(45, 186, 50, 37, 156)
+)
+people$id <- 1:5
+people
+pivot_wider(people, names_from="name", values_from = "value")
+
+#2 
+people <- data.frame(
+  name = c("Phillip", "Phillip", "Phillip", "Jessica", "Jessica"),
+  feature = c("height", "age", "age", "age", "height"),
+  value = c(45, 186, 50, 37, 156)
+)
+people <- people %>%
+  distinct(name, feature, .keep_all = TRUE) %>%
+  pivot_wider(names_from="name", values_from = "value")
+
+#3
+people <- data.frame(
+  name = c("Phillip", "John", "Mark", "Jessica", "Margaret"),
+  feature = c("height", "age", "age", "age", "height"),
+  value = c(45, 186, 50, 37, 156)
+)
+pivot_wider(people, names_from="name", values_from = "value")
+```
+
+2. First, use the `covidcases` data to create a new data frame called `sub_cases` containing the total number of cases by month for the states of California, Michigan, Connecticut, Rhode Island, Ohio, New York, and Massachusetts. Then, manipulate the `mobility` data to calculate the average `m50` mobility measure for each month. Finally, merge these two data sets using an appropriate joining function.
+
+```{r}
+sub_cases <- covidcases %>%
+  filter(state %in% c("California", "Michigan", "Connecticut", "Rhode Island",
+                      "Ohio", "New York", "Massachusetts")) %>%
+  mutate(month = month(date)) %>%
+  group_by(state, month) %>%
+  summarize(total_cases = sum(weekly_cases)) %>%
+  ungroup()
+
+mob_reshape <- mobility %>% 
+  mutate(month = month(date)) %>%
+  filter(state %in% c("California", "Michigan", "Connecticut", "Rhode Island",
+                      "Ohio", "New York", "Massachusetts")) %>%
+  group_by(state, month) %>%
+  summarize(avg_m50 = mean(m50, na.rm = T))
+
+covid_mob_sub <- right_join(sub_cases, mob_reshape, by = c("month", "state"))
+covid_mob_sub
+```
+
+3. Convert the `sub_cases` data frame from the previous exercise to wide format so that each row displays the cases in each state for a single month. Then, add on the average m50 overall for each month as an additional column using  a join function. 
+
+```{r}
+sub_cases_wide <- pivot_wider(sub_cases, names_from=state, values_from=total_cases)
+sub_cases_wide
+
+
+mob_reshape <- mobility %>% 
+  mutate(month = month(date)) %>%
+  filter(state %in% c("California", "Michigan", "Connecticut", "Rhode Island",
+                      "Ohio", "New York", "Massachusetts")) %>%
+  group_by(month) %>%
+  summarize(avg_m50 = mean(m50, na.rm = T))
+mob_reshape
+
+left_join(sub_cases_wide, mob_reshape, by=c("month"))
+```
 
