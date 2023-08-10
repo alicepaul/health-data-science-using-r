@@ -422,19 +422,20 @@ document.write(`
 </ul>
 <p>To customize a single code chunk, you can either type one of the above commands next to the <code class="docutils literal notranslate"><span class="pre">{r}</span></code> at the top of the code chunk by yourself or you can click on the ‘Modify Chunk Options’ symbol <i class="fa-gear fa" style="font-size: 22px; color: gray;"></i> at the top right of the code chunk and change the settings there.</p>
 <p>To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with <code class="docutils literal notranslate"><span class="pre">```{r</span> <span class="pre">setup,</span> <span class="pre">include=FALSE}</span></code> using the <code class="docutils literal notranslate"><span class="pre">knitr::opts_chunk$set</span></code> function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the <code class="docutils literal notranslate"><span class="pre">library()</span></code> function. For example, below we load the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> and <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> packages.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE)
+library(tidyverse)
+library(RforHDSdata)
+```
+</pre></div>
+</div>
 <p>If you want to display the code for your report in a code appendix, you can easily do this by creating an empty code chunk at the end of your .Rmd file with these chunk options <code class="docutils literal notranslate"><span class="pre">ref.label=knitr::all_labels()</span></code>, <code class="docutils literal notranslate"><span class="pre">echo</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>, and <code class="docutils literal notranslate"><span class="pre">eval</span> <span class="pre">=</span> <span class="pre">FALSE</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE} 
-
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE} 
+```
 </pre></div>
 </div>
 <p>You can also have inline R code by using single backticks around your code <code class="docutils literal notranslate"><span class="pre">`r</span> <span class="pre">max(c(1,2,3))</span> <span class="pre">`</span></code>. The code must start with <code class="docutils literal notranslate"><span class="pre">r</span></code> to be run when knit. This allows you to reference variables in your text. For example, we could display the variance of a column in our data without having to copy the value over.</p>
+<p><code class="docutils literal notranslate"><span class="pre">`r</span> <span class="pre">round(var(cars$speed),2)`</span></code></p>
 </section>
 </section>
 <section id="formatting-text-in-markdown">
@@ -445,9 +446,9 @@ document.write(`
 <p><code class="docutils literal notranslate"><span class="pre">**bolded</span> <span class="pre">text**</span></code> <strong>bolded text</strong></p>
 <p><code class="docutils literal notranslate"><span class="pre">`code</span> <span class="pre">text`</span></code> <code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">text</span></code></p>
 <p>To create headers and sections, you can add the <code class="docutils literal notranslate"><span class="pre">#</span></code> symbol in front of your text. Adding more of these symbols makes the headers smaller, which is useful for making subheaders.</p>
-<p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">Header</span></code>
-<code class="docutils literal notranslate"><span class="pre">##</span> <span class="pre">Smaller</span> <span class="pre">Header</span></code>
-<code class="docutils literal notranslate"><span class="pre">###</span> <span class="pre">Even</span> <span class="pre">Smaller</span> <span class="pre">Header</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">Header</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span> <span class="pre">Smaller</span> <span class="pre">Header</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">###</span> <span class="pre">Even</span> <span class="pre">Smaller</span> <span class="pre">Header</span></code></p>
 </section>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="center-header-center">
@@ -466,11 +467,37 @@ document.write(`
 <h2>Formatting Figures and Tables<a class="headerlink" href="#formatting-figures-and-tables" title="Permalink to this headline">#</a></h2>
 <p>Often, you’ll want to include figures generated by your code in your report, and you can customize these figures by changing the chunk options for the chunks that produce them. To change the size of a figure, you can add in the chunk option <code class="docutils literal notranslate"><span class="pre">out.width=&quot;50%&quot;</span></code> with your desired percentage of the full size. To add a nice caption to a figure in your report, you can add <code class="docutils literal notranslate"><span class="pre">fig.cap</span> <span class="pre">=</span> <span class="pre">'Your</span> <span class="pre">Desired</span> <span class="pre">Caption.</span></code>. To name a figure, you can add a name next to the <code class="docutils literal notranslate"><span class="pre">r</span></code> in the chunk options, without a comma, like <code class="docutils literal notranslate"><span class="pre">{r</span> <span class="pre">figname}</span></code>. Alternatively,  you can name figures by entering text into the ‘Chunk Name’ field using the ‘Modify Chunk Options’ button at the top right of a chunk.</p>
 <p>By default, the figures generated by your code chunks are allowed to ‘float’ in R Markdown - this means that the figures might move away from where they were coded or referenced in the final report. If you don’t want this to happen, you can customize the chunk that contains the code to produce the figure by adding <code class="docutils literal notranslate"><span class="pre">fig.pos</span> <span class="pre">=</span> <span class="pre">&quot;H&quot;</span></code> to that chunk’s options. If you want to prevent floating for all figures, add <code class="docutils literal notranslate"><span class="pre">fig.pos</span> <span class="pre">=</span> <span class="pre">&quot;H&quot;,</span> <span class="pre">out.extra</span> <span class="pre">=</span> <span class="pre">''</span></code> to the first code chunk in the file (the one that starts with the <code class="docutils literal notranslate"><span class="pre">knitr::opts_chunk$set</span></code> function).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```{r myfigure, fig.cap=&quot;Figure of Average Radius vs. Diagnosis&quot;, out.width=&quot;75%&quot;, 
+    fig.pos=&quot;H&quot;}
+data(breastcancer)
+ggplot(breastcancer) + 
+  geom_boxplot(aes(x = diagnosis, y = radius_mean), fill = &#39;lightblue&#39;) +
+  theme_bw() + 
+  labs(y = &quot;Average Radius&quot;) + 
+  scale_x_discrete(&quot;Diagnosis&quot;, labels = c(&quot;Benign&quot;, &quot;Malignant&quot;))
+```
+</pre></div>
+</div>
 <a class="reference internal image-reference" href="../_images/12-example-figure.png"><img alt="“”" class="align-center" src="../_images/12-example-figure.png" style="width: 600pt;" /></a>
 <p>If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the <code class="docutils literal notranslate"><span class="pre">gt</span></code> and <code class="docutils literal notranslate"><span class="pre">kableExtra</span></code> packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries.</p>
 <p>To demonstrate the abilities of these package, let’s suppose that we wanted to display the head of the first few columns of the <code class="docutils literal notranslate"><span class="pre">breastcancer</span></code> dataset from the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```{r}
+breastcancer %&gt;% select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %&gt;% head()
+```
+</pre></div>
+</div>
 <a class="reference internal image-reference" href="../_images/12-unformatted-table.png"><img alt="“”" class="align-center" src="../_images/12-unformatted-table.png" style="width: 500pt;" /></a>
 <p>We use the <code class="docutils literal notranslate"><span class="pre">kable()</span></code> and <code class="docutils literal notranslate"><span class="pre">kable_styling()</span></code> functions from the <code class="docutils literal notranslate"><span class="pre">kableExtra</span></code> package to produce a more nicely formatted table. The <code class="docutils literal notranslate"><span class="pre">kable()</span></code> function generates a table from a data frame. The <code class="docutils literal notranslate"><span class="pre">kable()</span></code> function allows you to specify some display options for your table. For example, you can add a caption to your table using the <code class="docutils literal notranslate"><span class="pre">caption</span></code> argument, and you can change the names of the columns in the table using the <code class="docutils literal notranslate"><span class="pre">col.names</span></code> argument. The <code class="docutils literal notranslate"><span class="pre">kable_styling()</span></code> has additional options available. Similar to the <code class="docutils literal notranslate"><span class="pre">fig.pos</span> <span class="pre">=</span> <span class="pre">H</span></code> command described for figures in the previous section, adding “HOLD_position” to the <code class="docutils literal notranslate"><span class="pre">kable_styling()</span></code> function will prevent the table from floating on the report; adding <code class="docutils literal notranslate"><span class="pre">&quot;scale_down&quot;</span></code> scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the <a class="reference external" href="https://www.rdocumentation.org/packages/knitr/versions/1.43/topics/kable">kable</a> and <a class="reference external" href="https://www.rdocumentation.org/packages/kableExtra/versions/1.3.4/topics/kable_styling">kable_styling</a> functions for more options available.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```{r}
+breastcancer %&gt;% 
+  select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %&gt;% 
+  head() %&gt;% 
+  kable(caption = &quot;Head of the Breast Cancer Dataset&quot;, 
+      col.names = c(&quot;ID&quot;, &quot;Diagnosis&quot;, &quot;Mean Radius&quot;, &quot;Mean Texture&quot;, &quot;Mean Perimeter&quot;)) %&gt;%   
+  kable_styling(latex_options = c(&quot;scale_down&quot;, &quot;HOLD_position&quot;))
+```
+</pre></div>
+</div>
 <a class="reference internal image-reference" href="../_images/12-formatted-table.png"><img alt="“”" class="align-center" src="../_images/12-formatted-table.png" style="width: 500pt;" /></a>
 <p>Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html">Chapter 4</a>, we also introduced the <code class="docutils literal notranslate"><span class="pre">gt</span></code> package. This package is an alternative package to <code class="docutils literal notranslate"><span class="pre">kableExtra</span></code> that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the <a class="reference external" href="https://gt.rstudio.com/articles/intro-creating-gt-tables.html">package introduction</a> for more details about this package. An example <code class="docutils literal notranslate"><span class="pre">gt</span></code> table is given below.</p>
 <a class="reference internal image-reference" href="../_images/12-gt-example.png"><img alt="“”" class="align-center" src="../_images/12-gt-example.png" style="width: 350pt;" /></a>
@@ -478,8 +505,14 @@ document.write(`
 <section id="using-bookdown-for-references">
 <h2>Using Bookdown for References<a class="headerlink" href="#using-bookdown-for-references" title="Permalink to this headline">#</a></h2>
 <p>R Markdown automatically adds figure and table numbers to the figures and tables in your report. The <code class="docutils literal notranslate"><span class="pre">bookdown</span></code> package allows us to add references. To use this package, make sure you have installed the <code class="docutils literal notranslate"><span class="pre">bookdown</span></code> package and then add the following text to the top of your .Rmd file, next to “output”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">output</span><span class="p">:</span>
+  <span class="n">bookdown</span><span class="p">::</span><span class="n">pdf_document2</span><span class="p">:</span>
+    <span class="n">toc</span><span class="p">:</span> <span class="n">false</span>
+</pre></div>
+</div>
 <p>The above code specifies that you would like to knit your file to a pdf document. If you would like to knit your file to an html or word document instead, you could type <code class="docutils literal notranslate"><span class="pre">bookdown::html_document2</span></code> or <code class="docutils literal notranslate"><span class="pre">bookdown::word_document2</span></code>. The <code class="docutils literal notranslate"><span class="pre">toc:</span> <span class="pre">false</span></code> indicates that you do not want to include a table of contents in the report - if you do want one, you can simply type <code class="docutils literal notranslate"><span class="pre">toc:true</span></code> instead. Once you’ve done this, you can reference figures and tables using their names: <code class="docutils literal notranslate"><span class="pre">\&#64;ref(fig:figname))</span></code> or <code class="docutils literal notranslate"><span class="pre">\&#64;ref(tab:tablename)</span></code>. The knitted pdf will substitute the appropriate figure or table number into your text.</p>
 <p>Additionally, we can reference sections by adding in labels to the section header. For example, we added the tag <code class="docutils literal notranslate"><span class="pre">#awesome</span></code> for the section below and can now reference it using <code class="docutils literal notranslate"><span class="pre">\&#64;ref{awesome}</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">##</span> <span class="pre">Awesome</span> <span class="pre">Stuff</span> <span class="pre">{#awesome}</span></code></p>
 </section>
 <section id="adding-in-equations">
 <h2>Adding in Equations<a class="headerlink" href="#adding-in-equations" title="Permalink to this headline">#</a></h2>
