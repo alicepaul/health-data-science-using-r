@@ -10,12 +10,12 @@ In this chapter, we will be working with data in R. To start, we need to load ou
 In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single library `RforHDSdata` that contains the sample data sets used in this book.
 
 ```{r}
-library(RforHDSdata)
+suppressPackageStartupMessages(library(RforHDSdata))
 ```
 
 ## Importing and Exporting Data
 
-The data we will use in this chapter contains information about patients who visited one of the University of Pittsburgh’s seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up. You can use the help operator `?pain` to learn more about the source of this data and to read its variable descriptions. Since this data is available in our R package, we can use the `data` function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
+The data we will use in this chapter contains information about patients who visited one of the University of Pittsburgh’s seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions. Since this data is available in our R package, we can use the `data` function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
 
 ```{r}
 data(pain)
@@ -51,7 +51,7 @@ If your data is not in a .csv file, you may need to use another package to read 
 
 ## Summarizing and Creating Data Columns
 
-We will now look at the data we have loaded into the data frame called `pain`. We use the `head()` function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this variable to a factor or a character representation later on. We can use the `names()` function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
+We will now look at the data we have loaded into the data frame called `pain`. We use the `head()` function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this column to a factor or a character representation later on. We can use the `names()` function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
 
 ```{r}
 head(pain)
@@ -82,7 +82,7 @@ mean(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 median(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 ```
 
-Additionally, the functions below are helpful for summarizing quantitative variables.
+Additionally, the functions below are helpful for summarizing quantitative columns.
 
 * `range()` - returns the minimum and maximum values for a numeric vector x
 * `quantile()` - returns the sample quantiles for a numeric vector
@@ -108,13 +108,21 @@ hist(pain$PAIN_INTENSITY_AVERAGE)
 
 ### Practice Question
 
-Use the `summary()` and `hist()` functions to summarize the `PROMIS_SLEEP_DISTURB_V1_0` variable both numerically and visually. 
+Summarize the `PROMIS_SLEEP_DISTURB_V1_0` column both numerically and visually. Your results should look like this:
+
+<img src="images/3-practicequestion1answer.png" alt= “” width="300pt" align="center">
 
 ```{r}
 # Insert your solution here:
 ```
 
-For categorical variables, it is useful to use the `table()` function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()` function to convert the counts to proportions. Below, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
+We can also use the `summary()` function for categorical variables. In this case, R will find the counts for each level. 
+
+```{r}
+summary(pain$PAT_SEX)
+```
+
+For categorical columns, it is also useful to use the `table()` function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()` function to convert the counts to proportions. Below, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
 
 ```{r}
 table(pain$PAT_SEX, useNA="always")
@@ -124,7 +132,7 @@ table(pain$PAT_SEX, useNA="always")
 prop.table(table(pain$PAT_SEX))
 ```
 
-Note that this column is not actually a factor variable yet, which we can check using the `is.factor()` function. We can convert it to one using `as.factor()`. 
+Note that this column is not actually a factor column yet, which we can check using the `is.factor()` function. We can convert it to one using `as.factor()`. 
 
 ```{r}
 is.factor(pain$PAT_SEX)
@@ -137,7 +145,7 @@ is.factor(pain$PAT_SEX)
 
 ### Other Summary Functions
 
-Sometimes we want to summarize information across multiple columns or rows. We can use the `rowSums()` and `colSums()` functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain map regions. In the first line of code, I select the column names pertaining to these variables. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called `pain_body_map`. 
+Sometimes we want to summarize information across multiple columns or rows. We can use the `rowSums()` and `colSums()` functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain map regions. In the first line of code, I select the column names pertaining to these columns. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called `pain_body_map`. 
 
 ```{r}
 body_map_cols <- names(pain)[2:75]
@@ -172,14 +180,14 @@ v2 = c(2, 18, 4)
 pmax(v1, v2)  
 ```
 
-Looking back at the `pain` data, if we want to create a new variable `lower_back_pain` that corresponds to whether someone selects *either* X218 or X219 we can use the `pmax()` function to find the maximum value between columns `X218` and `X219`. We can see that almost 60% of patients select at least one of these regions.
+Looking back at the `pain` data, if we want to create a new column `lower_back_pain` that corresponds to whether someone selects *either* X218 or X219 we can use the `pmax()` function to find the maximum value between columns `X218` and `X219`. We can see that almost 60% of patients select at least one of these regions.
 
 ```{r}
 lower_back <- pmax(pain_body_map$X218, pain_body_map$X219)
 prop.table(table(lower_back))
 ```
 
-We might want to store the total number of pain regions and our indicator of whether or not a patient has lower back pain as new columns. We use our code above to create new columns in the pain data using the `$` operator. To be consistent with the variable naming in the data, we use all upper case for our variable names. The `dim()` function shows that our data has grown by two columns, as expected. 
+We might want to store the total number of pain regions and our indicator of whether or not a patient has lower back pain as new columns. We use our code above to create new columns in the pain data using the `$` operator. To be consistent with the column naming in the data, we use all upper case for our column names. The `dim()` function shows that our data has grown by two columns, as expected. 
 
 ```{r}
 pain$NUM_REGIONS <- rowSums(pain_body_map)
@@ -201,13 +209,15 @@ summary(perc_patients)
 
 ### Practice Question
 
-Find the sum of each of the PROMIS measures across all patients using `apply()` and using `colSums()`. Verify that these two methods return the same result.
+Find the sum of each of the PROMIS measures across all patients using `apply()` and then using `colSums()`. Verify that these two methods return the same result, which is given below:
+
+<img src="images/3-practicequestion2answer.png" alt= “” width="600pt" align="center">
 
 ```{r}
 # Insert your solution here:
 ```
 
-### Missing values, Infinite values, and NaN values
+### Missing, Infinite, and NaN Values
 
 As we saw above, this data contains some missing values, which are represented as `NA` in R. R treats these values as if they were unknown, which is why we have to add the `na.rm=TRUE` argument to functions like `sum()` and `max()`. In the example below, we can see that R figures out that 1 plus an unknown number is also unknown!
 
@@ -355,9 +365,9 @@ pain$BACK <- any(pain$X208==1, pain$X209==1, pain$X212==1, pain$X213==1,
                  pain$X218==1, pain$X219==1)
 ```
 
-### Practice Question:
+### Practice Question
 
-Subset the `pain` data to those who have follow-up and have an initial average pain intensity of 5 or above. Name this subset of the data `pain_subset`.
+Subset the `pain` data to those who have follow-up and have an initial average pain intensity of 5 or above. Name this subset of the data `pain_subset`. Print the head of this data. The first 6 patient IDs in this new dataset should be 13118, 21384, 1827, 11309, 11093, and 14667.
 
 ```{r}
 # Insert your solution here:
@@ -407,15 +417,17 @@ table(pain$PAT_RACE)
 
 ## Recap Video
 
+In the video below, we reference the population mean and standard deviations for the instrument variables in the data. Use the help operator (`?pain`) to refresh your memory about these variables. 
+
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/EU0UJN68OWQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
 ## Exercises
 
-For these exercises, we will again be using the **pain** data from the `RforHDSdata` package.
+For these exercises, we will again be using the `pain` data from the `RforHDSdata` package.
 
-1. Print summary statistics for the `PROMIS_PHYSICAL_FUNTION` and `PROMIS_ANXIETY` variables in this dataset. Describe the distributions of these variables in the context of this dataset, especially given that the scale for the PROMIS physical function and anxiety measures goes from 0 to 100. 
+1. Print summary statistics for the `PROMIS_PHYSICAL_FUNTION` and `PROMIS_ANXIETY` columns in this dataset. Read the data documentation for these two columns, which both have range 0 to 100, and then comment on the distributions of these columns. 
 
 ```{r}
 summary(pain$PROMIS_PHYSICAL_FUNCTION)
@@ -435,7 +447,7 @@ table(pain$PAT_RACE)
 pain.new <- pain[!is.na(pain$GH_MENTAL_SCORE) & !is.na(pain$GH_PHYSICAL_SCORE),]
 ```
 
-4. Create a vector of the total number of patients who reported pain in each of bodily pain regions. Then, create a data frame containing the minimum, median, mean, maximum, standard deviation, and variance of this vector.
+4. Create a vector of the total number of patients who reported pain in each of the pain regions. Then, find the minimum, median, mean, maximum, standard deviation, and variance of this vector.
 
 ```{r}
 colsums <- colSums(pain[,c(2:75)], na.rm = TRUE)
@@ -447,6 +459,7 @@ colsum_summary <- data.frame(Variable = c("Sum of Columns"),
                              Max = max(colsums),
                              SD = sd(colsums),
                              Var = var(colsums))
+colsum_summary
 ```
 
 5. Calculate the median and interquartile range of the distribution of the total number of painful **leg** regions selected for each patient. Then, write a few sentences explaining anything interesting you observe about this distribution in the context of this dataset. 
@@ -472,7 +485,7 @@ hist(multiple_regions$PAIN_INTENSITY_AVERAGE)
 summary(multiple_regions$PAIN_INTENSITY_AVERAGE)
 ```
 
-7. First, create a histogram to plot the distribution of the `PAIN_INTENSITY_AVERAGE.FOLLOW_UP` variable. Then, create a table summarizing how many patients had missing values in this column. Finally, compare the distributions of the other variables between those with and without missing follow up. What do you notice? 
+7. Create a histogram to plot the distribution of the `PAIN_INTENSITY_AVERAGE.FOLLOW_UP` column. Then, create a table summarizing how many patients had missing values in this column. Finally, choose two columns to compare the distribution between those with and without missing follow up. What do you notice? 
 
 ```{r}
 hist(pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)

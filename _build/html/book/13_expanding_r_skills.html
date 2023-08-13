@@ -562,6 +562,756 @@ document.write(`
 </section>
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<ol class="arabic simple">
+<li><p>Suppose we want to replace the words “Thank you” in the following string with the word “Thanks”. Why does the below code fail? How can we correct it?</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">string</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Congratulations on finishing the book! Thank you for reading it.&quot;</span>
+<span class="nf">str_sub</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">35</span><span class="p">,</span><span class="w"> </span><span class="m">42</span><span class="p">))</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Thanks&quot;</span>
+<span class="n">string</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'Congratulations on finishing the bThanks'</li><li>'Congratulations on finishing the book! ThThanks'</li></ol>
+</div></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># didn&#39;t count the spaces, and</span>
+<span class="c1"># entered the start and end positions as a vector instead of two separate inputs </span>
+<span class="n">string</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Congratulations on finishing the book! Thank you for reading it.&quot;</span>
+<span class="nf">str_sub</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">40</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">48</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s">&quot;Thanks&quot;</span>
+<span class="n">string</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html">'Congratulations on finishing the book! Thanks for reading it.'</div></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>The code below uses data on cell nuclei from images of fine needle aspirates of breast masses. The goal of the code is to plot the maximum dimension ??? against the mean smoothness. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span>
+
+<span class="n">breastcancer</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">breastcancer</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">worst_dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">max</span><span class="p">(</span><span class="n">radius_worst</span><span class="p">,</span><span class="w"> </span><span class="n">texture_worst</span><span class="p">,</span><span class="w"> </span><span class="n">perimeter_worst</span><span class="p">))</span>
+
+<span class="nf">ggplot</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">breastcancer</span><span class="p">,</span><span class="w"> </span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">worst_dimension</span><span class="p">),</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">diagnosis</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="ne">Error</span>: object &#39;diagnosis&#39; not found
+<span class="ne">Traceback</span>:
+
+<span class="mi">1</span><span class="o">.</span> <span class="n">ggplot</span><span class="p">()</span> <span class="o">%&gt;%</span> <span class="n">geom_point</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">breastcancer</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">worst_dimension</span><span class="p">),</span> 
+ <span class="o">.</span>     <span class="n">color</span> <span class="o">=</span> <span class="n">diagnosis</span><span class="p">)</span>
+<span class="mi">2</span><span class="o">.</span> <span class="n">geom_point</span><span class="p">(</span><span class="o">.</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">breastcancer</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">worst_dimension</span><span class="p">),</span> 
+ <span class="o">.</span>     <span class="n">color</span> <span class="o">=</span> <span class="n">diagnosis</span><span class="p">)</span>
+<span class="mi">3</span><span class="o">.</span> <span class="n">layer</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">,</span> <span class="n">mapping</span> <span class="o">=</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">stat</span> <span class="o">=</span> <span class="n">stat</span><span class="p">,</span> <span class="n">geom</span> <span class="o">=</span> <span class="n">GeomPoint</span><span class="p">,</span> 
+ <span class="o">.</span>     <span class="n">position</span> <span class="o">=</span> <span class="n">position</span><span class="p">,</span> <span class="n">show</span><span class="o">.</span><span class="n">legend</span> <span class="o">=</span> <span class="n">show</span><span class="o">.</span><span class="n">legend</span><span class="p">,</span> <span class="n">inherit</span><span class="o">.</span><span class="n">aes</span> <span class="o">=</span> <span class="n">inherit</span><span class="o">.</span><span class="n">aes</span><span class="p">,</span> 
+ <span class="o">.</span>     <span class="n">params</span> <span class="o">=</span> <span class="n">list2</span><span class="p">(</span><span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+<span class="mi">4</span><span class="o">.</span> <span class="n">list2</span><span class="p">(</span><span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#errors are using max instead of pmax, </span>
+<span class="c1">#not specifying y for geom_point</span>
+<span class="c1">#putting color outside the aesthetic</span>
+<span class="c1">#piping instead of adding</span>
+
+<span class="n">breastcancer</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">breastcancer</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">worst_dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">pmax</span><span class="p">(</span><span class="n">radius_worst</span><span class="p">,</span><span class="w"> </span><span class="n">texture_worst</span><span class="p">,</span><span class="w"> </span><span class="n">perimeter_worst</span><span class="p">))</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">worst_dimension</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">smoothness_mean</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">diagnosis</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/e3091066cf436c4d360feddca7b4782336a0e1df77e3013fc9b104d6b9a84527.png" src="../_images/e3091066cf436c4d360feddca7b4782336a0e1df77e3013fc9b104d6b9a84527.png" />
+</div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Now, suppose we want to create a calibration plot from the following model, following the code from <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/11_logistic_regression.html">Chapter 11</a>. What is wrong with the code below? Debug it. Hint: there are three separate errors.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">diagnosis</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">smoothness_worst</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">symmetry_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">texture_se</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius_mean</span><span class="p">,</span>
+<span class="w">                 </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">breastcancer</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+
+<span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">num_cuts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span>
+<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_probs</span><span class="p">,</span>
+<span class="w">                          </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_cuts</span><span class="p">),</span>
+<span class="w">                          </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+
+<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">calib_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">             </span><span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">             </span><span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">observed</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">observed</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
+<span class="n">calib_data</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="m">-1.96</span><span class="o">*</span><span class="n">se</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="m">+1.96</span><span class="o">*</span><span class="n">se</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                </span><span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">observed</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Expected Proportion&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Observed Proportion&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme_minimal</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in eval(family$initialize): y values must be 0 &lt;= y &lt;= 1
+Traceback:
+
+1. glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + 
+ .     radius_mean, data = breastcancer, family = binomial)
+2. eval(call(if (is.function(method)) &quot;method&quot; else method, x = X, 
+ .     y = Y, weights = weights, start = start, etastart = etastart, 
+ .     mustart = mustart, offset = offset, family = family, control = control, 
+ .     intercept = attr(mt, &quot;intercept&quot;) &gt; 0L, singular.ok = singular.ok))
+3. eval(call(if (is.function(method)) &quot;method&quot; else method, x = X, 
+ .     y = Y, weights = weights, start = start, etastart = etastart, 
+ .     mustart = mustart, offset = offset, family = family, control = control, 
+ .     intercept = attr(mt, &quot;intercept&quot;) &gt; 0L, singular.ok = singular.ok))
+4. glm.fit(x = structure(c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+ . 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0.1622, 0.1238, 0.1444, 0.2098, 
+ . 0.1374, 0.1791, 0.1442, 0.1654, 0.1703, 0.1853, 0.1181, 0.1396, 
+ . 0.1037, 0.1131, 0.1651, 0.1678, 0.1464, 0.1789, 0.1512, 0.144, 
+ . 0.1312, 0.1324, 0.139, 0.1401, 0.1805, 0.1545, 0.1525, 0.1338, 
+ . 0.1641, 0.1255, 0.1491, 0.1637, 0.1634, 0.1509, 0.1446, 0.1563, 
+ . 0.1446, 0.09701, 0.09387, 0.161, 0.1094, 0.1909, 0.1247, 0.153, 
+ . 0.1503, 0.1679, 0.1297, 0.1786, 0.1494, 0.1162, 0.1085, 0.1089, 
+ . 0.1144, 0.128, 0.1389, 0.1249, 0.1624, 0.1368, 0.1021, 0.1733, 
+ . 0.1275, 0.1639, 0.164, 0.09836, 0.1851, 0.1648, 0.1548, 0.129, 
+ . 0.1482, 0.1296, 0.1193, 0.1207, 0.1585, 0.1411, 0.1176, 0.15, 
+ . 0.1451, 0.1478, 0.1639, 0.1289, 0.1557, 0.1536, 0.1573, 0.1392, 
+ . 0.1377, 0.1398, 0.1306, 0.1249, 0.1304, 0.1277, 0.1115, 0.1257, 
+ . 0.1006, 0.1339, 0.1551, 0.119, 0.114, 0.1316, 0.1431, 0.1431, 
+ . 0.1265, 0.1584, 0.1123, 0.1559, 0.1219, 0.1862, 0.1688, 0.1184, 
+ . 0.1701, 0.1699, 0.1467, 0.1287, 0.08949, 0.13, 0.1724, 0.15, 
+ . 0.1179, 0.1878, 0.1855, 0.1072, 0.1548, 0.1503, 0.1696, 0.1313, 
+ . 0.1025, 0.1157, 0.1471, 0.1021, 0.1386, 0.1275, 0.1427, 0.1546, 
+ . 0.1395, 0.1223, 0.1465, 0.1419, 0.1271, 0.119, 0.1411, 0.1367, 
+ . 0.1234, 0.1314, 0.1413, 0.1312, 0.1076, 0.1424, 0.1385, 0.0997, 
+ . 0.1316, 0.09711, 0.1297, 0.163, 0.1292, 0.1341, 0.1478, 0.1217, 
+ . 0.1418, 0.08774, 0.1275, 0.1171, 0.1358, 0.1124, 0.1438, 0.1452, 
+ . 0.1228, 0.1045, 0.1436, 0.1168, 0.1376, 0.1216, 0.1385, 0.1401, 
+ . 0.1531, 0.1216, 0.1076, 0.1162, 0.1301, 0.1415, 0.08125, 0.1162, 
+ . 0.1472, 0.1491, 0.1414, 0.1121, 0.1301, 0.1521, 0.1234, 0.1323, 
+ . 0.1356, 0.1096, 0.1533, 0.09388, 0.07117, 0.1785, 0.1316, 0.1097, 
+ . 0.1737, 0.08822, 0.1322, 0.1552, 0.1429, 0.1381, 0.1536, 0.2226, 
+ . 0.1426, 0.1491, 0.1415, 0.1111, 0.1349, 0.1222, 0.1178, 0.128, 
+ . 0.1142, 0.1243, 0.1559, 0.146, 0.1405, 0.09527, 0.1353, 0.1408, 
+ . 0.1311, 0.1376, 0.1406, 0.1552, 0.1276, 0.1297, 0.1341, 0.1136, 
+ . 0.1227, 0.1777, 0.1703, 0.09203, 0.09994, 0.1223, 0.1504, 0.1287, 
+ . 0.1481, 0.1228, 0.1081, 0.1365, 0.1278, 0.1037, 0.1347, 0.09368, 
+ . 0.1463, 0.1515, 0.1101, 0.1254, 0.1499, 0.1389, 0.1211, 0.1183, 
+ . 0.171, 0.1416, 0.1497, 0.1512, 0.1281, 0.1765, 0.1504, 0.1883, 
+ . 0.1522, 0.124, 0.1134, 0.1084, 0.1558, 0.1401, 0.1213, 0.1005, 
+ . 0.1256, 0.1335, 0.08567, 0.1358, 0.1272, 0.1467, 0.1315, 0.1359, 
+ . 0.1259, 0.1243, 0.105, 0.1185, 0.1782, 0.1036, 0.1518, 0.1365, 
+ . 0.09926, 0.1038, 0.1116, 0.09616, 0.1028, 0.1118, 0.09983, 0.1313, 
+ . 0.1483, 0.1369, 0.1298, 0.117, 0.09312, 0.1137, 0.09445, 0.1143, 
+ . 0.1495, 0.105, 0.1347, 0.1413, 0.1144, 0.09545, 0.1128, 0.09861, 
+ . 0.09023, 0.1016, 0.1223, 0.1011, 0.1194, 0.1092, 0.1347, 0.1104, 
+ . 0.1001, 0.1434, 0.1221, 0.08409, 0.1402, 0.1054, 0.1547, 0.1592, 
+ . 0.1256, 0.1384, 0.1281, 0.1013, 0.159, 0.1426, 0.1435, 0.1288, 
+ . 0.1424, 0.1166, 0.1222, 0.1449, 0.1142, 0.1498, 0.1402, 0.1515, 
+ . 0.1294, 0.1233, 0.1418, 0.1218, 0.146, 0.136, 0.1289, 0.122, 
+ . 0.1531, 0.1293, 0.09958, 0.155, 0.153, 0.166, 0.08864, 0.1096, 
+ . 0.1343, 0.1153, 0.1015, 0.1333, 0.09293, 0.114, 0.1298, 0.1338, 
+ . 0.1213, 0.1327, 0.1278, 0.1368, 0.1363, 0.1294, 0.1415, 0.1126, 
+ . 0.1192, 0.1562, 0.1105, 0.1235, 0.1143, 0.1108, 0.1275, 0.2184, 
+ . 0.161, 0.1095, 0.08799, 0.1427, 0.1166, 0.1312, 0.1026, 0.08484, 
+ . 0.1102, 0.1251, 0.1343, 0.146, 0.1681, 0.1502, 0.1432, 0.1066, 
+ . 0.1428, 0.09534, 0.112, 0.1244, 0.1873, 0.1374, 0.09329, 0.1172, 
+ . 0.1048, 0.1363, 0.1206, 0.09402, 0.1482, 0.124, 0.1453, 0.1369, 
+ . 0.1086, 0.1077, 0.1148, 0.1426, 0.1526, 0.1517, 0.1314, 0.1282, 
+ . 0.1249, 0.1312, 0.1415, 0.1147, 0.1398, 0.1126, 0.1327, 0.1303, 
+ . 0.103, 0.1068, 0.1419, 0.145, 0.1665, 0.139, 0.1218, 0.1613, 
+ . 0.1214, 0.1195, 0.1118, 0.1034, 0.1391, 0.1436, 0.1072, 0.09794, 
+ . 0.1263, 0.1311, 0.1401, 0.1226, 0.1089, 0.1368, 0.09457, 0.1528, 
+ . 0.1208, 0.1347, 0.1225, 0.1172, 0.1406, 0.1289, 0.1218, 0.111, 
+ . 0.16, 0.1357, 0.1017, 0.1342, 0.1282, 0.1201, 0.1351, 0.1388, 
+ . 0.1207, 0.178, 0.1234, 0.1041, 0.1065, 0.09422, 0.1332, 0.1326, 
+ . 0.1153, 0.09384, 0.1352, 0.1377, 0.1208, 0.1064, 0.1393, 0.1199, 
+ . 0.1541, 0.1175, 0.1142, 0.1514, 0.1526, 0.1009, 0.1256, 0.09862, 
+ . 0.1309, 0.09439, 0.1118, 0.1216, 0.1533, 0.1276, 0.1412, 0.1464, 
+ . 0.1135, 0.1794, 0.158, 0.1199, 0.1902, 0.2006, 0.1402, 0.1662, 
+ . 0.1354, 0.1732, 0.1073, 0.1139, 0.1574, 0.1223, 0.1246, 0.1483, 
+ . 0.1492, 0.1417, 0.1456, 0.1475, 0.185, 0.1342, 0.1108, 0.1425, 
+ . 0.1419, 0.1641, 0.1624, 0.1292, 0.1394, 0.1521, 0.1349, 0.155, 
+ . 0.1264, 0.1097, 0.1428, 0.1268, 0.138, 0.1768, 0.1256, 0.1596, 
+ . 0.1345, 0.134, 0.106, 0.1072, 0.1264, 0.1216, 0.1285, 0.1461, 
+ . 0.1199, 0.1204, 0.1001, 0.1087, 0.1234, 0.1103, 0.1227, 0.1384, 
+ . 0.1265, 0.1073, 0.1026, 0.1298, 0.1241, 0.09267, 0.1417, 0.1407, 
+ . 0.141, 0.1166, 0.1139, 0.165, 0.08996, 0.2419, 0.1812, 0.2069, 
+ . 0.2597, 0.1809, 0.2087, 0.1794, 0.2196, 0.235, 0.203, 0.1528, 
+ . 0.1842, 0.2397, 0.1847, 0.2069, 0.2303, 0.1586, 0.2164, 0.1582, 
+ . 0.1885, 0.1967, 0.1815, 0.2521, 0.1769, 0.1995, 0.304, 0.2252, 
+ . 0.1697, 0.1926, 0.1739, 0.2183, 0.2301, 0.2248, 0.1853, 0.1998, 
+ . 0.1896, 0.1885, 0.1467, 0.1565, 0.172, 0.1784, 0.1895, 0.231, 
+ . 0.1974, 0.1746, 0.1907, 0.1769, 0.2128, 0.1675, 0.1809, 0.1495, 
+ . 0.1353, 0.1868, 0.2092, 0.1616, 0.192, 0.1917, 0.2027, 0.1819, 
+ . 0.1683, 0.2743, 0.1828, 0.1949, 0.2341, 0.1905, 0.1953, 0.1717, 
+ . 0.1516, 0.2111, 0.159, 0.1582, 0.1902, 0.1927, 0.1662, 0.172, 
+ . 0.1798, 0.2403, 0.2152, 0.2906, 0.1718, 0.1842, 0.1942, 0.1829, 
+ . 0.1634, 0.2079, 0.2132, 0.2075, 0.1953, 0.193, 0.2116, 0.1685, 
+ . 0.1717, 0.1386, 0.1638, 0.1855, 0.2095, 0.19, 0.135, 0.162, 0.1879, 
+ . 0.1609, 0.193, 0.1739, 0.1945, 0.2217, 0.1925, 0.1801, 0.1602, 
+ . 0.2556, 0.1487, 0.1584, 0.1735, 0.1704, 0.1922, 0.1649, 0.1688, 
+ . 0.1305, 0.2157, 0.2096, 0.2129, 0.1667, 0.1966, 0.2655, 0.1856, 
+ . 0.1422, 0.1614, 0.1761, 0.1946, 0.2001, 0.2202, 0.188, 0.1931, 
+ . 0.216, 0.1816, 0.1692, 0.1585, 0.1339, 0.1734, 0.1957, 0.1771, 
+ . 0.1903, 0.1861, 0.1645, 0.1778, 0.1399, 0.1995, 0.2678, 0.1744, 
+ . 0.1724, 0.1473, 0.254, 0.2222, 0.2548, 0.183, 0.1822, 0.197, 
+ . 0.1971, 0.1844, 0.159, 0.1442, 0.1993, 0.1741, 0.2027, 0.1551, 
+ . 0.1801, 0.1515, 0.1381, 0.1893, 0.1538, 0.178, 0.1959, 0.1598, 
+ . 0.1966, 0.1566, 0.1928, 0.1722, 0.1669, 0.1794, 0.1395, 0.1466, 
+ . 0.18, 0.2395, 0.1618, 0.1167, 0.1727, 0.1703, 0.1621, 0.1516, 
+ . 0.1718, 0.1667, 0.2384, 0.1694, 0.1653, 0.1943, 0.1737, 0.1829, 
+ . 0.1834, 0.177, 0.1767, 0.195, 0.1979, 0.1506, 0.22, 0.2251, 0.1925, 
+ . 0.1594, 0.1934, 0.2026, 0.185, 0.1359, 0.1765, 0.1533, 0.1648, 
+ . 0.1308, 0.2235, 0.2106, 0.1967, 0.1964, 0.2094, 0.1428, 0.136, 
+ . 0.1962, 0.191, 0.1935, 0.1496, 0.2075, 0.1788, 0.1881, 0.1514, 
+ . 0.2123, 0.2131, 0.1869, 0.1845, 0.1448, 0.1551, 0.1517, 0.1909, 
+ . 0.1467, 0.1342, 0.1809, 0.1717, 0.1546, 0.2054, 0.1773, 0.1978, 
+ . 0.1737, 0.1487, 0.1596, 0.1897, 0.1883, 0.2205, 0.1834, 0.1733, 
+ . 0.1813, 0.1776, 0.1908, 0.1893, 0.2398, 0.2495, 0.2091, 0.1814, 
+ . 0.1564, 0.2108, 0.1547, 0.1867, 0.1769, 0.1922, 0.1635, 0.201, 
+ . 0.1668, 0.1508, 0.1769, 0.1721, 0.2081, 0.1538, 0.2015, 0.1954, 
+ . 0.155, 0.1573, 0.211, 0.1902, 0.2101, 0.1893, 0.1876, 0.1432, 
+ . 0.1697, 0.1588, 0.1337, 0.2595, 0.2013, 0.1714, 0.1879, 0.173, 
+ . 0.1875, 0.1638, 0.1592, 0.1449, 0.1619, 0.1635, 0.1695, 0.1792, 
+ . 0.1781, 0.2249, 0.1482, 0.1411, 0.1935, 0.1632, 0.1788, 0.1365, 
+ . 0.1453, 0.1936, 0.1632, 0.1601, 0.1833, 0.2163, 0.1215, 0.1673, 
+ . 0.1807, 0.233, 0.1472, 0.1743, 0.1928, 0.1543, 0.2569, 0.1638, 
+ . 0.1707, 0.1373, 0.1382, 0.1948, 0.1869, 0.1782, 0.1761, 0.194, 
+ . 0.1773, 0.1539, 0.1727, 0.1652, 0.1953, 0.189, 0.1797, 0.1912, 
+ . 0.2036, 0.1776, 0.2082, 0.2009, 0.1633, 0.1555, 0.1521, 0.1634, 
+ . 0.2459, 0.1671, 0.2375, 0.1956, 0.1647, 0.169, 0.1533, 0.2035, 
+ . 0.1424, 0.193, 0.1506, 0.1528, 0.1815, 0.1759, 0.1495, 0.165, 
+ . 0.1618, 0.1875, 0.1695, 0.1717, 0.1824, 0.2175, 0.1721, 0.1973, 
+ . 0.1571, 0.1872, 0.199, 0.2188, 0.1421, 0.1792, 0.2196, 0.2018, 
+ . 0.2003, 0.1203, 0.1779, 0.1617, 0.1627, 0.1646, 0.1607, 0.181, 
+ . 0.1989, 0.18, 0.1985, 0.1929, 0.2162, 0.1937, 0.1641, 0.1806, 
+ . 0.1574, 0.1535, 0.1847, 0.2113, 0.1601, 0.1874, 0.1735, 0.1571, 
+ . 0.1486, 0.1735, 0.158, 0.1992, 0.1966, 0.1601, 0.1714, 0.1274, 
+ . 0.1944, 0.1852, 0.2019, 0.2025, 0.2085, 0.1583, 0.1615, 0.2031, 
+ . 0.2086, 0.1886, 0.1848, 0.2538, 0.163, 0.1925, 0.2016, 0.1511, 
+ . 0.1459, 0.2041, 0.1811, 0.1724, 0.1943, 0.1573, 0.1669, 0.1861, 
+ . 0.1714, 0.1555, 0.1589, 0.1489, 0.1467, 0.1405, 0.2372, 0.172, 
+ . 0.182, 0.1713, 0.1893, 0.1473, 0.1554, 0.1349, 0.1663, 0.1615, 
+ . 0.165, 0.1799, 0.1375, 0.1799, 0.1619, 0.1667, 0.1621, 0.1793, 
+ . 0.2061, 0.1707, 0.1516, 0.1454, 0.1601, 0.1562, 0.168, 0.1696, 
+ . 0.1957, 0.2238, 0.1854, 0.1687, 0.1701, 0.1861, 0.1705, 0.1506, 
+ . 0.1813, 0.1779, 0.2151, 0.1464, 0.1579, 0.1779, 0.1732, 0.1784, 
+ . 0.2082, 0.1409, 0.1823, 0.1853, 0.1846, 0.1544, 0.122, 0.2116, 
+ . 0.1613, 0.1713, 0.1487, 0.1641, 0.1526, 0.1832, 0.1848, 0.1668, 
+ . 0.2275, 0.1943, 0.1505, 0.2378, 0.2057, 0.2124, 0.1954, 0.1711, 
+ . 0.1807, 0.1499, 0.1659, 0.2116, 0.1739, 0.1561, 0.1927, 0.186, 
+ . 0.1802, 0.1709, 0.212, 0.2197, 0.1991, 0.1637, 0.1714, 0.1387, 
+ . 0.1678, 0.1723, 0.1689, 0.1976, 0.1657, 0.1598, 0.1859, 0.1631, 
+ . 0.2166, 0.1619, 0.2127, 0.1926, 0.2131, 0.187, 0.2037, 0.1818, 
+ . 0.1872, 0.184, 0.1628, 0.162, 0.1664, 0.1885, 0.1669, 0.158, 
+ . 0.1976, 0.1661, 0.203, 0.1539, 0.1692, 0.1566, 0.1593, 0.1791, 
+ . 0.1742, 0.1454, 0.1388, 0.1537, 0.106, 0.2128, 0.2149, 0.1726, 
+ . 0.1752, 0.159, 0.2397, 0.1587, 0.9053, 0.7339, 0.7869, 1.156, 
+ . 0.7813, 0.8902, 0.7732, 1.377, 1.002, 1.599, 1.187, 0.9849, 3.568, 
+ . 1.078, 1.169, 1.033, 1.24, 1.073, 1.017, 0.7886, 0.7477, 0.9768, 
+ . 0.7096, 1.127, 0.9017, 0.976, 0.9832, 1.849, 1.012, 0.8225, 1.466, 
+ . 1.03, 1.398, 0.6062, 0.6857, 0.9197, 1.019, 2.342, 2.188, 0.5914, 
+ . 0.8265, 1.428, 1.666, 0.8249, 0.6123, 0.6633, 0.9567, 0.8937, 
+ . 0.7294, 1.353, 1.21, 0.9234, 0.6329, 1.593, 0.8339, 0.9591, 1.193, 
+ . 1.15, 1.214, 0.5796, 1.441, 2.067, 1.268, 2.265, 1.178, 1.281, 
+ . 2.011, 0.9429, 1.194, 0.8732, 0.7975, 0.8522, 1.041, 0.6205, 
+ . 1.025, 1.016, 1.014, 0.5505, 1.885, 1.095, 2.174, 1.016, 1.474, 
+ . 2.91, 1.255, 1.475, 2.22, 0.6636, 1.502, 0.7372, 1.111, 0.8413, 
+ . 1.153, 1.373, 0.9644, 1.509, 1.511, 2.043, 0.5391, 1.851, 1.29, 
+ . 1.508, 1.571, 1.222, 1.534, 0.9238, 1.657, 0.8944, 1.545, 0.9861, 
+ . 1.424, 1.803, 1.49, 1.86, 0.5864, 0.9227, 0.9789, 0.9489, 1.072, 
+ . 1.214, 0.4607, 1.581, 3.12, 0.857, 1.14, 0.8561, 1.005, 1.342, 
+ . 1.068, 1.199, 0.8163, 0.7859, 1.265, 0.8155, 1.202, 1.38, 2.508, 
+ . 0.9938, 1.452, 1.343, 0.496, 1.332, 1.908, 0.7712, 1.239, 0.6538, 
+ . 1.426, 1.909, 0.7394, 0.7574, 1.322, 1.962, 2.664, 0.7815, 0.7927, 
+ . 0.9823, 1.4, 2.06, 0.7285, 0.7614, 1.693, 0.6336, 1.048, 1.656, 
+ . 0.8561, 1.065, 0.4064, 1.391, 1.41, 1.217, 0.6656, 1.147, 0.6583, 
+ . 1.805, 1.925, 0.7873, 2.261, 1.284, 1.142, 0.9899, 1.481, 0.7629, 
+ . 1.15, 1.108, 0.4956, 1.268, 0.4757, 0.7655, 1.926, 0.8355, 2.11, 
+ . 1.748, 4.885, 1.809, 0.9622, 0.9086, 2.112, 1.305, 1.073, 0.6509, 
+ . 1.326, 0.8282, 1.56, 1.93, 1.044, 0.3621, 1.342, 0.8554, 0.9223, 
+ . 0.3628, 1.48, 0.8652, 1.476, 1.667, 1.845, 1.194, 1.563, 1.922, 
+ . 1.186, 1.321, 0.4336, 0.4981, 1.217, 0.9209, 0.8907, 0.8121, 
+ . 0.9027, 0.4966, 1.066, 1.069, 0.679, 0.8927, 1.647, 1.189, 0.8301, 
+ . 1.503, 0.9635, 1.041, 2.324, 0.8561, 0.6612, 0.6745, 1.642, 1.057, 
+ . 1.802, 2.612, 1.601, 0.4402, 1.493, 1.038, 0.8208, 0.8429, 0.78, 
+ . 0.8568, 0.6342, 0.8098, 1.199, 1.059, 2.454, 1.278, 1.033, 1.317, 
+ . 1.633, 0.9988, 0.7383, 1.617, 1.197, 1.916, 1.219, 1.489, 0.7198, 
+ . 0.5293, 1.352, 1.409, 1.433, 2.293, 1.28, 0.828, 1.166, 0.9195, 
+ . 1.001, 1.268, 0.9951, 0.9173, 1.389, 1.35, 1.39, 0.469, 1.905, 
+ . 1.974, 1.77, 0.948, 0.7636, 1.238, 0.6931, 0.6946, 1.027, 2.105, 
+ . 0.669, 1.143, 1.161, 1.04, 1.743, 1.563, 1.059, 1.786, 0.5735, 
+ . 1.305, 0.6864, 0.8285, 1.43, 0.9115, 0.6594, 0.3602, 2.777, 0.7151, 
+ . 0.5996, 0.5503, 1.911, 2.2, 1.471, 0.6863, 1.042, 1.023, 0.8073, 
+ . 0.9505, 1.081, 0.9097, 1.232, 1.457, 0.7476, 0.5664, 1.966, 0.9961, 
+ . 1.532, 2.129, 0.6412, 1.53, 2.015, 0.9245, 0.7706, 0.9429, 0.8225, 
+ . 2.284, 0.7395, 2.509, 1.152, 0.3981, 0.7615, 1.05, 0.6724, 1.324, 
+ . 0.8509, 1.506, 0.8092, 1.478, 1.51, 1.363, 1.2, 1.247, 0.9527, 
+ . 1.539, 1.285, 1.439, 0.6124, 0.9168, 1.892, 0.7786, 1.051, 0.6999, 
+ . 1.022, 0.4125, 1.309, 0.6575, 0.5066, 0.489, 1.231, 1.15, 0.5417, 
+ . 1.027, 0.9858, 1.031, 1.434, 0.873, 0.5308, 1.627, 0.8309, 0.6218, 
+ . 1.067, 2.836, 0.5477, 2.079, 1.331, 0.9209, 1.652, 1.685, 1.332, 
+ . 1.265, 0.6881, 1.14, 0.7747, 1.045, 1.299, 0.905, 0.9078, 1.743, 
+ . 0.6372, 1.798, 0.8733, 1.781, 1.555, 1.387, 1.182, 1.336, 1.627, 
+ . 1.203, 2.878, 1.213, 0.6457, 1.678, 1.44, 1.511, 0.7339, 0.895, 
+ . 1.747, 1.341, 1.127, 1.621, 0.9671, 0.8836, 0.8749, 1.46, 1.001, 
+ . 1.931, 0.6683, 0.9533, 0.7693, 1.046, 1.678, 0.6549, 1.376, 1.679, 
+ . 0.4833, 2.542, 0.5906, 1.204, 1.077, 0.6221, 1.354, 1.361, 1.554, 
+ . 1.375, 1.705, 0.7213, 0.6674, 1.924, 2.426, 1.35, 1.232, 1.687, 
+ . 1.152, 1.306, 0.9112, 0.7656, 0.685, 0.8135, 0.7884, 1.312, 1.465, 
+ . 1.74, 1.35, 2.643, 0.4334, 3.647, 0.538, 0.4875, 1.018, 0.5762, 
+ . 1.166, 0.9857, 1.19, 0.9264, 0.5733, 0.9462, 0.3871, 1.207, 1.006, 
+ . 1.408, 1.154, 0.5679, 1.139, 1.046, 1.288, 1.486, 1.473, 1.636, 
+ . 0.6332, 0.781, 1.045, 1.216, 0.8423, 1.528, 1.095, 0.7452, 1.093, 
+ . 1.39, 0.7959, 1.03, 0.4706, 1.961, 0.6417, 0.6232, 0.9306, 0.6237, 
+ . 1.198, 1.01, 0.9225, 0.8737, 1.169, 1.003, 1.13, 0.9004, 1.083, 
+ . 1.249, 1.216, 0.6793, 0.6068, 0.4957, 2.635, 0.504, 1.907, 0.8745, 
+ . 0.4801, 1.736, 1.583, 0.9901, 1.851, 1.978, 1.462, 1.479, 1.768, 
+ . 1.079, 1.385, 1.597, 1.047, 1.336, 0.967, 1.023, 1.363, 1.918, 
+ . 1.304, 1.467, 1.367, 1.879, 1.36, 2.239, 2.09, 2.927, 1.108, 
+ . 2.904, 1.492, 3.896, 1.205, 1.026, 1.256, 2.463, 1.075, 1.595, 
+ . 1.428, 17.99, 20.57, 19.69, 11.42, 20.29, 12.45, 18.25, 13.71, 
+ . 13, 12.46, 16.02, 15.78, 19.17, 15.85, 13.73, 14.54, 14.68, 16.13, 
+ . 19.81, 13.54, 13.08, 9.504, 15.34, 21.16, 16.65, 17.14, 14.58, 
+ . 18.61, 15.3, 17.57, 18.63, 11.84, 17.02, 19.27, 16.13, 16.74, 
+ . 14.25, 13.03, 14.99, 13.48, 13.44, 10.95, 19.07, 13.28, 13.17, 
+ . 18.65, 8.196, 13.17, 12.05, 13.49, 11.76, 13.64, 11.94, 18.22, 
+ . 15.1, 11.52, 19.21, 14.71, 13.05, 8.618, 10.17, 8.598, 14.25, 
+ . 9.173, 12.68, 14.78, 9.465, 11.31, 9.029, 12.78, 18.94, 8.888, 
+ . 17.2, 13.8, 12.31, 16.07, 13.53, 18.05, 20.18, 12.86, 11.45, 
+ . 13.34, 25.22, 19.1, 12, 18.46, 14.48, 19.02, 12.36, 14.64, 14.62, 
+ . 15.37, 13.27, 13.45, 15.06, 20.26, 12.18, 9.787, 11.6, 14.42, 
+ . 13.61, 6.981, 12.18, 9.876, 10.49, 13.11, 11.64, 12.36, 22.27, 
+ . 11.34, 9.777, 12.63, 14.26, 10.51, 8.726, 11.93, 8.95, 14.87, 
+ . 15.78, 17.95, 11.41, 18.66, 24.25, 14.5, 13.37, 13.85, 13.61, 
+ . 19, 15.1, 19.79, 12.19, 15.46, 16.16, 15.71, 18.45, 12.77, 11.71, 
+ . 11.43, 14.95, 11.28, 9.738, 16.11, 11.43, 12.9, 10.75, 11.9, 
+ . 11.8, 14.95, 14.44, 13.74, 13, 8.219, 9.731, 11.15, 13.15, 12.25, 
+ . 17.68, 16.84, 12.06, 10.9, 11.75, 19.19, 19.59, 12.34, 23.27, 
+ . 14.97, 10.8, 16.78, 17.47, 14.97, 12.32, 13.43, 15.46, 11.08, 
+ . 10.66, 8.671, 9.904, 16.46, 13.01, 12.81, 27.22, 21.09, 15.7, 
+ . 11.41, 15.28, 10.08, 18.31, 11.71, 11.81, 12.3, 14.22, 12.77, 
+ . 9.72, 12.34, 14.86, 12.91, 13.77, 18.08, 19.18, 14.45, 12.23, 
+ . 17.54, 23.29, 13.81, 12.47, 15.12, 9.876, 17.01, 13.11, 15.27, 
+ . 20.58, 11.84, 28.11, 17.42, 14.19, 13.86, 11.89, 10.2, 19.8, 
+ . 19.53, 13.65, 13.56, 10.18, 15.75, 13.27, 14.34, 10.44, 15, 12.62, 
+ . 12.83, 17.05, 11.32, 11.22, 20.51, 9.567, 14.03, 23.21, 20.48, 
+ . 14.22, 17.46, 13.64, 12.42, 11.3, 13.75, 19.4, 10.48, 13.2, 12.89, 
+ . 10.65, 11.52, 20.94, 11.5, 19.73, 17.3, 19.45, 13.96, 19.55, 
+ . 15.32, 15.66, 15.53, 20.31, 17.35, 17.29, 15.61, 17.19, 20.73, 
+ . 10.6, 13.59, 12.87, 10.71, 14.29, 11.29, 21.75, 9.742, 17.93, 
+ . 11.89, 11.33, 18.81, 13.59, 13.85, 19.16, 11.74, 19.4, 16.24, 
+ . 12.89, 12.58, 11.94, 12.89, 11.26, 11.37, 14.41, 14.96, 12.95, 
+ . 11.85, 12.72, 13.77, 10.91, 11.76, 14.26, 10.51, 19.53, 12.46, 
+ . 20.09, 10.49, 11.46, 11.6, 13.2, 9, 13.5, 13.05, 11.7, 14.61, 
+ . 12.76, 11.54, 8.597, 12.49, 12.18, 18.22, 9.042, 12.43, 10.25, 
+ . 20.16, 12.86, 20.34, 12.2, 12.67, 14.11, 12.03, 16.27, 16.26, 
+ . 16.03, 12.98, 11.22, 11.25, 12.3, 17.06, 12.99, 18.77, 10.05, 
+ . 23.51, 14.42, 9.606, 11.06, 19.68, 11.71, 10.26, 12.06, 14.76, 
+ . 11.47, 11.95, 11.66, 15.75, 25.73, 15.08, 11.14, 12.56, 13.05, 
+ . 13.87, 8.878, 9.436, 12.54, 13.3, 12.76, 16.5, 13.4, 20.44, 20.2, 
+ . 12.21, 21.71, 22.01, 16.35, 15.19, 21.37, 20.64, 13.69, 16.17, 
+ . 10.57, 13.46, 13.66, 11.08, 11.27, 11.04, 12.05, 12.39, 13.28, 
+ . 14.6, 12.21, 13.88, 11.27, 19.55, 10.26, 8.734, 15.49, 21.61, 
+ . 12.1, 14.06, 13.51, 12.8, 11.06, 11.8, 17.91, 11.93, 12.96, 12.94, 
+ . 12.34, 10.94, 16.14, 12.85, 17.99, 12.27, 11.36, 11.04, 9.397, 
+ . 14.99, 15.13, 11.89, 9.405, 15.5, 12.7, 11.16, 11.57, 14.69, 
+ . 11.61, 13.66, 9.742, 10.03, 10.48, 10.8, 11.13, 12.72, 14.9, 
+ . 12.4, 20.18, 18.82, 14.86, 13.98, 12.87, 14.04, 13.85, 14.02, 
+ . 10.97, 17.27, 13.78, 10.57, 18.03, 11.99, 17.75, 14.8, 14.53, 
+ . 21.1, 11.87, 19.59, 12, 14.53, 12.62, 13.38, 11.63, 13.21, 13, 
+ . 9.755, 17.08, 27.42, 14.4, 11.6, 13.17, 13.24, 13.14, 9.668, 
+ . 17.6, 11.62, 9.667, 12.04, 14.92, 12.27, 10.88, 12.83, 14.2, 
+ . 13.9, 11.49, 16.25, 12.16, 13.9, 13.47, 13.7, 15.73, 12.45, 14.64, 
+ . 19.44, 11.68, 16.69, 12.25, 17.85, 18.01, 12.46, 13.16, 14.87, 
+ . 12.65, 12.47, 18.49, 20.59, 15.04, 13.82, 12.54, 23.09, 9.268, 
+ . 9.676, 12.22, 11.06, 16.3, 15.46, 11.74, 14.81, 13.4, 14.58, 
+ . 15.05, 11.34, 18.31, 19.89, 12.88, 12.75, 9.295, 24.63, 11.26, 
+ . 13.71, 9.847, 8.571, 13.46, 12.34, 13.94, 12.07, 11.75, 11.67, 
+ . 13.68, 20.47, 10.96, 20.55, 14.27, 11.69, 7.729, 7.691, 11.54, 
+ . 14.47, 14.74, 13.21, 13.87, 13.62, 10.32, 10.26, 9.683, 10.82, 
+ . 10.86, 11.13, 12.77, 9.333, 12.88, 10.29, 10.16, 9.423, 14.59, 
+ . 11.51, 14.05, 11.2, 15.22, 20.92, 21.56, 20.13, 16.6, 20.6, 7.76
+ . ), dim = c(569L, 5L), dimnames = list(c(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, 
+ . &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12&quot;, &quot;13&quot;, &quot;14&quot;, &quot;15&quot;, &quot;16&quot;, 
+ . &quot;17&quot;, &quot;18&quot;, &quot;19&quot;, &quot;20&quot;, &quot;21&quot;, &quot;22&quot;, &quot;23&quot;, &quot;24&quot;, &quot;25&quot;, &quot;26&quot;, &quot;27&quot;, 
+ . &quot;28&quot;, &quot;29&quot;, &quot;30&quot;, &quot;31&quot;, &quot;32&quot;, &quot;33&quot;, &quot;34&quot;, &quot;35&quot;, &quot;36&quot;, &quot;37&quot;, &quot;38&quot;, 
+ . &quot;39&quot;, &quot;40&quot;, &quot;41&quot;, &quot;42&quot;, &quot;43&quot;, &quot;44&quot;, &quot;45&quot;, &quot;46&quot;, &quot;47&quot;, &quot;48&quot;, &quot;49&quot;, 
+ . &quot;50&quot;, &quot;51&quot;, &quot;52&quot;, &quot;53&quot;, &quot;54&quot;, &quot;55&quot;, &quot;56&quot;, &quot;57&quot;, &quot;58&quot;, &quot;59&quot;, &quot;60&quot;, 
+ . &quot;61&quot;, &quot;62&quot;, &quot;63&quot;, &quot;64&quot;, &quot;65&quot;, &quot;66&quot;, &quot;67&quot;, &quot;68&quot;, &quot;69&quot;, &quot;70&quot;, &quot;71&quot;, 
+ . &quot;72&quot;, &quot;73&quot;, &quot;74&quot;, &quot;75&quot;, &quot;76&quot;, &quot;77&quot;, &quot;78&quot;, &quot;79&quot;, &quot;80&quot;, &quot;81&quot;, &quot;82&quot;, 
+ . &quot;83&quot;, &quot;84&quot;, &quot;85&quot;, &quot;86&quot;, &quot;87&quot;, &quot;88&quot;, &quot;89&quot;, &quot;90&quot;, &quot;91&quot;, &quot;92&quot;, &quot;93&quot;, 
+ . &quot;94&quot;, &quot;95&quot;, &quot;96&quot;, &quot;97&quot;, &quot;98&quot;, &quot;99&quot;, &quot;100&quot;, &quot;101&quot;, &quot;102&quot;, &quot;103&quot;, 
+ . &quot;104&quot;, &quot;105&quot;, &quot;106&quot;, &quot;107&quot;, &quot;108&quot;, &quot;109&quot;, &quot;110&quot;, &quot;111&quot;, &quot;112&quot;, 
+ . &quot;113&quot;, &quot;114&quot;, &quot;115&quot;, &quot;116&quot;, &quot;117&quot;, &quot;118&quot;, &quot;119&quot;, &quot;120&quot;, &quot;121&quot;, 
+ . &quot;122&quot;, &quot;123&quot;, &quot;124&quot;, &quot;125&quot;, &quot;126&quot;, &quot;127&quot;, &quot;128&quot;, &quot;129&quot;, &quot;130&quot;, 
+ . &quot;131&quot;, &quot;132&quot;, &quot;133&quot;, &quot;134&quot;, &quot;135&quot;, &quot;136&quot;, &quot;137&quot;, &quot;138&quot;, &quot;139&quot;, 
+ . &quot;140&quot;, &quot;141&quot;, &quot;142&quot;, &quot;143&quot;, &quot;144&quot;, &quot;145&quot;, &quot;146&quot;, &quot;147&quot;, &quot;148&quot;, 
+ . &quot;149&quot;, &quot;150&quot;, &quot;151&quot;, &quot;152&quot;, &quot;153&quot;, &quot;154&quot;, &quot;155&quot;, &quot;156&quot;, &quot;157&quot;, 
+ . &quot;158&quot;, &quot;159&quot;, &quot;160&quot;, &quot;161&quot;, &quot;162&quot;, &quot;163&quot;, &quot;164&quot;, &quot;165&quot;, &quot;166&quot;, 
+ . &quot;167&quot;, &quot;168&quot;, &quot;169&quot;, &quot;170&quot;, &quot;171&quot;, &quot;172&quot;, &quot;173&quot;, &quot;174&quot;, &quot;175&quot;, 
+ . &quot;176&quot;, &quot;177&quot;, &quot;178&quot;, &quot;179&quot;, &quot;180&quot;, &quot;181&quot;, &quot;182&quot;, &quot;183&quot;, &quot;184&quot;, 
+ . &quot;185&quot;, &quot;186&quot;, &quot;187&quot;, &quot;188&quot;, &quot;189&quot;, &quot;190&quot;, &quot;191&quot;, &quot;192&quot;, &quot;193&quot;, 
+ . &quot;194&quot;, &quot;195&quot;, &quot;196&quot;, &quot;197&quot;, &quot;198&quot;, &quot;199&quot;, &quot;200&quot;, &quot;201&quot;, &quot;202&quot;, 
+ . &quot;203&quot;, &quot;204&quot;, &quot;205&quot;, &quot;206&quot;, &quot;207&quot;, &quot;208&quot;, &quot;209&quot;, &quot;210&quot;, &quot;211&quot;, 
+ . &quot;212&quot;, &quot;213&quot;, &quot;214&quot;, &quot;215&quot;, &quot;216&quot;, &quot;217&quot;, &quot;218&quot;, &quot;219&quot;, &quot;220&quot;, 
+ . &quot;221&quot;, &quot;222&quot;, &quot;223&quot;, &quot;224&quot;, &quot;225&quot;, &quot;226&quot;, &quot;227&quot;, &quot;228&quot;, &quot;229&quot;, 
+ . &quot;230&quot;, &quot;231&quot;, &quot;232&quot;, &quot;233&quot;, &quot;234&quot;, &quot;235&quot;, &quot;236&quot;, &quot;237&quot;, &quot;238&quot;, 
+ . &quot;239&quot;, &quot;240&quot;, &quot;241&quot;, &quot;242&quot;, &quot;243&quot;, &quot;244&quot;, &quot;245&quot;, &quot;246&quot;, &quot;247&quot;, 
+ . &quot;248&quot;, &quot;249&quot;, &quot;250&quot;, &quot;251&quot;, &quot;252&quot;, &quot;253&quot;, &quot;254&quot;, &quot;255&quot;, &quot;256&quot;, 
+ . &quot;257&quot;, &quot;258&quot;, &quot;259&quot;, &quot;260&quot;, &quot;261&quot;, &quot;262&quot;, &quot;263&quot;, &quot;264&quot;, &quot;265&quot;, 
+ . &quot;266&quot;, &quot;267&quot;, &quot;268&quot;, &quot;269&quot;, &quot;270&quot;, &quot;271&quot;, &quot;272&quot;, &quot;273&quot;, &quot;274&quot;, 
+ . &quot;275&quot;, &quot;276&quot;, &quot;277&quot;, &quot;278&quot;, &quot;279&quot;, &quot;280&quot;, &quot;281&quot;, &quot;282&quot;, &quot;283&quot;, 
+ . &quot;284&quot;, &quot;285&quot;, &quot;286&quot;, &quot;287&quot;, &quot;288&quot;, &quot;289&quot;, &quot;290&quot;, &quot;291&quot;, &quot;292&quot;, 
+ . &quot;293&quot;, &quot;294&quot;, &quot;295&quot;, &quot;296&quot;, &quot;297&quot;, &quot;298&quot;, &quot;299&quot;, &quot;300&quot;, &quot;301&quot;, 
+ . &quot;302&quot;, &quot;303&quot;, &quot;304&quot;, &quot;305&quot;, &quot;306&quot;, &quot;307&quot;, &quot;308&quot;, &quot;309&quot;, &quot;310&quot;, 
+ . &quot;311&quot;, &quot;312&quot;, &quot;313&quot;, &quot;314&quot;, &quot;315&quot;, &quot;316&quot;, &quot;317&quot;, &quot;318&quot;, &quot;319&quot;, 
+ . &quot;320&quot;, &quot;321&quot;, &quot;322&quot;, &quot;323&quot;, &quot;324&quot;, &quot;325&quot;, &quot;326&quot;, &quot;327&quot;, &quot;328&quot;, 
+ . &quot;329&quot;, &quot;330&quot;, &quot;331&quot;, &quot;332&quot;, &quot;333&quot;, &quot;334&quot;, &quot;335&quot;, &quot;336&quot;, &quot;337&quot;, 
+ . &quot;338&quot;, &quot;339&quot;, &quot;340&quot;, &quot;341&quot;, &quot;342&quot;, &quot;343&quot;, &quot;344&quot;, &quot;345&quot;, &quot;346&quot;, 
+ . &quot;347&quot;, &quot;348&quot;, &quot;349&quot;, &quot;350&quot;, &quot;351&quot;, &quot;352&quot;, &quot;353&quot;, &quot;354&quot;, &quot;355&quot;, 
+ . &quot;356&quot;, &quot;357&quot;, &quot;358&quot;, &quot;359&quot;, &quot;360&quot;, &quot;361&quot;, &quot;362&quot;, &quot;363&quot;, &quot;364&quot;, 
+ . &quot;365&quot;, &quot;366&quot;, &quot;367&quot;, &quot;368&quot;, &quot;369&quot;, &quot;370&quot;, &quot;371&quot;, &quot;372&quot;, &quot;373&quot;, 
+ . &quot;374&quot;, &quot;375&quot;, &quot;376&quot;, &quot;377&quot;, &quot;378&quot;, &quot;379&quot;, &quot;380&quot;, &quot;381&quot;, &quot;382&quot;, 
+ . &quot;383&quot;, &quot;384&quot;, &quot;385&quot;, &quot;386&quot;, &quot;387&quot;, &quot;388&quot;, &quot;389&quot;, &quot;390&quot;, &quot;391&quot;, 
+ . &quot;392&quot;, &quot;393&quot;, &quot;394&quot;, &quot;395&quot;, &quot;396&quot;, &quot;397&quot;, &quot;398&quot;, &quot;399&quot;, &quot;400&quot;, 
+ . &quot;401&quot;, &quot;402&quot;, &quot;403&quot;, &quot;404&quot;, &quot;405&quot;, &quot;406&quot;, &quot;407&quot;, &quot;408&quot;, &quot;409&quot;, 
+ . &quot;410&quot;, &quot;411&quot;, &quot;412&quot;, &quot;413&quot;, &quot;414&quot;, &quot;415&quot;, &quot;416&quot;, &quot;417&quot;, &quot;418&quot;, 
+ . &quot;419&quot;, &quot;420&quot;, &quot;421&quot;, &quot;422&quot;, &quot;423&quot;, &quot;424&quot;, &quot;425&quot;, &quot;426&quot;, &quot;427&quot;, 
+ . &quot;428&quot;, &quot;429&quot;, &quot;430&quot;, &quot;431&quot;, &quot;432&quot;, &quot;433&quot;, &quot;434&quot;, &quot;435&quot;, &quot;436&quot;, 
+ . &quot;437&quot;, &quot;438&quot;, &quot;439&quot;, &quot;440&quot;, &quot;441&quot;, &quot;442&quot;, &quot;443&quot;, &quot;444&quot;, &quot;445&quot;, 
+ . &quot;446&quot;, &quot;447&quot;, &quot;448&quot;, &quot;449&quot;, &quot;450&quot;, &quot;451&quot;, &quot;452&quot;, &quot;453&quot;, &quot;454&quot;, 
+ . &quot;455&quot;, &quot;456&quot;, &quot;457&quot;, &quot;458&quot;, &quot;459&quot;, &quot;460&quot;, &quot;461&quot;, &quot;462&quot;, &quot;463&quot;, 
+ . &quot;464&quot;, &quot;465&quot;, &quot;466&quot;, &quot;467&quot;, &quot;468&quot;, &quot;469&quot;, &quot;470&quot;, &quot;471&quot;, &quot;472&quot;, 
+ . &quot;473&quot;, &quot;474&quot;, &quot;475&quot;, &quot;476&quot;, &quot;477&quot;, &quot;478&quot;, &quot;479&quot;, &quot;480&quot;, &quot;481&quot;, 
+ . &quot;482&quot;, &quot;483&quot;, &quot;484&quot;, &quot;485&quot;, &quot;486&quot;, &quot;487&quot;, &quot;488&quot;, &quot;489&quot;, &quot;490&quot;, 
+ . &quot;491&quot;, &quot;492&quot;, &quot;493&quot;, &quot;494&quot;, &quot;495&quot;, &quot;496&quot;, &quot;497&quot;, &quot;498&quot;, &quot;499&quot;, 
+ . &quot;500&quot;, &quot;501&quot;, &quot;502&quot;, &quot;503&quot;, &quot;504&quot;, &quot;505&quot;, &quot;506&quot;, &quot;507&quot;, &quot;508&quot;, 
+ . &quot;509&quot;, &quot;510&quot;, &quot;511&quot;, &quot;512&quot;, &quot;513&quot;, &quot;514&quot;, &quot;515&quot;, &quot;516&quot;, &quot;517&quot;, 
+ . &quot;518&quot;, &quot;519&quot;, &quot;520&quot;, &quot;521&quot;, &quot;522&quot;, &quot;523&quot;, &quot;524&quot;, &quot;525&quot;, &quot;526&quot;, 
+ . &quot;527&quot;, &quot;528&quot;, &quot;529&quot;, &quot;530&quot;, &quot;531&quot;, &quot;532&quot;, &quot;533&quot;, &quot;534&quot;, &quot;535&quot;, 
+ . &quot;536&quot;, &quot;537&quot;, &quot;538&quot;, &quot;539&quot;, &quot;540&quot;, &quot;541&quot;, &quot;542&quot;, &quot;543&quot;, &quot;544&quot;, 
+ . &quot;545&quot;, &quot;546&quot;, &quot;547&quot;, &quot;548&quot;, &quot;549&quot;, &quot;550&quot;, &quot;551&quot;, &quot;552&quot;, &quot;553&quot;, 
+ . &quot;554&quot;, &quot;555&quot;, &quot;556&quot;, &quot;557&quot;, &quot;558&quot;, &quot;559&quot;, &quot;560&quot;, &quot;561&quot;, &quot;562&quot;, 
+ . &quot;563&quot;, &quot;564&quot;, &quot;565&quot;, &quot;566&quot;, &quot;567&quot;, &quot;568&quot;, &quot;569&quot;), c(&quot;(Intercept)&quot;, 
+ . &quot;smoothness_worst&quot;, &quot;symmetry_mean&quot;, &quot;texture_se&quot;, &quot;radius_mean&quot;
+ . )), assign = 0:4), y = c(`1` = &quot;M&quot;, `2` = &quot;M&quot;, `3` = &quot;M&quot;, `4` = &quot;M&quot;, 
+ . `5` = &quot;M&quot;, `6` = &quot;M&quot;, `7` = &quot;M&quot;, `8` = &quot;M&quot;, `9` = &quot;M&quot;, `10` = &quot;M&quot;, 
+ . `11` = &quot;M&quot;, `12` = &quot;M&quot;, `13` = &quot;M&quot;, `14` = &quot;M&quot;, `15` = &quot;M&quot;, `16` = &quot;M&quot;, 
+ . `17` = &quot;M&quot;, `18` = &quot;M&quot;, `19` = &quot;M&quot;, `20` = &quot;B&quot;, `21` = &quot;B&quot;, `22` = &quot;B&quot;, 
+ . `23` = &quot;M&quot;, `24` = &quot;M&quot;, `25` = &quot;M&quot;, `26` = &quot;M&quot;, `27` = &quot;M&quot;, `28` = &quot;M&quot;, 
+ . `29` = &quot;M&quot;, `30` = &quot;M&quot;, `31` = &quot;M&quot;, `32` = &quot;M&quot;, `33` = &quot;M&quot;, `34` = &quot;M&quot;, 
+ . `35` = &quot;M&quot;, `36` = &quot;M&quot;, `37` = &quot;M&quot;, `38` = &quot;B&quot;, `39` = &quot;M&quot;, `40` = &quot;M&quot;, 
+ . `41` = &quot;M&quot;, `42` = &quot;M&quot;, `43` = &quot;M&quot;, `44` = &quot;M&quot;, `45` = &quot;M&quot;, `46` = &quot;M&quot;, 
+ . `47` = &quot;B&quot;, `48` = &quot;M&quot;, `49` = &quot;B&quot;, `50` = &quot;B&quot;, `51` = &quot;B&quot;, `52` = &quot;B&quot;, 
+ . `53` = &quot;B&quot;, `54` = &quot;M&quot;, `55` = &quot;M&quot;, `56` = &quot;B&quot;, `57` = &quot;M&quot;, `58` = &quot;M&quot;, 
+ . `59` = &quot;B&quot;, `60` = &quot;B&quot;, `61` = &quot;B&quot;, `62` = &quot;B&quot;, `63` = &quot;M&quot;, `64` = &quot;B&quot;, 
+ . `65` = &quot;M&quot;, `66` = &quot;M&quot;, `67` = &quot;B&quot;, `68` = &quot;B&quot;, `69` = &quot;B&quot;, `70` = &quot;B&quot;, 
+ . `71` = &quot;M&quot;, `72` = &quot;B&quot;, `73` = &quot;M&quot;, `74` = &quot;M&quot;, `75` = &quot;B&quot;, `76` = &quot;M&quot;, 
+ . `77` = &quot;B&quot;, `78` = &quot;M&quot;, `79` = &quot;M&quot;, `80` = &quot;B&quot;, `81` = &quot;B&quot;, `82` = &quot;B&quot;, 
+ . `83` = &quot;M&quot;, `84` = &quot;M&quot;, `85` = &quot;B&quot;, `86` = &quot;M&quot;, `87` = &quot;M&quot;, `88` = &quot;M&quot;, 
+ . `89` = &quot;B&quot;, `90` = &quot;B&quot;, `91` = &quot;B&quot;, `92` = &quot;M&quot;, `93` = &quot;B&quot;, `94` = &quot;B&quot;, 
+ . `95` = &quot;M&quot;, `96` = &quot;M&quot;, `97` = &quot;B&quot;, `98` = &quot;B&quot;, `99` = &quot;B&quot;, `100` = &quot;M&quot;, 
+ . `101` = &quot;M&quot;, `102` = &quot;B&quot;, `103` = &quot;B&quot;, `104` = &quot;B&quot;, `105` = &quot;B&quot;, 
+ . `106` = &quot;M&quot;, `107` = &quot;B&quot;, `108` = &quot;B&quot;, `109` = &quot;M&quot;, `110` = &quot;B&quot;, 
+ . `111` = &quot;B&quot;, `112` = &quot;B&quot;, `113` = &quot;B&quot;, `114` = &quot;B&quot;, `115` = &quot;B&quot;, 
+ . `116` = &quot;B&quot;, `117` = &quot;B&quot;, `118` = &quot;M&quot;, `119` = &quot;M&quot;, `120` = &quot;M&quot;, 
+ . `121` = &quot;B&quot;, `122` = &quot;M&quot;, `123` = &quot;M&quot;, `124` = &quot;B&quot;, `125` = &quot;B&quot;, 
+ . `126` = &quot;B&quot;, `127` = &quot;M&quot;, `128` = &quot;M&quot;, `129` = &quot;B&quot;, `130` = &quot;M&quot;, 
+ . `131` = &quot;B&quot;, `132` = &quot;M&quot;, `133` = &quot;M&quot;, `134` = &quot;B&quot;, `135` = &quot;M&quot;, 
+ . `136` = &quot;M&quot;, `137` = &quot;B&quot;, `138` = &quot;B&quot;, `139` = &quot;M&quot;, `140` = &quot;B&quot;, 
+ . `141` = &quot;B&quot;, `142` = &quot;M&quot;, `143` = &quot;B&quot;, `144` = &quot;B&quot;, `145` = &quot;B&quot;, 
+ . `146` = &quot;B&quot;, `147` = &quot;M&quot;, `148` = &quot;B&quot;, `149` = &quot;B&quot;, `150` = &quot;B&quot;, 
+ . `151` = &quot;B&quot;, `152` = &quot;B&quot;, `153` = &quot;B&quot;, `154` = &quot;B&quot;, `155` = &quot;B&quot;, 
+ . `156` = &quot;B&quot;, `157` = &quot;M&quot;, `158` = &quot;B&quot;, `159` = &quot;B&quot;, `160` = &quot;B&quot;, 
+ . `161` = &quot;B&quot;, `162` = &quot;M&quot;, `163` = &quot;M&quot;, `164` = &quot;B&quot;, `165` = &quot;M&quot;, 
+ . `166` = &quot;B&quot;, `167` = &quot;B&quot;, `168` = &quot;M&quot;, `169` = &quot;M&quot;, `170` = &quot;B&quot;, 
+ . `171` = &quot;B&quot;, `172` = &quot;M&quot;, `173` = &quot;M&quot;, `174` = &quot;B&quot;, `175` = &quot;B&quot;, 
+ . `176` = &quot;B&quot;, `177` = &quot;B&quot;, `178` = &quot;M&quot;, `179` = &quot;B&quot;, `180` = &quot;B&quot;, 
+ . `181` = &quot;M&quot;, `182` = &quot;M&quot;, `183` = &quot;M&quot;, `184` = &quot;B&quot;, `185` = &quot;M&quot;, 
+ . `186` = &quot;B&quot;, `187` = &quot;M&quot;, `188` = &quot;B&quot;, `189` = &quot;B&quot;, `190` = &quot;B&quot;, 
+ . `191` = &quot;M&quot;, `192` = &quot;B&quot;, `193` = &quot;B&quot;, `194` = &quot;M&quot;, `195` = &quot;M&quot;, 
+ . `196` = &quot;B&quot;, `197` = &quot;M&quot;, `198` = &quot;M&quot;, `199` = &quot;M&quot;, `200` = &quot;M&quot;, 
+ . `201` = &quot;B&quot;, `202` = &quot;M&quot;, `203` = &quot;M&quot;, `204` = &quot;M&quot;, `205` = &quot;B&quot;, 
+ . `206` = &quot;M&quot;, `207` = &quot;B&quot;, `208` = &quot;M&quot;, `209` = &quot;B&quot;, `210` = &quot;B&quot;, 
+ . `211` = &quot;M&quot;, `212` = &quot;B&quot;, `213` = &quot;M&quot;, `214` = &quot;M&quot;, `215` = &quot;M&quot;, 
+ . `216` = &quot;M&quot;, `217` = &quot;B&quot;, `218` = &quot;B&quot;, `219` = &quot;M&quot;, `220` = &quot;M&quot;, 
+ . `221` = &quot;B&quot;, `222` = &quot;B&quot;, `223` = &quot;B&quot;, `224` = &quot;M&quot;, `225` = &quot;B&quot;, 
+ . `226` = &quot;B&quot;, `227` = &quot;B&quot;, `228` = &quot;B&quot;, `229` = &quot;B&quot;, `230` = &quot;M&quot;, 
+ . `231` = &quot;M&quot;, `232` = &quot;B&quot;, `233` = &quot;B&quot;, `234` = &quot;M&quot;, `235` = &quot;B&quot;, 
+ . `236` = &quot;B&quot;, `237` = &quot;M&quot;, `238` = &quot;M&quot;, `239` = &quot;B&quot;, `240` = &quot;M&quot;, 
+ . `241` = &quot;B&quot;, `242` = &quot;B&quot;, `243` = &quot;B&quot;, `244` = &quot;B&quot;, `245` = &quot;M&quot;, 
+ . `246` = &quot;B&quot;, `247` = &quot;B&quot;, `248` = &quot;B&quot;, `249` = &quot;B&quot;, `250` = &quot;B&quot;, 
+ . `251` = &quot;M&quot;, `252` = &quot;B&quot;, `253` = &quot;M&quot;, `254` = &quot;M&quot;, `255` = &quot;M&quot;, 
+ . `256` = &quot;M&quot;, `257` = &quot;M&quot;, `258` = &quot;M&quot;, `259` = &quot;M&quot;, `260` = &quot;M&quot;, 
+ . `261` = &quot;M&quot;, `262` = &quot;M&quot;, `263` = &quot;M&quot;, `264` = &quot;M&quot;, `265` = &quot;M&quot;, 
+ . `266` = &quot;M&quot;, `267` = &quot;B&quot;, `268` = &quot;B&quot;, `269` = &quot;B&quot;, `270` = &quot;B&quot;, 
+ . `271` = &quot;B&quot;, `272` = &quot;B&quot;, `273` = &quot;M&quot;, `274` = &quot;B&quot;, `275` = &quot;M&quot;, 
+ . `276` = &quot;B&quot;, `277` = &quot;B&quot;, `278` = &quot;M&quot;, `279` = &quot;B&quot;, `280` = &quot;B&quot;, 
+ . `281` = &quot;M&quot;, `282` = &quot;B&quot;, `283` = &quot;M&quot;, `284` = &quot;M&quot;, `285` = &quot;B&quot;, 
+ . `286` = &quot;B&quot;, `287` = &quot;B&quot;, `288` = &quot;B&quot;, `289` = &quot;B&quot;, `290` = &quot;B&quot;, 
+ . `291` = &quot;B&quot;, `292` = &quot;B&quot;, `293` = &quot;B&quot;, `294` = &quot;B&quot;, `295` = &quot;B&quot;, 
+ . `296` = &quot;B&quot;, `297` = &quot;B&quot;, `298` = &quot;M&quot;, `299` = &quot;B&quot;, `300` = &quot;B&quot;, 
+ . `301` = &quot;M&quot;, `302` = &quot;B&quot;, `303` = &quot;M&quot;, `304` = &quot;B&quot;, `305` = &quot;B&quot;, 
+ . `306` = &quot;B&quot;, `307` = &quot;B&quot;, `308` = &quot;B&quot;, `309` = &quot;B&quot;, `310` = &quot;B&quot;, 
+ . `311` = &quot;B&quot;, `312` = &quot;B&quot;, `313` = &quot;B&quot;, `314` = &quot;B&quot;, `315` = &quot;B&quot;, 
+ . `316` = &quot;B&quot;, `317` = &quot;B&quot;, `318` = &quot;M&quot;, `319` = &quot;B&quot;, `320` = &quot;B&quot;, 
+ . `321` = &quot;B&quot;, `322` = &quot;M&quot;, `323` = &quot;B&quot;, `324` = &quot;M&quot;, `325` = &quot;B&quot;, 
+ . `326` = &quot;B&quot;, `327` = &quot;B&quot;, `328` = &quot;B&quot;, `329` = &quot;M&quot;, `330` = &quot;M&quot;, 
+ . `331` = &quot;M&quot;, `332` = &quot;B&quot;, `333` = &quot;B&quot;, `334` = &quot;B&quot;, `335` = &quot;B&quot;, 
+ . `336` = &quot;M&quot;, `337` = &quot;B&quot;, `338` = &quot;M&quot;, `339` = &quot;B&quot;, `340` = &quot;M&quot;, 
+ . `341` = &quot;B&quot;, `342` = &quot;B&quot;, `343` = &quot;B&quot;, `344` = &quot;M&quot;, `345` = &quot;B&quot;, 
+ . `346` = &quot;B&quot;, `347` = &quot;B&quot;, `348` = &quot;B&quot;, `349` = &quot;B&quot;, `350` = &quot;B&quot;, 
+ . `351` = &quot;B&quot;, `352` = &quot;M&quot;, `353` = &quot;M&quot;, `354` = &quot;M&quot;, `355` = &quot;B&quot;, 
+ . `356` = &quot;B&quot;, `357` = &quot;B&quot;, `358` = &quot;B&quot;, `359` = &quot;B&quot;, `360` = &quot;B&quot;, 
+ . `361` = &quot;B&quot;, `362` = &quot;B&quot;, `363` = &quot;B&quot;, `364` = &quot;B&quot;, `365` = &quot;B&quot;, 
+ . `366` = &quot;M&quot;, `367` = &quot;M&quot;, `368` = &quot;B&quot;, `369` = &quot;M&quot;, `370` = &quot;M&quot;, 
+ . `371` = &quot;M&quot;, `372` = &quot;B&quot;, `373` = &quot;M&quot;, `374` = &quot;M&quot;, `375` = &quot;B&quot;, 
+ . `376` = &quot;B&quot;, `377` = &quot;B&quot;, `378` = &quot;B&quot;, `379` = &quot;B&quot;, `380` = &quot;M&quot;, 
+ . `381` = &quot;B&quot;, `382` = &quot;B&quot;, `383` = &quot;B&quot;, `384` = &quot;B&quot;, `385` = &quot;B&quot;, 
+ . `386` = &quot;M&quot;, `387` = &quot;B&quot;, `388` = &quot;B&quot;, `389` = &quot;B&quot;, `390` = &quot;M&quot;, 
+ . `391` = &quot;B&quot;, `392` = &quot;B&quot;, `393` = &quot;M&quot;, `394` = &quot;M&quot;, `395` = &quot;B&quot;, 
+ . `396` = &quot;B&quot;, `397` = &quot;B&quot;, `398` = &quot;B&quot;, `399` = &quot;B&quot;, `400` = &quot;B&quot;, 
+ . `401` = &quot;M&quot;, `402` = &quot;B&quot;, `403` = &quot;B&quot;, `404` = &quot;B&quot;, `405` = &quot;B&quot;, 
+ . `406` = &quot;B&quot;, `407` = &quot;B&quot;, `408` = &quot;B&quot;, `409` = &quot;M&quot;, `410` = &quot;B&quot;, 
+ . `411` = &quot;B&quot;, `412` = &quot;B&quot;, `413` = &quot;B&quot;, `414` = &quot;B&quot;, `415` = &quot;M&quot;, 
+ . `416` = &quot;B&quot;, `417` = &quot;B&quot;, `418` = &quot;M&quot;, `419` = &quot;B&quot;, `420` = &quot;B&quot;, 
+ . `421` = &quot;B&quot;, `422` = &quot;B&quot;, `423` = &quot;B&quot;, `424` = &quot;B&quot;, `425` = &quot;B&quot;, 
+ . `426` = &quot;B&quot;, `427` = &quot;B&quot;, `428` = &quot;B&quot;, `429` = &quot;B&quot;, `430` = &quot;B&quot;, 
+ . `431` = &quot;M&quot;, `432` = &quot;B&quot;, `433` = &quot;M&quot;, `434` = &quot;M&quot;, `435` = &quot;B&quot;, 
+ . `436` = &quot;M&quot;, `437` = &quot;B&quot;, `438` = &quot;B&quot;, `439` = &quot;B&quot;, `440` = &quot;B&quot;, 
+ . `441` = &quot;B&quot;, `442` = &quot;M&quot;, `443` = &quot;B&quot;, `444` = &quot;B&quot;, `445` = &quot;M&quot;, 
+ . `446` = &quot;B&quot;, `447` = &quot;M&quot;, `448` = &quot;B&quot;, `449` = &quot;B&quot;, `450` = &quot;M&quot;, 
+ . `451` = &quot;B&quot;, `452` = &quot;M&quot;, `453` = &quot;B&quot;, `454` = &quot;B&quot;, `455` = &quot;B&quot;, 
+ . `456` = &quot;B&quot;, `457` = &quot;B&quot;, `458` = &quot;B&quot;, `459` = &quot;B&quot;, `460` = &quot;B&quot;, 
+ . `461` = &quot;M&quot;, `462` = &quot;M&quot;, `463` = &quot;B&quot;, `464` = &quot;B&quot;, `465` = &quot;B&quot;, 
+ . `466` = &quot;B&quot;, `467` = &quot;B&quot;, `468` = &quot;B&quot;, `469` = &quot;M&quot;, `470` = &quot;B&quot;, 
+ . `471` = &quot;B&quot;, `472` = &quot;B&quot;, `473` = &quot;B&quot;, `474` = &quot;B&quot;, `475` = &quot;B&quot;, 
+ . `476` = &quot;B&quot;, `477` = &quot;B&quot;, `478` = &quot;B&quot;, `479` = &quot;B&quot;, `480` = &quot;M&quot;, 
+ . `481` = &quot;B&quot;, `482` = &quot;B&quot;, `483` = &quot;B&quot;, `484` = &quot;B&quot;, `485` = &quot;B&quot;, 
+ . `486` = &quot;B&quot;, `487` = &quot;B&quot;, `488` = &quot;M&quot;, `489` = &quot;B&quot;, `490` = &quot;M&quot;, 
+ . `491` = &quot;B&quot;, `492` = &quot;B&quot;, `493` = &quot;M&quot;, `494` = &quot;B&quot;, `495` = &quot;B&quot;, 
+ . `496` = &quot;B&quot;, `497` = &quot;B&quot;, `498` = &quot;B&quot;, `499` = &quot;M&quot;, `500` = &quot;M&quot;, 
+ . `501` = &quot;B&quot;, `502` = &quot;M&quot;, `503` = &quot;B&quot;, `504` = &quot;M&quot;, `505` = &quot;B&quot;, 
+ . `506` = &quot;B&quot;, `507` = &quot;B&quot;, `508` = &quot;B&quot;, `509` = &quot;B&quot;, `510` = &quot;M&quot;, 
+ . `511` = &quot;B&quot;, `512` = &quot;B&quot;, `513` = &quot;M&quot;, `514` = &quot;B&quot;, `515` = &quot;M&quot;, 
+ . `516` = &quot;B&quot;, `517` = &quot;M&quot;, `518` = &quot;M&quot;, `519` = &quot;B&quot;, `520` = &quot;B&quot;, 
+ . `521` = &quot;B&quot;, `522` = &quot;M&quot;, `523` = &quot;B&quot;, `524` = &quot;B&quot;, `525` = &quot;B&quot;, 
+ . `526` = &quot;B&quot;, `527` = &quot;B&quot;, `528` = &quot;B&quot;, `529` = &quot;B&quot;, `530` = &quot;B&quot;, 
+ . `531` = &quot;B&quot;, `532` = &quot;B&quot;, `533` = &quot;B&quot;, `534` = &quot;M&quot;, `535` = &quot;B&quot;, 
+ . `536` = &quot;M&quot;, `537` = &quot;M&quot;, `538` = &quot;B&quot;, `539` = &quot;B&quot;, `540` = &quot;B&quot;, 
+ . `541` = &quot;B&quot;, `542` = &quot;B&quot;, `543` = &quot;B&quot;, `544` = &quot;B&quot;, `545` = &quot;B&quot;, 
+ . `546` = &quot;B&quot;, `547` = &quot;B&quot;, `548` = &quot;B&quot;, `549` = &quot;B&quot;, `550` = &quot;B&quot;, 
+ . `551` = &quot;B&quot;, `552` = &quot;B&quot;, `553` = &quot;B&quot;, `554` = &quot;B&quot;, `555` = &quot;B&quot;, 
+ . `556` = &quot;B&quot;, `557` = &quot;B&quot;, `558` = &quot;B&quot;, `559` = &quot;B&quot;, `560` = &quot;B&quot;, 
+ . `561` = &quot;B&quot;, `562` = &quot;B&quot;, `563` = &quot;M&quot;, `564` = &quot;M&quot;, `565` = &quot;M&quot;, 
+ . `566` = &quot;M&quot;, `567` = &quot;M&quot;, `568` = &quot;M&quot;, `569` = &quot;B&quot;), weights = NULL, 
+ .     start = NULL, etastart = NULL, mustart = NULL, offset = NULL, 
+ .     family = structure(list(family = &quot;binomial&quot;, link = &quot;logit&quot;, 
+ .         linkfun = function (mu) 
+ .         .Call(C_logit_link, mu), linkinv = function (eta) 
+ .         .Call(C_logit_linkinv, eta), variance = function (mu) 
+ .         mu * (1 - mu), dev.resids = function (y, mu, wt) 
+ .         .Call(C_binomial_dev_resids, y, mu, wt), aic = function (y, 
+ .             n, mu, wt, dev) 
+ .         {
+ .             m &lt;- if (any(n &gt; 1)) 
+ .                 n
+ .             else wt
+ .             -2 * sum(ifelse(m &gt; 0, (wt/m), 0) * dbinom(round(m * 
+ .                 y), round(m), mu, log = TRUE))
+ .         }, mu.eta = function (eta) 
+ .         .Call(C_logit_mu_eta, eta), initialize = {
+ .             if (NCOL(y) == 1) {
+ .                 if (is.factor(y)) 
+ .                   y &lt;- y != levels(y)[1L]
+ .                 n &lt;- rep.int(1, nobs)
+ .                 y[weights == 0] &lt;- 0
+ .                 if (any(y &lt; 0 | y &gt; 1)) 
+ .                   stop(&quot;y values must be 0 &lt;= y &lt;= 1&quot;)
+ .                 mustart &lt;- (weights * y + 0.5)/(weights + 1)
+ .                 m &lt;- weights * y
+ .                 if (&quot;binomial&quot; == &quot;binomial&quot; &amp;&amp; any(abs(m - round(m)) &gt; 
+ .                   0.001)) 
+ .                   warning(gettextf(&quot;non-integer #successes in a %s glm!&quot;, 
+ .                     &quot;binomial&quot;), domain = NA)
+ .             }
+ .             else if (NCOL(y) == 2) {
+ .                 if (&quot;binomial&quot; == &quot;binomial&quot; &amp;&amp; any(abs(y - round(y)) &gt; 
+ .                   0.001)) 
+ .                   warning(gettextf(&quot;non-integer counts in a %s glm!&quot;, 
+ .                     &quot;binomial&quot;), domain = NA)
+ .                 n &lt;- (y1 &lt;- y[, 1L]) + y[, 2L]
+ .                 y &lt;- y1/n
+ .                 if (any(n0 &lt;- n == 0)) 
+ .                   y[n0] &lt;- 0
+ .                 weights &lt;- weights * n
+ .                 mustart &lt;- (n * y + 0.5)/(n + 1)
+ .             }
+ .             else stop(gettextf(&quot;for the &#39;%s&#39; family, y must be a vector of 0 and 1&#39;s\nor a 2 column matrix where col 1 is no. successes and col 2 is no. failures&quot;, 
+ .                 &quot;binomial&quot;), domain = NA)
+ .         }, validmu = function (mu) 
+ .         all(is.finite(mu)) &amp;&amp; all(mu &gt; 0 &amp; mu &lt; 1), valideta = function (eta) 
+ .         TRUE, simulate = function (object, nsim) 
+ .         {
+ .             ftd &lt;- fitted(object)
+ .             n &lt;- length(ftd)
+ .             ntot &lt;- n * nsim
+ .             wts &lt;- object$prior.weights
+ .             if (any(wts%%1 != 0)) 
+ .                 stop(&quot;cannot simulate from non-integer prior.weights&quot;)
+ .             if (!is.null(m &lt;- object$model)) {
+ .                 y &lt;- model.response(m)
+ .                 if (is.factor(y)) {
+ .                   yy &lt;- factor(1 + rbinom(ntot, size = 1, prob = ftd), 
+ .                     labels = levels(y))
+ .                   split(yy, rep(seq_len(nsim), each = n))
+ .                 }
+ .                 else if (is.matrix(y) &amp;&amp; ncol(y) == 2) {
+ .                   yy &lt;- vector(&quot;list&quot;, nsim)
+ .                   for (i in seq_len(nsim)) {
+ .                     Y &lt;- rbinom(n, size = wts, prob = ftd)
+ .                     YY &lt;- cbind(Y, wts - Y)
+ .                     colnames(YY) &lt;- colnames(y)
+ .                     yy[[i]] &lt;- YY
+ .                   }
+ .                   yy
+ .                 }
+ .                 else rbinom(ntot, size = wts, prob = ftd)/wts
+ .             }
+ .             else rbinom(ntot, size = wts, prob = ftd)/wts
+ .         }, dispersion = 1), class = &quot;family&quot;), control = list(
+ .         epsilon = 1e-08, maxit = 25, trace = FALSE), intercept = TRUE, 
+ .     singular.ok = TRUE)
+5. eval(family$initialize)
+6. eval(family$initialize)
+7. stop(&quot;y values must be 0 &lt;= y &lt;= 1&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#errors are not changing the diagnosis variable to 0/1</span>
+<span class="c1">#predicting the OR instad of the probabilities, </span>
+<span class="c1">#and copying over the calibration code without changing the model name </span>
+
+<span class="nf">library</span><span class="p">(</span><span class="n">RforHDSdata</span><span class="p">)</span>
+<span class="nf">data</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span>
+
+<span class="n">breastcancer</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">breastcancer</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">diagnosis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">case_when</span><span class="p">(</span><span class="n">diagnosis</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;M&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                              </span><span class="n">diagnosis</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;B&quot;</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="m">0</span><span class="p">))</span>
+
+<span class="n">model</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">diagnosis</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">smoothness_worst</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">symmetry_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">texture_se</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">radius_mean</span><span class="p">,</span>
+<span class="w">                 </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">breastcancer</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+
+<span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+
+<span class="n">num_cuts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">11</span>
+<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_probs</span><span class="p">,</span>
+<span class="w">                          </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_cuts</span><span class="p">),</span>
+<span class="w">                          </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+
+<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">calib_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">             </span><span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">             </span><span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">observed</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">observed</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
+<span class="n">calib_data</span>
+
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="m">-1.96</span><span class="o">*</span><span class="n">se</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="m">+1.96</span><span class="o">*</span><span class="n">se</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                </span><span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
+<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">observed</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Expected Proportion&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Observed Proportion&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
+<span class="w">  </span><span class="nf">theme_minimal</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'id'</li><li>'diagnosis'</li><li>'radius_mean'</li><li>'texture_mean'</li><li>'perimeter_mean'</li><li>'area_mean'</li><li>'smoothness_mean'</li><li>'compactness_mean'</li><li>'concavity_mean'</li><li>'concave_points_mean'</li><li>'symmetry_mean'</li><li>'fractal_dimension_mean'</li><li>'radius_se'</li><li>'texture_se'</li><li>'perimeter_se'</li><li>'area_se'</li><li>'smoothness_se'</li><li>'compactness_se'</li><li>'concavity_se'</li><li>'concave_points_se'</li><li>'symmetry_se'</li><li>'fractal_dimension_se'</li><li>'radius_worst'</li><li>'texture_worst'</li><li>'perimeter_worst'</li><li>'area_worst'</li><li>'smoothness_worst'</li><li>'compactness_worst'</li><li>'concavity_worst'</li><li>'concave_points_worst'</li><li>'symmetry_worst'</li><li>'fractal_dimension_worst'</li></ol>
+</div><div class="output text_html"><table class="dataframe">
+<caption>A tibble: 11 × 4</caption>
+<thead>
+	<tr><th scope=col>bin</th><th scope=col>observed</th><th scope=col>expected</th><th scope=col>se</th></tr>
+	<tr><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(-0.001,0.0909]</td><td>0.01333333</td><td>0.01549559</td><td>0.006622073</td></tr>
+	<tr><td>(0.0909,0.182] </td><td>0.11538462</td><td>0.12584182</td><td>0.062656268</td></tr>
+	<tr><td>(0.182,0.273]  </td><td>0.25000000</td><td>0.21029868</td><td>0.125000000</td></tr>
+	<tr><td>(0.273,0.364]  </td><td>0.16666667</td><td>0.32413867</td><td>0.107582871</td></tr>
+	<tr><td>(0.364,0.455]  </td><td>0.71428571</td><td>0.40195442</td><td>0.170746944</td></tr>
+	<tr><td>(0.455,0.545]  </td><td>0.60000000</td><td>0.50139977</td><td>0.154919334</td></tr>
+	<tr><td>(0.545,0.636]  </td><td>0.60000000</td><td>0.59950487</td><td>0.154919334</td></tr>
+	<tr><td>(0.636,0.727]  </td><td>0.57142857</td><td>0.69641348</td><td>0.187043906</td></tr>
+	<tr><td>(0.727,0.818]  </td><td>0.77777778</td><td>0.76670533</td><td>0.138579903</td></tr>
+	<tr><td>(0.818,0.909]  </td><td>0.88235294</td><td>0.87169767</td><td>0.078142490</td></tr>
+	<tr><td>(0.909,1]      </td><td>0.98742138</td><td>0.98898968</td><td>0.008838308</td></tr>
+</tbody>
+</table>
+</div><img alt="../_images/ad8c079fab85a769e13725aeb5ec7705744f194c15c1c178e7591035b7e1e6ed.png" src="../_images/ad8c079fab85a769e13725aeb5ec7705744f194c15c1c178e7591035b7e1e6ed.png" />
+</div>
+</div>
 </section>
 </section>
 

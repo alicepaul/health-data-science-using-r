@@ -353,13 +353,18 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residuals-discrimination-and-calibration">Residuals, Discrimination, and Calibration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#receiver-operating-characteristic-roc-curve">Receiver Operating Characteristic (ROC) Curve</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-plot">Calibration Plot</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-selection-and-likelihood-ratio-tests">Variable Selection and Likelihood Ratio Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-beyond-binary-outcomes">Extending Beyond Binary Outcomes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>
@@ -398,7 +403,7 @@ document.write(`
 <li><p><code class="docutils literal notranslate"><span class="pre">data</span></code> - the dataset used to train the model, and</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">family</span></code> - a description of the error distribution and link function to be used in the model.</p></li>
 </ul>
-<p>In binary logistic regression, we assume a binomial outcome and use the logit link function. We can specify this by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">binomial</span></code>. By default, this will assume the link function is the logit function. Note that we can even use the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function to implement linear regression by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">gaussian</span></code>.</p>
+<p>In binary logistic regression, we assume a binomial outcome and use the logit link function. We can specify this by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">binomial</span></code>. By default, this will assume the link function is the logit function. Note that we can even use the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function to implement linear regression by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">gaussian</span></code>. Using our example from <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/10_linear_regression.html">Chapter 10</a>, running <code class="docutils literal notranslate"><span class="pre">glm(SBP~LEAD,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">nhanes_df,</span> <span class="pre">family=</span> <span class="pre">gaussian)</span></code> would be equivalent to <code class="docutils literal notranslate"><span class="pre">lm(SBP~LEAD,</span> <span class="pre">data</span> <span class="pre">=</span> <span class="pre">nhanes_df)</span></code>.</p>
 <p>Our outcome of interest will be current e-cigarette use, <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code>, so we need to create this variable from the variables that are currently in the data. We set <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code> to 0 if the respondent answered that they have not used e-cigarettes in the last 30 days and 1 otherwise. We can see that there are only 1,435 respondents who reported e-cigarette use. This is a low percentage of the overall sample, which will likely impact our results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -523,6 +528,17 @@ Number of Fisher Scoring iterations: 6
 </table>
 </div></div>
 </div>
+<section id="practice-question">
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<p>Fit a logistic regression model with cigarette use as the outcome and age, race_and_ethnicity, LGBT, and family_affluence as well as an interaction between family_affluence and race_and_ethnicity as independent variables. Your AIC should be 2430.8.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
 </section>
 <section id="residuals-discrimination-and-calibration">
 <h2>Residuals, Discrimination, and Calibration<a class="headerlink" href="#residuals-discrimination-and-calibration" title="Permalink to this headline">#</a></h2>
@@ -627,7 +643,7 @@ Number of Fisher Scoring iterations: 6
 </table>
 </div></div>
 </div>
-<p>We will use the threshold of 0.080 indicated on our ROC curve to create predicted classes for our response. By comparing the result to our outcome using the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function, we can directly calculate the sensitivity, specificity, and overall accuracy.</p>
+<p>We will use the threshold of 0.080 indicated on our ROC curve to create predicted classes for our response. By comparing the result to our outcome using the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function, we can directly calculate measures like sensitivity, specificity, positive and negative predictive values, and overall accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_ys</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.08</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
@@ -648,32 +664,37 @@ Number of Fisher Scoring iterations: 6
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sens</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
-<span class="nf">round</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span>
+<span class="n">spec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">ppv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">npv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">])</span>
+<span class="n">acc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html">0.665</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
-<span class="n">spec</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Measures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Sens&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Spec&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;PPV&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NPV&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acc&quot;</span><span class="p">),</span>
+<span class="w">          </span><span class="n">Values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span><span class="w"> </span><span class="n">spec</span><span class="p">,</span><span class="w"> </span><span class="n">ppv</span><span class="p">,</span><span class="w"> </span><span class="n">npv</span><span class="p">,</span><span class="w"> </span><span class="n">acc</span><span class="p">),</span><span class="m">3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">0.689710703399091</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">acc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">)</span>
-<span class="n">acc</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">0.687950072011522</div></div>
+<div class="output text_html"><table class="dataframe">
+<caption>A data.frame: 5 × 2</caption>
+<thead>
+	<tr><th scope=col>Measures</th><th scope=col>Values</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>Sens</td><td>0.665</td></tr>
+	<tr><td>Spec</td><td>0.690</td></tr>
+	<tr><td>PPV </td><td>0.144</td></tr>
+	<tr><td>NPV </td><td>0.963</td></tr>
+	<tr><td>Acc </td><td>0.688</td></tr>
+</tbody>
+</table>
+</div></div>
 </div>
 </section>
 <section id="calibration-plot">
@@ -732,6 +753,18 @@ Number of Fisher Scoring iterations: 6
 </div>
 <div class="cell_output docutils container">
 <img alt="../_images/beefe95f376be7e1ff8b40dd64a981dfae0ba0342a0f5cf8bbf1ca9ee7475e71.png" src="../_images/beefe95f376be7e1ff8b40dd64a981dfae0ba0342a0f5cf8bbf1ca9ee7475e71.png" />
+</div>
+</div>
+</section>
+<section id="id1">
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<p>Create a calibration plot with 15 cuts for your model from the previous practice question. It should look like this:</p>
+<a class="reference internal image-reference" href="../_images/11-practicequestion2answer.png"><img alt="“”" class="align-center" src="../_images/11-practicequestion2answer.png" style="width: 400pt;" /></a>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Insert your solution here:</span>
+</pre></div>
+</div>
 </div>
 </div>
 </section>
@@ -853,6 +886,10 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 </div>
 </div>
 </section>
+<section id="extending-beyond-binary-outcomes">
+<h2>Extending Beyond Binary Outcomes<a class="headerlink" href="#extending-beyond-binary-outcomes" title="Permalink to this headline">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the <code class="docutils literal notranslate"><span class="pre">family</span></code> argument. Below, we fit a ???</p>
+</section>
 <section id="recap-video">
 <h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
 <div class="video-container">
@@ -861,10 +898,206 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 <section id="exercises">
 <h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <ol class="arabic simple">
-<li><p>Try using <code class="docutils literal notranslate"><span class="pre">lm</span></code> for analyzing the smoking behavior as a function of variables in the <code class="docutils literal notranslate"><span class="pre">nyts</span></code> data. They can be random from your favorite or interested potential predictors. Fit a Logistic regression to your subset of data frame using <code class="docutils literal notranslate"><span class="pre">glm</span></code>. Are the estimated coefficients similar to the true ones we used?</p></li>
-<li><p>What is the estimated probability of an event at x=1,1? Use <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function but make sure to read the documentation on the type argument.</p></li>
-<li><p>Measure accuracy and precision of your model.</p></li>
+<li><p>Create a new variable <code class="docutils literal notranslate"><span class="pre">tobacco_use</span></code> representing any tobacco use in the past 30 days (including e-cigs, cigarettes, and/or cigars) as well as a new variable <code class="docutils literal notranslate"><span class="pre">perceived_tobacco_use</span></code> equal to the maximum of the perceived cigarette and e-cig use. Then, create a new data frame <code class="docutils literal notranslate"><span class="pre">nyts_sub</span></code> that contains these two new columns as well as columns for sex, grades in the past year, psych distress, and family affluence. <br> <br> Fit a logistic regression model with this new tobacco use variable as the outcome and all other selected variables as independent variables.</p></li>
 </ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">num_e_cigs</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_cigarettes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_cigars</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                       </span><span class="n">perceived_tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">pmax</span><span class="p">(</span><span class="n">perceived_cigarette_use</span><span class="p">,</span><span class="w"> </span><span class="n">perceived_e_cig_use</span><span class="p">))</span>
+<span class="n">nyts_sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">sex</span><span class="p">,</span><span class="w"> </span><span class="n">grades_in_past_year</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">psych_distress</span><span class="p">,</span><span class="w"> </span><span class="n">family_affluence</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                </span><span class="n">tobacco_use</span><span class="p">,</span><span class="w"> </span><span class="n">perceived_tobacco_use</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span>
+
+<span class="n">mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">tobacco_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grades_in_past_year</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">psych_distress</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w">           </span><span class="n">family_affluence</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">perceived_tobacco_use</span><span class="p">,</span>
+<span class="w">           </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts_sub</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+
+<span class="nf">summary</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Call:
+glm(formula = tobacco_use ~ sex + grades_in_past_year + psych_distress + 
+    family_affluence + perceived_tobacco_use, family = binomial, 
+    data = nyts_sub)
+
+Coefficients:
+                                        Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)                             -3.88806    0.11356 -34.239  &lt; 2e-16
+sexFemale                               -0.12346    0.06560  -1.882   0.0598
+grades_in_past_yearMostly B&#39;s            0.44562    0.08006   5.566 2.61e-08
+grades_in_past_yearMostly C&#39;s            0.71638    0.09264   7.733 1.05e-14
+grades_in_past_yearMostly D&#39;s            0.70974    0.13269   5.349 8.85e-08
+grades_in_past_yearMostly F&#39;s            0.68605    0.14667   4.677 2.90e-06
+grades_in_past_yearNone of these grades  1.08074    0.25630   4.217 2.48e-05
+grades_in_past_yearNot Sure              0.30693    0.13340   2.301   0.0214
+psych_distressmoderate                   0.17673    0.09702   1.822   0.0685
+psych_distressnone                      -0.47890    0.08276  -5.787 7.19e-09
+psych_distresssevere                     0.37367    0.09324   4.008 6.13e-05
+family_affluencelow                     -0.08462    0.08257  -1.025   0.3054
+family_affluencemedium                  -0.08106    0.07380  -1.098   0.2721
+perceived_tobacco_use                    2.41085    0.10257  23.503  &lt; 2e-16
+                                           
+(Intercept)                             ***
+sexFemale                               .  
+grades_in_past_yearMostly B&#39;s           ***
+grades_in_past_yearMostly C&#39;s           ***
+grades_in_past_yearMostly D&#39;s           ***
+grades_in_past_yearMostly F&#39;s           ***
+grades_in_past_yearNone of these grades ***
+grades_in_past_yearNot Sure             *  
+psych_distressmoderate                  .  
+psych_distressnone                      ***
+psych_distresssevere                    ***
+family_affluencelow                        
+family_affluencemedium                     
+perceived_tobacco_use                   ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 8756.9  on 16891  degrees of freedom
+Residual deviance: 7767.1  on 16878  degrees of freedom
+AIC: 7795.1
+
+Number of Fisher Scoring iterations: 6
+</pre></div>
+</div>
+</div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Perform stepwise selection on your model from Question 1 with <code class="docutils literal notranslate"><span class="pre">direction</span> <span class="pre">=</span> <span class="pre">&quot;both&quot;</span></code>, setting the upper scope of the model selection procedure to be a model including all two-way interactions and the lower scope to be a model including only an intercept. To specify all possible interactions you can use the formula <code class="docutils literal notranslate"><span class="pre">&quot;tobacco_use</span> <span class="pre">~</span> <span class="pre">.^2&quot;</span></code>. <br> <br> Use the <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> function to display the exponentiated estimated coefficients for the resulting model along with a confidence interval.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;both&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tobacco_use ~ 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tobacco_use ~ .^2&quot;</span><span class="p">))</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Start:  AIC=7795.15
+tobacco_use ~ sex + grades_in_past_year + psych_distress + family_affluence + 
+    perceived_tobacco_use
+
+                                            Df Deviance    AIC
+- family_affluence                           2   7768.6 7792.6
++ family_affluence:perceived_tobacco_use     2   7761.0 7793.0
++ grades_in_past_year:perceived_tobacco_use  6   7755.0 7795.0
+&lt;none&gt;                                           7767.1 7795.1
++ sex:perceived_tobacco_use                  1   7766.3 7796.3
+- sex                                        1   7770.7 7796.7
++ sex:family_affluence                       2   7765.2 7797.2
++ psych_distress:perceived_tobacco_use       3   7764.3 7798.3
++ sex:psych_distress                         3   7765.9 7799.9
++ sex:grades_in_past_year                    6   7760.7 7800.7
++ psych_distress:family_affluence            6   7763.7 7803.7
++ grades_in_past_year:family_affluence      12   7753.5 7805.5
++ grades_in_past_year:psych_distress        18   7753.7 7817.7
+- grades_in_past_year                        6   7853.2 7869.2
+- psych_distress                             3   7879.5 7901.5
+- perceived_tobacco_use                      1   8367.5 8393.5
+
+Step:  AIC=7792.62
+tobacco_use ~ sex + grades_in_past_year + psych_distress + perceived_tobacco_use
+
+                                            Df Deviance    AIC
++ grades_in_past_year:perceived_tobacco_use  6   7756.5 7792.5
+&lt;none&gt;                                           7768.6 7792.6
++ sex:perceived_tobacco_use                  1   7767.7 7793.7
+- sex                                        1   7772.1 7794.1
++ family_affluence                           2   7767.1 7795.1
++ psych_distress:perceived_tobacco_use       3   7765.8 7795.8
++ sex:psych_distress                         3   7767.3 7797.3
++ sex:grades_in_past_year                    6   7762.2 7798.2
++ grades_in_past_year:psych_distress        18   7755.2 7815.2
+- grades_in_past_year                        6   7854.4 7866.4
+- psych_distress                             3   7880.0 7898.0
+- perceived_tobacco_use                      1   8370.8 8392.8
+
+Step:  AIC=7792.51
+tobacco_use ~ sex + grades_in_past_year + psych_distress + perceived_tobacco_use + 
+    grades_in_past_year:perceived_tobacco_use
+
+                                            Df Deviance    AIC
+&lt;none&gt;                                           7756.5 7792.5
+- grades_in_past_year:perceived_tobacco_use  6   7768.6 7792.6
++ sex:perceived_tobacco_use                  1   7755.2 7793.2
+- sex                                        1   7760.0 7794.0
++ family_affluence                           2   7755.0 7795.0
++ psych_distress:perceived_tobacco_use       3   7753.7 7795.7
++ sex:psych_distress                         3   7755.1 7797.1
++ sex:grades_in_past_year                    6   7749.1 7797.1
++ grades_in_past_year:psych_distress        18   7743.3 7815.3
+- psych_distress                             3   7867.2 7897.2
+</pre></div>
+</div>
+<div class="output text_html"><table class="dataframe">
+<caption>A tibble: 18 × 7</caption>
+<thead>
+	<tr><th scope=col>term</th><th scope=col>estimate</th><th scope=col>std.error</th><th scope=col>statistic</th><th scope=col>p.value</th><th scope=col>conf.low</th><th scope=col>conf.high</th></tr>
+	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><td>(Intercept)                                                  </td><td> 0.01563026</td><td>0.14662251</td><td>-28.3622655</td><td>5.908656e-177</td><td> 0.01165638</td><td> 0.02071553</td></tr>
+	<tr><td>sexFemale                                                    </td><td> 0.88384446</td><td>0.06566275</td><td> -1.8804296</td><td> 6.004956e-02</td><td> 0.77714216</td><td> 1.00532696</td></tr>
+	<tr><td>grades_in_past_yearMostly B's                                </td><td> 2.25483625</td><td>0.17781137</td><td>  4.5726960</td><td> 4.814885e-06</td><td> 1.59267608</td><td> 3.19972002</td></tr>
+	<tr><td>grades_in_past_yearMostly C's                                </td><td> 2.11732252</td><td>0.21626463</td><td>  3.4686778</td><td> 5.230263e-04</td><td> 1.37905746</td><td> 3.22265860</td></tr>
+	<tr><td>grades_in_past_yearMostly D's                                </td><td> 3.49790920</td><td>0.29804219</td><td>  4.2013025</td><td> 2.653837e-05</td><td> 1.91152076</td><td> 6.16568247</td></tr>
+	<tr><td>grades_in_past_yearMostly F's                                </td><td> 2.29600411</td><td>0.36410143</td><td>  2.2827987</td><td> 2.244223e-02</td><td> 1.08113291</td><td> 4.53144860</td></tr>
+	<tr><td>grades_in_past_yearNone of these grades                      </td><td> 2.50628212</td><td>0.55471991</td><td>  1.6563322</td><td> 9.765457e-02</td><td> 0.73289912</td><td> 6.66692966</td></tr>
+	<tr><td>grades_in_past_yearNot Sure                                  </td><td> 2.28343612</td><td>0.25513872</td><td>  3.2362057</td><td> 1.211300e-03</td><td> 1.36304990</td><td> 3.71583999</td></tr>
+	<tr><td>psych_distressmoderate                                       </td><td> 1.19179586</td><td>0.09700587</td><td>  1.8087699</td><td> 7.048676e-02</td><td> 0.98491802</td><td> 1.44085987</td></tr>
+	<tr><td>psych_distressnone                                           </td><td> 0.62244060</td><td>0.08282143</td><td> -5.7244493</td><td> 1.037698e-08</td><td> 0.52949987</td><td> 0.73268415</td></tr>
+	<tr><td>psych_distresssevere                                         </td><td> 1.45019753</td><td>0.09317955</td><td>  3.9890703</td><td> 6.633276e-05</td><td> 1.20807277</td><td> 1.74094610</td></tr>
+	<tr><td>perceived_tobacco_use                                        </td><td>16.03929793</td><td>0.19667771</td><td> 14.1095902</td><td> 3.314989e-45</td><td>10.94623462</td><td>23.67469588</td></tr>
+	<tr><td>grades_in_past_yearMostly B's:perceived_tobacco_use          </td><td> 0.53621350</td><td>0.26454793</td><td> -2.3558033</td><td> 1.848270e-02</td><td> 0.31897475</td><td> 0.90010780</td></tr>
+	<tr><td>grades_in_past_yearMostly C's:perceived_tobacco_use          </td><td> 0.91383505</td><td>0.30988246</td><td> -0.2907722</td><td> 7.712256e-01</td><td> 0.49923388</td><td> 1.68327805</td></tr>
+	<tr><td>grades_in_past_yearMostly D's:perceived_tobacco_use          </td><td> 0.40776264</td><td>0.43409981</td><td> -2.0665064</td><td> 3.878069e-02</td><td> 0.17588512</td><td> 0.96689596</td></tr>
+	<tr><td>grades_in_past_yearMostly F's:perceived_tobacco_use          </td><td> 0.75946483</td><td>0.48740534</td><td> -0.5645019</td><td> 5.724126e-01</td><td> 0.29947993</td><td> 2.03455802</td></tr>
+	<tr><td>grades_in_past_yearNone of these grades:perceived_tobacco_use</td><td> 1.25553624</td><td>0.73663210</td><td>  0.3089232</td><td> 7.573799e-01</td><td> 0.31848928</td><td> 5.91392786</td></tr>
+	<tr><td>grades_in_past_yearNot Sure:perceived_tobacco_use            </td><td> 0.40807972</td><td>0.38308534</td><td> -2.3396685</td><td> 1.930086e-02</td><td> 0.19341789</td><td> 0.87039297</td></tr>
+</tbody>
+</table>
+</div></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>According to your model from Question 2, what is the estimated probability of tobacco use for a girl with mostly C’s, moderate psych distress, and a perceived tobacco use of 0.5? Use the <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function to answer this question.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">new_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">sex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Female&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">grades_in_past_year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mostly C&#39;s&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">psych_distress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;moderate&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                       </span><span class="n">perceived_tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span>
+
+<span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_data</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><strong>1:</strong> 0.117747179807868</div></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Construct an ROC curve for the model from Question 2 and find the AUC as well as the threshold that maximizes sensitivity and specificity.</p></li>
+</ol>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                    </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">print.thres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/6d494c9dbb42c9b9e3491f9e28d9499ae2c35665da550827271951f76f353126.png" src="../_images/6d494c9dbb42c9b9e3491f9e28d9499ae2c35665da550827271951f76f353126.png" />
+</div>
+</div>
 </section>
 </section>
 
@@ -935,13 +1168,18 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generalized-linear-models-in-r">Generalized Linear Models in R</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#practice-question">Practice Question</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residuals-discrimination-and-calibration">Residuals, Discrimination, and Calibration</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#receiver-operating-characteristic-roc-curve">Receiver Operating Characteristic (ROC) Curve</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#calibration-plot">Calibration Plot</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Practice Question</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-selection-and-likelihood-ratio-tests">Variable Selection and Likelihood Ratio Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#extending-beyond-binary-outcomes">Extending Beyond Binary Outcomes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap-video">Recap Video</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exercises">Exercises</a></li>
 </ul>

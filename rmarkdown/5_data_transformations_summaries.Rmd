@@ -8,7 +8,7 @@ output: html_document
 In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html).
 
 ```{r}
-library(RforHDSdata)
+suppressPackageStartupMessages(library(RforHDSdata))
 suppressPackageStartupMessages(library(tidyverse))
 data(NHANESsample)
 ```
@@ -35,7 +35,7 @@ print(head(nhanes_df))
 
 We mention tibbles here since some functions in the `tidyverse` package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed. 
 
-## Subsetting Data using `select`, `filter`, and `slice`
+## Subsetting Data 
 
 In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()` function. The `dplyr` package has its own functions that are useful to subset the data. The `select()` function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%`. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.  
 
@@ -100,13 +100,15 @@ nhanes_df %>%
 
 ### Practice Question
 
-Filter the data to only those with an education level of more than HS who report alcohol use, select the diastolic blood pressure variables, and display the 4th and 10th rows. 
+Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the data below.
+
+<img src="images/5-practicequestion1answer.png" alt= “” width="200pt" align="center">
 
 ```{r}
-# Solution:
+# Insert your solution here:
 ```
 
-## Updating Rows and Columns using `rename`, `mutate`, and `arrange`
+## Updating Rows and Columns
 
 The next few functions we will look at will allow us to update the rows and columns in our data. For example, the `rename()` function allows us to change the names of columns. Below, we change the name of `INCOME` to `PIR` since this variable is the poverty income ratio and also update the name of `SMOKE` to be `SMOKE_STATUS`. When specifying these names, the new name is on the left of the `=` and the old name is on the right.
 
@@ -151,13 +153,13 @@ nhanes_df %>%
 
 ### Practice Question
 
-Create a new column called `DBP_CHANGE` that is equal to the difference between a patient's first and last diastolic blood pressure readings. Then, sort the dataframe by this new column in increasing order.
+Create a new column called `DBP_CHANGE` that is equal to the difference between a patient's first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four `DBP_CHANGE` values in the head of the resulting dataset should be -66, -64, -64, and -62.
 
 ```{r}
-# Solution:
+# Insert your solution here:                    
 ```
 
-## Summarizing using `summarize` and `group_by`
+## Summarizing and Grouping
 
 If we wanted to understand how many observations there are for each given race category, we could use the `table()` function as we described in earlier chapters. Another similar function is the `count()` function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!
 
@@ -171,7 +173,8 @@ Finding the counts like we did above is a form of a summary statistic for our da
 ```{r}
 nhanes_df %>%
   filter(RACE == "Non-Hispanic Black") %>%
-  summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), MEAN_DBP = mean(DBP1, na.rm=TRUE))
+  summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), 
+            MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
 If we wanted to repeat this for the other race groups, we would have to change the arguments to the `filter()` function each time. To avoid having to repeat our code and/or do this multiple times, we can use the `group_by()` function, which takes a data frame and one or more columns with which to group the data by. Below, we group using the `RACE` variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the `slice()` function with index 1, it will return the first row for each group.
@@ -187,7 +190,8 @@ Grouping data is very helpful in combination with the `summarize()` function. Li
 ```{r}
 nhanes_df %>% 
   group_by(RACE) %>%
-  summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), MEAN_DBP = mean(DBP1, na.rm=TRUE))
+  summarize(TOT = n(), MEAN_SBP = mean(SBP1, na.rm=TRUE), 
+            MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
 After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the `ungroup()` function, which restores the data to a single data frame. After ungrouping by race below, we can see that we get a single observation returned by the `slice()` function.
@@ -203,32 +207,31 @@ nhanes_df %>%
 
 ### Practice Question
 
-Create a data frame summarizing the percent of patients with hypertension by age and smoking status. 
+Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like this: 
+
+<img src="images/5-practicequestion3answer.png" alt= “” width="200pt" align="center">
 
 ```{r}
-# Solution:
+# Insert your solution here:
 ```
 
 ## Recap Video
 
 <div class="video-container">
-    <iframe width="700" height="500" src="https://www.youtube.com/embed/-N7wWwXjQaQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    <iframe width="700" height="500" src="https://www.youtube.com/embed/IeRMFCCuxwc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
 ## Exercises
 
-The following exercises use the **covidcases** dataset from the `RforHDSdata` package.
+The following exercises use the `covidcases` dataset from the `RforHDSdata` package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
 
 ```{r}
 data(covidcases)
-names(covidcases)
 ```
 
-1. Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West. Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast. 
+1. Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using [this list](https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States) of which states are in which region or you can use [state.region](https://search.r-project.org/CRAN/refmans/usa/html/state.region.html) from the `datasets` package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast. 
 
 ```{r}
-##link to wikipedia or do state.region
-
 covidcases <- covidcases %>%
           mutate(region = case_when(state %in% c("Connecticut", 
                                                  "Maine", 
@@ -297,29 +300,23 @@ summarize(avg = mean(weekly_cases, na.rm=TRUE),
 arrange(desc(avg)) 
 ```
 
-3. Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data.
+3. Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use `?slice_min` to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values. 
 
 ```{r}
 covidcases %>% ungroup() %>%
   filter(region == "Midwest" & week == 15) %>%
-  slice_min(order_by = weekly_deaths, n=10)
+  slice_min(order_by = weekly_deaths, n=10, with_ties = FALSE)
 ```
 
-4. Create new variables specifying the monthly cases and deaths for each county, and then display the counties with the 5 highest monthly cases.
+4. Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases. 
 
 ```{r}
 covidcases %>%
-  mutate(month = case_when(between(week, 9, 12) ~ "March",
-                           between(week, 13, 16) ~ "April",
-                           between(week, 17, 20) ~ "May",
-                           between(week, 21, 24) ~ "June",
-                           between(week, 25, 28) ~ "July",
-                           between(week, 29, 32) ~ "August",
-                           between(week, 33, 36) ~ "September")) %>%
-  group_by(region, state, county, month) %>%
-  summarize(monthly_cases = sum(weekly_cases),
-            monthly_deaths = sum(weekly_deaths)) %>%
+  filter(between(week, 9, 20)) %>%
+  group_by(state, county) %>%
+  summarize(total_cases = sum(weekly_cases)) %>%
   ungroup() %>% 
-  slice_max(order_by = monthly_cases, n = 5)
+  group_by(state) %>% 
+  slice_max(order_by = total_cases, n = 1)
 ```
 
