@@ -12,7 +12,7 @@ This chapter will introduce you to R Markdown, which is a document format that c
 To create an R Markdown file, you will need to have RStudio installed as an application. You'll also need to install the `rmarkdown` package in addition to the `knitr` package. We also recommend the `bookdown` package, which allows us to create section, figure, and table references, as well as the `kableExtra` package for formatting your tables.
 
 
-Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in [Chapter 1](https://alicepaul.github.io/r-for-health-data-science/book/1_intro_to_r.html). Just like opening a new R file, you'll want to go to File -> New File, but instead of selecting 'R Script', you'll now select 'R Markdown...'. This should bring up a window that looks like the following:
+Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in [Chapter 1](https://alicepaul.github.io/health-data-science-in-r/book/1_intro_to_r.html). Just like opening a new R file, you'll want to go to File -> New File, but instead of selecting 'R Script', you'll now select 'R Markdown...'. This should bring up a window that looks like the following:
 
 <img src="images/12-new-r-markdown-window.png" alt= “” width="400pt" align="center">
 
@@ -49,25 +49,26 @@ You can specify whether you want to include the code and/or its various output i
 
 To customize a single code chunk, you can either type one of the above commands next to the `{r}` at the top of the code chunk by yourself or you can click on the 'Modify Chunk Options' symbol <i class="fa-gear fa" style="font-size: 22px; color: gray;"></i> at the top right of the code chunk and change the settings there.
 
-To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with ` ```{r setup, include=FALSE} ` using the `knitr::opts_chunk$set` function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the `library()` function. For example, below we load the `tidyverse` and `RforHDSdata` packages. 
+To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with ` ```{r setup, include=FALSE} ` using the `knitr::opts_chunk$set` function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the `library()` function. For example, below we load the `tidyverse` and `HDSinRdata` packages. 
 
+````
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE)
+library(tidyverse)
+library(HDSinRdata)
+```
+````
 
 If you want to display the code for your report in a code appendix, you can easily do this by creating an empty code chunk at the end of your .Rmd file with these chunk options `ref.label=knitr::all_labels()`, `echo = TRUE`, and `eval = FALSE`. 
 
-```
-
+````
 ```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE} 
-
 ```
-
-```
-
-```    
-
-```
+````
 
 You can also have inline R code by using single backticks around your code `` `r max(c(1,2,3)) ` ``. The code must start with `r` to be run when knit. This allows you to reference variables in your text. For example, we could display the variance of a column in our data without having to copy the value over. 
 
+`` `r round(var(cars$speed),2)` ``
 
 ## Formatting Text in Markdown
 
@@ -81,15 +82,15 @@ To add text to your report, you can simply type directly into the R Markdown fil
 
 `` `code text` `` `code text`
 
-To create headers and sections, you can add the `#` symbol in front of your text. Adding more of these symbols makes the headers smaller, which is useful for making subheaders.
+To create headers and sections, you can add the `#` symbol in front of your text. Adding more of these symbols makes the headers smaller, which is useful for making subheaders. 
 
 `# Header` 
+
 `## Smaller Header`
+
 `### Even Smaller Header` 
 
-# <center>Header</center>
-## <center>Smaller Header</center>
-### <center>Even Smaller Header</center>
+<img src="images/12-headers.png" alt= “” width="250pt" align="center">
 
 You can also add links `[text](www.example.com)` and images `![alt text](image.png)`
 
@@ -107,22 +108,48 @@ Often, you'll want to include figures generated by your code in your report, and
 
 By default, the figures generated by your code chunks are allowed to 'float' in R Markdown - this means that the figures might move away from where they were coded or referenced in the final report. If you don't want this to happen, you can customize the chunk that contains the code to produce the figure by adding `fig.pos = "H"` to that chunk's options. If you want to prevent floating for all figures, add `fig.pos = "H", out.extra = ''` to the first code chunk in the file (the one that starts with the `knitr::opts_chunk$set` function).
 
+````
+```{r myfigure, fig.cap="Figure of Average Radius vs. Diagnosis", out.width="75%", 
+    fig.pos="H"}
+data(breastcancer)
+ggplot(breastcancer) + 
+  geom_boxplot(aes(x = diagnosis, y = radius_mean), fill = 'lightblue') +
+  theme_bw() + 
+  labs(y = "Average Radius") + 
+  scale_x_discrete("Diagnosis", labels = c("Benign", "Malignant"))
+```
+````
 
 <img src="images/12-example-figure.png" alt= “” width="600pt" align="center">
 
 If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the `gt` and `kableExtra` packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries. 
 
-To demonstrate the abilities of these package, let's suppose that we wanted to display the head of the first few columns of the `breastcancer` dataset from the `RforHDSdata` package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.
+To demonstrate the abilities of these package, let's suppose that we wanted to display the head of the first few columns of the `breastcancer` dataset from the `HDSinRdata` package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.
 
+````
+```{r}
+breastcancer %>% select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>% head()
+```
+````
 
 <img src="images/12-unformatted-table.png" alt= “” width="500pt" align="center">
 
 We use the `kable()` and `kable_styling()` functions from the `kableExtra` package to produce a more nicely formatted table. The `kable()` function generates a table from a data frame. The `kable()` function allows you to specify some display options for your table. For example, you can add a caption to your table using the `caption` argument, and you can change the names of the columns in the table using the `col.names` argument. The `kable_styling()` has additional options available. Similar to the `fig.pos = H` command described for figures in the previous section, adding "HOLD_position" to the `kable_styling()` function will prevent the table from floating on the report; adding `"scale_down"` scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the [kable](https://www.rdocumentation.org/packages/knitr/versions/1.43/topics/kable) and [kable_styling](https://www.rdocumentation.org/packages/kableExtra/versions/1.3.4/topics/kable_styling) functions for more options available. 
 
+````
+```{r}
+breastcancer %>% 
+  select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>% 
+  head() %>% 
+  kable(caption = "Head of the Breast Cancer Dataset", 
+      col.names = c("ID", "Diagnosis", "Mean Radius", "Mean Texture", "Mean Perimeter")) %>%   
+  kable_styling(latex_options = c("scale_down", "HOLD_position"))
+```
+````
 
 <img src="images/12-formatted-table.png" alt= “” width="500pt" align="center">
 
-Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html), we also introduced the `gt` package. This package is an alternative package to `kableExtra` that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the [package introduction](https://gt.rstudio.com/articles/intro-creating-gt-tables.html) for more details about this package. An example `gt` table is given below.
+Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html), we also introduced the `gt` package. This package is an alternative package to `kableExtra` that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the [package introduction](https://gt.rstudio.com/articles/intro-creating-gt-tables.html) for more details about this package. An example `gt` table is given below.
 
 <img src="images/12-gt-example.png" alt= “” width="350pt" align="center">
 
@@ -130,11 +157,17 @@ Above, we can see that kable produces a much nicer table in the knitted pdf that
 
 R Markdown automatically adds figure and table numbers to the figures and tables in your report. The `bookdown` package allows us to add references. To use this package, make sure you have installed the `bookdown` package and then add the following text to the top of your .Rmd file, next to "output".
 
+```
+output:
+  bookdown::pdf_document2:
+    toc: false
+```
 
 The above code specifies that you would like to knit your file to a pdf document. If you would like to knit your file to an html or word document instead, you could type `bookdown::html_document2` or `bookdown::word_document2`. The `toc: false` indicates that you do not want to include a table of contents in the report - if you do want one, you can simply type `toc:true` instead. Once you've done this, you can reference figures and tables using their names: `\@ref(fig:figname))` or `\@ref(tab:tablename)`. The knitted pdf will substitute the appropriate figure or table number into your text. 
 
 Additionally, we can reference sections by adding in labels to the section header. For example, we added the tag `#awesome` for the section below and can now reference it using `\@ref{awesome}`.
 
+`## Awesome Stuff {#awesome}`
 
 ## Adding in Equations 
 
@@ -152,5 +185,5 @@ If you want to learn more about how to write in LaTeX, [Art of Problem Solving](
 
 ## Exercises
 
-The exercise for this chapter is to recreate the following pdf created from an R Markdown file. You will need to use the `breastcancer` dataset from the `RforHDSdata` package.
+The exercise for this chapter is to recreate [this example pdf](https://github.com/alicepaul/health-data-science-in-r/blob/main/book/docs/ExampleRMarkdown.pdf) created from an R Markdown file. You will need to use the `breastcancer` dataset from the `HDSinRdata` package.
 

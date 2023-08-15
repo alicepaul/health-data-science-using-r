@@ -12,7 +12,7 @@ We will use the `tidyverse`, `gt`, and `gtsummary` packages to help manipulate a
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(car))
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 suppressPackageStartupMessages(library(gt))
 suppressPackageStartupMessages(library(gtsummary))
 data(tex_itop)
@@ -42,8 +42,7 @@ Some of the counties are so small that we may want to consider dropping them fro
 mean(county_rates_2021, na.rm=TRUE)
 ```
 
-Within R we can also calculate a confidence interval for this mean. Recall that a $(1-\alpha)$%  confidence interval for the mean is given by the equation below, where $\hat{\mu}$ is our sample mean, $\hat{\sigma}^2$ is the sample variance, and $n$ is the number of observations.
-$$\hat{\mu} \pm z_{1-\alpha/2} \cdot \frac{\hat{\sigma}}{\sqrt{n}}$$
+Within R we can also calculate a confidence interval for this mean. Recall that a $(1-\alpha)$%  confidence interval for the mean is given by the equation $\hat{\mu} \pm z_{1-\alpha/2} \cdot \frac{\hat{\sigma}}{\sqrt{n}}$, where $\hat{\mu}$ is our sample mean, $\hat{\sigma}^2$ is the sample variance, and $n$ is the number of observations.
 
 Below, we use this formula to calculate a 95% confidence interval for the mean abortion rate among counties:
 
@@ -265,7 +264,7 @@ Repeat the Chi-Squared test, but this time use the RUCC codes instead of the `ur
 
 ## Adding Hypothesis Tests to Summary Tables
 
-In [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html), we used the `gt` and `gtsummary` packages to create summary tables of variables. When creating a stratified table (done by add the `by` argument), we can automatically add p-values for hypothesis tests comparing across populations using the `add_p()` function. By default, the `add_p()` function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the `by` variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher's Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.
+In [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html), we used the `gt` and `gtsummary` packages to create summary tables of variables. When creating a stratified table (done by add the `by` argument), we can automatically add p-values for hypothesis tests comparing across populations using the `add_p()` function. By default, the `add_p()` function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the `by` variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher's Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.
 
 ```{r}
 tbl_summary(tex_itop, include = c(total_rate, white_rate, asian_rate, 
@@ -287,7 +286,7 @@ We observe that a Kruskal-Wallis rank sum test was used to compare abortion rate
 
 ## Exercises
 
-For the following exercises, we will be using the `pain` data from the `RforHDSdata` package.
+For the following exercises, we will be using the `pain` data from the `HDSinRdata` package.
 
 ```{r}
 data(pain)
@@ -295,53 +294,11 @@ data(pain)
 
 1. Determine whether the presence or absence of follow-up information is significantly associated with the initial average pain intensity. What do the results suggest?
 
-```{r}
-pain_df <- pain[complete.cases(subset(pain, select=-c(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))), ]
-pain_df$HAS_FOLLOW_UP <- !is.na(pain_df$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)
-t.test(PAIN_INTENSITY_AVERAGE~HAS_FOLLOW_UP, data=pain_df)
-```
-
-2. First, plot `PROMIS_PAIN_BEHAVIOR` grouped by race (you can use the `PAT_RACE_CAT` variable that we defined in [Chapter 7](https://alicepaul.github.io/r-for-health-data-science/book/7_visualization_ggplot.html)). What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.
-
-```{r}
-pain_df$PAT_RACE_CAT <- as.factor(ifelse(pain_df$PAT_RACE %in% c("BLACK", "WHITE"), pain_df$PAT_RACE, "OTHER"))
-ggplot(pain_df) + geom_density(aes(x = PROMIS_PAIN_BEHAVIOR, y = ..scaled.., fill = PAT_RACE_CAT), alpha = 0.5)
-
-aov_res <- aov(PROMIS_PAIN_BEHAVIOR~PAT_RACE_CAT, data=pain_df)
-summary(aov_res)
-```
+2. First, plot `PROMIS_PAIN_BEHAVIOR` grouped by race (you can use the `PAT_RACE_CAT` variable that we defined in [Chapter 7](https://alicepaul.github.io/health-data-science-in-r/book/7_visualization_ggplot.html)). What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.
 
 3. Examine the association between `CCI_BIN` and `MEDICAID_BIN`. Are these variable significantly related to each other? How would you describe their relationship?
 
-```{r}
-chi_sq <- chisq.test(pain_df$CCI_BIN, 
-           pain_df$MEDICAID_BIN)
-chi_sq
-chi_sq$p.value
-```
+4. Recreate the summary table below. Then, recreate the p-values for `PROMIS_DEPRESSION`, `PROMIS_ANXIETY`, and `MEDICAID_BIN` using the appropriate tests. 
 
-4. Create a table of the percentages of people with pain in each region of the body stratified by whether or not they had follow up information, and add p_values to the table. Which body regions were selected significantly more for those with follow-up compared to those without?
-
-```{r}
-pain_df <- pain_df %>% mutate(Back = ifelse(if_any(c(X208, X209, X218, X219, X212, X213),  ~ . == 1), 1, 0),
-                             Neck = ifelse(if_any(c(X105, X106, X205, X206),  ~ . == 1), 1, 0),
-                             Shoulders = ifelse(if_any(c(X107, X110, X207, X210),  ~ . == 1), 1, 0),
-                             Chest_Abs = ifelse(if_any(c(X108, X109, X112, X113),  ~ . == 1), 1, 0),
-                             Legs = ifelse(if_any(c(X126, X127, X228, X229, X131, X132, X233, X234),  ~ . == 1), 1, 0),
-                             Arms = ifelse(if_any(c(X111, X114, X211, X214, X115, X116, X117, X118, X217, X220),  ~ . == 1), 1, 0),
-                             Wrists_Hands = ifelse(if_any(c(X119, X124, X221, X226, X125, X128, X227, X230),  ~ . == 1), 1, 0),
-                             Elbows = ifelse(if_any(c(X215, X216),  ~ . == 1), 1, 0),
-                             Feet_Ankles = ifelse(if_any(c(X135, X136, X237, X238, X133, X134, X235, X236),  ~ . == 1), 1, 0),
-                             Knees = ifelse(if_any(c(X129, X130, X231, X232),  ~ . == 1), 1, 0),
-                             Head = ifelse(if_any(c(X101, X102, X103, X104, X201, X203, X202, X204),  ~ . == 1), 1, 0),
-                             Hips = ifelse(if_any(c(X120, X121, X122, X123, X222, X223, X224, X225),  ~ . == 1), 1, 0))
-
-
-tbl_summary(pain_df, include = c(Back, Neck, Shoulders, Chest_Abs, Legs, Arms, 
-                                 Wrists_Hands, Elbows, Feet_Ankles, Knees, Head, Hips),
-           by = "HAS_FOLLOW_UP") %>% 
-  add_p() %>%
-  as_gt() %>% 
-  gt:::as.tags.gt_tbl()
-```
+<img src="images/9-exercise4.png" alt= “” width="500pt" align="center">
 

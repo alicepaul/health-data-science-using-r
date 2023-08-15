@@ -1216,152 +1216,24 @@ document.write(`
 <ol class="arabic simple">
 <li><p>Print summary statistics for the <code class="docutils literal notranslate"><span class="pre">PROMIS_PHYSICAL_FUNTION</span></code> and <code class="docutils literal notranslate"><span class="pre">PROMIS_ANXIETY</span></code> columns in this dataset. Read the data documentation for these two columns, which both have range 0 to 100, and then comment on the distributions of these columns.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PROMIS_PHYSICAL_FUNCTION</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PROMIS_ANXIETY</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  15.40   30.60   35.39   35.27   39.37   73.33 
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
-  32.87   49.27   56.49   56.28   63.35   84.90      87 
-</pre></div>
-</div>
-</div>
-</div>
 <ol class="arabic simple" start="2">
 <li><p>Create frequency tables for the values of <code class="docutils literal notranslate"><span class="pre">PAT_SEX</span></code> and <code class="docutils literal notranslate"><span class="pre">PAT_RACE</span></code> and summarize what these tables tell you about the distributions of these demographic characteristics.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_SEX</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>female   male 
- 13102   8556 
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>         AAPI         AI/AN         BLACK NOT SPECIFIED         WHITE 
-          162            60          3229           126         17940 
-</pre></div>
-</div>
-</div>
-</div>
 <ol class="arabic simple" start="3">
 <li><p>Create a new data frame called <code class="docutils literal notranslate"><span class="pre">pain.new</span></code> that doesn’t contain patients with NA values for both <code class="docutils literal notranslate"><span class="pre">GH_MENTAL_SCORE</span></code> and <code class="docutils literal notranslate"><span class="pre">GH_PHYSICAL_SCORE</span></code>, which are the PROMIS global mental and physical scores, respectively.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain.new</span> <span class="o">&lt;-</span> <span class="n">pain</span><span class="p">[</span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">GH_MENTAL_SCORE</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">GH_PHYSICAL_SCORE</span><span class="p">),]</span>
-</pre></div>
-</div>
-</div>
-</div>
 <ol class="arabic simple" start="4">
 <li><p>Create a vector of the proportion of patients who reported pain in each of the pain regions. Then, find the minimum, median, mean, maximum, standard deviation, and variance of this vector.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">colsums</span> <span class="o">&lt;-</span> <span class="nf">colSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="o">:</span><span class="m">75</span><span class="p">)],</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span><span class="o">/</span><span class="nf">nrow</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span>
-
-<span class="n">colsum_summary</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">Min</span> <span class="o">=</span>  <span class="nf">min</span><span class="p">(</span><span class="n">colsums</span><span class="p">),</span>
-                             <span class="n">Median</span> <span class="o">=</span> <span class="nf">median</span><span class="p">(</span><span class="n">colsums</span><span class="p">),</span>
-                             <span class="n">Mean</span>  <span class="o">=</span> <span class="nf">mean</span><span class="p">(</span><span class="n">colsums</span><span class="p">),</span>
-                             <span class="n">Max</span> <span class="o">=</span> <span class="nf">max</span><span class="p">(</span><span class="n">colsums</span><span class="p">),</span>
-                             <span class="n">SD</span> <span class="o">=</span> <span class="nf">sd</span><span class="p">(</span><span class="n">colsums</span><span class="p">),</span>
-                             <span class="n">Var</span> <span class="o">=</span> <span class="nf">var</span><span class="p">(</span><span class="n">colsums</span><span class="p">))</span>
-<span class="n">colsum_summary</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 1 × 6</caption>
-<thead>
-	<tr><th scope=col>Min</th><th scope=col>Median</th><th scope=col>Mean</th><th scope=col>Max</th><th scope=col>SD</th><th scope=col>Var</th></tr>
-	<tr><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>0.03227445</td><td>0.1362083</td><td>0.1437594</td><td>0.5419245</td><td>0.09524322</td><td>0.00907127</td></tr>
-</tbody>
-</table>
-</div></div>
-</div>
 <ol class="arabic simple" start="5">
 <li><p>Calculate the median and interquartile range of the distribution of the total number of painful <strong>leg</strong> regions selected for each patient. Then, write a few sentences explaining anything interesting you observe about this distribution in the context of this dataset.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">leg_cols</span> <span class="o">&lt;-</span> <span class="nf">which</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">pain</span><span class="p">)</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;X126&quot;</span><span class="p">,</span> <span class="s">&quot;X127&quot;</span><span class="p">,</span> <span class="s">&quot;X228&quot;</span><span class="p">,</span> <span class="s">&quot;X229&quot;</span><span class="p">,</span> 
-                            <span class="s">&quot;X129&quot;</span><span class="p">,</span> <span class="s">&quot;X130&quot;</span><span class="p">,</span> <span class="s">&quot;X231&quot;</span><span class="p">,</span> <span class="s">&quot;X232&quot;</span><span class="p">,</span> 
-                            <span class="s">&quot;X131&quot;</span><span class="p">,</span> <span class="s">&quot;X132&quot;</span><span class="p">,</span> <span class="s">&quot;X233&quot;</span><span class="p">,</span> <span class="s">&quot;X234&quot;</span><span class="p">,</span>
-                            <span class="s">&quot;X133&quot;</span><span class="p">,</span> <span class="s">&quot;X134&quot;</span><span class="p">,</span> <span class="s">&quot;X235&quot;</span><span class="p">,</span> <span class="s">&quot;X236&quot;</span><span class="p">))</span>
-<span class="n">rowsum.thigh</span> <span class="o">&lt;-</span> <span class="nf">rowSums</span><span class="p">(</span><span class="n">pain</span><span class="p">[,</span><span class="n">leg_cols</span><span class="p">],</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
-<span class="nf">median</span><span class="p">(</span><span class="n">rowsum.thigh</span><span class="p">)</span>
-<span class="nf">IQR</span><span class="p">(</span><span class="n">rowsum.thigh</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">2</div><div class="output text_html">4</div></div>
-</div>
 <ol class="arabic simple" start="6">
 <li><p>Look at the distribution of average pain intensity between patients with only one pain region selected vs. those with more than one region selected. What do you notice?</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">one_region</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span> <span class="n">NUM_REGIONS</span> <span class="o">==</span> <span class="m">1</span><span class="p">)</span>
-<span class="n">multiple_regions</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span> <span class="n">NUM_REGIONS</span> <span class="o">&gt;</span> <span class="m">1</span><span class="p">)</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">one_region</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">one_region</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">multiple_regions</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">multiple_regions</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-   0.00    4.00    6.00    5.92    8.00   10.00 
-</pre></div>
-</div>
-<img alt="../_images/904b14cc7f60d2e7b7c78f0de9fea217a3e028de4470eb6e01fef3333d949520.png" src="../_images/904b14cc7f60d2e7b7c78f0de9fea217a3e028de4470eb6e01fef3333d949520.png" />
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  0.000   5.000   7.000   6.515   8.000  10.000 
-</pre></div>
-</div>
-<img alt="../_images/a5736c75f9fe6f5b06d0bd8f5307c7542c72de27cd7f9f0e384d353e96d4cc1e.png" src="../_images/a5736c75f9fe6f5b06d0bd8f5307c7542c72de27cd7f9f0e384d353e96d4cc1e.png" />
-</div>
-</div>
 <ol class="arabic simple" start="7">
 <li><p>Create a histogram to plot the distribution of the <code class="docutils literal notranslate"><span class="pre">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span></code> column. Then, create a table summarizing how many patients had missing values in this column. Finally, choose two columns to compare the distribution between those with and without missing follow up. What do you notice?</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">hist</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
-
-<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">&lt;-</span> <span class="nf">is.na</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
-<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">==</span> <span class="s">&quot;FALSE&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Not Missing&quot;</span>
-<span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">[</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span> <span class="o">==</span> <span class="s">&quot;TRUE&quot;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s">&quot;Missing&quot;</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">pain</span><span class="o">$</span><span class="n">missing_follow_up</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>    Missing Not Missing 
-      14520        7138 
-</pre></div>
-</div>
-<img alt="../_images/7b9f908322e19f2e96a9514b6e86254db2c2ea0190555613fb352b8e5aa6d0f9.png" src="../_images/7b9f908322e19f2e96a9514b6e86254db2c2ea0190555613fb352b8e5aa6d0f9.png" />
-</div>
-</div>
 </section>
 </section>
 

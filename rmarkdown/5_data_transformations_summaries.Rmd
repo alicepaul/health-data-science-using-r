@@ -5,10 +5,10 @@ output: html_document
 
 # 5. Data Transformations and Summaries
 
-In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html).
+In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html).
 
 ```{r}
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 suppressPackageStartupMessages(library(tidyverse))
 data(NHANESsample)
 ```
@@ -50,7 +50,7 @@ nhanes_df <- nhanes_df %>% select(-c(ID, LEAD_QUANTILE))
 names(nhanes_df)
 ```
 
-While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows.  The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html). Below, we choose to filter the data to only observations after 2008.
+While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows.  The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html). Below, we choose to filter the data to only observations after 2008.
 
 ```{r}
 nhanes_df_recent <- nhanes_df %>% filter(YEAR >= 2008)
@@ -223,7 +223,7 @@ Create a data frame summarizing the percent of patients with hypertension by smo
 
 ## Exercises
 
-The following exercises use the `covidcases` dataset from the `RforHDSdata` package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
+The following exercises use the `covidcases` dataset from the `HDSinRdata` package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
 
 ```{r}
 data(covidcases)
@@ -231,92 +231,9 @@ data(covidcases)
 
 1. Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using [this list](https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States) of which states are in which region or you can use [state.region](https://search.r-project.org/CRAN/refmans/usa/html/state.region.html) from the `datasets` package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast. 
 
-```{r}
-covidcases <- covidcases %>%
-          mutate(region = case_when(state %in% c("Connecticut", 
-                                                 "Maine", 
-                                                 "Massachusetts", 
-                                                 "New Hampshire", 
-                                                 "Rhode Island", 
-                                                 "Vermont", 
-                                                 "New Jersey", 
-                                                 "New York", 
-                                                 "Pennsylvania") ~ "Northeast",
-                                   state %in% c("Illinois",
-                                               "Indiana",
-                                               "Michigan",
-                                               "Ohio", 
-                                               "Wisconsin",
-                                               "Iowa",
-                                               "Kansas",
-                                               "Minnesota",
-                                               "Missouri",
-                                               "Nebraska",
-                                               "North Dakota",
-                                               "South Dakota") ~ "Midwest",
-                                   state %in% c("Delaware",
-                                               "Florida",
-                                               "Georgia",
-                                               "Maryland",
-                                               "North Carolina",
-                                               "South Carolina", 
-                                               "Virginia", 
-                                               "District of Columbia",
-                                               "West Virginia",
-                                               "Alabama",
-                                               "Kentucky",
-                                               "Mississippi",
-                                               "Tennessee",
-                                               "Arkansas",
-                                               "Louisiana",
-                                               "Oklahoma",
-                                               "Texas") ~ "South",
-                                   state %in% c("Arizona",
-                                                "Colorado",
-                                                "Idaho", 
-                                                "Montana",
-                                                "Nevada", 
-                                                "New Mexico", 
-                                                "Utah", 
-                                                "Wyoming", 
-                                                "Alaska", 
-                                                "California", 
-                                                "Hawaii", 
-                                                "Oregon", 
-                                                "Washington") ~ "West"))
-
-covidcases %>% ungroup() %>%
-filter(region == "Northeast") %>% 
-summarize(avg = mean(weekly_cases, na.rm=TRUE), sd = sd(weekly_cases, na.rm=TRUE))
-```
-
 2. Now, create a data frame with the average and standard deviation summarized for each region rather than for just one selected region as in Question 1. Sort this data frame from highest to lowest average weekly cases. What other information would you need in order to more accurately compare these regions in terms of their average cases?
-
-```{r}
-covidcases %>% 
-group_by(region) %>% 
-summarize(avg = mean(weekly_cases, na.rm=TRUE), 
-          sd = sd(weekly_cases, na.rm=TRUE)) %>%
-arrange(desc(avg)) 
-```
 
 3. Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use `?slice_min` to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values. 
 
-```{r}
-covidcases %>% ungroup() %>%
-  filter(region == "Midwest" & week == 15) %>%
-  slice_min(order_by = weekly_deaths, n=10, with_ties = FALSE)
-```
-
 4. Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases. 
-
-```{r}
-covidcases %>%
-  filter(between(week, 9, 20)) %>%
-  group_by(state, county) %>%
-  summarize(total_cases = sum(weekly_cases)) %>%
-  ungroup() %>% 
-  group_by(state) %>% 
-  slice_max(order_by = total_cases, n = 1)
-```
 

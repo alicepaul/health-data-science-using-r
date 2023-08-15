@@ -583,19 +583,6 @@ document.write(`
 <ol class=list-inline><li>'Congratulations on finishing the bThanks'</li><li>'Congratulations on finishing the book! ThThanks'</li></ol>
 </div></div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># didn&#39;t count the spaces, and</span>
-<span class="c1"># entered the start and end positions as a vector instead of two separate inputs </span>
-<span class="n">string</span> <span class="o">&lt;-</span> <span class="s">&quot;Congratulations on finishing the book! Thank you for reading it.&quot;</span>
-<span class="nf">str_sub</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">start</span> <span class="o">=</span> <span class="m">40</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="m">48</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;Thanks&quot;</span>
-<span class="n">string</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">'Congratulations on finishing the book! Thanks for reading it.'</div></div>
-</div>
 <ol class="arabic simple" start="2">
 <li><p>The code below uses the <code class="docutils literal notranslate"><span class="pre">NHANESsample</span></code> data from the <code class="docutils literal notranslate"><span class="pre">HDSinRdata</span></code> package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.</p></li>
 </ol>
@@ -626,22 +613,6 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#errors are using max instead of pmax,</span>
-<span class="c1">#not removing NA values, </span>
-<span class="c1">#putting color outside the aesthetic,</span>
-<span class="c1">#piping instead of adding</span>
-
-<span class="n">nhanes_df</span> <span class="o">&lt;-</span> <span class="n">NHANESsample</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">worst_DBP</span> <span class="o">=</span> <span class="nf">pmax</span><span class="p">(</span><span class="n">DBP1</span><span class="p">,</span> <span class="n">DBP2</span><span class="p">,</span> <span class="n">DBP3</span><span class="p">,</span> <span class="n">DBP4</span><span class="p">,</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="bp">T</span><span class="p">),</span>
-                                     <span class="n">worst_SBP</span> <span class="o">=</span> <span class="nf">pmax</span><span class="p">(</span><span class="n">SBP1</span><span class="p">,</span> <span class="n">SBP2</span><span class="p">,</span> <span class="n">SBP3</span><span class="p">,</span> <span class="n">SBP4</span><span class="p">,</span> <span class="n">na.rm</span> <span class="o">=</span> <span class="bp">T</span><span class="p">))</span>
-<span class="n">nhanes_df</span><span class="o">$</span><span class="n">HYP</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">nhanes_df</span><span class="o">$</span><span class="n">HYP</span><span class="p">)</span>
-
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">nhanes_df</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">worst_DBP</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">worst_SBP</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">HYP</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
 <ol class="arabic simple" start="3">
 <li><p>The code below uses the <code class="docutils literal notranslate"><span class="pre">breastcancer</span></code> data from the <code class="docutils literal notranslate"><span class="pre">HDSinRdata</span></code> package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from <a class="reference external" href="https://alicepaul.github.io/health-data-science-in-r/book/11_logistic_regression.html">Chapter 11</a>. What is wrong with the code below? Debug it. Hint: there are three separate errors.</p></li>
 </ol>
@@ -658,48 +629,6 @@ document.write(`
 <span class="n">calib_data</span> <span class="o">&lt;-</span>  <span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span> <span class="o">=</span> <span class="n">pred_probs</span><span class="p">,</span>
                           <span class="n">bin</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="n">num_cuts</span><span class="p">),</span>
                           <span class="n">class</span> <span class="o">=</span> <span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
-
-<span class="n">calib_data</span> <span class="o">&lt;-</span> <span class="n">calib_data</span> <span class="o">%&gt;%</span> 
-             <span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-             <span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> 
-                       <span class="n">expected</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> 
-                       <span class="n">se</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">observed</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">observed</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
-<span class="n">calib_data</span>
-
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span> <span class="o">+</span> 
-  <span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span> 
-  <span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="m">-1.96</span><span class="o">*</span><span class="n">se</span><span class="p">,</span> 
-                    <span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="m">+1.96</span><span class="o">*</span><span class="n">se</span><span class="p">),</span> 
-                <span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
-  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">observed</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Expected Proportion&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Observed Proportion&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">theme_minimal</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">#errors are not changing the diagnosis variable to 0/1</span>
-<span class="c1">#predicting the OR instead of the probabilities, </span>
-<span class="c1">#and copying over the calibration code without changing the model name </span>
-
-<span class="nf">library</span><span class="p">(</span><span class="n">HDSinRdata</span><span class="p">)</span>
-<span class="nf">data</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span>
-<span class="nf">names</span><span class="p">(</span><span class="n">breastcancer</span><span class="p">)</span>
-
-<span class="n">breastcancer</span> <span class="o">&lt;-</span> <span class="n">breastcancer</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">diagnosis</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span><span class="n">diagnosis</span> <span class="o">==</span> <span class="s">&quot;M&quot;</span> <span class="o">~</span> <span class="m">1</span><span class="p">,</span> 
-                              <span class="n">diagnosis</span> <span class="o">==</span> <span class="s">&quot;B&quot;</span> <span class="o">~</span> <span class="m">0</span><span class="p">))</span>
-
-<span class="n">model</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">diagnosis</span> <span class="o">~</span> <span class="n">smoothness_worst</span> <span class="o">+</span> <span class="n">symmetry_mean</span> <span class="o">+</span> <span class="n">texture_se</span> <span class="o">+</span> <span class="n">radius_mean</span><span class="p">,</span>
-                 <span class="n">data</span> <span class="o">=</span> <span class="n">breastcancer</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
-
-<span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
-
-<span class="n">num_cuts</span> <span class="o">&lt;-</span> <span class="m">11</span>
-<span class="n">calib_data</span> <span class="o">&lt;-</span>  <span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span> <span class="o">=</span> <span class="n">pred_probs</span><span class="p">,</span>
-                          <span class="n">bin</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="n">num_cuts</span><span class="p">),</span>
-                          <span class="n">class</span> <span class="o">=</span> <span class="n">model</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
 
 <span class="n">calib_data</span> <span class="o">&lt;-</span> <span class="n">calib_data</span> <span class="o">%&gt;%</span> 
              <span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">%&gt;%</span> 

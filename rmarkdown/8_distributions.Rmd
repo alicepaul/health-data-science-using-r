@@ -9,7 +9,7 @@ In this chapter, we will cover how to generate random samples in R from known pr
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 data(NHANESsample)
 ```
 
@@ -26,7 +26,7 @@ sample(1:10, 1)
 
 ## Probability Distributions in R
 
-All of the common discrete (e.g. bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:  
+All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:  
 
   -  `r[dist]()`: generates random samples from the given distribution (e.g. `rnorm()`, `runif()`)  
   -  `d[dist]()`: density function for the distribution (e.g. `dnorm()`, `dunif()`)  
@@ -241,63 +241,7 @@ ecdf_lead(5)
   -  What is the probability that a randomly chosen female is 6 feet or taller? 
   -  Generate 500 random observations following this distribution and find the sample 0.15 quantile. Then, compare this to the 0.15 quantile using the `qdist()` function. 
 
-```{r}
-pnorm(5*12, mean = 64, sd = 2.2)
-```
-
-```{r}
-1-pnorm(6*12, mean = 64, sd = 2.2)
-```
-
-```{r}
-set.seed(10)
-
-x_norm <- rnorm(500, mean=64, sd = 2.2)
-quantile(x_norm, 0.15)
-q_15 <- qnorm(0.15, mean=64, sd = 2.2)
-q_15
-```
-
 2. Compute the probability that the height of a randomly chosen female is within 1 SD from the average height.
 
-```{r}
-# Assign a variable 'female_avg' as the average female height.
-female_avg <- 64
-
-# Assign a variable 'female_sd' as the standard deviation for female heights.
-female_sd <- 2.2
-
-# To a variable named 'taller', assign the value of a height that is one SD taller than average.
-taller <- female_avg + female_sd
-
-# To a variable named 'shorter', assign the value of a height that is one SD shorter than average.
-shorter <- female_avg - female_sd
-
-# Calculate the probability that a randomly selected female is between the desired height range.
-
-pnorm(taller, female_avg,female_sd) - pnorm(shorter, female_avg,female_sd)
-```
-
-3. Suppose that we have a model for how a certain drug affects patients. We believe that those who are not given the drug have a reduction in tumor size that is randomly distributed as $X\sim100*exp(mean = R)$, where $R$ follows a uniform distribution with mean 0 and sd 1. Further, we believe that those who are given the drug see a reduction in tumor size distributed as $X \sim 100*exp(mean = 2)$. Simulate 100 patients and plot distributions of reduction in tumor size for both groups. 
-
-```{r}
-set.seed(0)
-n <- 100 # simulate 100 patients
-mu_drug <- 2
-mu_nodrug <- runif(n) # default mean =0, sd=1, with 100 sample size
-x_drug <- 100*rexp(n, rate = 1/mu_drug) # generate expo distibutions
-x_nodrug <- 100*rexp(n, rate = 1/mu_nodrug)
-
-summary(x_drug)
-summary(x_nodrug) # significant difference between two treatments
-
-ggplot() + geom_histogram(aes(x = x_drug, y = after_stat(density), fill ="red"), alpha = 0.3, bins = 20) + 
-# after_stat(density) after capture histogram and change to density
-geom_histogram(aes(x=x_nodrug, y = after_stat(density), fill = "blue"), alpha = 0.3, bins = 20) +
-geom_density(aes(x=x_drug), color = "red") +
-geom_density(aes(x=x_nodrug), color = "blue") +
-xlab("Reduction in Tumor Size") +
-ylab("Density") +
-scale_fill_identity(name = "Treatment", breaks = c("red", "blue"), labels = c("Drug", "No Drug"), guide = "legend")
-```
+3. Create a vector of 100 patient IDs, and then use the sample() function to assign half of them to a treatment group and the other half to a control group. Then, suppose those in the control group have a reduction in viral load distributed as $X \sim 100*exp(mean = V)$, where $V$ follows a uniform distribution between 1 and 2, whereas those who are in the treatment group have a reduction in viral load distributed as $X \sim 100*exp(mean = 3)$. Plot distributions of reduction in viral load for both groups. 
 

@@ -8,7 +8,7 @@ output: html_document
 In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we will learn how to conduct more exploratory analysis, focusing on the univariate and bivariate sample distributions of the data. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to create summary plots using the `GGally` package and tables using the `gt` and `gtsummary` packages.
 
 ```{r}
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 suppressPackageStartupMessages(library(GGally)) 
 suppressPackageStartupMessages(library(gt))
 suppressPackageStartupMessages(library(gtsummary))
@@ -57,7 +57,7 @@ nhanes_df$EVER_SMOKE <- ifelse(nhanes_df$SMOKE %in% c("QuitSmoke", "StillSmoke")
 table(nhanes_df$EVER_SMOKE)
 ```
 
-The `summary()` and `table()` functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in the [last chapter](https://alicepaul.github.io/r-for-health-data-science/book/3_data_files.html) that the `hist()` function creates a histogram plot. Below we use this function to plot a histogram of the log transformation of the lead column.
+The `summary()` and `table()` functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in the [last chapter](https://alicepaul.github.io/health-data-science-in-r/book/3_data_files.html) that the `hist()` function creates a histogram plot. Below we use this function to plot a histogram of the log transformation of the lead column.
 
 ```{r}
 hist(log(nhanes_df$LEAD))
@@ -199,7 +199,7 @@ ggcorr(nhanes_cont, label=TRUE)
 
 ## Tables
 
-Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The `gt` package is designed to create polished tables that can include footnotes, titles, column labels, etc. The `gtsummary` package is an extension of this package that can create summary tables. We will focus on the latter but come back to creating nice tables in [Chapter 12](https://alicepaul.github.io/r-for-health-data-science/book/12_rmarkdown_reports.html).
+Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The `gt` package is designed to create polished tables that can include footnotes, titles, column labels, etc. The `gtsummary` package is an extension of this package that can create summary tables. We will focus on the latter but come back to creating nice tables in [Chapter 12](https://alicepaul.github.io/health-data-science-in-r/book/12_rmarkdown_reports.html).
 
 To start, we create a gt object (a special type of table) of the first six rows of our data using the `gt()` function. In R Markdown, the table would be automatically displayed nicely when knit. Since we are using this within a Jupyter notebook, however, we need to pass this to another function to make sure it displays correctly as HTML. The pipe operator `%>%` passes the result on the left hand side as the first argument to the function on the right hand side. You can see the difference in the formatting as opposed to printing the data.
 
@@ -240,76 +240,12 @@ For these exercises, we will continue using the `nhanes_df` data.
 
 1. Using both numerical and graphical summaries, describe the distribution of the first diastolic blood pressure reading `DBP1`among study participants. Then, create a column called `INCOME_CAT` with two categories: "low" for those whose income is at most 2 and "not low" otherwise and examine the bivariate distribution of `DBP1` and `INCOME_CAT`. Arrange the two plots next to each other. What do you notice?
 
-```{r}
-par(mfrow=c(1,2))
-# dbp
-summary(nhanes_df$DBP1)
-hist(nhanes_df$DBP1,breaks = 30, col="pink", main="Histogram of Diastolic Blood Pressure",
-    xlab="Diastolic Blood Pressure")
-
-# income
-nhanes_df$INCOME_CAT <- ifelse(nhanes_df$INCOME<=2,"Low","Not Low")
-
-# bivariate distribution
-summary(nhanes_df$DBP1[nhanes_df$INCOME_CAT == "Low"])
-summary(nhanes_df$DBP1[nhanes_df$INCOME_CAT == "Not Low"])
-
-boxplot(DBP1 ~ INCOME_CAT, data=nhanes_df, xlab="Income Status", ylab="Diastolic Blood Pressure", col = c("red", "green"))
-```
-
 2. Subset the data to adults between the ages of 20 and 55. Then, explore how blood pressure varies by age and gender among this age group. Is there a visible trend in blood pressure with increasing age among either sex? 
 
-```{r}
-nhanes_df.subset.female <- subset(nhanes_df, 
-                              nhanes_df$AGE>=20 & nhanes_df$AGE<=55 & SEX == "Female")
-nhanes_df.subset.male <- subset(nhanes_df, 
-                              nhanes_df$AGE>=20 & nhanes_df$AGE<=55 & SEX == "Male")
-plot(nhanes_df.subset.female$AGE, nhanes_df.subset.female$DBP1, xlab = "age", ylab = "Diastolic Blood Pressure", col = "red")
-plot(nhanes_df.subset.male$AGE, nhanes_df.subset.male$DBP1, xlab = "age", ylab = "Diastolic Blood Pressure", col = "blue")
-```
-
 3. For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum and maximum values for all continuous columns.
-
-```{r}
-subset.males <- subset(nhanes_df, 
-                       nhanes_df$SEX=="Male" & nhanes_df$AGE>=50 & nhanes_df$AGE<=59)
-subset.males$RACE <- as.factor(subset.males$RACE)
-boxplot(subset.males$DBP1 ~ subset.males$RACE, 
-        xlab = "Race", ylab = "Diastolic Blood Pressure", col = "pink")
-
-tbl_summary(subset.males, include= c("SEX", "RACE", "AGE", "EDUCATION", "SMOKE",
-                                  "BMI_CAT", "LEAD", "SBP1", "DBP1", "HYP"),
-           by = "RACE", statistic = list(all_continuous() ~ "{mean} ({sd}, {min}, {max})")) %>% 
-  as_gt() %>% 
-  gt:::as.tags.gt_tbl()
-```
 
 4. Recreate the following two plots in R. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other. 
 
 <img src="images/4-exercise4plot1.png" alt= “” width="250pt" align="left">
 <img src="images/4-exercise4plot2.png" alt= “” width="250pt" align="left">
-
-```{r}
-nhanes_subset <- NHANESsample[NHANESsample$YEAR %in% c(1999, 2005, 2011, 2017), ]
-ed_year <- table(nhanes_subset$EDUCATION, nhanes_subset$YEAR)
-barplot(height = ed_year, 
-        beside = TRUE, 
-        legend.text = T, 
-        col = c("red", "orange", "blue"), 
-        args.legend = list(x = "topleft",
-                           inset = c(0.05, 0)),
-        xlab = "Year",
-        ylab = "Count")
-
-boxplot(nhanes_subset$LEAD ~ nhanes_subset$EDUCATION, 
-        xlab = "Education Level", 
-        ylab = "Blood Lead Level", 
-        ylim = c(0, 10), 
-        col = c("red", "orange", "blue"))
-
-boxplot(nhanes_subset$LEAD ~ nhanes_subset$YEAR, 
-        xlab = "Year", 
-        ylab = "Blood Lead Level", 
-        ylim = c(0, 10))
-```
 

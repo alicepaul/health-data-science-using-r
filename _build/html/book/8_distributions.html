@@ -399,7 +399,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">6</div></div>
+<div class="output text_html">10</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -781,122 +781,12 @@ Below, we can compare some of the values from the <code class="docutils literal 
 <li><p>What is the probability that a randomly chosen female is 6 feet or taller?</p></li>
 <li><p>Generate 500 random observations following this distribution and find the sample 0.15 quantile. Then, compare this to the 0.15 quantile using the <code class="docutils literal notranslate"><span class="pre">qdist()</span></code> function.</p></li>
 </ul>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">pnorm</span><span class="p">(</span><span class="m">5</span><span class="o">*</span><span class="m">12</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2.2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">0.0345181739972076</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="m">1</span><span class="o">-</span><span class="nf">pnorm</span><span class="p">(</span><span class="m">6</span><span class="o">*</span><span class="m">12</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2.2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">0.000138256957819105</div></div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">10</span><span class="p">)</span>
-
-<span class="n">x_norm</span> <span class="o">&lt;-</span> <span class="nf">rnorm</span><span class="p">(</span><span class="m">500</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2.2</span><span class="p">)</span>
-<span class="nf">quantile</span><span class="p">(</span><span class="n">x_norm</span><span class="p">,</span> <span class="m">0.15</span><span class="p">)</span>
-<span class="n">q_15</span> <span class="o">&lt;-</span> <span class="nf">qnorm</span><span class="p">(</span><span class="m">0.15</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="m">64</span><span class="p">,</span> <span class="n">sd</span> <span class="o">=</span> <span class="m">2.2</span><span class="p">)</span>
-<span class="n">q_15</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><strong>15%:</strong> 61.4970070803198</div><div class="output text_html">61.7198465431137</div></div>
-</div>
 <ol class="arabic simple" start="2">
 <li><p>Compute the probability that the height of a randomly chosen female is within 1 SD from the average height.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assign a variable &#39;female_avg&#39; as the average female height.</span>
-<span class="n">female_avg</span> <span class="o">&lt;-</span> <span class="m">64</span>
-
-<span class="c1"># Assign a variable &#39;female_sd&#39; as the standard deviation for female heights.</span>
-<span class="n">female_sd</span> <span class="o">&lt;-</span> <span class="m">2.2</span>
-
-<span class="c1"># To a variable named &#39;taller&#39;, assign the value of a height that is one SD taller than average.</span>
-<span class="n">taller</span> <span class="o">&lt;-</span> <span class="n">female_avg</span> <span class="o">+</span> <span class="n">female_sd</span>
-
-<span class="c1"># To a variable named &#39;shorter&#39;, assign the value of a height that is one SD shorter than average.</span>
-<span class="n">shorter</span> <span class="o">&lt;-</span> <span class="n">female_avg</span> <span class="o">-</span> <span class="n">female_sd</span>
-
-<span class="c1"># Calculate the probability that a randomly selected female is between the desired height range.</span>
-
-<span class="nf">pnorm</span><span class="p">(</span><span class="n">taller</span><span class="p">,</span> <span class="n">female_avg</span><span class="p">,</span><span class="n">female_sd</span><span class="p">)</span> <span class="o">-</span> <span class="nf">pnorm</span><span class="p">(</span><span class="n">shorter</span><span class="p">,</span> <span class="n">female_avg</span><span class="p">,</span><span class="n">female_sd</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html">0.682689492137087</div></div>
-</div>
 <ol class="arabic simple" start="3">
 <li><p>Create a vector of 100 patient IDs, and then use the sample() function to assign half of them to a treatment group and the other half to a control group. Then, suppose those in the control group have a reduction in viral load distributed as <span class="math notranslate nohighlight">\(X \sim 100*exp(mean = V)\)</span>, where <span class="math notranslate nohighlight">\(V\)</span> follows a uniform distribution between 1 and 2, whereas those who are in the treatment group have a reduction in viral load distributed as <span class="math notranslate nohighlight">\(X \sim 100*exp(mean = 3)\)</span>. Plot distributions of reduction in viral load for both groups.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">0</span><span class="p">)</span>
-<span class="n">patients</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">id</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">1</span><span class="p">),</span> <span class="n">trt</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
-<span class="n">trt_ids</span> <span class="o">&lt;-</span> <span class="nf">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">patients</span><span class="p">),</span> <span class="m">50</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-<span class="n">patients</span><span class="o">$</span><span class="n">trt</span><span class="p">[</span><span class="n">trt_ids</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">1</span>
-<span class="n">patients</span><span class="o">$</span><span class="n">trt</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">patients</span><span class="o">$</span><span class="n">trt</span><span class="p">)</span>
-<span class="n">mu_trt</span> <span class="o">&lt;-</span> <span class="m">3</span>
-<span class="n">mu_ctrl</span> <span class="o">&lt;-</span> <span class="nf">runif</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="n">min</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">max</span> <span class="o">=</span> <span class="m">2</span><span class="p">)</span> 
-
-<span class="n">patients</span><span class="o">$</span><span class="n">vl_reduction</span> <span class="o">&lt;-</span> <span class="m">0</span>
-<span class="n">patients</span><span class="o">$</span><span class="n">vl_reduction</span><span class="p">[</span><span class="n">patients</span><span class="o">$</span><span class="n">trt</span> <span class="o">==</span> <span class="m">1</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">100</span><span class="o">*</span><span class="nf">rexp</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="m">1</span><span class="o">/</span><span class="n">mu_trt</span><span class="p">)</span>
-<span class="n">patients</span><span class="o">$</span><span class="n">vl_reduction</span><span class="p">[</span><span class="n">patients</span><span class="o">$</span><span class="n">trt</span> <span class="o">==</span> <span class="m">0</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="m">100</span><span class="o">*</span><span class="nf">rexp</span><span class="p">(</span><span class="m">50</span><span class="p">,</span> <span class="n">rate</span> <span class="o">=</span> <span class="m">1</span><span class="o">/</span><span class="n">mu_ctrl</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">patients</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">patients</span><span class="o">$</span><span class="n">vl_reduction</span><span class="p">[</span><span class="n">patients</span><span class="o">$</span><span class="n">trt</span> <span class="o">==</span> <span class="m">0</span><span class="p">])</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">patients</span><span class="o">$</span><span class="n">vl_reduction</span><span class="p">[</span><span class="n">patients</span><span class="o">$</span><span class="n">trt</span> <span class="o">==</span> <span class="m">1</span><span class="p">])</span>
-
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">patients</span><span class="p">)</span> <span class="o">+</span> 
-<span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">vl_reduction</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="nf">after_stat</span><span class="p">(</span><span class="n">density</span><span class="p">),</span> <span class="n">fill</span> <span class="o">=</span><span class="n">trt</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0.3</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span> <span class="o">+</span> 
-<span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">vl_reduction</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">trt</span><span class="p">))</span> <span class="o">+</span>
-<span class="nf">xlab</span><span class="p">(</span><span class="s">&quot;Reduction in Viral Load&quot;</span><span class="p">)</span> <span class="o">+</span>
-<span class="nf">ylab</span><span class="p">(</span><span class="s">&quot;Density&quot;</span><span class="p">)</span> <span class="o">+</span> 
-<span class="nf">scale_fill_discrete</span><span class="p">(</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Group&quot;</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Control&quot;</span><span class="p">,</span> <span class="s">&quot;Treatment&quot;</span><span class="p">))</span> <span class="o">+</span>
-<span class="nf">scale_color_discrete</span><span class="p">(</span><span class="n">guide</span> <span class="o">=</span> <span class="s">&quot;none&quot;</span><span class="p">)</span> <span class="o">+</span>
-<span class="nf">theme_minimal</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A data.frame: 6 × 3</caption>
-<thead>
-	<tr><th></th><th scope=col>id</th><th scope=col>trt</th><th scope=col>vl_reduction</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>1</td><td>1</td><td>152.89257</td></tr>
-	<tr><th scope=row>2</th><td>2</td><td>1</td><td>251.10195</td></tr>
-	<tr><th scope=row>3</th><td>3</td><td>0</td><td> 31.54844</td></tr>
-	<tr><th scope=row>4</th><td>4</td><td>0</td><td> 56.60680</td></tr>
-	<tr><th scope=row>5</th><td>5</td><td>0</td><td> 43.93421</td></tr>
-	<tr><th scope=row>6</th><td>6</td><td>1</td><td>535.42962</td></tr>
-</tbody>
-</table>
-</div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  2.905  43.467 108.474 154.384 248.865 456.305 
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  11.15  107.64  222.27  289.75  458.65  872.97 
-</pre></div>
-</div>
-<img alt="../_images/38ab30fa1cb342d44d56b10cdc508c3765fb4a346741e10cf2c1023b54388cf5.png" src="../_images/38ab30fa1cb342d44d56b10cdc508c3765fb4a346741e10cf2c1023b54388cf5.png" />
-</div>
-</div>
 </section>
 </section>
 

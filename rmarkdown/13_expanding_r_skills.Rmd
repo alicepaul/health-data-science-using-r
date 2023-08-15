@@ -11,13 +11,14 @@ We will demonstrate these skills using the `stringr` package, which is a package
 
 ```{r}
 suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(HDSinRdata))
 ```
 
 ## Reading Documentation for New Packages
 
 Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [stringr](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette [Introduction to String R](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html). 
 
-We will use this `stringr` package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from [Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41](https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130). Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of paranthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
+We will use this `stringr` package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from [Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41](https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130). Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
 
 ```{r}
 sample_str <- " A systematic search will be performed in PubMed, Embase, and the 
@@ -43,7 +44,7 @@ class(sample_str_words)
 sample_str_words
 ```
 
-We now want to identify words in this vector that have starting and/or end parantheses. The function `grepl()` takes in a character vector `x` and a pattern to search for. It returns a logical vector for whether or not each element of `x` has a match for that pattern.
+We now want to identify words in this vector that have starting and/or end parentheses. The function `grepl()` takes in a character vector `x` and a pattern to search for. It returns a logical vector for whether or not each element of `x` has a match for that pattern.
 
 ```{r}
 grepl(sample_str_words, ")")
@@ -59,7 +60,7 @@ The warning message above will give us a good clue for what went wrong. It says 
 grepl(x=sample_str_words, pattern=")")
 ```
 
-That worked! However, it won't work if we change that to a starting parantheses. Try it out for yourself to see this. The error message says that it is looking for an end parantheses. In this case, the documentation does not help us. Let's try googling "stringr find start parentheses". The first search result for me is a [stack overflow question](https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r) that helps us out. We read that we need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression. 
+That worked! However, it won't work if we change that to a starting parentheses. Try it out for yourself to see this. The error message says that it is looking for an end parentheses. In this case, the documentation does not help us. Let's try googling "stringr find start parentheses". The first search result for me is a [stack overflow question](https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r) that helps us out. We read that we need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression. 
 
 ```{r}
 grepl(x=sample_str_words, pattern="\\(")
@@ -69,7 +70,7 @@ When a function doesn't return what we expect it to, it is a good idea to first 
 
 ### Debugging Code 
 
-The code below is supposed to extract the search query from the text as well as find the invididual search terms used in the query. However, the code is incorrect. You can try out to two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
+The code below is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out to two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
 
 ```{r}
 sample_strA <- " A systematic search will be performed in PubMed, Embase, and the 
@@ -143,38 +144,22 @@ str_sub(string, c(35, 42)) <- "Thanks"
 string
 ```
 
+2. The code below uses the `NHANESsample` data from the `HDSinRdata` package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.
+
 ```{r}
-# didn't count the spaces, and
-# entered the start and end positions as a vector instead of two separate inputs 
-string <- "Congratulations on finishing the book! Thank you for reading it."
-str_sub(string, start = 40, end = 48) <- "Thanks"
-string
+data(NHANESsample)
+
+nhanes_df <- NHANESsample %>% mutate(worst_DBP = max(DBP1, DBP2, DBP3, DBP4),
+                                     worst_SBP = max(SBP1, SBP2, SBP3, SBP4))
+
+ggplot() %>% geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP), color = HYP)
 ```
 
-2. The code below uses data on cell nuclei from images of fine needle aspirates of breast masses. The goal of the code is to plot the maximum dimension ??? against the mean smoothness. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.
+3. The code below uses the `breastcancer` data from the `HDSinRdata` package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter 11](https://alicepaul.github.io/health-data-science-in-r/book/11_logistic_regression.html). What is wrong with the code below? Debug it. Hint: there are three separate errors.
 
 ```{r}
-library(RforHDSdata)
 data(breastcancer)
 
-breastcancer <- breastcancer %>% mutate(worst_dimension = max(radius_worst, texture_worst, perimeter_worst))
-
-ggplot() %>% geom_point(data = breastcancer, aes(x = worst_dimension), color = diagnosis)
-```
-
-```{r}
-#errors are using max instead of pmax, 
-#not specifying y for geom_point
-#putting color outside the aesthetic
-#piping instead of adding
-
-breastcancer <- breastcancer %>% mutate(worst_dimension = pmax(radius_worst, texture_worst, perimeter_worst))
-ggplot(breastcancer) + geom_point(aes(x = worst_dimension, y = smoothness_mean, color = diagnosis))
-```
-
-3. Now, suppose we want to create a calibration plot from the following model, following the code from [Chapter 11](https://alicepaul.github.io/r-for-health-data-science/book/11_logistic_regression.html). What is wrong with the code below? Debug it. Hint: there are three separate errors.
-
-```{r}
 model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + radius_mean,
                  data = breastcancer, family = binomial)
 
@@ -184,45 +169,6 @@ num_cuts <- 10
 calib_data <-  data.frame(prob = pred_probs,
                           bin = cut(pred_probs, breaks = num_cuts),
                           class = mod_start$y)
-
-calib_data <- calib_data %>% 
-             group_by(bin) %>% 
-             summarize(observed = sum(class)/n(), 
-                       expected = sum(prob)/n(), 
-                       se = sqrt(observed*(1-observed)/n()))
-calib_data
-
-ggplot(calib_data) + 
-  geom_abline(intercept = 0, slope = 1, color="red") + 
-  geom_errorbar(aes(x = expected, ymin=observed-1.96*se, 
-                    ymax=observed+1.96*se), 
-                colour="black", width=.01)+
-  geom_point(aes(x = expected, y = observed)) +
-  labs(x="Expected Proportion", y="Observed Proportion") +
-  theme_minimal()
-```
-
-```{r}
-#errors are not changing the diagnosis variable to 0/1
-#predicting the OR instad of the probabilities, 
-#and copying over the calibration code without changing the model name 
-
-library(RforHDSdata)
-data(breastcancer)
-names(breastcancer)
-
-breastcancer <- breastcancer %>% mutate(diagnosis = case_when(diagnosis == "M" ~ 1, 
-                              diagnosis == "B" ~ 0))
-
-model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + radius_mean,
-                 data = breastcancer, family = binomial)
-
-pred_probs <- predict(model, type="response")
-
-num_cuts <- 11
-calib_data <-  data.frame(prob = pred_probs,
-                          bin = cut(pred_probs, breaks = num_cuts),
-                          class = model$y)
 
 calib_data <- calib_data %>% 
              group_by(bin) %>% 

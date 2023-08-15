@@ -7,10 +7,10 @@ output: html_document
 
 In this chapter, we will be working with data in R. To start, we need to load our data into R: this requires identifying the type of data file we have (e.g. .csv, .xlsx, .dta) and finding the appropriate function to load in the data. This will create a data frame object containing the information from the file. After demonstrating how to load in such data, this chapter will show you how to find information about data columns, including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.  
 
-In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single library `RforHDSdata` that contains the sample data sets used in this book.
+In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single library `HDSinRdata` that contains the sample data sets used in this book.
 
 ```{r}
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 ```
 
 ## Importing and Exporting Data
@@ -22,7 +22,7 @@ data(pain)
 dim(pain)
 ```
 
-In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the `readr` package, both of which were shown in [Chapter 1](https://alicepaul.github.io/r-for-health-data-science/book/1_intro_to_r.html). As an example, we load the `fake_names.csv` dataset belwo using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the `tidyverse` packages. We will cover this data structure in more detail in [Chapter 5](https://alicepaul.github.io/r-for-health-data-science/book/5_data_transformations_summaries.html). For now, note that you can use either function to read in a .csv file.
+In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the `readr` package, both of which were shown in [Chapter 1](https://alicepaul.github.io/health-data-science-in-r/book/1_intro_to_r.html). As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the `tidyverse` packages. We will cover this data structure in more detail in [Chapter 5](https://alicepaul.github.io/health-data-science-in-r/book/5_data_transformations_summaries.html). For now, note that you can use either function to read in a .csv file.
 
 ```{r}
 read.csv("data/fake_names.csv")
@@ -32,7 +32,7 @@ read.csv("data/fake_names.csv")
 readr::read_csv("data/fake_names.csv", show_col_types=FALSE)
 ```
 
-In addition to loading data into R, you may also want to save data from R into a data file you can access later or share with others. To write a data frame from R to a .csv file, you can use the `write.csv()` function. This function has three key arguments: the first agrument is the data frame in R that you want to write to a file, the second argument is the file name or the full file path where you want to write the data, and the third argument is whether or not you want to include the row names as an extra column. In this case, we will not include row names. If you do not specify a file path, R will save the file in our current working directory.
+In addition to loading data into R, you may also want to save data from R into a data file you can access later or share with others. To write a data frame from R to a .csv file, you can use the `write.csv()` function. This function has three key arguments: the first argument is the data frame in R that you want to write to a file, the second argument is the file name or the full file path where you want to write the data, and the third argument is whether or not you want to include the row names as an extra column. In this case, we will not include row names. If you do not specify a file path, R will save the file in our current working directory.
 
 ```{r}
 df <- data.frame(x=c(1,0,1), y=c("A", "B", "C"))
@@ -88,7 +88,7 @@ Additionally, the functions below are helpful for summarizing quantitative colum
 * `quantile()` - returns the sample quantiles for a numeric vector
 * `IQR()` - returns the interquartile range for a numeric vector
 
-By default, the `quantile()` function returns the sample quartiles. 
+By default, the `quantile()` function returns the sample quantiles. 
 
 ```{r}
 quantile(pain$PAIN_INTENSITY_AVERAGE, na.rm = TRUE)
@@ -100,7 +100,7 @@ However, we can pass in a list of probabilities to use instead. For example, bel
 quantile(pain$PAIN_INTENSITY_AVERAGE, probs = c(0.1, 0.9), na.rm=TRUE)
 ```
 
-We can also plot a histogram of the sample distribution using the `hist()` function. We will look more in depth at how to change aspects of this histogram in [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html).
+We can also plot a histogram of the sample distribution using the `hist()` function. We will look more in depth at how to change aspects of this histogram in [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html).
 
 ```{r}
 hist(pain$PAIN_INTENSITY_AVERAGE)
@@ -195,7 +195,7 @@ pain$LOWER_BACK <- lower_back
 dim(pain)
 ```
 
-Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function, which takes in three arguments. The first agrument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The first example below finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. In the second example, we find the sum of the body pain regions over the columns, which is equivalent to the example using `colSums()` above. In this case, we added the `na.rm=TRUE` argument. The `apply()` function will pass additional arguments to the function `FUN`. 
+Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function, which takes in three arguments. The first argument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The first example below finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. In the second example, we find the sum of the body pain regions over the columns, which is equivalent to the example using `colSums()` above. In this case, we added the `na.rm=TRUE` argument. The `apply()` function will pass additional arguments to the function `FUN`. 
 
 ```{r}
 any_selected <- apply(pain_body_map, 1, max)
@@ -266,7 +266,7 @@ pain$PERC_PAIN_CHANGE <- pain$PAIN_CHANGE/pain$PAIN_INTENSITY_AVERAGE
 summary(pain$PERC_PAIN_CHANGE)
 ```
 
-In the summary of the percent change, we can see that the maximum value is `Inf`. This is R's representation of infinity. This occurred because some patients have an intial pain score of 0, which creates infinite values when we divide through by this value to find the percent change. We can test whether something is infinite using the `is.infinite()` or `is.finite()` functions. This shows that there were three patients with infinite values. The value `-Inf` is used to represent negative infinity.
+In the summary of the percent change, we can see that the maximum value is `Inf`. This is R's representation of infinity. This occurred because some patients have an initial pain score of 0, which creates infinite values when we divide through by this value to find the percent change. We can test whether something is infinite using the `is.infinite()` or `is.finite()` functions. This shows that there were three patients with infinite values. The value `-Inf` is used to represent negative infinity.
 
 ```{r}
 sum(is.infinite(pain$PERC_PAIN_CHANGE))
@@ -425,74 +425,19 @@ In the video below, we reference the population mean and standard deviations for
 
 ## Exercises
 
-For these exercises, we will again be using the `pain` data from the `RforHDSdata` package.
+For these exercises, we will again be using the `pain` data from the `HDSinRdata` package.
 
 1. Print summary statistics for the `PROMIS_PHYSICAL_FUNTION` and `PROMIS_ANXIETY` columns in this dataset. Read the data documentation for these two columns, which both have range 0 to 100, and then comment on the distributions of these columns. 
 
-```{r}
-summary(pain$PROMIS_PHYSICAL_FUNCTION)
-summary(pain$PROMIS_ANXIETY)
-```
-
 2. Create frequency tables for the values of `PAT_SEX` and `PAT_RACE` and summarize what these tables tell you about the distributions of these demographic characteristics.
-
-```{r}
-table(pain$PAT_SEX)
-table(pain$PAT_RACE)
-```
 
 3. Create a new data frame called `pain.new` that doesn't contain patients with NA values for both `GH_MENTAL_SCORE` and `GH_PHYSICAL_SCORE`, which are the PROMIS global mental and physical scores, respectively. 
 
-```{r}
-pain.new <- pain[!is.na(pain$GH_MENTAL_SCORE) & !is.na(pain$GH_PHYSICAL_SCORE),]
-```
-
-4. Create a vector of the total number of patients who reported pain in each of the pain regions. Then, find the minimum, median, mean, maximum, standard deviation, and variance of this vector.
-
-```{r}
-colsums <- colSums(pain[,c(2:75)], na.rm = TRUE)
-
-colsum_summary <- data.frame(Variable = c("Sum of Columns"),
-                             Min =  min(colsums),
-                             Median = median(colsums),
-                             Mean  = mean(colsums),
-                             Max = max(colsums),
-                             SD = sd(colsums),
-                             Var = var(colsums))
-colsum_summary
-```
+4. Create a vector of the proportion of patients who reported pain in each of the pain regions. Then, find the minimum, median, mean, maximum, standard deviation, and variance of this vector.
 
 5. Calculate the median and interquartile range of the distribution of the total number of painful **leg** regions selected for each patient. Then, write a few sentences explaining anything interesting you observe about this distribution in the context of this dataset. 
 
-```{r}
-leg_cols <- which(colnames(pain) %in% c("X126", "X127", "X228", "X229", 
-                            "X129", "X130", "X231", "X232", 
-                            "X131", "X132", "X233", "X234",
-                            "X133", "X134", "X235", "X236"))
-rowsum.thigh <- rowSums(pain[,leg_cols], na.rm = TRUE)
-median(rowsum.thigh)
-IQR(rowsum.thigh)
-```
-
 6. Look at the distribution of average pain intensity between patients with only one pain region selected vs. those with more than one region selected. What do you notice? 
 
-```{r}
-one_region <- subset(pain, NUM_REGIONS == 1)
-multiple_regions <- subset(pain, NUM_REGIONS > 1)
-hist(one_region$PAIN_INTENSITY_AVERAGE)
-summary(one_region$PAIN_INTENSITY_AVERAGE)
-hist(multiple_regions$PAIN_INTENSITY_AVERAGE)
-summary(multiple_regions$PAIN_INTENSITY_AVERAGE)
-```
-
 7. Create a histogram to plot the distribution of the `PAIN_INTENSITY_AVERAGE.FOLLOW_UP` column. Then, create a table summarizing how many patients had missing values in this column. Finally, choose two columns to compare the distribution between those with and without missing follow up. What do you notice? 
-
-```{r}
-hist(pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)
-
-pain$missing_follow_up <- is.na(pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)
-pain$missing_follow_up[pain$missing_follow_up == "FALSE"] <- "Not Missing"
-pain$missing_follow_up[pain$missing_follow_up == "TRUE"] <- "Missing"
-table(pain$missing_follow_up)
-```
 

@@ -7,12 +7,12 @@ output: html_document
 
 This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection. 
 
-For this chapter, we will use the `NHANESsample` dataset, which was retrieved from the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) and is in the `RforHDSdata` package. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by [Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892](https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full). Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis. 
+For this chapter, we will use the `NHANESsample` dataset, which was retrieved from the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) and is in the `HDSinRdata` package. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by [Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892](https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full). Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis. 
 
 We will use the `broom` package to present the estimated coefficients for our regression models and the `car` package to compute variance inflation factors.
 
 ```{r}
-suppressPackageStartupMessages(library(RforHDSdata))
+suppressPackageStartupMessages(library(HDSinRdata))
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(broom))
 suppressPackageStartupMessages(library(car))
@@ -21,7 +21,7 @@ data(NHANESsample)
 
 ## Simple Linear Regression
 
-In [Chapter 4](https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html), we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of [Huang](https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full), we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations. 
+In [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html), we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of [Huang](https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full), we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations. 
 
 ```{r}
 NHANESsample$SBP <- apply(NHANESsample[,c("SBP1", "SBP2", "SBP3", "SBP4")], 1, 
@@ -337,57 +337,11 @@ For these exercises, we will continue using the `nhanes_df` data.
 
 1. Construct a linear model using `DBP` as the output and `LEAD`, `AGE`, and `EVER_SMOKE` as features, and print the output.
 
-```{r}
-model_exercise1 <- lm(DBP~LEAD + AGE + SMOKE, data = nhanes_df)
-summary(model_exercise1)
-```
-
 2. Use forward stepwise selection to add possible interactions to the linear model from the previous question.
-
-```{r}
-model_int <- lm(DBP~ LEAD*AGE + LEAD*SMOKE + AGE*SMOKE, data = nhanes_df)
-model_exercise2 <- step(model_exercise1, scope = list(lower = model_exercise1, upper = model_int), direction = "forward")
-summary(model_exercise2)
-```
 
 3. Draw a QQ plot for the model in Question 2, and describe the distribution that you observe.
 
-```{r}
-#solutions:
-qqnorm(rstandard(model_exercise2)) 
-qqline(rstandard(model_exercise2),col="red") 
-#qq plot shows a fat-tail trend
-```
-
 4. Report the MAE and MSE of the model developed in Question 2. Then, find the row numbers of the observations with the top 5 Cook's Distance values for this model.
 
-```{r}
-#first find the prediction by this model
-predicted <- predict(model_exercise2)
-
-#mae
-mae <- mean(abs(nhanes_df$DBP - predicted))
-cat('MAE: ', mae, '\n')
-
-#mse
-mse <- mean((nhanes_df$DBP- predicted)^2)
-cat('MSE: ', mse, '\n')
-
-#cooks distance
-inf_mat <- influence.measures(model_exercise2)[['infmat']]
-as.data.frame(inf_mat) %>% arrange(desc(cook.d)) %>% head()
-```
-
 5. Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that will improve the fit of this model. Then, fit and summarize this new model with the transformation included. How do the MSE and MAE of the new model compare to the previous one? Note that your predictions will be on the transformed scale so you'll need to convert them to the correct scale. 
-
-```{r}
-#use log(DBP1 + 1) beacuase DBP1 has 0, and r can't deal with log transformation with 0
-#this transformation creates the most outliers, but it also makes the model more normally
-#distributed and improves homoscedasticity
-model_exercise5 <- lm(log(DBP+1) ~ LEAD*AGE + LEAD*SMOKE + SMOKE*AGE, data=nhanes_df) 
-summary(model_exercise5)
-
-par(mfrow=c(2,2))
-plot(model_exercise5)
-```
 
