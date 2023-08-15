@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>9. Hypothesis Testing &#8212; R for Health Data Science</title>
   
@@ -44,7 +44,6 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -71,7 +70,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="10. Linear Regression" href="10_linear_regression.html" />
     <link rel="prev" title="8. Probability Distributions in R" href="8_distributions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:language" content="None"/>
   </head>
   
   
@@ -176,6 +175,7 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
+
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
 
@@ -382,7 +382,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="hypothesis-testing">
-<h1>9. Hypothesis Testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this heading">#</a></h1>
+<h1>9. Hypothesis Testing<a class="headerlink" href="#hypothesis-testing" title="Permalink to this headline">#</a></h1>
 <p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests for comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
 <p>We will use the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code>, <code class="docutils literal notranslate"><span class="pre">gt</span></code>, and <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> packages to help manipulate and summarize the data. The <code class="docutils literal notranslate"><span class="pre">car</span></code> package contains the function <code class="docutils literal notranslate"><span class="pre">leveneTest()</span></code> to implement a Levene’s test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.</p>
 <div class="cell docutils container">
@@ -398,12 +398,12 @@ document.write(`
 </div>
 </div>
 <section id="univariate-distributions-and-one-sample-tests">
-<h2>Univariate Distributions and One Sample Tests<a class="headerlink" href="#univariate-distributions-and-one-sample-tests" title="Permalink to this heading">#</a></h2>
+<h2>Univariate Distributions and One Sample Tests<a class="headerlink" href="#univariate-distributions-and-one-sample-tests" title="Permalink to this headline">#</a></h2>
 <p>Let’s begin by looking at a single outcome of interest - the number of induced terminations of pregnancy (referred to as ITOPs or abortions below) in 2021 per 1000 females ages 15-49 in each county. We use the number of females ages 15-49 as a proxy to scale the number of abortions by the population size, though this is not truly reflective of the number of people who can give birth in each county.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_2021</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span><span class="o">$</span><span class="n">total_rate</span><span class="p">[</span><span class="n">tex_itop</span><span class="o">$</span><span class="n">year</span> <span class="o">==</span> <span class="m">2021</span><span class="p">]</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="m">35</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_2021</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="o">$</span><span class="n">total_rate</span><span class="p">[</span><span class="n">tex_itop</span><span class="o">$</span><span class="n">year</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2021</span><span class="p">]</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">35</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -414,10 +414,10 @@ document.write(`
 <p>We can see in the figure that this is a heavy-tailed distribution. Below, we find the 10 counties with the highest rates and see that there are some counties that very few total abortions but that have some of the highest abortion rates. This indicates a small population. On the other hand, we also observe Harris county, which contains the city of Houston and has both a high total abortion count and a high abortion rate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_itop</span> <span class="o">%&gt;%</span> 
-  <span class="nf">filter</span><span class="p">(</span><span class="n">year</span><span class="o">==</span><span class="m">2021</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">slice_max</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">total_itop</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">year</span><span class="o">==</span><span class="m">2021</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">slice_max</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">total_itop</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -446,7 +446,7 @@ document.write(`
 <p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math notranslate nohighlight">\(\mu\)</span> we can do so by simply using the <code class="docutils literal notranslate"><span class="pre">mean()</span></code> function. For reference, the <a class="reference external" href="https://www.cdc.gov/reproductivehealth/data_stats/abortion.htm">CDC</a> estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15–44 years.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -458,11 +458,11 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>Below, we use this formula to calculate a 95% confidence interval for the mean abortion rate among counties:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">est_mean</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
-<span class="n">est_sd</span> <span class="o">&lt;-</span> <span class="nf">sd</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
-<span class="n">z_alpha</span> <span class="o">&lt;-</span> <span class="nf">dnorm</span><span class="p">(</span><span class="m">1-0.05</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
-<span class="n">n</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
-<span class="nf">c</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">-</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">est_mean</span> <span class="o">+</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">est_mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<span class="n">est_sd</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">sd</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
+<span class="n">z_alpha</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">dnorm</span><span class="p">(</span><span class="m">1-0.05</span><span class="o">/</span><span class="m">2</span><span class="p">)</span>
+<span class="n">n</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">length</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">)</span>
+<span class="nf">c</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">est_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -478,9 +478,9 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>If we want to display this nicely, we can use the <code class="docutils literal notranslate"><span class="pre">round()</span></code> function, which allows us to specify a number of digits to be displayed, and the <code class="docutils literal notranslate"><span class="pre">paste()</span></code> function, which creates a single character string from multiple inputs.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lower</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">-</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
-<span class="n">upper</span> <span class="o">&lt;-</span> <span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span> <span class="o">+</span> <span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
-<span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Confidence Interval: (&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="s">&quot;)&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">lower</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
+<span class="n">upper</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">est_mean</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">z_alpha</span><span class="o">*</span><span class="n">est_sd</span><span class="o">/</span><span class="nf">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="m">3</span><span class="p">)</span>
+<span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Confidence Interval: (&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lower</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -490,8 +490,8 @@ $<span class="math notranslate nohighlight">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot
 <p>Suppose that we wanted to run a hypothesis test to compare the mean to a pre-determined value. In particular, the Texas Heartbeat Act was introduced in 2021 and drastically reduced the number of eligible abortions. We could test whether there were significantly fewer abortions in 2021 compared to 2020 using a one-sided t-test. Our null hypothesis is that <span class="math notranslate nohighlight">\(\mu \geq 6.23\)</span>, the mean abortion rate in 2020. To run this hypothesis test, we use the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function. For a one sample t-test, we need to specify our sample <code class="docutils literal notranslate"><span class="pre">x</span></code>, the alternative hypothesis <code class="docutils literal notranslate"><span class="pre">alternative</span></code> (default is a two-sided test), the true value of the mean <code class="docutils literal notranslate"><span class="pre">mu</span></code> (default 0), and a confidence level <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> (default 0.95). Below, we run this t-test, and we can see from the result that we reject the null hypothesis at the 0.05 level and observe a statistically significant decline in the abortion rate in 2021.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s">&quot;less&quot;</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="m">6.23</span><span class="p">,</span> 
-       <span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;less&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6.23</span><span class="p">,</span><span class="w"> </span>
+<span class="w">       </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -513,8 +513,8 @@ mean of x
 <p>The output for this test is printed above. If we want to reference these values, we will need to save the result. The object <code class="docutils literal notranslate"><span class="pre">t_test_res</span></code> is a list that contains information about the statistic, p-value, confidence interval, etc. The list of outputs are similar to other test objects, so it is useful to look at what is contained in each by reading the test documentation (<code class="docutils literal notranslate"><span class="pre">?t.test</span></code>). Below, we find the p-value from <code class="docutils literal notranslate"><span class="pre">t_test_res</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_res</span> <span class="o">&lt;-</span> <span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s">&quot;less&quot;</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="m">6.23</span><span class="p">,</span> 
-       <span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">t.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;less&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">6.23</span><span class="p">,</span><span class="w"> </span>
+<span class="w">       </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
 <span class="nf">names</span><span class="p">(</span><span class="n">t_test_res</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -538,7 +538,7 @@ mean of x
 <div class="output text_html">0.0161249536351096</div></div>
 </div>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
 <p>Test whether there were significantly more abortions in 2019 compared to 2020 using a one-sided t-test. Your test statistic should be -6.4736.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -550,8 +550,8 @@ mean of x
 <p>One thing to consider is that the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function assumes that the sample <code class="docutils literal notranslate"><span class="pre">x</span></code> comes from a normal distribution. The one-sample Wilcoxon signed rank test is a non-parametric alternative to the one-sample t-test that can be used to compare the median value of a sample to a theoretical value without assuming that the data is normally distributed. This test can be performed using the <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> function and takes in the same arguments as the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function. Below, we can see that we again reject the null hypothesis at the 0.05 level and conclude that the median abortion rate in 2021 was significantly lower than 5.14, which was the median rate in 2020.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wilcox_res</span> <span class="o">&lt;-</span> <span class="nf">wilcox.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s">&quot;less&quot;</span><span class="p">,</span> 
-                          <span class="n">mu</span> <span class="o">=</span> <span class="m">5.14</span><span class="p">,</span> <span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">wilcox_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">wilcox.test</span><span class="p">(</span><span class="n">county_rates_2021</span><span class="p">,</span><span class="w"> </span><span class="n">alternative</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;less&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                          </span><span class="n">mu</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5.14</span><span class="p">,</span><span class="w"> </span><span class="n">conf.level</span><span class="o">=</span><span class="m">0.95</span><span class="p">)</span>
 <span class="n">wilcox_res</span>
 <span class="n">wilcox_res</span><span class="o">$</span><span class="n">p.value</span>
 </pre></div>
@@ -570,17 +570,17 @@ alternative hypothesis: true location is less than 5.14
 </section>
 </section>
 <section id="correlation-and-covariance">
-<h2>Correlation and Covariance<a class="headerlink" href="#correlation-and-covariance" title="Permalink to this heading">#</a></h2>
+<h2>Correlation and Covariance<a class="headerlink" href="#correlation-and-covariance" title="Permalink to this headline">#</a></h2>
 <p>We now look at two sample tests. To start, we look at the 2020 and 2021 rates by county. We pivot our data into a wider format in order to create 2020 and 2021 rate columns, and, this time, we filter out the Loving and Terrel counties to remove outliers. We then create a scatter plot of 2021 vs. 2020 rates and observe a linear correlation between the two.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">county</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Terrell&quot;</span><span class="p">,</span> <span class="s">&quot;Loving&quot;</span><span class="p">)),</span> 
-         <span class="n">year</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="m">2021</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">year</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">na.omit</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span> <span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">county</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Terrell&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Loving&quot;</span><span class="p">)),</span><span class="w"> </span>
+<span class="w">         </span><span class="n">year</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span><span class="w"> </span><span class="m">2021</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -605,9 +605,9 @@ alternative hypothesis: true location is less than 5.14
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span> <span class="o">+</span> 
- <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y2020</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y2021</span><span class="p">))</span> <span class="o">+</span>
- <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;2020 ITOP Rates&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;2021 ITOP Rates&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">county_rates</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
+<span class="w"> </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">y2020</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y2021</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
+<span class="w"> </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;2020 ITOP Rates&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;2021 ITOP Rates&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -618,19 +618,19 @@ alternative hypothesis: true location is less than 5.14
 <p>We have seen before how to calculate the correlation between two columns using the <code class="docutils literal notranslate"><span class="pre">cor()</span></code> function. We can also calculate the covariance using the <code class="docutils literal notranslate"><span class="pre">cov()</span></code> function. As suspected, there is a positive correlation. The estimated covariance is around 5.2.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
-<span class="nf">cov</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">cor</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<span class="nf">cov</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">0.499567727097001</div><div class="output text_html">5.19853342823301</div></div>
+<div class="output text_html">0.499567727097002</div><div class="output text_html">5.19853342823301</div></div>
 </div>
 <p>Besides calculating the value of the correlation, we can also test whether this correlation is significantly different from zero. The function <code class="docutils literal notranslate"><span class="pre">cor.test()</span></code> tests for association between paired samples, using either Pearson’s product moment correlation coefficient, Kendall’s <span class="math notranslate nohighlight">\(\tau\)</span>, or Spearman’s <span class="math notranslate nohighlight">\(\rho\)</span>. Similar to the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> and <code class="docutils literal notranslate"><span class="pre">wilcox.test()</span></code> functions, we can also specify the <code class="docutils literal notranslate"><span class="pre">alternative</span></code> and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> arguments. Below, we test whether there is a non-zero correlation between the 2020 and 2021 county rates using Pearson’s product-moment correlation. We can see from the resulting p-value that we can reject the null hypothesis that the correlation is zero and conclude that it is instead significantly different than zero. This time we also print the computed confidence interval for our estimate.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">cor_test_res</span> <span class="o">&lt;-</span> <span class="nf">cor.test</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> 
-                         <span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">cor_test_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cor.test</span><span class="p">(</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                         </span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">,</span><span class="w"> </span><span class="n">method</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">)</span>
 <span class="n">cor_test_res</span>
 </pre></div>
 </div>
@@ -662,16 +662,16 @@ sample estimates:
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>0.400733353878666</li><li>0.586908922651711</li></ol>
+<ol class=list-inline><li>0.400733353878667</li><li>0.586908922651712</li></ol>
 </div></div>
 </div>
 </section>
 <section id="two-sample-tests-for-continuous-variables">
-<h2>Two Sample Tests for Continuous Variables<a class="headerlink" href="#two-sample-tests-for-continuous-variables" title="Permalink to this heading">#</a></h2>
+<h2>Two Sample Tests for Continuous Variables<a class="headerlink" href="#two-sample-tests-for-continuous-variables" title="Permalink to this headline">#</a></h2>
 <p>If we wanted to directly compare the difference between 2020 and 2021 rates, we could use a two sample test. In this case, because our samples are paired by county, we can use a two sample paired t-test. Specifically, we use a two-sided test to test the null hypothesis that the rates are equal by specifying two different vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Note that we used the default values of <code class="docutils literal notranslate"><span class="pre">mu=0</span></code> and <code class="docutils literal notranslate"><span class="pre">alternative=&quot;two.sided&quot;</span></code>. Additionally, we used the default value <code class="docutils literal notranslate"><span class="pre">var.equal=FALSE</span></code>, which implies that the samples may have different variances. From the results below, we reject the null hypothesis that the two county rates are equal at the 0.05 level. We also print a 95% confidence interval of the difference in means.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_two_res</span> <span class="o">&lt;-</span> <span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_two_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2020</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">county_rates</span><span class="o">$</span><span class="n">y2021</span><span class="p">)</span>
 <span class="n">t_test_two_res</span>
 <span class="n">t_test_two_res</span><span class="o">$</span><span class="n">conf.int</span>
 </pre></div>
@@ -701,303 +701,13 @@ mean of x mean of y
 <p>In the <code class="docutils literal notranslate"><span class="pre">tex_itop</span></code> dataset, each county has also been categorized by whether it was urban or rural. Suppose we want to compare the change in abortion rates from 2020 to 2021 between rural and urban counties. First, we create a variable describing the rate change between these years using the code below. We choose to use the change in rate rather than percent change to avoid infinite or undefined values.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_type</span> <span class="o">&lt;-</span> <span class="n">tex_itop</span> <span class="o">%&gt;%</span>
-  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span> <span class="n">urban</span><span class="p">,</span> <span class="n">county_type</span><span class="p">,</span> <span class="n">total_rate</span><span class="p">,</span> <span class="n">year</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">filter</span><span class="p">(</span><span class="n">total_rate</span> <span class="o">&lt;</span> <span class="m">15</span><span class="p">,</span> <span class="n">year</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="m">2021</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span> <span class="o">=</span> <span class="n">year</span><span class="p">,</span> <span class="n">values_from</span> <span class="o">=</span> <span class="n">total_rate</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">na.omit</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span> <span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">mutate</span><span class="p">(</span><span class="n">rate_change</span> <span class="o">=</span> <span class="p">(</span><span class="n">y2021</span><span class="o">-</span><span class="n">y2020</span><span class="p">))</span> 
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in `dplyr::select()`:
-! Can&#39;t subset columns that don&#39;t exist.
-✖ Column `county_type` doesn&#39;t exist.
-Traceback:
-
-1. tex_itop %&gt;% dplyr::select(c(county, urban, county_type, total_rate, 
- .     year)) %&gt;% filter(total_rate &lt; 15, year %in% c(2020, 2021)) %&gt;% 
- .     pivot_wider(names_from = year, values_from = total_rate) %&gt;% 
- .     na.omit() %&gt;% rename(y2020 = &quot;2020&quot;, y2021 = &quot;2021&quot;) %&gt;% 
- .     mutate(rate_change = (y2021 - y2020))
-2. mutate(., rate_change = (y2021 - y2020))
-3. rename(., y2020 = &quot;2020&quot;, y2021 = &quot;2021&quot;)
-4. na.omit(.)
-5. pivot_wider(., names_from = year, values_from = total_rate)
-6. filter(., total_rate &lt; 15, year %in% c(2020, 2021))
-7. dplyr::select(., c(county, urban, county_type, total_rate, year))
-8. select.data.frame(., c(county, urban, county_type, total_rate, 
- .     year))
-9. tidyselect::eval_select(expr(c(...)), data = .data, error_call = error_call)
-10. eval_select_impl(data, names(data), as_quosure(expr, env), include = include, 
-  .     exclude = exclude, strict = strict, name_spec = name_spec, 
-  .     allow_rename = allow_rename, allow_empty = allow_empty, allow_predicates = allow_predicates, 
-  .     error_call = error_call, )
-11. with_subscript_errors(out &lt;- vars_select_eval(vars, expr, strict = strict, 
-  .     data = x, name_spec = name_spec, uniquely_named = uniquely_named, 
-  .     allow_rename = allow_rename, allow_empty = allow_empty, allow_predicates = allow_predicates, 
-  .     type = type, error_call = error_call), type = type)
-12. try_fetch(expr, vctrs_error_subscript = function(cnd) {
-  .     cnd$subscript_action &lt;- subscript_action(type)
-  .     cnd$subscript_elt &lt;- &quot;column&quot;
-  .     cnd_signal(cnd)
-  . })
-13. withCallingHandlers(expr, condition = function(cnd) {
-  .     {
-  .         .__handler_frame__. &lt;- TRUE
-  .         .__setup_frame__. &lt;- frame
-  .         if (inherits(cnd, &quot;message&quot;)) {
-  .             except &lt;- c(&quot;warning&quot;, &quot;error&quot;)
-  .         }
-  .         else if (inherits(cnd, &quot;warning&quot;)) {
-  .             except &lt;- &quot;error&quot;
-  .         }
-  .         else {
-  .             except &lt;- &quot;&quot;
-  .         }
-  .     }
-  .     while (!is_null(cnd)) {
-  .         if (inherits(cnd, &quot;vctrs_error_subscript&quot;)) {
-  .             out &lt;- handlers[[1L]](cnd)
-  .             if (!inherits(out, &quot;rlang_zap&quot;)) 
-  .                 throw(out)
-  .         }
-  .         inherit &lt;- .subset2(.subset2(cnd, &quot;rlang&quot;), &quot;inherit&quot;)
-  .         if (is_false(inherit)) {
-  .             return()
-  .         }
-  .         cnd &lt;- .subset2(cnd, &quot;parent&quot;)
-  .     }
-  . })
-14. vars_select_eval(vars, expr, strict = strict, data = x, name_spec = name_spec, 
-  .     uniquely_named = uniquely_named, allow_rename = allow_rename, 
-  .     allow_empty = allow_empty, allow_predicates = allow_predicates, 
-  .     type = type, error_call = error_call)
-15. walk_data_tree(expr, data_mask, context_mask)
-16. eval_c(expr, data_mask, context_mask)
-17. reduce_sels(node, data_mask, context_mask, init = init)
-18. walk_data_tree(new, data_mask, context_mask)
-19. eval_c(expr, data_mask, context_mask)
-20. reduce_sels(node, data_mask, context_mask, init = init)
-21. walk_data_tree(new, data_mask, context_mask)
-22. as_indices_sel_impl(out, vars = vars, strict = strict, data = data, 
-  .     allow_predicates = allow_predicates, call = error_call, arg = as_label(expr))
-23. as_indices_impl(x, vars, call = call, arg = arg, strict = strict)
-24. chr_as_locations(x, vars, call = call, arg = arg)
-25. vctrs::vec_as_location(x, n = length(vars), names = vars, call = call, 
-  .     arg = arg)
-26. (function () 
-  . stop_subscript_oob(i = i, subscript_type = subscript_type, names = names, 
-  .     subscript_action = subscript_action, subscript_arg = subscript_arg, 
-  .     call = call))()
-27. stop_subscript_oob(i = i, subscript_type = subscript_type, names = names, 
-  .     subscript_action = subscript_action, subscript_arg = subscript_arg, 
-  .     call = call)
-28. stop_subscript(class = &quot;vctrs_error_subscript_oob&quot;, i = i, subscript_type = subscript_type, 
-  .     ..., call = call)
-29. abort(class = c(class, &quot;vctrs_error_subscript&quot;), i = i, ..., 
-  .     call = call)
-30. signal_abort(cnd, .file)
-31. signalCondition(cnd)
-32. (function (cnd) 
-  . {
-  .     {
-  .         .__handler_frame__. &lt;- TRUE
-  .         .__setup_frame__. &lt;- frame
-  .         if (inherits(cnd, &quot;message&quot;)) {
-  .             except &lt;- c(&quot;warning&quot;, &quot;error&quot;)
-  .         }
-  .         else if (inherits(cnd, &quot;warning&quot;)) {
-  .             except &lt;- &quot;error&quot;
-  .         }
-  .         else {
-  .             except &lt;- &quot;&quot;
-  .         }
-  .     }
-  .     while (!is_null(cnd)) {
-  .         if (inherits(cnd, &quot;vctrs_error_subscript&quot;)) {
-  .             out &lt;- handlers[[1L]](cnd)
-  .             if (!inherits(out, &quot;rlang_zap&quot;)) 
-  .                 throw(out)
-  .         }
-  .         inherit &lt;- .subset2(.subset2(cnd, &quot;rlang&quot;), &quot;inherit&quot;)
-  .         if (is_false(inherit)) {
-  .             return()
-  .         }
-  .         cnd &lt;- .subset2(cnd, &quot;parent&quot;)
-  .     }
-  . })(structure(list(message = &quot;&quot;, trace = structure(list(call = list(
-  .     IRkernel::main(), kernel$run(), handle_shell(), executor$execute(msg), 
-  .     tryCatch(evaluate(request$content$code, envir = .GlobalEnv, 
-  .         output_handler = oh, stop_on_error = 1L), interrupt = function(cond) {
-  .         log_debug(&quot;Interrupt during execution&quot;)
-  .         interrupted &lt;&lt;- TRUE
-  .     }, error = .self$handle_error), tryCatchList(expr, classes, 
-  .         parentenv, handlers), tryCatchOne(tryCatchList(expr, 
-  .         names[-nh], parentenv, handlers[-nh]), names[nh], parentenv, 
-  .         handlers[[nh]]), doTryCatch(return(expr), name, parentenv, 
-  .         handler), tryCatchList(expr, names[-nh], parentenv, handlers[-nh]), 
-  .     tryCatchOne(expr, names, parentenv, handlers[[1L]]), doTryCatch(return(expr), 
-  .         name, parentenv, handler), evaluate(request$content$code, 
-  .         envir = .GlobalEnv, output_handler = oh, stop_on_error = 1L), 
-  .     evaluate_call(expr, parsed$src[[i]], envir = envir, enclos = enclos, 
-  .         debug = debug, last = i == length(out), use_try = stop_on_error != 
-  .             2L, keep_warning = keep_warning, keep_message = keep_message, 
-  .         log_echo = log_echo, log_warning = log_warning, output_handler = output_handler, 
-  .         include_timing = include_timing), timing_fn(handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
-  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
-  .         message = mHandler))), handle(ev &lt;- withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
-  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
-  .         message = mHandler)), try(f, silent = TRUE), tryCatch(expr, 
-  .         error = function(e) {
-  .             call &lt;- conditionCall(e)
-  .             if (!is.null(call)) {
-  .                 if (identical(call[[1L]], quote(doTryCatch))) 
-  .                   call &lt;- sys.call(-4L)
-  .                 dcall &lt;- deparse(call, nlines = 1L)
-  .                 prefix &lt;- paste(&quot;Error in&quot;, dcall, &quot;: &quot;)
-  .                 LONG &lt;- 75L
-  .                 sm &lt;- strsplit(conditionMessage(e), &quot;\n&quot;)[[1L]]
-  .                 w &lt;- 14L + nchar(dcall, type = &quot;w&quot;) + nchar(sm[1L], 
-  .                   type = &quot;w&quot;)
-  .                 if (is.na(w)) 
-  .                   w &lt;- 14L + nchar(dcall, type = &quot;b&quot;) + nchar(sm[1L], 
-  .                     type = &quot;b&quot;)
-  .                 if (w &gt; LONG) 
-  .                   prefix &lt;- paste0(prefix, &quot;\n  &quot;)
-  .             }
-  .             else prefix &lt;- &quot;Error : &quot;
-  .             msg &lt;- paste0(prefix, conditionMessage(e), &quot;\n&quot;)
-  .             .Internal(seterrmessage(msg[1L]))
-  .             if (!silent &amp;&amp; isTRUE(getOption(&quot;show.error.messages&quot;))) {
-  .                 cat(msg, file = outFile)
-  .                 .Internal(printDeferredWarnings())
-  .             }
-  .             invisible(structure(msg, class = &quot;try-error&quot;, condition = e))
-  .         }), tryCatchList(expr, classes, parentenv, handlers), 
-  .     tryCatchOne(expr, names, parentenv, handlers[[1L]]), doTryCatch(return(expr), 
-  .         name, parentenv, handler), withCallingHandlers(withVisible(eval_with_user_handlers(expr, 
-  .         envir, enclos, user_handlers)), warning = wHandler, error = eHandler, 
-  .         message = mHandler), withVisible(eval_with_user_handlers(expr, 
-  .         envir, enclos, user_handlers)), eval_with_user_handlers(expr, 
-  .         envir, enclos, user_handlers), eval(expr, envir, enclos), 
-  .     eval(expr, envir, enclos), tex_itop %&gt;% dplyr::select(c(county, 
-  .         urban, county_type, total_rate, year)) %&gt;% filter(total_rate &lt; 
-  .         15, year %in% c(2020, 2021)) %&gt;% pivot_wider(names_from = year, 
-  .         values_from = total_rate) %&gt;% na.omit() %&gt;% rename(y2020 = &quot;2020&quot;, 
-  .         y2021 = &quot;2021&quot;) %&gt;% mutate(rate_change = (y2021 - y2020)), 
-  .     mutate(., rate_change = (y2021 - y2020)), rename(., y2020 = &quot;2020&quot;, 
-  .         y2021 = &quot;2021&quot;), na.omit(.), pivot_wider(., names_from = year, 
-  .         values_from = total_rate), filter(., total_rate &lt; 15, 
-  .         year %in% c(2020, 2021)), dplyr::select(., c(county, 
-  .         urban, county_type, total_rate, year)), select.data.frame(., 
-  .         c(county, urban, county_type, total_rate, year)), tidyselect::eval_select(expr(c(...)), 
-  .         data = .data, error_call = error_call), eval_select_impl(data, 
-  .         names(data), as_quosure(expr, env), include = include, 
-  .         exclude = exclude, strict = strict, name_spec = name_spec, 
-  .         allow_rename = allow_rename, allow_empty = allow_empty, 
-  .         allow_predicates = allow_predicates, error_call = error_call, 
-  .         ), with_subscript_errors(out &lt;- vars_select_eval(vars, 
-  .         expr, strict = strict, data = x, name_spec = name_spec, 
-  .         uniquely_named = uniquely_named, allow_rename = allow_rename, 
-  .         allow_empty = allow_empty, allow_predicates = allow_predicates, 
-  .         type = type, error_call = error_call), type = type), 
-  .     try_fetch(expr, vctrs_error_subscript = function(cnd) {
-  .         cnd$subscript_action &lt;- subscript_action(type)
-  .         cnd$subscript_elt &lt;- &quot;column&quot;
-  .         cnd_signal(cnd)
-  .     }), withCallingHandlers(expr, condition = function(cnd) {
-  .         {
-  .             .__handler_frame__. &lt;- TRUE
-  .             .__setup_frame__. &lt;- frame
-  .             if (inherits(cnd, &quot;message&quot;)) {
-  .                 except &lt;- c(&quot;warning&quot;, &quot;error&quot;)
-  .             }
-  .             else if (inherits(cnd, &quot;warning&quot;)) {
-  .                 except &lt;- &quot;error&quot;
-  .             }
-  .             else {
-  .                 except &lt;- &quot;&quot;
-  .             }
-  .         }
-  .         while (!is_null(cnd)) {
-  .             if (inherits(cnd, &quot;vctrs_error_subscript&quot;)) {
-  .                 out &lt;- handlers[[1L]](cnd)
-  .                 if (!inherits(out, &quot;rlang_zap&quot;)) 
-  .                   throw(out)
-  .             }
-  .             inherit &lt;- .subset2(.subset2(cnd, &quot;rlang&quot;), &quot;inherit&quot;)
-  .             if (is_false(inherit)) {
-  .                 return()
-  .             }
-  .             cnd &lt;- .subset2(cnd, &quot;parent&quot;)
-  .         }
-  .     }), vars_select_eval(vars, expr, strict = strict, data = x, 
-  .         name_spec = name_spec, uniquely_named = uniquely_named, 
-  .         allow_rename = allow_rename, allow_empty = allow_empty, 
-  .         allow_predicates = allow_predicates, type = type, error_call = error_call), 
-  .     walk_data_tree(expr, data_mask, context_mask), eval_c(expr, 
-  .         data_mask, context_mask), reduce_sels(node, data_mask, 
-  .         context_mask, init = init), walk_data_tree(new, data_mask, 
-  .         context_mask), eval_c(expr, data_mask, context_mask), 
-  .     reduce_sels(node, data_mask, context_mask, init = init), 
-  .     walk_data_tree(new, data_mask, context_mask), as_indices_sel_impl(out, 
-  .         vars = vars, strict = strict, data = data, allow_predicates = allow_predicates, 
-  .         call = error_call, arg = as_label(expr)), as_indices_impl(x, 
-  .         vars, call = call, arg = arg, strict = strict), chr_as_locations(x, 
-  .         vars, call = call, arg = arg), vctrs::vec_as_location(x, 
-  .         n = length(vars), names = vars, call = call, arg = arg), 
-  .     `&lt;fn&gt;`(), stop_subscript_oob(i = i, subscript_type = subscript_type, 
-  .         names = names, subscript_action = subscript_action, subscript_arg = subscript_arg, 
-  .         call = call), stop_subscript(class = &quot;vctrs_error_subscript_oob&quot;, 
-  .         i = i, subscript_type = subscript_type, ..., call = call), 
-  .     abort(class = c(class, &quot;vctrs_error_subscript&quot;), i = i, ..., 
-  .         call = call)), parent = c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 
-  . 7L, 6L, 9L, 10L, 4L, 12L, 13L, 13L, 15L, 16L, 17L, 18L, 19L, 
-  . 13L, 13L, 13L, 23L, 24L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 33L, 
-  . 34L, 35L, 36L, 37L, 35L, 39L, 40L, 41L, 42L, 43L, 44L, 45L, 46L, 
-  . 47L, 48L, 49L, 0L, 51L, 52L, 53L), visible = c(TRUE, TRUE, TRUE, 
-  . TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
-  . TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 
-  . TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE), namespace = c(&quot;IRkernel&quot;, NA, &quot;IRkernel&quot;, NA, &quot;base&quot;, 
-  . &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;evaluate&quot;, &quot;evaluate&quot;, 
-  . &quot;evaluate&quot;, &quot;evaluate&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, &quot;base&quot;, 
-  . &quot;base&quot;, &quot;base&quot;, &quot;evaluate&quot;, &quot;base&quot;, &quot;base&quot;, NA, &quot;dplyr&quot;, &quot;dplyr&quot;, 
-  . &quot;stats&quot;, &quot;tidyr&quot;, &quot;dplyr&quot;, &quot;dplyr&quot;, &quot;dplyr&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, 
-  . &quot;tidyselect&quot;, &quot;rlang&quot;, &quot;base&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, 
-  . &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, 
-  . &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;tidyselect&quot;, &quot;vctrs&quot;, &quot;vctrs&quot;, &quot;vctrs&quot;, 
-  . &quot;vctrs&quot;, &quot;rlang&quot;), scope = c(&quot;::&quot;, NA, &quot;local&quot;, NA, &quot;::&quot;, &quot;local&quot;, 
-  . &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;local&quot;, 
-  . &quot;local&quot;, &quot;::&quot;, &quot;::&quot;, &quot;local&quot;, &quot;local&quot;, &quot;local&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, 
-  . &quot;::&quot;, &quot;::&quot;, NA, &quot;::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;::&quot;, 
-  . &quot;:::&quot;, &quot;:::&quot;, &quot;::&quot;, &quot;::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, 
-  . &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;:::&quot;, &quot;::&quot;, &quot;local&quot;, &quot;:::&quot;, 
-  . &quot;:::&quot;, &quot;::&quot;), error_frame = c(FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, 
-  . FALSE, FALSE, FALSE, FALSE)), row.names = c(NA, -54L), version = 2L, class = c(&quot;rlang_trace&quot;, 
-  . &quot;rlib_trace&quot;, &quot;tbl&quot;, &quot;data.frame&quot;)), parent = NULL, i = &quot;county_type&quot;, 
-  .     subscript_type = &quot;character&quot;, names = c(&quot;county&quot;, &quot;total_itop&quot;, 
-  .     &quot;asian_itop&quot;, &quot;hispanic_itop&quot;, &quot;white_itop&quot;, &quot;black_itop&quot;, 
-  .     &quot;native_american_itop&quot;, &quot;other_itop&quot;, &quot;year&quot;, &quot;urban&quot;, &quot;total_rate&quot;, 
-  .     &quot;white_rate&quot;, &quot;black_rate&quot;, &quot;hispanic_rate&quot;, &quot;asian_rate&quot;, 
-  .     &quot;native_american_rate&quot;, &quot;other_rate&quot;), subscript_action = NULL, 
-  .     subscript_arg = &quot;county_type&quot;, rlang = list(inherit = TRUE), 
-  .     call = dplyr::select(., c(county, urban, county_type, total_rate, 
-  .         year))), class = c(&quot;vctrs_error_subscript_oob&quot;, &quot;vctrs_error_subscript&quot;, 
-  . &quot;rlang_error&quot;, &quot;error&quot;, &quot;condition&quot;)))
-33. handlers[[1L]](cnd)
-34. cnd_signal(cnd)
-35. signal_abort(cnd)
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_type</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tex_itop</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">county</span><span class="p">,</span><span class="w"> </span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">county_type</span><span class="p">,</span><span class="w"> </span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">filter</span><span class="p">(</span><span class="n">total_rate</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">15</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span><span class="w"> </span><span class="m">2021</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">pivot_wider</span><span class="p">(</span><span class="n">names_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">year</span><span class="p">,</span><span class="w"> </span><span class="n">values_from</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_rate</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">rename</span><span class="p">(</span><span class="s">&quot;y2020&quot;</span><span class="o">=</span><span class="s">&quot;2020&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;y2021&quot;</span><span class="o">=</span><span class="s">&quot;2021&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">mutate</span><span class="p">(</span><span class="n">rate_change</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">y2021</span><span class="o">-</span><span class="n">y2020</span><span class="p">))</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -1005,7 +715,7 @@ Traceback:
 <p>We again use a two-sample two-sided t-test, but this time the data is not paired. Below, we show an alternative way to specify a t-test test below using a formula <code class="docutils literal notranslate"><span class="pre">lhs</span> <span class="pre">~</span> <span class="pre">rhs</span></code>, where <code class="docutils literal notranslate"><span class="pre">lhs</span></code> is a numeric column and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> is a factor column with two levels. We must also specify the data in this case. From the R output in this case, we would fail to reject the null hypothesis at the 0.05 level and conclude that the rate changes for urban and rural counties are not significantly different. We also print the estimates used in the t-test using <code class="docutils literal notranslate"><span class="pre">estimate</span></code>, which shows the estimated mean in both groups.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_unpaired</span> <span class="o">&lt;-</span> <span class="nf">t.test</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">county_rates_type</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">t_test_unpaired</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">t.test</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">county_rates_type</span><span class="p">)</span>
 <span class="n">t_test_unpaired</span>
 <span class="n">t_test_unpaired</span><span class="o">$</span><span class="n">estimate</span>
 </pre></div>
@@ -1035,9 +745,9 @@ mean in group Rural mean in group Urban
 <p>Note that this yields the same results as if we had specified the data using two vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">&lt;-</span> <span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">[</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span> <span class="o">==</span> <span class="s">&#39;Urban&#39;</span><span class="p">]</span>
-<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">[</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span> <span class="o">==</span> <span class="s">&#39;Rural&#39;</span><span class="p">]</span>
-<span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">paired</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span> 
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">[</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#39;Urban&#39;</span><span class="p">]</span>
+<span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">[</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&#39;Rural&#39;</span><span class="p">]</span>
+<span class="nf">t.test</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">paired</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -1060,8 +770,8 @@ sample estimates:
 <p>This time we use the column <code class="docutils literal notranslate"><span class="pre">county_type</span></code>, which is an indicator for whether the county is urban, suburban, or rural according to the RUCC (rural-urban continuum codes) from the U.S. Department of Agriculture. For the <code class="docutils literal notranslate"><span class="pre">kruskal.test()</span></code> function, we can either specify the arguments <code class="docutils literal notranslate"><span class="pre">formula</span></code> (<code class="docutils literal notranslate"><span class="pre">rate_change</span> <span class="pre">~</span> <span class="pre">county_type</span></code>) and <code class="docutils literal notranslate"><span class="pre">data</span></code> (<code class="docutils literal notranslate"><span class="pre">county_rates_type</span></code>) or we can specify two vectors: <code class="docutils literal notranslate"><span class="pre">x</span></code>, a numeric vector, and <code class="docutils literal notranslate"><span class="pre">g</span></code>, a factor representing the group. For the <code class="docutils literal notranslate"><span class="pre">aov()</span></code> function, we specify the test using a formula and the data. To see the p-value, we have to use the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function to print the result. Again, both tests suggest that we fail to reject the null hypothesis at the 0.05 level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">kruskal.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">,</span> 
-             <span class="n">county_rates_type</span><span class="o">$</span><span class="n">county_type</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">kruskal.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">rate_change</span><span class="p">,</span><span class="w"> </span>
+<span class="w">             </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">county_type</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1076,7 +786,7 @@ Kruskal-Wallis chi-squared = 2.3715, df = 2, p-value = 0.3055
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">aov_res</span> <span class="o">&lt;-</span> <span class="nf">aov</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">county_type</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">county_rates_type</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">aov_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">aov</span><span class="p">(</span><span class="n">rate_change</span><span class="o">~</span><span class="n">county_type</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">county_rates_type</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">aov_res</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1090,7 +800,7 @@ Residuals   245 1546.6   6.313
 </div>
 </div>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
 <p>Use an appropriate test to determine whether the ITOP rates in 2016 significantly differed by race. The test statistic should be 264.27 with associated p-value &lt; 2.2e-16.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1101,11 +811,11 @@ Residuals   245 1546.6   6.313
 </div>
 </section>
 <section id="two-sample-variance-tests">
-<h3>Two Sample Variance Tests<a class="headerlink" href="#two-sample-variance-tests" title="Permalink to this heading">#</a></h3>
+<h3>Two Sample Variance Tests<a class="headerlink" href="#two-sample-variance-tests" title="Permalink to this headline">#</a></h3>
 <p>We could also test whether the variance of a continous variable is equal between groups. To start, we compare the variance in abortion rates in 2021 between urban and rural counties using an F test. Our null hypothesis for this test is that the variance in both groups is equal. The function <code class="docutils literal notranslate"><span class="pre">var.test()</span></code> implements an F test and has the same main arguments as the <code class="docutils literal notranslate"><span class="pre">t.test()</span></code> function: vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> OR a <code class="docutils literal notranslate"><span class="pre">formula</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code>, the alternative hypothesis <code class="docutils literal notranslate"><span class="pre">alternative</span></code>, and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code>. Additionally, we can specify the hypothesized ratio of the variances through the arugment <code class="docutils literal notranslate"><span class="pre">ratio</span></code> (default value 1). Note that this function assumes that the two samples come from normally distributed populations. We fail to reject the null hypothesis that the variance in rates are equal at the 0.05 level and print the estimate of the ratio of variances, which is around 1.11.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">f_test</span> <span class="o">&lt;-</span> <span class="nf">var.test</span><span class="p">(</span><span class="n">y2021</span> <span class="o">~</span> <span class="n">urban</span><span class="p">,</span> <span class="n">county_rates_type</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">f_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">var.test</span><span class="p">(</span><span class="n">y2021</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">urban</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_type</span><span class="p">)</span>
 <span class="n">f_test</span>
 <span class="n">f_test</span><span class="o">$</span><span class="n">estimate</span>
 </pre></div>
@@ -1129,8 +839,8 @@ ratio of variances
 <p>Lastly, we implement a Levene’s test to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and data set, as below, or by providing two vectors <code class="docutils literal notranslate"><span class="pre">y</span></code>, a numeric vector, and <code class="docutils literal notranslate"><span class="pre">g</span></code>, a vector specifying the groups. This test is from the <code class="docutils literal notranslate"><span class="pre">car</span></code> package and has slightly different output than other tests. In particular, to access the p-value, we need to access the value named <code class="docutils literal notranslate"><span class="pre">'Pr(&gt;F)'</span></code>. In this case, we actually do reject the null hypothesis at the 0.05 level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">levene_test</span> <span class="o">&lt;-</span> <span class="nf">leveneTest</span><span class="p">(</span><span class="n">y2021</span> <span class="o">~</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">county_type</span><span class="p">),</span> 
-                              <span class="n">county_rates_type</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">levene_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">leveneTest</span><span class="p">(</span><span class="n">y2021</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">county_type</span><span class="p">),</span><span class="w"> </span>
+<span class="w">                              </span><span class="n">county_rates_type</span><span class="p">)</span>
 <span class="nf">print</span><span class="p">(</span><span class="n">levene_test</span><span class="p">)</span>
 <span class="n">levene_test</span><span class="p">[[</span><span class="s">&#39;Pr(&gt;F)&#39;</span><span class="p">]]</span>
 </pre></div>
@@ -1156,14 +866,14 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 </section>
 </section>
 <section id="two-sample-tests-for-categorical-variables">
-<h2>Two Sample Tests for Categorical Variables<a class="headerlink" href="#two-sample-tests-for-categorical-variables" title="Permalink to this heading">#</a></h2>
+<h2>Two Sample Tests for Categorical Variables<a class="headerlink" href="#two-sample-tests-for-categorical-variables" title="Permalink to this headline">#</a></h2>
 <p>In the two sample tests above, we were comparing the distributions of continuous variables. We now look at comparing distributions of categorical variables. We will first categorize counties by their abortion rate in 2020 being above or below 11.2, which was the national average rate that year. We display the distribution of this variable by the urban/rural grouping using a contingency table below.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span> <span class="o">&lt;-</span> 
-  <span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span> <span class="o">&gt;</span> <span class="m">11.2</span><span class="p">,</span> <span class="s">&quot;Above Nat Avg&quot;</span><span class="p">,</span> 
-         <span class="s">&quot;Below Nat Avg&quot;</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span> <span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">11.2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Above Nat Avg&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">         </span><span class="s">&quot;Below Nat Avg&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1179,8 +889,8 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 <p>We can use a Fisher’s exact test to test whether the classifications of being above and below the national average and being rural and urban are associated with each other. In this case, the null hypothesis is that the odds or being below the national average is equal between rural and urban counties. The <code class="docutils literal notranslate"><span class="pre">fisher.test()</span></code> function can either take in a contingency table as a matrix or can be specified by two factor vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>, which is how we implement it below. Additionally, there is the option to specify the <code class="docutils literal notranslate"><span class="pre">alternative</span></code> and <code class="docutils literal notranslate"><span class="pre">conf.level</span></code> arguments. We do not see a statistically significant difference between urban and rural counties at the 0.05 level with the estimated odds ratio is around 0.23.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">fisher_test</span> <span class="o">&lt;-</span> <span class="nf">fisher.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">,</span> 
-                           <span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">fisher_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">fisher.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                           </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_nat_avg</span><span class="p">)</span>
 <span class="n">fisher_test</span>
 <span class="n">fisher_test</span><span class="o">$</span><span class="n">estimate</span>
 </pre></div>
@@ -1204,11 +914,11 @@ odds ratio
 <p>An alternative test is a Pearson’s Chi-Squared test, which can be used for large sample sizes. The counts of rural and urban counties in the ‘Above Nat Avg’ category are very small, so we recategorize our outcome to be at or above Texas’s average to avoid this complication. The <code class="docutils literal notranslate"><span class="pre">chisq.test()</span></code> function also takes in a contingency table as a matrix or can be specified by two factor vectors <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>. Another useful argument is <code class="docutils literal notranslate"><span class="pre">correct</span></code> (default is TRUE) which indicates whether to apply a continuity correction. For this test, we observe a statistically significant difference in the proportion of counties above the national average between rural and urban counties and reject the null hypothesis at the 0.05 level.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_mean</span> <span class="o">&lt;-</span> <span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span><span class="p">)</span>
-<span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span> <span class="o">&lt;-</span> 
-  <span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span> <span class="o">&gt;</span> <span class="n">tex_mean</span><span class="p">,</span> <span class="s">&quot;Above Texas Ave&quot;</span><span class="p">,</span> 
-         <span class="s">&quot;Below Texas Ave&quot;</span><span class="p">)</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span> <span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">tex_mean</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span><span class="p">)</span>
+<span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">y2020</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">tex_mean</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Above Texas Ave&quot;</span><span class="p">,</span><span class="w"> </span>
+<span class="w">         </span><span class="s">&quot;Below Texas Ave&quot;</span><span class="p">)</span>
+<span class="nf">table</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span><span class="w"> </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1223,8 +933,8 @@ odds ratio
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">chi_sq</span> <span class="o">&lt;-</span> <span class="nf">chisq.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span> 
-           <span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">chi_sq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">chisq.test</span><span class="p">(</span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">below_tex_avg</span><span class="p">,</span><span class="w"> </span>
+<span class="w">           </span><span class="n">county_rates_type</span><span class="o">$</span><span class="n">urban</span><span class="p">)</span>
 <span class="n">chi_sq</span>
 <span class="n">chi_sq</span><span class="o">$</span><span class="n">p.value</span>
 </pre></div>
@@ -1240,7 +950,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 <div class="output text_html">0.00952741685585952</div></div>
 </div>
 <section id="id2">
-<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
 <p>Repeat the Chi-Squared test, but this time use the RUCC codes instead of the <code class="docutils literal notranslate"><span class="pre">urban</span></code> column. You should get a p-value of 0.2799. Think about what could explain the difference between these results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1252,17 +962,17 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 </section>
 </section>
 <section id="adding-hypothesis-tests-to-summary-tables">
-<h2>Adding Hypothesis Tests to Summary Tables<a class="headerlink" href="#adding-hypothesis-tests-to-summary-tables" title="Permalink to this heading">#</a></h2>
+<h2>Adding Hypothesis Tests to Summary Tables<a class="headerlink" href="#adding-hypothesis-tests-to-summary-tables" title="Permalink to this headline">#</a></h2>
 <p>In <a class="reference external" href="https://alicepaul.github.io/r-for-health-data-science/book/4_exploratory_analysis.html">Chapter 4</a>, we used the <code class="docutils literal notranslate"><span class="pre">gt</span></code> and <code class="docutils literal notranslate"><span class="pre">gtsummary</span></code> packages to create summary tables of variables. When creating a stratified table (done by add the <code class="docutils literal notranslate"><span class="pre">by</span></code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code class="docutils literal notranslate"><span class="pre">add_p()</span></code> function. By default, the <code class="docutils literal notranslate"><span class="pre">add_p()</span></code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code class="docutils literal notranslate"><span class="pre">by</span></code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">tex_itop</span><span class="p">,</span> <span class="n">include</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">total_rate</span><span class="p">,</span> <span class="n">white_rate</span><span class="p">,</span> <span class="n">asian_rate</span><span class="p">,</span> 
-                                  <span class="n">hispanic_rate</span><span class="p">,</span> <span class="n">black_rate</span><span class="p">,</span> 
-                                  <span class="n">native_american_rate</span><span class="p">),</span>
-           <span class="n">by</span> <span class="o">=</span> <span class="s">&quot;year&quot;</span><span class="p">,</span> <span class="n">statistic</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span> <span class="o">~</span> <span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
-  <span class="nf">add_p</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
-  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">tex_itop</span><span class="p">,</span><span class="w"> </span><span class="n">include</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">total_rate</span><span class="p">,</span><span class="w"> </span><span class="n">white_rate</span><span class="p">,</span><span class="w"> </span><span class="n">asian_rate</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                  </span><span class="n">hispanic_rate</span><span class="p">,</span><span class="w"> </span><span class="n">black_rate</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                  </span><span class="n">native_american_rate</span><span class="p">),</span>
+<span class="w">           </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;year&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">statistic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="nf">all_continuous</span><span class="p">()</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="s">&quot;{mean} ({sd})&quot;</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">add_p</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">as_gt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1274,23 +984,23 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 		
 	</head>
 	<body>
-		<div id="stngevjisg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#stngevjisg table {
+		<div id="gkesttfwkr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#gkesttfwkr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#stngevjisg thead, #stngevjisg tbody, #stngevjisg tfoot, #stngevjisg tr, #stngevjisg td, #stngevjisg th {
+#gkesttfwkr thead, #gkesttfwkr tbody, #gkesttfwkr tfoot, #gkesttfwkr tr, #gkesttfwkr td, #gkesttfwkr th {
   border-style: none;
 }
 
-#stngevjisg p {
+#gkesttfwkr p {
   margin: 0;
   padding: 0;
 }
 
-#stngevjisg .gt_table {
+#gkesttfwkr .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1316,12 +1026,12 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-left-color: #D3D3D3;
 }
 
-#stngevjisg .gt_caption {
+#gkesttfwkr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#stngevjisg .gt_title {
+#gkesttfwkr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1333,7 +1043,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-width: 0;
 }
 
-#stngevjisg .gt_subtitle {
+#gkesttfwkr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1345,7 +1055,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-top-width: 0;
 }
 
-#stngevjisg .gt_heading {
+#gkesttfwkr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1357,13 +1067,13 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#stngevjisg .gt_bottom_border {
+#gkesttfwkr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#stngevjisg .gt_col_headings {
+#gkesttfwkr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1378,7 +1088,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#stngevjisg .gt_col_heading {
+#gkesttfwkr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1398,7 +1108,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   overflow-x: hidden;
 }
 
-#stngevjisg .gt_column_spanner_outer {
+#gkesttfwkr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1410,15 +1120,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 4px;
 }
 
-#stngevjisg .gt_column_spanner_outer:first-child {
+#gkesttfwkr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#stngevjisg .gt_column_spanner_outer:last-child {
+#gkesttfwkr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#stngevjisg .gt_column_spanner {
+#gkesttfwkr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1430,11 +1140,11 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   width: 100%;
 }
 
-#stngevjisg .gt_spanner_row {
+#gkesttfwkr .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#stngevjisg .gt_group_heading {
+#gkesttfwkr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1460,7 +1170,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   text-align: left;
 }
 
-#stngevjisg .gt_empty_group_heading {
+#gkesttfwkr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1475,15 +1185,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   vertical-align: middle;
 }
 
-#stngevjisg .gt_from_md > :first-child {
+#gkesttfwkr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#stngevjisg .gt_from_md > :last-child {
+#gkesttfwkr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#stngevjisg .gt_row {
+#gkesttfwkr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1502,7 +1212,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   overflow-x: hidden;
 }
 
-#stngevjisg .gt_stub {
+#gkesttfwkr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1515,7 +1225,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#stngevjisg .gt_stub_row_group {
+#gkesttfwkr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1529,15 +1239,15 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   vertical-align: top;
 }
 
-#stngevjisg .gt_row_group_first td {
+#gkesttfwkr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#stngevjisg .gt_row_group_first th {
+#gkesttfwkr .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#stngevjisg .gt_summary_row {
+#gkesttfwkr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1547,16 +1257,16 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#stngevjisg .gt_first_summary_row {
+#gkesttfwkr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#stngevjisg .gt_first_summary_row.thick {
+#gkesttfwkr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#stngevjisg .gt_last_summary_row {
+#gkesttfwkr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1566,7 +1276,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#stngevjisg .gt_grand_summary_row {
+#gkesttfwkr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1576,7 +1286,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#stngevjisg .gt_first_grand_summary_row {
+#gkesttfwkr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1586,7 +1296,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-top-color: #D3D3D3;
 }
 
-#stngevjisg .gt_last_grand_summary_row_top {
+#gkesttfwkr .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1596,11 +1306,11 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#stngevjisg .gt_striped {
+#gkesttfwkr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#stngevjisg .gt_table_body {
+#gkesttfwkr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1609,7 +1319,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-bottom-color: #D3D3D3;
 }
 
-#stngevjisg .gt_footnotes {
+#gkesttfwkr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1623,7 +1333,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#stngevjisg .gt_footnote {
+#gkesttfwkr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1632,7 +1342,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#stngevjisg .gt_sourcenotes {
+#gkesttfwkr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1646,7 +1356,7 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   border-right-color: #D3D3D3;
 }
 
-#stngevjisg .gt_sourcenote {
+#gkesttfwkr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1654,63 +1364,63 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
   padding-right: 5px;
 }
 
-#stngevjisg .gt_left {
+#gkesttfwkr .gt_left {
   text-align: left;
 }
 
-#stngevjisg .gt_center {
+#gkesttfwkr .gt_center {
   text-align: center;
 }
 
-#stngevjisg .gt_right {
+#gkesttfwkr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#stngevjisg .gt_font_normal {
+#gkesttfwkr .gt_font_normal {
   font-weight: normal;
 }
 
-#stngevjisg .gt_font_bold {
+#gkesttfwkr .gt_font_bold {
   font-weight: bold;
 }
 
-#stngevjisg .gt_font_italic {
+#gkesttfwkr .gt_font_italic {
   font-style: italic;
 }
 
-#stngevjisg .gt_super {
+#gkesttfwkr .gt_super {
   font-size: 65%;
 }
 
-#stngevjisg .gt_footnote_marks {
+#gkesttfwkr .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#stngevjisg .gt_asterisk {
+#gkesttfwkr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#stngevjisg .gt_indent_1 {
+#gkesttfwkr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#stngevjisg .gt_indent_2 {
+#gkesttfwkr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#stngevjisg .gt_indent_3 {
+#gkesttfwkr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#stngevjisg .gt_indent_4 {
+#gkesttfwkr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#stngevjisg .gt_indent_5 {
+#gkesttfwkr .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1796,13 +1506,13 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 <p>We observe that a Kruskal-Wallis rank sum test was used to compare abortion rates across year for each racial group. All of the reported p-values are above 0.05 so overall it indicates that there were not statistically significant changes across years in the abortion rate.</p>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/3vyCeUdSS6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
 <p>For the following exercises, we will be using the <code class="docutils literal notranslate"><span class="pre">pain</span></code> data from the <code class="docutils literal notranslate"><span class="pre">RforHDSdata</span></code> package.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1816,9 +1526,9 @@ X-squared = 6.7212, df = 1, p-value = 0.009527
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span> <span class="o">&lt;-</span> <span class="n">pain</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span> <span class="n">select</span><span class="o">=-</span><span class="nf">c</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">))),</span> <span class="p">]</span>
-<span class="n">pain_df</span><span class="o">$</span><span class="n">HAS_FOLLOW_UP</span> <span class="o">&lt;-</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
-<span class="nf">t.test</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="o">~</span><span class="n">HAS_FOLLOW_UP</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pain_df</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain</span><span class="p">[</span><span class="nf">complete.cases</span><span class="p">(</span><span class="nf">subset</span><span class="p">(</span><span class="n">pain</span><span class="p">,</span><span class="w"> </span><span class="n">select</span><span class="o">=-</span><span class="nf">c</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">))),</span><span class="w"> </span><span class="p">]</span>
+<span class="n">pain_df</span><span class="o">$</span><span class="n">HAS_FOLLOW_UP</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAIN_INTENSITY_AVERAGE.FOLLOW_UP</span><span class="p">)</span>
+<span class="nf">t.test</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="o">~</span><span class="n">HAS_FOLLOW_UP</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">pain_df</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1842,10 +1552,10 @@ mean in group FALSE  mean in group TRUE
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span> <span class="o">%in%</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;BLACK&quot;</span><span class="p">,</span> <span class="s">&quot;WHITE&quot;</span><span class="p">),</span> <span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">,</span> <span class="s">&quot;OTHER&quot;</span><span class="p">))</span>
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">PROMIS_PAIN_BEHAVIOR</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">..scaled..</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">PAT_RACE_CAT</span><span class="p">),</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="w"> </span><span class="o">%in%</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;BLACK&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;WHITE&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;OTHER&quot;</span><span class="p">))</span>
+<span class="nf">ggplot</span><span class="p">(</span><span class="n">pain_df</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">geom_density</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PROMIS_PAIN_BEHAVIOR</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">..scaled..</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PAT_RACE_CAT</span><span class="p">),</span><span class="w"> </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span>
 
-<span class="n">aov_res</span> <span class="o">&lt;-</span> <span class="nf">aov</span><span class="p">(</span><span class="n">PROMIS_PAIN_BEHAVIOR</span><span class="o">~</span><span class="n">PAT_RACE_CAT</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">pain_df</span><span class="p">)</span>
+<span class="n">aov_res</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">aov</span><span class="p">(</span><span class="n">PROMIS_PAIN_BEHAVIOR</span><span class="o">~</span><span class="n">PAT_RACE_CAT</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="o">=</span><span class="n">pain_df</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">aov_res</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1863,7 +1573,7 @@ Residuals    8792  90376    10.3
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 </pre></div>
 </div>
-<img alt="../_images/b20513ca7900c4a7ae00f7a4a41e05f9c0484bd5a64204793ecb2fd19662bec2.png" src="../_images/b20513ca7900c4a7ae00f7a4a41e05f9c0484bd5a64204793ecb2fd19662bec2.png" />
+<img alt="../_images/44aaa9f1887f5fe9b8f00a6dc255e3c215efbc82a40fea67c25b9d7cc0f6d99d.png" src="../_images/44aaa9f1887f5fe9b8f00a6dc255e3c215efbc82a40fea67c25b9d7cc0f6d99d.png" />
 </div>
 </div>
 <ol class="arabic simple" start="3">
@@ -1871,8 +1581,8 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">chi_sq</span> <span class="o">&lt;-</span> <span class="nf">chisq.test</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">CCI_BIN</span><span class="p">,</span> 
-           <span class="n">pain_df</span><span class="o">$</span><span class="n">MEDICAID_BIN</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">chi_sq</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">chisq.test</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">CCI_BIN</span><span class="p">,</span><span class="w"> </span>
+<span class="w">           </span><span class="n">pain_df</span><span class="o">$</span><span class="n">MEDICAID_BIN</span><span class="p">)</span>
 <span class="n">chi_sq</span>
 <span class="n">chi_sq</span><span class="o">$</span><span class="n">p.value</span>
 </pre></div>
@@ -1888,40 +1598,30 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
 <div class="output text_html">0.0113804117469644</div></div>
 </div>
 <ol class="arabic simple" start="4">
-<li><p>Recreate the summary table below. Then, recreate the p-values for PROMIS_DEPRESSION, PROMIS_ANXIETY, and MEDICAID_BIN using the appropriate tests.</p></li>
+<li><p>Create a table of the percentages of people with pain in each region of the body stratified by whether or not they had follow up information, and add p_values to the table. Which body regions were selected significantly more for those with follow-up compared to those without?</p></li>
 </ol>
-<a class="reference internal image-reference" href="../_images/9-exercise4.png"><img alt="“”" class="align-center" src="../_images/9-exercise4.png" style="width: 500pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tbl_summary</span><span class="p">(</span><span class="n">pain_df</span><span class="p">,</span> <span class="n">include</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">PAIN_INTENSITY_AVERAGE</span><span class="p">,</span> 
-                                 <span class="n">PROMIS_PHYSICAL_FUNCTION</span><span class="p">,</span> 
-                                 <span class="n">PROMIS_PAIN_BEHAVIOR</span><span class="p">,</span> 
-                                 <span class="n">PROMIS_DEPRESSION</span><span class="p">,</span> 
-                                 <span class="n">PROMIS_ANXIETY</span><span class="p">,</span>
-                                 <span class="n">PROMIS_SLEEP_DISTURB_V1_0</span><span class="p">,</span>
-                                 <span class="n">PROMIS_PAIN_INTERFERENCE</span><span class="p">,</span>
-                                 <span class="n">GH_MENTAL_SCORE</span><span class="p">,</span>
-                                 <span class="n">GH_PHYSICAL_SCORE</span><span class="p">,</span> 
-                                 <span class="n">AGE_AT_CONTACT</span><span class="p">,</span> 
-                                 <span class="n">BMI</span><span class="p">,</span>
-                                 <span class="n">PAT_SEX</span><span class="p">,</span> 
-                                 <span class="n">MEDICAID_BIN</span><span class="p">),</span>
-           <span class="n">by</span> <span class="o">=</span> <span class="s">&quot;PAT_RACE_CAT&quot;</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">add_p</span><span class="p">()</span> <span class="o">%&gt;%</span>
-  <span class="nf">as_gt</span><span class="p">()</span> <span class="o">%&gt;%</span> 
-  <span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pain_df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">pain_df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">Back</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X208</span><span class="p">,</span><span class="w"> </span><span class="n">X209</span><span class="p">,</span><span class="w"> </span><span class="n">X218</span><span class="p">,</span><span class="w"> </span><span class="n">X219</span><span class="p">,</span><span class="w"> </span><span class="n">X212</span><span class="p">,</span><span class="w"> </span><span class="n">X213</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Neck</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X105</span><span class="p">,</span><span class="w"> </span><span class="n">X106</span><span class="p">,</span><span class="w"> </span><span class="n">X205</span><span class="p">,</span><span class="w"> </span><span class="n">X206</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Shoulders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X107</span><span class="p">,</span><span class="w"> </span><span class="n">X110</span><span class="p">,</span><span class="w"> </span><span class="n">X207</span><span class="p">,</span><span class="w"> </span><span class="n">X210</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Chest_Abs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X108</span><span class="p">,</span><span class="w"> </span><span class="n">X109</span><span class="p">,</span><span class="w"> </span><span class="n">X112</span><span class="p">,</span><span class="w"> </span><span class="n">X113</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Legs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X126</span><span class="p">,</span><span class="w"> </span><span class="n">X127</span><span class="p">,</span><span class="w"> </span><span class="n">X228</span><span class="p">,</span><span class="w"> </span><span class="n">X229</span><span class="p">,</span><span class="w"> </span><span class="n">X131</span><span class="p">,</span><span class="w"> </span><span class="n">X132</span><span class="p">,</span><span class="w"> </span><span class="n">X233</span><span class="p">,</span><span class="w"> </span><span class="n">X234</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Arms</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X111</span><span class="p">,</span><span class="w"> </span><span class="n">X114</span><span class="p">,</span><span class="w"> </span><span class="n">X211</span><span class="p">,</span><span class="w"> </span><span class="n">X214</span><span class="p">,</span><span class="w"> </span><span class="n">X115</span><span class="p">,</span><span class="w"> </span><span class="n">X116</span><span class="p">,</span><span class="w"> </span><span class="n">X117</span><span class="p">,</span><span class="w"> </span><span class="n">X118</span><span class="p">,</span><span class="w"> </span><span class="n">X217</span><span class="p">,</span><span class="w"> </span><span class="n">X220</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Wrists_Hands</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X119</span><span class="p">,</span><span class="w"> </span><span class="n">X124</span><span class="p">,</span><span class="w"> </span><span class="n">X221</span><span class="p">,</span><span class="w"> </span><span class="n">X226</span><span class="p">,</span><span class="w"> </span><span class="n">X125</span><span class="p">,</span><span class="w"> </span><span class="n">X128</span><span class="p">,</span><span class="w"> </span><span class="n">X227</span><span class="p">,</span><span class="w"> </span><span class="n">X230</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Elbows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X215</span><span class="p">,</span><span class="w"> </span><span class="n">X216</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Feet_Ankles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X135</span><span class="p">,</span><span class="w"> </span><span class="n">X136</span><span class="p">,</span><span class="w"> </span><span class="n">X237</span><span class="p">,</span><span class="w"> </span><span class="n">X238</span><span class="p">,</span><span class="w"> </span><span class="n">X133</span><span class="p">,</span><span class="w"> </span><span class="n">X134</span><span class="p">,</span><span class="w"> </span><span class="n">X235</span><span class="p">,</span><span class="w"> </span><span class="n">X236</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Knees</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X129</span><span class="p">,</span><span class="w"> </span><span class="n">X130</span><span class="p">,</span><span class="w"> </span><span class="n">X231</span><span class="p">,</span><span class="w"> </span><span class="n">X232</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Head</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X101</span><span class="p">,</span><span class="w"> </span><span class="n">X102</span><span class="p">,</span><span class="w"> </span><span class="n">X103</span><span class="p">,</span><span class="w"> </span><span class="n">X104</span><span class="p">,</span><span class="w"> </span><span class="n">X201</span><span class="p">,</span><span class="w"> </span><span class="n">X203</span><span class="p">,</span><span class="w"> </span><span class="n">X202</span><span class="p">,</span><span class="w"> </span><span class="n">X204</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
+<span class="w">                             </span><span class="n">Hips</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="nf">if_any</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">X120</span><span class="p">,</span><span class="w"> </span><span class="n">X121</span><span class="p">,</span><span class="w"> </span><span class="n">X122</span><span class="p">,</span><span class="w"> </span><span class="n">X123</span><span class="p">,</span><span class="w"> </span><span class="n">X222</span><span class="p">,</span><span class="w"> </span><span class="n">X223</span><span class="p">,</span><span class="w"> </span><span class="n">X224</span><span class="p">,</span><span class="w"> </span><span class="n">X225</span><span class="p">),</span><span class="w">  </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">))</span>
 
 
-
-
-<span class="nf">chisq.test</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">MEDICAID_BIN</span><span class="p">,</span>
-                     <span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span><span class="p">)</span>
-
-<span class="nf">kruskal.test</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PROMIS_ANXIETY</span><span class="p">,</span> 
-             <span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span><span class="p">)</span>
-
-<span class="nf">kruskal.test</span><span class="p">(</span><span class="n">pain_df</span><span class="o">$</span><span class="n">PROMIS_DEPRESSION</span><span class="p">,</span> 
-             <span class="n">pain_df</span><span class="o">$</span><span class="n">PAT_RACE_CAT</span><span class="p">)</span>
+<span class="nf">tbl_summary</span><span class="p">(</span><span class="n">pain_df</span><span class="p">,</span><span class="w"> </span><span class="n">include</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">Back</span><span class="p">,</span><span class="w"> </span><span class="n">Neck</span><span class="p">,</span><span class="w"> </span><span class="n">Shoulders</span><span class="p">,</span><span class="w"> </span><span class="n">Chest_Abs</span><span class="p">,</span><span class="w"> </span><span class="n">Legs</span><span class="p">,</span><span class="w"> </span><span class="n">Arms</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                 </span><span class="n">Wrists_Hands</span><span class="p">,</span><span class="w"> </span><span class="n">Elbows</span><span class="p">,</span><span class="w"> </span><span class="n">Feet_Ankles</span><span class="p">,</span><span class="w"> </span><span class="n">Knees</span><span class="p">,</span><span class="w"> </span><span class="n">Head</span><span class="p">,</span><span class="w"> </span><span class="n">Hips</span><span class="p">),</span>
+<span class="w">           </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;HAS_FOLLOW_UP&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="nf">add_p</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span>
+<span class="w">  </span><span class="nf">as_gt</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
+<span class="w">  </span><span class="n">gt</span><span class="o">:::</span><span class="nf">as.tags.gt_tbl</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -1933,23 +1633,23 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
 		
 	</head>
 	<body>
-		<div id="apqsuzxftr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-  <style>#apqsuzxftr table {
+		<div id="hkaywjaftq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+  <style>#hkaywjaftq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#apqsuzxftr thead, #apqsuzxftr tbody, #apqsuzxftr tfoot, #apqsuzxftr tr, #apqsuzxftr td, #apqsuzxftr th {
+#hkaywjaftq thead, #hkaywjaftq tbody, #hkaywjaftq tfoot, #hkaywjaftq tr, #hkaywjaftq td, #hkaywjaftq th {
   border-style: none;
 }
 
-#apqsuzxftr p {
+#hkaywjaftq p {
   margin: 0;
   padding: 0;
 }
 
-#apqsuzxftr .gt_table {
+#hkaywjaftq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1975,12 +1675,12 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-left-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_caption {
+#hkaywjaftq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#apqsuzxftr .gt_title {
+#hkaywjaftq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1992,7 +1692,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-bottom-width: 0;
 }
 
-#apqsuzxftr .gt_subtitle {
+#hkaywjaftq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2004,7 +1704,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-top-width: 0;
 }
 
-#apqsuzxftr .gt_heading {
+#hkaywjaftq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2016,13 +1716,13 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-right-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_bottom_border {
+#hkaywjaftq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_col_headings {
+#hkaywjaftq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2037,7 +1737,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-right-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_col_heading {
+#hkaywjaftq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2057,7 +1757,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   overflow-x: hidden;
 }
 
-#apqsuzxftr .gt_column_spanner_outer {
+#hkaywjaftq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2069,15 +1769,15 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 4px;
 }
 
-#apqsuzxftr .gt_column_spanner_outer:first-child {
+#hkaywjaftq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#apqsuzxftr .gt_column_spanner_outer:last-child {
+#hkaywjaftq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#apqsuzxftr .gt_column_spanner {
+#hkaywjaftq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2089,11 +1789,11 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   width: 100%;
 }
 
-#apqsuzxftr .gt_spanner_row {
+#hkaywjaftq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#apqsuzxftr .gt_group_heading {
+#hkaywjaftq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2119,7 +1819,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   text-align: left;
 }
 
-#apqsuzxftr .gt_empty_group_heading {
+#hkaywjaftq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2134,15 +1834,15 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   vertical-align: middle;
 }
 
-#apqsuzxftr .gt_from_md > :first-child {
+#hkaywjaftq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#apqsuzxftr .gt_from_md > :last-child {
+#hkaywjaftq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#apqsuzxftr .gt_row {
+#hkaywjaftq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2161,7 +1861,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   overflow-x: hidden;
 }
 
-#apqsuzxftr .gt_stub {
+#hkaywjaftq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2174,7 +1874,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 5px;
 }
 
-#apqsuzxftr .gt_stub_row_group {
+#hkaywjaftq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2188,15 +1888,15 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   vertical-align: top;
 }
 
-#apqsuzxftr .gt_row_group_first td {
+#hkaywjaftq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#apqsuzxftr .gt_row_group_first th {
+#hkaywjaftq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#apqsuzxftr .gt_summary_row {
+#hkaywjaftq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2206,16 +1906,16 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 5px;
 }
 
-#apqsuzxftr .gt_first_summary_row {
+#hkaywjaftq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_first_summary_row.thick {
+#hkaywjaftq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#apqsuzxftr .gt_last_summary_row {
+#hkaywjaftq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2225,7 +1925,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-bottom-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_grand_summary_row {
+#hkaywjaftq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2235,7 +1935,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 5px;
 }
 
-#apqsuzxftr .gt_first_grand_summary_row {
+#hkaywjaftq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2245,7 +1945,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-top-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_last_grand_summary_row_top {
+#hkaywjaftq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2255,11 +1955,11 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-bottom-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_striped {
+#hkaywjaftq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#apqsuzxftr .gt_table_body {
+#hkaywjaftq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2268,7 +1968,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-bottom-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_footnotes {
+#hkaywjaftq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2282,7 +1982,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-right-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_footnote {
+#hkaywjaftq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2291,7 +1991,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 5px;
 }
 
-#apqsuzxftr .gt_sourcenotes {
+#hkaywjaftq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2305,7 +2005,7 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   border-right-color: #D3D3D3;
 }
 
-#apqsuzxftr .gt_sourcenote {
+#hkaywjaftq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2313,63 +2013,63 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
   padding-right: 5px;
 }
 
-#apqsuzxftr .gt_left {
+#hkaywjaftq .gt_left {
   text-align: left;
 }
 
-#apqsuzxftr .gt_center {
+#hkaywjaftq .gt_center {
   text-align: center;
 }
 
-#apqsuzxftr .gt_right {
+#hkaywjaftq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#apqsuzxftr .gt_font_normal {
+#hkaywjaftq .gt_font_normal {
   font-weight: normal;
 }
 
-#apqsuzxftr .gt_font_bold {
+#hkaywjaftq .gt_font_bold {
   font-weight: bold;
 }
 
-#apqsuzxftr .gt_font_italic {
+#hkaywjaftq .gt_font_italic {
   font-style: italic;
 }
 
-#apqsuzxftr .gt_super {
+#hkaywjaftq .gt_super {
   font-size: 65%;
 }
 
-#apqsuzxftr .gt_footnote_marks {
+#hkaywjaftq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#apqsuzxftr .gt_asterisk {
+#hkaywjaftq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#apqsuzxftr .gt_indent_1 {
+#hkaywjaftq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#apqsuzxftr .gt_indent_2 {
+#hkaywjaftq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#apqsuzxftr .gt_indent_3 {
+#hkaywjaftq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#apqsuzxftr .gt_indent_4 {
+#hkaywjaftq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#apqsuzxftr .gt_indent_5 {
+#hkaywjaftq .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2378,121 +2078,75 @@ X-squared = 6.4049, df = 1, p-value = 0.01138
     
     <tr class="gt_col_headings">
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;Characteristic&lt;/strong&gt;"><strong>Characteristic</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;BLACK&lt;/strong&gt;, N = 1,379&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>BLACK</strong>, N = 1,379<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;OTHER&lt;/strong&gt;, N = 145&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>OTHER</strong>, N = 145<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;WHITE&lt;/strong&gt;, N = 7,271&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>WHITE</strong>, N = 7,271<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;FALSE&lt;/strong&gt;, N = 6,382&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>FALSE</strong>, N = 6,382<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;TRUE&lt;/strong&gt;, N = 2,413&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;"><strong>TRUE</strong>, N = 2,413<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&lt;strong&gt;p-value&lt;/strong&gt;&lt;span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/span&gt;"><strong>p-value</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>2</sup></span></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
-    <tr><td headers="label" class="gt_row gt_left">PAIN_INTENSITY_AVERAGE</td>
-<td headers="stat_1" class="gt_row gt_center">8.00 (7.00, 9.00)</td>
-<td headers="stat_2" class="gt_row gt_center">7.00 (6.00, 8.00)</td>
-<td headers="stat_3" class="gt_row gt_center">6.00 (5.00, 8.00)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_PHYSICAL_FUNCTION</td>
-<td headers="stat_1" class="gt_row gt_center">35 (30, 38)</td>
-<td headers="stat_2" class="gt_row gt_center">35 (31, 41)</td>
-<td headers="stat_3" class="gt_row gt_center">35 (30, 39)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_PAIN_BEHAVIOR</td>
-<td headers="stat_1" class="gt_row gt_center">62.6 (60.9, 64.3)</td>
-<td headers="stat_2" class="gt_row gt_center">62.3 (59.8, 63.4)</td>
-<td headers="stat_3" class="gt_row gt_center">61.6 (59.0, 63.4)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_DEPRESSION</td>
-<td headers="stat_1" class="gt_row gt_center">57 (50, 64)</td>
-<td headers="stat_2" class="gt_row gt_center">55 (48, 64)</td>
-<td headers="stat_3" class="gt_row gt_center">55 (48, 62)</td>
-<td headers="p.value" class="gt_row gt_center">0.004</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_ANXIETY</td>
-<td headers="stat_1" class="gt_row gt_center">60 (51, 65)</td>
-<td headers="stat_2" class="gt_row gt_center">58 (51, 65)</td>
-<td headers="stat_3" class="gt_row gt_center">56 (50, 63)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_SLEEP_DISTURB_V1_0</td>
-<td headers="stat_1" class="gt_row gt_center">63 (56, 68)</td>
-<td headers="stat_2" class="gt_row gt_center">61 (54, 68)</td>
-<td headers="stat_3" class="gt_row gt_center">60 (54, 65)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PROMIS_PAIN_INTERFERENCE</td>
-<td headers="stat_1" class="gt_row gt_center">68 (64, 72)</td>
-<td headers="stat_2" class="gt_row gt_center">68 (64, 72)</td>
-<td headers="stat_3" class="gt_row gt_center">67 (63, 72)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">GH_MENTAL_SCORE</td>
-<td headers="stat_1" class="gt_row gt_center">41 (36, 48)</td>
-<td headers="stat_2" class="gt_row gt_center">44 (34, 51)</td>
-<td headers="stat_3" class="gt_row gt_center">44 (36, 51)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">GH_PHYSICAL_SCORE</td>
-<td headers="stat_1" class="gt_row gt_center">32 (30, 37)</td>
-<td headers="stat_2" class="gt_row gt_center">35 (30, 40)</td>
-<td headers="stat_3" class="gt_row gt_center">35 (30, 40)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">AGE_AT_CONTACT</td>
-<td headers="stat_1" class="gt_row gt_center">53 (43, 61)</td>
-<td headers="stat_2" class="gt_row gt_center">48 (37, 58)</td>
-<td headers="stat_3" class="gt_row gt_center">57 (46, 67)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">BMI</td>
-<td headers="stat_1" class="gt_row gt_center">32 (27, 37)</td>
-<td headers="stat_2" class="gt_row gt_center">27 (23, 33)</td>
-<td headers="stat_3" class="gt_row gt_center">29 (25, 34)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">PAT_SEX</td>
-<td headers="stat_1" class="gt_row gt_center"></td>
-<td headers="stat_2" class="gt_row gt_center"></td>
-<td headers="stat_3" class="gt_row gt_center"></td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
-    <tr><td headers="label" class="gt_row gt_left">    female</td>
-<td headers="stat_1" class="gt_row gt_center">930 (67%)</td>
-<td headers="stat_2" class="gt_row gt_center">92 (63%)</td>
-<td headers="stat_3" class="gt_row gt_center">4,220 (58%)</td>
-<td headers="p.value" class="gt_row gt_center"></td></tr>
-    <tr><td headers="label" class="gt_row gt_left">    male</td>
-<td headers="stat_1" class="gt_row gt_center">449 (33%)</td>
-<td headers="stat_2" class="gt_row gt_center">53 (37%)</td>
-<td headers="stat_3" class="gt_row gt_center">3,051 (42%)</td>
-<td headers="p.value" class="gt_row gt_center"></td></tr>
-    <tr><td headers="label" class="gt_row gt_left">MEDICAID_BIN</td>
-<td headers="stat_1" class="gt_row gt_center">573 (42%)</td>
-<td headers="stat_2" class="gt_row gt_center">52 (36%)</td>
-<td headers="stat_3" class="gt_row gt_center">1,536 (21%)</td>
-<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Back</td>
+<td headers="stat_1" class="gt_row gt_center">4,339 (68%)</td>
+<td headers="stat_2" class="gt_row gt_center">1,689 (70%)</td>
+<td headers="p.value" class="gt_row gt_center">0.070</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Neck</td>
+<td headers="stat_1" class="gt_row gt_center">1,938 (30%)</td>
+<td headers="stat_2" class="gt_row gt_center">749 (31%)</td>
+<td headers="p.value" class="gt_row gt_center">0.5</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Shoulders</td>
+<td headers="stat_1" class="gt_row gt_center">2,050 (32%)</td>
+<td headers="stat_2" class="gt_row gt_center">815 (34%)</td>
+<td headers="p.value" class="gt_row gt_center">0.14</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Chest_Abs</td>
+<td headers="stat_1" class="gt_row gt_center">877 (14%)</td>
+<td headers="stat_2" class="gt_row gt_center">339 (14%)</td>
+<td headers="p.value" class="gt_row gt_center">0.7</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Legs</td>
+<td headers="stat_1" class="gt_row gt_center">2,977 (47%)</td>
+<td headers="stat_2" class="gt_row gt_center">1,139 (47%)</td>
+<td headers="p.value" class="gt_row gt_center">0.6</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Arms</td>
+<td headers="stat_1" class="gt_row gt_center">1,374 (22%)</td>
+<td headers="stat_2" class="gt_row gt_center">517 (21%)</td>
+<td headers="p.value" class="gt_row gt_center">>0.9</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Wrists_Hands</td>
+<td headers="stat_1" class="gt_row gt_center">1,422 (22%)</td>
+<td headers="stat_2" class="gt_row gt_center">517 (21%)</td>
+<td headers="p.value" class="gt_row gt_center">0.4</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Elbows</td>
+<td headers="stat_1" class="gt_row gt_center">744 (12%)</td>
+<td headers="stat_2" class="gt_row gt_center">282 (12%)</td>
+<td headers="p.value" class="gt_row gt_center">>0.9</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Feet_Ankles</td>
+<td headers="stat_1" class="gt_row gt_center">2,344 (37%)</td>
+<td headers="stat_2" class="gt_row gt_center">878 (36%)</td>
+<td headers="p.value" class="gt_row gt_center">0.8</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Knees</td>
+<td headers="stat_1" class="gt_row gt_center">2,737 (43%)</td>
+<td headers="stat_2" class="gt_row gt_center">1,038 (43%)</td>
+<td headers="p.value" class="gt_row gt_center">>0.9</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Head</td>
+<td headers="stat_1" class="gt_row gt_center">836 (13%)</td>
+<td headers="stat_2" class="gt_row gt_center">340 (14%)</td>
+<td headers="p.value" class="gt_row gt_center">0.2</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">Hips</td>
+<td headers="stat_1" class="gt_row gt_center">3,721 (58%)</td>
+<td headers="stat_2" class="gt_row gt_center">1,481 (61%)</td>
+<td headers="p.value" class="gt_row gt_center">0.009</td></tr>
   </tbody>
   
   <tfoot class="gt_footnotes">
     <tr>
-      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> Median (IQR); n (%)</td>
+      <td class="gt_footnote" colspan="4"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> n (%)</td>
     </tr>
     <tr>
-      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>2</sup></span> Kruskal-Wallis rank sum test; Pearson’s Chi-squared test</td>
+      <td class="gt_footnote" colspan="4"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>2</sup></span> Pearson’s Chi-squared test</td>
     </tr>
   </tfoot>
 </table>
 </div>
 	</body>
 </html>
-</div><div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>	Pearson&#39;s Chi-squared test
-
-data:  pain_df$MEDICAID_BIN and pain_df$PAT_RACE_CAT
-X-squared = 271.11, df = 2, p-value &lt; 2.2e-16
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>	Kruskal-Wallis rank sum test
-
-data:  pain_df$PROMIS_ANXIETY and pain_df$PAT_RACE_CAT
-Kruskal-Wallis chi-squared = 39.036, df = 2, p-value = 3.338e-09
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>	Kruskal-Wallis rank sum test
-
-data:  pain_df$PROMIS_DEPRESSION and pain_df$PAT_RACE_CAT
-Kruskal-Wallis chi-squared = 10.92, df = 2, p-value = 0.004253
-</pre></div>
-</div>
-</div>
+</div></div>
 </div>
 </section>
 </section>
