@@ -834,93 +834,11 @@ document.write(`
 <ol class="arabic simple">
 <li><p>Replicate the plot below, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark (this date was taken from this <a class="reference external" href="https://www.ajmc.com/view/a-timeline-of-covid19-developments-in-2020">timeline</a>, and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">covidcases</span><span class="p">)</span>
-<span class="n">covidcases</span><span class="o">$</span><span class="n">weekly_cases</span><span class="p">[</span><span class="n">covidcases</span><span class="o">$</span><span class="n">weekly_cases</span> <span class="o">&lt;=</span> <span class="m">0</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="kc">NA</span>
-
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">covidcases</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">y</span> <span class="o">=</span> <span class="n">state</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">week</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">weekly_cases</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_tile</span><span class="p">(</span><span class="n">color</span> <span class="o">=</span> <span class="s">&#39;white&#39;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">scale_fill_gradientn</span><span class="p">(</span><span class="n">colours</span> <span class="o">=</span> <span class="nf">hcl.colors</span><span class="p">(</span><span class="m">7</span><span class="p">,</span> <span class="n">palette</span> <span class="o">=</span> <span class="s">&quot;OrRd&quot;</span><span class="p">)[</span><span class="m">7</span><span class="o">:</span><span class="m">1</span><span class="p">],</span>
-                       <span class="n">breaks</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> <span class="m">1000</span><span class="p">,</span> <span class="m">10000</span><span class="p">),</span> 
-                       <span class="n">labels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">,</span> <span class="s">&quot;100&quot;</span><span class="p">,</span> <span class="s">&quot;1K&quot;</span><span class="p">,</span> <span class="s">&quot;10K&quot;</span><span class="p">),</span>
-                       <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Number of Cases&quot;</span><span class="p">,</span> <span class="n">trans</span><span class="o">=</span><span class="s">&quot;log10&quot;</span><span class="p">,</span> 
-                       <span class="n">na.value</span><span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">geom_vline</span><span class="p">(</span><span class="n">xintercept</span> <span class="o">=</span> <span class="m">25</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">linewidth</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">annotate</span><span class="p">(</span><span class="n">geom</span> <span class="o">=</span> <span class="s">&quot;text&quot;</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="m">22</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="m">51</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;100K Deaths&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">5</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">-0.3</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">scale_y_discrete</span><span class="p">(</span><span class="n">position</span> <span class="o">=</span> <span class="s">&#39;left&#39;</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;State&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">coord_equal</span><span class="p">()</span> <span class="o">+</span>
-  <span class="nf">scale_x_continuous</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0.5</span><span class="p">),</span> <span class="n">breaks</span><span class="o">=</span><span class="nf">seq</span><span class="p">(</span><span class="m">10</span><span class="p">,</span> <span class="m">35</span><span class="p">,</span> <span class="m">5</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Week&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">theme_minimal</span><span class="p">()</span> <span class="o">+</span>
-  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span> <span class="o">=</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
-        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">12</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span> <span class="s">&#39;bold&#39;</span><span class="p">),</span>
-        <span class="n">panel.grid</span> <span class="o">=</span> <span class="nf">element_blank</span><span class="p">(),</span>
-  <span class="p">)</span> <span class="o">+</span>
-  <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#39;United States COVID-19 Spread: Weekly Cases&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_html"><table class="dataframe">
-<caption>A grouped_df: 6 × 5</caption>
-<thead>
-	<tr><th scope=col>state</th><th scope=col>county</th><th scope=col>week</th><th scope=col>weekly_cases</th><th scope=col>weekly_deaths</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>Alabama</td><td>Autauga</td><td>12</td><td> 3</td><td>0</td></tr>
-	<tr><td>Alabama</td><td>Autauga</td><td>13</td><td> 3</td><td>0</td></tr>
-	<tr><td>Alabama</td><td>Autauga</td><td>14</td><td> 2</td><td>1</td></tr>
-	<tr><td>Alabama</td><td>Autauga</td><td>15</td><td>11</td><td>1</td></tr>
-	<tr><td>Alabama</td><td>Autauga</td><td>16</td><td> 5</td><td>1</td></tr>
-	<tr><td>Alabama</td><td>Autauga</td><td>17</td><td> 8</td><td>2</td></tr>
-</tbody>
-</table>
-</div><img alt="../_images/6bf3d6d78753a23c71eb309327c067dcff320354de90ecb0a94a6e3998c00450.png" src="../_images/6bf3d6d78753a23c71eb309327c067dcff320354de90ecb0a94a6e3998c00450.png" />
-</div>
-</div>
+<a class="reference internal image-reference" href="../_images/7-exercise1plot.png"><img alt="“”" class="align-center" src="../_images/7-exercise1plot.png" style="width: 400pt;" /></a>
 <ol class="arabic simple" start="2">
-<li><p>Replicate the plot below, which is a stacked area chart for the total death from Covid-19 in the states with the top ten total death counts overall.</p></li>
+<li><p>Replicate the plot below, which is a stacked area chart for the total deaths from Covid-19 in the states with the top ten total death counts overall.</p></li>
 </ol>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">deaths</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">%&gt;%</span>
-  <span class="nf">summarize</span><span class="p">(</span><span class="n">deaths</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_cases</span><span class="p">))</span>
-
-<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">summarise</span><span class="p">(</span><span class="n">totaldeaths</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span> <span class="o">%&gt;%</span>
-  <span class="nf">arrange</span><span class="p">(</span><span class="nf">desc</span><span class="p">(</span><span class="n">totaldeaths</span><span class="p">))</span>
-<span class="n">top10states</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">state</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">])</span>
-
-<span class="n">df</span> <span class="o">&lt;-</span> <span class="n">covidcases</span> <span class="o">%&gt;%</span> 
-  <span class="nf">mutate</span><span class="p">(</span><span class="n">top10</span> <span class="o">=</span> <span class="nf">replace</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="o">!</span><span class="n">state</span> <span class="o">%in%</span> <span class="n">top10states</span><span class="p">,</span> <span class="s">&quot;Other&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span> 
-  <span class="nf">group_by</span><span class="p">(</span><span class="n">top10</span><span class="p">,</span> <span class="n">week</span><span class="p">)</span> <span class="o">%&gt;%</span> 
-  <span class="nf">summarise</span><span class="p">(</span><span class="n">totaldeaths</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">weekly_deaths</span><span class="p">))</span>
-<span class="n">df</span><span class="o">$</span><span class="n">top10</span> <span class="o">=</span> <span class="nf">factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">top10</span><span class="p">,</span> <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">top10states</span><span class="p">,</span> <span class="s">&quot;Other&quot;</span><span class="p">))</span>
-<span class="n">df</span><span class="o">$</span><span class="n">date</span> <span class="o">&lt;-</span> <span class="nf">as.Date</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="m">2020</span><span class="p">,</span> <span class="n">df</span><span class="o">$</span><span class="n">week</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&quot;-&quot;</span><span class="p">),</span> <span class="s">&quot;%Y-%U-%u&quot;</span><span class="p">)</span>
-
-<span class="nf">ggplot</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">totaldeaths</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="n">top10</span><span class="p">))</span> <span class="o">+</span>
-  <span class="nf">geom_area</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="m">1.0</span> <span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="m">0.3</span><span class="p">,</span> <span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">theme_classic</span><span class="p">()</span> <span class="o">+</span>
-  <span class="nf">scale_x_date</span><span class="p">(</span><span class="n">date_breaks</span> <span class="o">=</span> <span class="s">&quot;1 month&quot;</span><span class="p">)</span> <span class="o">+</span>
-  <span class="nf">theme</span><span class="p">(</span><span class="n">legend.position</span><span class="o">=</span><span class="s">&quot;bottom&quot;</span><span class="p">,</span>
-        <span class="n">axis.text.x</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">angle</span> <span class="o">=</span> <span class="m">30</span><span class="p">,</span> <span class="n">hjust</span> <span class="o">=</span> <span class="m">1</span><span class="p">),</span>
-        <span class="n">plot.title</span> <span class="o">=</span> <span class="nf">element_text</span><span class="p">(</span><span class="n">size</span> <span class="o">=</span> <span class="m">15</span><span class="p">,</span> <span class="n">face</span> <span class="o">=</span>  <span class="s">&quot;bold&quot;</span><span class="p">))</span> <span class="o">+</span>
- <span class="nf">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s">&quot;Total Deaths Over Time in the Top 10 States &quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Date&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s">&quot;Total Deaths&quot;</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="s">&quot;State&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>`summarise()` has grouped output by &#39;top10&#39;. You can override using the
-`.groups` argument.
-</pre></div>
-</div>
-<img alt="../_images/c6f5732ae4dbea50ffd24ed22e0f747c246e0b09d1a1cae6f0a3c8dc12cdebfb.png" src="../_images/c6f5732ae4dbea50ffd24ed22e0f747c246e0b09d1a1cae6f0a3c8dc12cdebfb.png" />
-</div>
-</div>
+<a class="reference internal image-reference" href="../_images/7-exercise2plot.png"><img alt="“”" class="align-center" src="../_images/7-exercise2plot.png" style="width: 400pt;" /></a>
 </section>
 </section>
 
