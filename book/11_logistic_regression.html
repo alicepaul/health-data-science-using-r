@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>11. Logistic Regression &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="12. Writing Reports in R Markdown" href="12_rmarkdown_reports.html" />
     <link rel="prev" title="10. Linear Regression" href="10_linear_regression.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -175,7 +176,6 @@ const thebe_selector_output = ".output, .cell_output"
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Extra Topics</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="12_rmarkdown_reports.html">12. Writing Reports in R Markdown</a></li>
-
 <li class="toctree-l1"><a class="reference internal" href="13_expanding_r_skills.html">13. Expanding your R Skills</a></li>
 </ul>
 
@@ -379,7 +379,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="logistic-regression">
-<h1>11. Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this headline">#</a></h1>
+<h1>11. Logistic Regression<a class="headerlink" href="#logistic-regression" title="Permalink to this heading">#</a></h1>
 <p>This chapter will build on the last and continue with regression analysis in R. Specifically, we will cover binary logistic regression using the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function, which can be used to fit generalized linear models. Many of the functions learned in the last chapter can also be used with a <code class="docutils literal notranslate"><span class="pre">glm</span></code> object. For example, the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function expects a formula in the same way as the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function. We will also cover diagnostic plots and model evaluation specific to a binary outcome.</p>
 <p>The data used in this chapter is from the 2021 National Youth Tobacco Survey (NYTS). This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. We will use logistic regression to examine whether survey setting was associated with youth reporting of current tobacco use similar to the analysis presented in <a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/36470692/">Park-Lee et al. (2023). Impact of Survey Setting on Current Tobacco Product Use: National Youth Tobacco Survey, 2021. Journal of Adolescent Health, 72(3), 365-374</a>. Note that we ignore survey weights for this analysis.</p>
 <p>We will use the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package again to present the estimated coefficients, the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> package to create a calibration plots, the <code class="docutils literal notranslate"><span class="pre">lmtest</span></code> package to perform likelihood ratio tests, and the <code class="docutils literal notranslate"><span class="pre">pROC</span></code> package to create receiver operating characteristic curves.</p>
@@ -396,7 +396,7 @@ document.write(`
 </div>
 </div>
 <section id="generalized-linear-models-in-r">
-<h2>Generalized Linear Models in R<a class="headerlink" href="#generalized-linear-models-in-r" title="Permalink to this headline">#</a></h2>
+<h2>Generalized Linear Models in R<a class="headerlink" href="#generalized-linear-models-in-r" title="Permalink to this heading">#</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">glm(formula,</span> <span class="pre">data,</span> <span class="pre">family)</span></code> function in R is used to fit generalized linear models. The three main arguments we must specify to the function are the</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">formula</span></code> - specifies the relationship between the independent variables and the outcome of interest,</p></li>
@@ -407,7 +407,7 @@ document.write(`
 <p>Our outcome of interest will be current e-cigarette use, <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code>, so we need to create this variable from the variables that are currently in the data. We set <code class="docutils literal notranslate"><span class="pre">e_cig_use</span></code> to 0 if the respondent answered that they have not used e-cigarettes in the last 30 days and 1 otherwise. We can see that there are only 1,435 respondents who reported e-cigarette use. This is a low percentage of the overall sample, which will likely impact our results.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="o">==</span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="o">==</span><span class="m">0</span><span class="p">,</span> <span class="s">&quot;0&quot;</span><span class="p">,</span> <span class="s">&quot;1&quot;</span><span class="p">))</span>
 <span class="nf">table</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">e_cig_use</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -423,9 +423,9 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">table</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="p">)</span>
-<span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;In a school building/classroom&quot;</span><span class="p">,</span>
-<span class="w">                        </span><span class="s">&quot;school&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;home/other&quot;</span><span class="p">)</span>
-<span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">as.factor</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="p">)</span>
+<span class="n">nyts</span><span class="o">$</span><span class="n">location</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span> <span class="o">==</span> <span class="s">&quot;In a school building/classroom&quot;</span><span class="p">,</span>
+                        <span class="s">&quot;school&quot;</span><span class="p">,</span> <span class="s">&quot;home/other&quot;</span><span class="p">)</span>
+<span class="n">nyts</span><span class="o">$</span><span class="n">location</span> <span class="o">&lt;-</span> <span class="nf">as.factor</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">location</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -441,8 +441,8 @@ document.write(`
 <p>To start, we will create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, and race and ethnicity. Note that we specify our formula and data as with the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function. We then use the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function again to print a summary of this fitted model. The output is slightly different from an <code class="docutils literal notranslate"><span class="pre">lm</span></code> object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function and is not demonstrated in this chapter.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_start</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">grade</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">race_and_ethnicity</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">location</span><span class="p">,</span>
-<span class="w">                 </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_start</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">grade</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">race_and_ethnicity</span> <span class="o">+</span> <span class="n">location</span><span class="p">,</span>
+                 <span class="n">data</span> <span class="o">=</span> <span class="n">nyts</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
 <span class="nf">summary</span><span class="p">(</span><span class="n">mod_start</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -499,7 +499,7 @@ Number of Fisher Scoring iterations: 6
 <p>We can use the <code class="docutils literal notranslate"><span class="pre">tidy()</span></code> function from the <code class="docutils literal notranslate"><span class="pre">broom</span></code> package to display the estimated coefficients from the above model. This time we add the <code class="docutils literal notranslate"><span class="pre">exponentiate</span> <span class="pre">=</span> <span class="pre">TRUE</span></code> argument to exponentiate our coefficients so we can interpret them as estimated change in odds rather than log odds. For example, we can see below that those who answered at school have double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span><span class="w"> </span><span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">tidy</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -529,7 +529,7 @@ Number of Fisher Scoring iterations: 6
 </div></div>
 </div>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 <p>Fit a logistic regression model with cigarette use as the outcome and age, race_and_ethnicity, LGBT, and family_affluence as well as an interaction between family_affluence and race_and_ethnicity as independent variables. Your AIC should be 2430.8.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -541,13 +541,13 @@ Number of Fisher Scoring iterations: 6
 </section>
 </section>
 <section id="residuals-discrimination-and-calibration">
-<h2>Residuals, Discrimination, and Calibration<a class="headerlink" href="#residuals-discrimination-and-calibration" title="Permalink to this headline">#</a></h2>
+<h2>Residuals, Discrimination, and Calibration<a class="headerlink" href="#residuals-discrimination-and-calibration" title="Permalink to this heading">#</a></h2>
 <p>Next, we look at the distribution of the residuals. The <code class="docutils literal notranslate"><span class="pre">resid()</span></code> function can be used to find the residuals again, but this time we might want to specify the Pearson and deviance residuals by specifying the <code class="docutils literal notranslate"><span class="pre">type</span></code> argument. We plot histograms for both of these residual types below. In both plots, we can observe a multi-modal distribution, which reflects the binary nature of our outcome.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
-<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;pearson&quot;</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">resid</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;deviance&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -558,7 +558,7 @@ Number of Fisher Scoring iterations: 6
 <p>To further evaluate the fit of our model, we may want to observe the predicted probabilities. The <code class="docutils literal notranslate"><span class="pre">predict()</span></code> function by default will return the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If want to find the predicted probabilities, we can update the argument by specifying <code class="docutils literal notranslate"><span class="pre">type=&quot;response&quot;</span></code>. Additionally, we can predict on data not used to train the model by using the argument <code class="docutils literal notranslate"><span class="pre">newdata</span></code>. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function (and <code class="docutils literal notranslate"><span class="pre">lm()</span></code> function) drop any observations with NA values when training. In the last chapter, we omitted incomplete cases prior to analysis so that the predicted probabilities corresponded directly to the rows in our data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_probs</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">mod_start</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">)</span>
 <span class="nf">length</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -569,11 +569,11 @@ Number of Fisher Scoring iterations: 6
 <p>If want to find the class for each observation used in fitting the model, we can use the model’s output, which stores the model matrix <code class="docutils literal notranslate"><span class="pre">x</span></code> and the outcome vector <code class="docutils literal notranslate"><span class="pre">y</span></code>. We plot the distribution of estimated probabilities for each class. Note that all the predicted probabilities are below 0.5, the typical cut-off for prediction. This is in part due to the fact that we have such an imbalanced outcome.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">fill</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)),</span>
-<span class="w">                </span><span class="n">bins</span><span class="o">=</span><span class="m">30</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
-<span class="w">  </span><span class="nf">scale_fill_discrete</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;E-Cig Use&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Predicted Probabilities&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Count&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">()</span> <span class="o">+</span> 
+  <span class="nf">geom_histogram</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)),</span>
+                <span class="n">bins</span><span class="o">=</span><span class="m">30</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">scale_fill_discrete</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;E-Cig Use&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Predicted Probabilities&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Count&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -582,14 +582,14 @@ Number of Fisher Scoring iterations: 6
 </div>
 </div>
 <section id="receiver-operating-characteristic-roc-curve">
-<h3>Receiver Operating Characteristic (ROC) Curve<a class="headerlink" href="#receiver-operating-characteristic-roc-curve" title="Permalink to this headline">#</a></h3>
+<h3>Receiver Operating Characteristic (ROC) Curve<a class="headerlink" href="#receiver-operating-characteristic-roc-curve" title="Permalink to this heading">#</a></h3>
 <p>We now plot the receiver operating characteristic (ROC) curve and compute the area under the curve (AUC). The <code class="docutils literal notranslate"><span class="pre">roc()</span></code> function from the <code class="docutils literal notranslate"><span class="pre">pROC</span></code> package builds an ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector <code class="docutils literal notranslate"><span class="pre">response</span></code> and predictor vector <code class="docutils literal notranslate"><span class="pre">predictor</span></code>. By default, with a 0/1 outcome, the <code class="docutils literal notranslate"><span class="pre">roc()</span></code> function will assume class 0 is controls and class 1 is cases. We can also specify this in the <code class="docutils literal notranslate"><span class="pre">levels</span></code> argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument <code class="docutils literal notranslate"><span class="pre">direction</span> <span class="pre">=</span> <span class="pre">&quot;&gt;&quot;</span></code> if the opposite is true. We can plot the ROC curve by calling the <code class="docutils literal notranslate"><span class="pre">plot()</span></code> function. We can add some extra information by adding the AUC (<code class="docutils literal notranslate"><span class="pre">print.auc</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>) and the threshold that maximizes sensitivity + specificity (<code class="docutils literal notranslate"><span class="pre">print.thres</span> <span class="pre">=</span> <span class="pre">TRUE</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span>
-<span class="w">               </span><span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">),</span><span class="w"> </span>
-<span class="w">               </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">print.thres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="n">pred_probs</span><span class="p">,</span> 
+               <span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">),</span> 
+               <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">print.thres</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -600,7 +600,7 @@ Number of Fisher Scoring iterations: 6
 <p>If we want to understand more about the curve, we can use the <code class="docutils literal notranslate"><span class="pre">coords()</span></code> function to find the coordinates for each threshold used to create the curve. The argument <code class="docutils literal notranslate"><span class="pre">x=</span> <span class="pre">&quot;all&quot;</span></code> specifies we want to find all thresholds, but we could also specify only to return local maxima.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">coords</span><span class="p">(</span><span class="n">roc</span><span class="o">=</span><span class="n">roc_mod</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;all&quot;</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span> <span class="o">&lt;-</span> <span class="nf">coords</span><span class="p">(</span><span class="n">roc</span><span class="o">=</span><span class="n">roc_mod</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="s">&quot;all&quot;</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">roc_vals</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -626,7 +626,7 @@ Number of Fisher Scoring iterations: 6
 <p>For example, we could use this information to find the highest threshold with a corresponding sensitivity above 0.75. This returns a threshold of 0.062. If we were to predict class 1 for all observations with a predicted probability above 0.062, then we would achieve a sensitivity of 0.77 and specificity of 0.56 on the training data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span><span class="p">[</span><span class="n">roc_vals</span><span class="o">$</span><span class="n">sensitivity</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.75</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">tail</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_vals</span><span class="p">[</span><span class="n">roc_vals</span><span class="o">$</span><span class="n">sensitivity</span> <span class="o">&gt;</span> <span class="m">0.75</span><span class="p">,</span> <span class="p">]</span> <span class="o">%&gt;%</span> <span class="nf">tail</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -646,8 +646,8 @@ Number of Fisher Scoring iterations: 6
 <p>We will use the threshold of 0.080 indicated on our ROC curve to create predicted classes for our response. By comparing the result to our outcome using the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function, we can directly calculate measures like sensitivity, specificity, positive and negative predictive values, and overall accuracy.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_ys</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0.08</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
-<span class="n">tab_outcome</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">pred_ys</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">pred_ys</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">pred_probs</span> <span class="o">&gt;</span> <span class="m">0.08</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
+<span class="n">tab_outcome</span> <span class="o">&lt;-</span> <span class="nf">table</span><span class="p">(</span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">,</span> <span class="n">pred_ys</span><span class="p">)</span>
 <span class="n">tab_outcome</span>
 </pre></div>
 </div>
@@ -663,19 +663,19 @@ Number of Fisher Scoring iterations: 6
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sens</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
-<span class="n">spec</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
-<span class="n">ppv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
-<span class="n">npv</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">])</span>
-<span class="n">acc</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">sens</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">spec</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">ppv</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span>
+<span class="n">npv</span> <span class="o">&lt;-</span> <span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">])</span>
+<span class="n">acc</span> <span class="o">&lt;-</span> <span class="p">(</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">]</span><span class="o">+</span><span class="n">tab_outcome</span><span class="p">[</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">])</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">tab_outcome</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Measures</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Sens&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Spec&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;PPV&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;NPV&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Acc&quot;</span><span class="p">),</span>
-<span class="w">          </span><span class="n">Values</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span><span class="w"> </span><span class="n">spec</span><span class="p">,</span><span class="w"> </span><span class="n">ppv</span><span class="p">,</span><span class="w"> </span><span class="n">npv</span><span class="p">,</span><span class="w"> </span><span class="n">acc</span><span class="p">),</span><span class="m">3</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">data.frame</span><span class="p">(</span><span class="n">Measures</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;Sens&quot;</span><span class="p">,</span> <span class="s">&quot;Spec&quot;</span><span class="p">,</span> <span class="s">&quot;PPV&quot;</span><span class="p">,</span> <span class="s">&quot;NPV&quot;</span><span class="p">,</span> <span class="s">&quot;Acc&quot;</span><span class="p">),</span>
+          <span class="n">Values</span> <span class="o">=</span> <span class="nf">round</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">ppv</span><span class="p">,</span> <span class="n">npv</span><span class="p">,</span> <span class="n">acc</span><span class="p">),</span><span class="m">3</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -698,19 +698,19 @@ Number of Fisher Scoring iterations: 6
 </div>
 </section>
 <section id="calibration-plot">
-<h3>Calibration Plot<a class="headerlink" href="#calibration-plot" title="Permalink to this headline">#</a></h3>
+<h3>Calibration Plot<a class="headerlink" href="#calibration-plot" title="Permalink to this heading">#</a></h3>
 <p>Another useful plot is a calibration plot. This type of plot groups the data by the estimated probabilities and compares the mean probability with the observed proportion of observations in class 1. It visualizes how close our estimated distribution and true distribution are to each other. There are several packages that can create calibration plots, but we demonstrate how to do this using the <code class="docutils literal notranslate"><span class="pre">ggplot2</span></code> package. First, we create a data frame with the predicted probabilities and the outcome variable. Additionally, we group this data into <code class="docutils literal notranslate"><span class="pre">num_cuts</span></code> groups based on the predicted probabilities using the <code class="docutils literal notranslate"><span class="pre">cut()</span></code> function. Within each group, we find the model’s predicted mean along with the observed proportion and estimated standard errors.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">num_cuts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">10</span>
-<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w">  </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pred_probs</span><span class="p">,</span>
-<span class="w">                          </span><span class="n">bin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span><span class="w"> </span><span class="n">breaks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">num_cuts</span><span class="p">),</span>
-<span class="w">                          </span><span class="n">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
-<span class="n">calib_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">calib_data</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">             </span><span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">             </span><span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
-<span class="w">                       </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span><span class="w"> </span>
-<span class="w">                       </span><span class="n">se</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">sqrt</span><span class="p">(</span><span class="n">observed</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">observed</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">num_cuts</span> <span class="o">&lt;-</span> <span class="m">10</span>
+<span class="n">calib_data</span> <span class="o">&lt;-</span>  <span class="nf">data.frame</span><span class="p">(</span><span class="n">prob</span> <span class="o">=</span> <span class="n">pred_probs</span><span class="p">,</span>
+                          <span class="n">bin</span> <span class="o">=</span> <span class="nf">cut</span><span class="p">(</span><span class="n">pred_probs</span><span class="p">,</span> <span class="n">breaks</span> <span class="o">=</span> <span class="n">num_cuts</span><span class="p">),</span>
+                          <span class="n">class</span> <span class="o">=</span> <span class="n">mod_start</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+<span class="n">calib_data</span> <span class="o">&lt;-</span> <span class="n">calib_data</span> <span class="o">%&gt;%</span> 
+             <span class="nf">group_by</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span> <span class="o">%&gt;%</span> 
+             <span class="nf">summarize</span><span class="p">(</span><span class="n">observed</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">class</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> 
+                       <span class="n">expected</span> <span class="o">=</span> <span class="nf">sum</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">(),</span> 
+                       <span class="n">se</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">observed</span><span class="o">*</span><span class="p">(</span><span class="m">1</span><span class="o">-</span><span class="n">observed</span><span class="p">)</span><span class="o">/</span><span class="nf">n</span><span class="p">()))</span>
 <span class="n">calib_data</span>
 </pre></div>
 </div>
@@ -740,14 +740,14 @@ Number of Fisher Scoring iterations: 6
 <p>Next, we plot the observed vs expected proportions. We also used the estimated standard error to create corresponding 95% confidence intervals. The red line indicates a perfect fit where our estimated and true distributions match. Overall, the plot below shows that our model could be better calibrated.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="n">slope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">  </span><span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="m">-1.96</span><span class="o">*</span><span class="n">se</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                    </span><span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="m">+1.96</span><span class="o">*</span><span class="n">se</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                </span><span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
-<span class="w">  </span><span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">observed</span><span class="p">))</span><span class="w"> </span><span class="o">+</span>
-<span class="w">  </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Expected Proportion&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="o">=</span><span class="s">&quot;Observed Proportion&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span>
-<span class="w">  </span><span class="nf">theme_minimal</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">ggplot</span><span class="p">(</span><span class="n">calib_data</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_abline</span><span class="p">(</span><span class="n">intercept</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;red&quot;</span><span class="p">)</span> <span class="o">+</span> 
+  <span class="nf">geom_errorbar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="n">observed</span><span class="m">-1.96</span><span class="o">*</span><span class="n">se</span><span class="p">,</span> 
+                    <span class="n">ymax</span><span class="o">=</span><span class="n">observed</span><span class="m">+1.96</span><span class="o">*</span><span class="n">se</span><span class="p">),</span> 
+                <span class="n">colour</span><span class="o">=</span><span class="s">&quot;black&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">.</span><span class="m">01</span><span class="p">)</span><span class="o">+</span>
+  <span class="nf">geom_point</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">expected</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">observed</span><span class="p">))</span> <span class="o">+</span>
+  <span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;Expected Proportion&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;Observed Proportion&quot;</span><span class="p">)</span> <span class="o">+</span>
+  <span class="nf">theme_minimal</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -757,8 +757,8 @@ Number of Fisher Scoring iterations: 6
 </div>
 </section>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
-<p>Create a calibration plot with 15 cuts for your model from the previous practice question. It should look like this:</p>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
+<p>Create a calibration plot with 5 cuts for your model from the previous practice question (recall that this model should have cigarette use as the outcome and age, race_and_ethnicity, LGBT, and family_affluence as well as an interaction between family_affluence and race_and_ethnicity as independent variables). It should look like this:</p>
 <a class="reference internal image-reference" href="../_images/11-practicequestion2answer.png"><img alt="“”" class="align-center" src="../_images/11-practicequestion2answer.png" style="width: 400pt;" /></a>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -770,15 +770,15 @@ Number of Fisher Scoring iterations: 6
 </section>
 </section>
 <section id="variable-selection-and-likelihood-ratio-tests">
-<h2>Variable Selection and Likelihood Ratio Tests<a class="headerlink" href="#variable-selection-and-likelihood-ratio-tests" title="Permalink to this headline">#</a></h2>
+<h2>Variable Selection and Likelihood Ratio Tests<a class="headerlink" href="#variable-selection-and-likelihood-ratio-tests" title="Permalink to this heading">#</a></h2>
 <p>In the last chapter, we introduced the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function to implement stepwise variable selection. This function also works with <code class="docutils literal notranslate"><span class="pre">glm</span></code> objects. In this case, we use this function to implement backward selection from a larger set of covariates. We first remove any observations with NA values to ensure that our training data does not change size as the formula changes.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts_sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">location</span><span class="p">,</span><span class="w"> </span><span class="n">sex</span><span class="p">,</span><span class="w"> </span><span class="n">grade</span><span class="p">,</span><span class="w"> </span><span class="n">otherlang</span><span class="p">,</span><span class="w"> </span><span class="n">grades_in_past_year</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                </span><span class="n">perceived_e_cig_use</span><span class="p">,</span><span class="w"> </span><span class="n">race_and_ethnicity</span><span class="p">,</span><span class="w"> </span><span class="n">LGBT</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                </span><span class="n">psych_distress</span><span class="p">,</span><span class="w"> </span><span class="n">family_affluence</span><span class="p">,</span><span class="w"> </span><span class="n">e_cig_use</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts_sub</span> <span class="o">&lt;-</span> <span class="n">nyts</span> <span class="o">%&gt;%</span> 
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">location</span><span class="p">,</span> <span class="n">sex</span><span class="p">,</span> <span class="n">grade</span><span class="p">,</span> <span class="n">otherlang</span><span class="p">,</span> <span class="n">grades_in_past_year</span><span class="p">,</span> 
+                <span class="n">perceived_e_cig_use</span><span class="p">,</span> <span class="n">race_and_ethnicity</span><span class="p">,</span> <span class="n">LGBT</span><span class="p">,</span> 
+                <span class="n">psych_distress</span><span class="p">,</span> <span class="n">family_affluence</span><span class="p">,</span> <span class="n">e_cig_use</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">na.omit</span><span class="p">()</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">nyts_sub</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -804,9 +804,9 @@ Number of Fisher Scoring iterations: 6
 <p>To implement backward selection, we first create a model with all the covariates included. The period <code class="docutils literal notranslate"><span class="pre">.</span></code> in the formula indicates that we want to include all variables. Next, we use the <code class="docutils literal notranslate"><span class="pre">step()</span></code> function. Since we are using backward selection, we only need to specify the lower formula in the scope.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_full</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">.</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts_sub</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
-<span class="n">mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">model_full</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;backward&#39;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                 </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;e_cig_use ~ sex + grade + </span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">model_full</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">.</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">nyts_sub</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
+<span class="n">mod_step</span> <span class="o">&lt;-</span> <span class="nf">step</span><span class="p">(</span><span class="n">model_full</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&#39;backward&#39;</span><span class="p">,</span> 
+                 <span class="n">scope</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">lower</span> <span class="o">=</span> <span class="s">&quot;e_cig_use ~ sex + grade + </span>
 <span class="s">                 race_and_ethnicity + location&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -844,10 +844,10 @@ e_cig_use ~ location + sex + grade + otherlang + grades_in_past_year +
 <p>Stepwise selection keeps most variables in the model and only drops family affluence. Below, we can see the AUC for this model has improved to 0.818.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                    </span><span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                    </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">print.thres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span> 
+                    <span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span> 
+                    <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">print.thres</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -858,15 +858,15 @@ e_cig_use ~ location + sex + grade + otherlang + grades_in_past_year +
 <p>If we want to compare this model to our model above, we could use a likelihood ratio test since the two models are nested. The <code class="docutils literal notranslate"><span class="pre">lrtest()</span></code> function from the <code class="docutils literal notranslate"><span class="pre">lmtest</span></code> package allows us to input two nested <code class="docutils literal notranslate"><span class="pre">glm</span></code> models and performs a corresponding Chi-squared likelihood ratio test. First, we need to ensure that our initial model is fit on the same data used in the stepwise selection. The output below indicates a statistically significant improvement in the model likelihood with the inclusion of the other variables.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_start2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">grade</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">race_and_ethnicity</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">location</span><span class="p">,</span>
-<span class="w">                 </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts_sub</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_start2</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">e_cig_use</span> <span class="o">~</span> <span class="n">grade</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">race_and_ethnicity</span> <span class="o">+</span> <span class="n">location</span><span class="p">,</span>
+                 <span class="n">data</span> <span class="o">=</span> <span class="n">nyts_sub</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">print</span><span class="p">(</span><span class="nf">lrtest</span><span class="p">(</span><span class="n">mod_start2</span><span class="p">,</span><span class="w"> </span><span class="n">mod_step</span><span class="p">))</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">print</span><span class="p">(</span><span class="nf">lrtest</span><span class="p">(</span><span class="n">mod_start2</span><span class="p">,</span> <span class="n">mod_step</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -887,32 +887,52 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 </div>
 </section>
 <section id="extending-beyond-binary-outcomes">
-<h2>Extending Beyond Binary Outcomes<a class="headerlink" href="#extending-beyond-binary-outcomes" title="Permalink to this headline">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the <code class="docutils literal notranslate"><span class="pre">family</span></code> argument. Below, we fit a ???</p>
+<h2>Extending Beyond Binary Outcomes<a class="headerlink" href="#extending-beyond-binary-outcomes" title="Permalink to this heading">#</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">glm()</span></code> function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the <code class="docutils literal notranslate"><span class="pre">family</span></code> argument. Below, we fit a Poisson model to model the number of e-cigarettes used in the last 30 days by setting <code class="docutils literal notranslate"><span class="pre">family</span> <span class="pre">=</span> <span class="pre">poisson</span></code>. However, despite the fact that our outcome is a count value, this model doesn’t seem to be a good fit for our data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_poisson</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">num_e_cigs</span> <span class="o">~</span> <span class="n">grade</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">race_and_ethnicity</span> <span class="o">+</span> <span class="n">location</span><span class="p">,</span>
+                 <span class="n">data</span> <span class="o">=</span> <span class="n">nyts</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">poisson</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
+<span class="nf">hist</span><span class="p">(</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_poisson</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;Model&quot;</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Predicted Values&quot;</span><span class="p">)</span>
+<span class="nf">hist</span><span class="p">(</span><span class="n">nyts</span><span class="o">$</span><span class="n">num_e_cigs</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s">&quot;Observed&quot;</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;Number E-Cigs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/0b209f3625e02a1818a16866283ddc1de38ce79db9c1ca3dd286f82b77986d96.png" src="../_images/0b209f3625e02a1818a16866283ddc1de38ce79db9c1ca3dd286f82b77986d96.png" />
+</div>
+</div>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/0D8Nul44eYQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div></section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Create a new variable <code class="docutils literal notranslate"><span class="pre">tobacco_use</span></code> representing any tobacco use in the past 30 days (including e-cigs, cigarettes, and/or cigars) as well as a new variable <code class="docutils literal notranslate"><span class="pre">perceived_tobacco_use</span></code> equal to the maximum of the perceived cigarette and e-cig use. Then, create a new data frame <code class="docutils literal notranslate"><span class="pre">nyts_sub</span></code> that contains these two new columns as well as columns for sex, grades in the past year, psych distress, and family affluence. <br> <br> Fit a logistic regression model with this new tobacco use variable as the outcome and all other selected variables as independent variables.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="nf">mutate</span><span class="p">(</span><span class="n">tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ifelse</span><span class="p">(</span><span class="n">num_e_cigs</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_cigarettes</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">num_cigars</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">),</span>
-<span class="w">                       </span><span class="n">perceived_tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">pmax</span><span class="p">(</span><span class="n">perceived_cigarette_use</span><span class="p">,</span><span class="w"> </span><span class="n">perceived_e_cig_use</span><span class="p">))</span>
-<span class="n">nyts_sub</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">nyts</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span>
-<span class="w">  </span><span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">sex</span><span class="p">,</span><span class="w"> </span><span class="n">grades_in_past_year</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                </span><span class="n">psych_distress</span><span class="p">,</span><span class="w"> </span><span class="n">family_affluence</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                </span><span class="n">tobacco_use</span><span class="p">,</span><span class="w"> </span><span class="n">perceived_tobacco_use</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span>
-<span class="w">  </span><span class="nf">na.omit</span><span class="p">()</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">nyts</span> <span class="o">&lt;-</span> <span class="n">nyts</span> <span class="o">%&gt;%</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">tobacco_use</span> <span class="o">=</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">num_e_cigs</span> <span class="o">+</span> <span class="n">num_cigarettes</span> <span class="o">+</span> <span class="n">num_cigars</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">),</span>
+                       <span class="n">perceived_tobacco_use</span> <span class="o">=</span> <span class="nf">pmax</span><span class="p">(</span><span class="n">perceived_cigarette_use</span><span class="p">,</span> <span class="n">perceived_e_cig_use</span><span class="p">))</span>
+<span class="n">nyts_sub</span> <span class="o">&lt;-</span> <span class="n">nyts</span> <span class="o">%&gt;%</span> 
+  <span class="n">dplyr</span><span class="o">::</span><span class="nf">select</span><span class="p">(</span><span class="n">sex</span><span class="p">,</span> <span class="n">grades_in_past_year</span><span class="p">,</span> 
+                <span class="n">psych_distress</span><span class="p">,</span> <span class="n">family_affluence</span><span class="p">,</span> 
+                <span class="n">tobacco_use</span><span class="p">,</span> <span class="n">perceived_tobacco_use</span><span class="p">)</span> <span class="o">%&gt;%</span>
+  <span class="nf">na.omit</span><span class="p">()</span>
 
-<span class="n">mod</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">glm</span><span class="p">(</span><span class="n">tobacco_use</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">sex</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">grades_in_past_year</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">psych_distress</span><span class="w"> </span><span class="o">+</span><span class="w"> </span>
-<span class="w">           </span><span class="n">family_affluence</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">perceived_tobacco_use</span><span class="p">,</span>
-<span class="w">           </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nyts_sub</span><span class="p">,</span><span class="w"> </span><span class="n">family</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binomial</span><span class="p">)</span>
+<span class="n">mod</span> <span class="o">&lt;-</span> <span class="nf">glm</span><span class="p">(</span><span class="n">tobacco_use</span> <span class="o">~</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">grades_in_past_year</span> <span class="o">+</span> <span class="n">psych_distress</span> <span class="o">+</span> 
+           <span class="n">family_affluence</span> <span class="o">+</span> <span class="n">perceived_tobacco_use</span><span class="p">,</span>
+           <span class="n">data</span> <span class="o">=</span> <span class="n">nyts_sub</span><span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">binomial</span><span class="p">)</span>
 
 <span class="nf">summary</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
 </pre></div>
@@ -974,8 +994,8 @@ Number of Fisher Scoring iterations: 6
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;both&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tobacco_use ~ 1&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;tobacco_use ~ .^2&quot;</span><span class="p">))</span>
-<span class="nf">tidy</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">conf.int</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">mod_step</span> <span class="o">&lt;-</span> <span class="nf">step</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;both&quot;</span><span class="p">,</span> <span class="n">scope</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">lower</span> <span class="o">=</span> <span class="s">&quot;tobacco_use ~ 1&quot;</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="s">&quot;tobacco_use ~ .^2&quot;</span><span class="p">))</span>
+<span class="nf">tidy</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span> <span class="n">exponentiate</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">conf.int</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1070,27 +1090,27 @@ tobacco_use ~ sex + grades_in_past_year + psych_distress + perceived_tobacco_use
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">new_data</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">data.frame</span><span class="p">(</span><span class="n">sex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Female&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                       </span><span class="n">grades_in_past_year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Mostly C&#39;s&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                       </span><span class="n">psych_distress</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;moderate&quot;</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                       </span><span class="n">perceived_tobacco_use</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">new_data</span> <span class="o">&lt;-</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">sex</span> <span class="o">=</span> <span class="s">&quot;Female&quot;</span><span class="p">,</span> 
+                       <span class="n">grades_in_past_year</span> <span class="o">=</span> <span class="s">&quot;Mostly C&#39;s&quot;</span><span class="p">,</span> 
+                       <span class="n">psych_distress</span> <span class="o">=</span> <span class="s">&quot;moderate&quot;</span><span class="p">,</span> 
+                       <span class="n">perceived_tobacco_use</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span>
 
-<span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">newdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_data</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;response&quot;</span><span class="p">)</span>
+<span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span> <span class="n">newdata</span> <span class="o">=</span> <span class="n">new_data</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;response&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><strong>1:</strong> 0.117747179807868</div></div>
+<div class="output text_html"><strong>1:</strong> 0.117747179807869</div></div>
 </div>
 <ol class="arabic simple" start="4">
 <li><p>Construct an ROC curve for the model from Question 2 and find the AUC as well as the threshold that maximizes sensitivity and specificity.</p></li>
 </ol>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                    </span><span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span><span class="w"> </span>
-<span class="w">                    </span><span class="n">levels</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="n">direction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span><span class="w"> </span><span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span><span class="w"> </span><span class="n">print.thres</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="n">roc_mod_step</span> <span class="o">&lt;-</span> <span class="nf">roc</span><span class="p">(</span><span class="n">predictor</span><span class="o">=</span><span class="nf">predict</span><span class="p">(</span><span class="n">mod_step</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&quot;response&quot;</span><span class="p">),</span> 
+                    <span class="n">response</span><span class="o">=</span><span class="nf">as.factor</span><span class="p">(</span><span class="n">mod_step</span><span class="o">$</span><span class="n">y</span><span class="p">),</span> 
+                    <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">),</span> <span class="n">direction</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">roc_mod_step</span><span class="p">,</span> <span class="n">print.auc</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">,</span> <span class="n">print.thres</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
