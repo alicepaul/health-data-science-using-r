@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>3. Working with Data Files in R &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="4. Intro to Exploratory Data Analysis" href="4_exploratory_analysis.html" />
     <link rel="prev" title="2. Data Structures in R" href="2_data_structures.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -230,7 +231,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/main/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/3_data_files.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/3_data_files.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -380,7 +381,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="working-with-data-files-in-r">
-<h1>3. Working with Data Files in R<a class="headerlink" href="#working-with-data-files-in-r" title="Permalink to this headline">#</a></h1>
+<h1>3. Working with Data Files in R<a class="headerlink" href="#working-with-data-files-in-r" title="Permalink to this heading">#</a></h1>
 <p>In this chapter, we will be working with data in R. To start, we need to load our data into R: this requires identifying the type of data file we have (e.g. .csv, .xlsx, .dta) and finding the appropriate function to load in the data. This will create a data frame object containing the information from the file. After demonstrating how to load in such data, this chapter will show you how to find information about data columns, including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.</p>
 <p>In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single library <code class="docutils literal notranslate"><span class="pre">HDSinRdata</span></code> that contains the sample data sets used in this book.</p>
 <div class="cell docutils container">
@@ -389,19 +390,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(HDSinRdata): there is no package called ‘HDSinRdata’
-Traceback:
-
-1. suppressPackageStartupMessages(library(HDSinRdata))
-2. withCallingHandlers(expr, packageStartupMessage = function(c) tryInvokeRestart(&quot;muffleMessage&quot;))
-3. library(HDSinRdata)
-</pre></div>
-</div>
-</div>
 </div>
 <section id="importing-and-exporting-data">
-<h2>Importing and Exporting Data<a class="headerlink" href="#importing-and-exporting-data" title="Permalink to this headline">#</a></h2>
+<h2>Importing and Exporting Data<a class="headerlink" href="#importing-and-exporting-data" title="Permalink to this heading">#</a></h2>
 <p>The data we will use in this chapter contains information about patients who visited one of the University of Pittsburgh’s seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up. You can use the help operator <code class="docutils literal notranslate"><span class="pre">?pain</span></code> to learn more about the source of this data and to read its column descriptions. Since this data is available in our R package, we can use the <code class="docutils literal notranslate"><span class="pre">data</span></code> function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -486,7 +477,7 @@ Traceback:
 </ul>
 </section>
 <section id="summarizing-and-creating-data-columns">
-<h2>Summarizing and Creating Data Columns<a class="headerlink" href="#summarizing-and-creating-data-columns" title="Permalink to this headline">#</a></h2>
+<h2>Summarizing and Creating Data Columns<a class="headerlink" href="#summarizing-and-creating-data-columns" title="Permalink to this heading">#</a></h2>
 <p>We will now look at the data we have loaded into the data frame called <code class="docutils literal notranslate"><span class="pre">pain</span></code>. We use the <code class="docutils literal notranslate"><span class="pre">head()</span></code> function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column <code class="docutils literal notranslate"><span class="pre">PATIENT_NUM</span></code> is a numeric column of type <code class="docutils literal notranslate"><span class="pre">dbl</span></code>. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this column to a factor or a character representation later on. We can use the <code class="docutils literal notranslate"><span class="pre">names()</span></code> function to print all the column names. Note that columns <code class="docutils literal notranslate"><span class="pre">X101</span></code> to <code class="docutils literal notranslate"><span class="pre">X238</span></code> correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -543,7 +534,7 @@ Traceback:
 </div></div>
 </div>
 <section id="column-summaries">
-<h3>Column Summaries<a class="headerlink" href="#column-summaries" title="Permalink to this headline">#</a></h3>
+<h3>Column Summaries<a class="headerlink" href="#column-summaries" title="Permalink to this heading">#</a></h3>
 <p>To explore the range and distribution of a column’s values, we can use some of the base R functions. For example, the <code class="docutils literal notranslate"><span class="pre">summary()</span></code> function is a useful way to summarize a numeric column’s values. Below, we can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -622,7 +613,7 @@ Traceback:
 </div>
 </section>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 <p>Summarize the <code class="docutils literal notranslate"><span class="pre">PROMIS_SLEEP_DISTURB_V1_0</span></code> column both numerically and visually. Your results should look like this:</p>
 <a class="reference internal image-reference" href="../_images/3-practicequestion1answer.png"><img alt="“”" class="align-center" src="../_images/3-practicequestion1answer.png" style="width: 300pt;" /></a>
 <div class="cell docutils container">
@@ -695,7 +686,7 @@ Traceback:
 </div>
 </section>
 <section id="other-summary-functions">
-<h3>Other Summary Functions<a class="headerlink" href="#other-summary-functions" title="Permalink to this headline">#</a></h3>
+<h3>Other Summary Functions<a class="headerlink" href="#other-summary-functions" title="Permalink to this heading">#</a></h3>
 <p>Sometimes we want to summarize information across multiple columns or rows. We can use the <code class="docutils literal notranslate"><span class="pre">rowSums()</span></code> and <code class="docutils literal notranslate"><span class="pre">colSums()</span></code> functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain map regions. In the first line of code, I select the column names pertaining to these columns. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called <code class="docutils literal notranslate"><span class="pre">pain_body_map</span></code>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -835,7 +826,7 @@ Traceback:
 </div>
 </section>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <p>Find the sum of each of the PROMIS measures across all patients using <code class="docutils literal notranslate"><span class="pre">apply()</span></code> and then using <code class="docutils literal notranslate"><span class="pre">colSums()</span></code>. Verify that these two methods return the same result, which is given below:</p>
 <a class="reference internal image-reference" href="../_images/3-practicequestion2answer.png"><img alt="“”" class="align-center" src="../_images/3-practicequestion2answer.png" style="width: 600pt;" /></a>
 <div class="cell docutils container">
@@ -847,7 +838,7 @@ Traceback:
 </div>
 </section>
 <section id="missing-infinite-and-nan-values">
-<h3>Missing, Infinite, and NaN Values<a class="headerlink" href="#missing-infinite-and-nan-values" title="Permalink to this headline">#</a></h3>
+<h3>Missing, Infinite, and NaN Values<a class="headerlink" href="#missing-infinite-and-nan-values" title="Permalink to this heading">#</a></h3>
 <p>As we saw above, this data contains some missing values, which are represented as <code class="docutils literal notranslate"><span class="pre">NA</span></code> in R. R treats these values as if they were unknown, which is why we have to add the <code class="docutils literal notranslate"><span class="pre">na.rm=TRUE</span></code> argument to functions like <code class="docutils literal notranslate"><span class="pre">sum()</span></code> and <code class="docutils literal notranslate"><span class="pre">max()</span></code>. In the example below, we can see that R figures out that 1 plus an unknown number is also unknown!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -906,7 +897,7 @@ Traceback:
 .dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}
 .dl-inline>dt::after {content: ":\0020"; padding-right: .5ex}
 .dl-inline>dt:not(:first-of-type) {padding-left: .5ex}
-</style><dl class=dl-inline><dt>PATIENT_NUM</dt><dd>0</dd><dt>X101</dt><dd>0</dd><dt>X102</dt><dd>0</dd><dt>X103</dt><dd>0</dd><dt>X104</dt><dd>0</dd><dt>X105</dt><dd>0</dd><dt>X106</dt><dd>0</dd><dt>X107</dt><dd>0</dd><dt>X108</dt><dd>0</dd><dt>X109</dt><dd>0</dd><dt>X110</dt><dd>0</dd><dt>X111</dt><dd>0</dd><dt>X112</dt><dd>0</dd><dt>X113</dt><dd>0</dd><dt>X114</dt><dd>0</dd><dt>X115</dt><dd>0</dd><dt>X116</dt><dd>0</dd><dt>X117</dt><dd>0</dd><dt>X118</dt><dd>0</dd><dt>X119</dt><dd>0</dd><dt>X120</dt><dd>0</dd><dt>X121</dt><dd>0</dd><dt>X122</dt><dd>0</dd><dt>X123</dt><dd>0</dd><dt>X124</dt><dd>0</dd><dt>X125</dt><dd>0</dd><dt>X126</dt><dd>0</dd><dt>X127</dt><dd>0</dd><dt>X128</dt><dd>0</dd><dt>X129</dt><dd>0</dd><dt>X130</dt><dd>0</dd><dt>X131</dt><dd>0</dd><dt>X132</dt><dd>0</dd><dt>X133</dt><dd>0</dd><dt>X134</dt><dd>0</dd><dt>X135</dt><dd>0</dd><dt>X136</dt><dd>0</dd><dt>X201</dt><dd>0</dd><dt>X202</dt><dd>0</dd><dt>X203</dt><dd>0</dd><dt>X204</dt><dd>0</dd><dt>X205</dt><dd>0</dd><dt>X206</dt><dd>0</dd><dt>X207</dt><dd>0</dd><dt>X208</dt><dd>0</dd><dt>X209</dt><dd>0</dd><dt>X210</dt><dd>0</dd><dt>X211</dt><dd>0</dd><dt>X212</dt><dd>0</dd><dt>X213</dt><dd>0</dd><dt>X214</dt><dd>0</dd><dt>X215</dt><dd>0</dd><dt>X216</dt><dd>0</dd><dt>X217</dt><dd>0</dd><dt>X218</dt><dd>0</dd><dt>X219</dt><dd>0</dd><dt>X220</dt><dd>0</dd><dt>X221</dt><dd>0</dd><dt>X222</dt><dd>0</dd><dt>X223</dt><dd>0</dd><dt>X224</dt><dd>0</dd><dt>X225</dt><dd>0</dd><dt>X226</dt><dd>0</dd><dt>X227</dt><dd>0</dd><dt>X228</dt><dd>0</dd><dt>X229</dt><dd>0</dd><dt>X230</dt><dd>0</dd><dt>X231</dt><dd>0</dd><dt>X232</dt><dd>0</dd><dt>X233</dt><dd>0</dd><dt>X234</dt><dd>0</dd><dt>X235</dt><dd>0</dd><dt>X236</dt><dd>0</dd><dt>X237</dt><dd>0</dd><dt>X238</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE</dt><dd>0</dd><dt>PROMIS_PHYSICAL_FUNCTION</dt><dd>0</dd><dt>PROMIS_PAIN_BEHAVIOR</dt><dd>0.294117647058824</dd><dt>PROMIS_DEPRESSION</dt><dd>0.0040169914119494</dd><dt>PROMIS_ANXIETY</dt><dd>0.0040169914119494</dd><dt>PROMIS_SLEEP_DISTURB_V1_0</dt><dd>0.0040169914119494</dd><dt>PROMIS_PAIN_INTERFERENCE</dt><dd>0.00697201957706159</dd><dt>GH_MENTAL_SCORE</dt><dd>0.136023640225321</dd><dt>GH_PHYSICAL_SCORE</dt><dd>0.136023640225321</dd><dt>AGE_AT_CONTACT</dt><dd>0</dd><dt>BMI</dt><dd>0.260042478529873</dd><dt>CCI_TOTAL_SCORE</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE.FOLLOW_UP</dt><dd>0.67042201495983</dd><dt>PAT_SEX</dt><dd>0</dd><dt>PAT_RACE</dt><dd>0.00651029642626281</dd><dt>CCI_BIN</dt><dd>0</dd><dt>MEDICAID_BIN</dt><dd>0.0138516945239634</dd><dt>NUM_REGIONS</dt><dd>0</dd><dt>LOWER_BACK</dt><dd>0</dd></dl>
+</style><dl class=dl-inline><dt>PATIENT_NUM</dt><dd>0</dd><dt>X101</dt><dd>0</dd><dt>X102</dt><dd>0</dd><dt>X103</dt><dd>0</dd><dt>X104</dt><dd>0</dd><dt>X105</dt><dd>0</dd><dt>X106</dt><dd>0</dd><dt>X107</dt><dd>0</dd><dt>X108</dt><dd>0</dd><dt>X109</dt><dd>0</dd><dt>X110</dt><dd>0</dd><dt>X111</dt><dd>0</dd><dt>X112</dt><dd>0</dd><dt>X113</dt><dd>0</dd><dt>X114</dt><dd>0</dd><dt>X115</dt><dd>0</dd><dt>X116</dt><dd>0</dd><dt>X117</dt><dd>0</dd><dt>X118</dt><dd>0</dd><dt>X119</dt><dd>0</dd><dt>X120</dt><dd>0</dd><dt>X121</dt><dd>0</dd><dt>X122</dt><dd>0</dd><dt>X123</dt><dd>0</dd><dt>X124</dt><dd>0</dd><dt>X125</dt><dd>0</dd><dt>X126</dt><dd>0</dd><dt>X127</dt><dd>0</dd><dt>X128</dt><dd>0</dd><dt>X129</dt><dd>0</dd><dt>X130</dt><dd>0</dd><dt>X131</dt><dd>0</dd><dt>X132</dt><dd>0</dd><dt>X133</dt><dd>0</dd><dt>X134</dt><dd>0</dd><dt>X135</dt><dd>0</dd><dt>X136</dt><dd>0</dd><dt>X201</dt><dd>0</dd><dt>X202</dt><dd>0</dd><dt>X203</dt><dd>0</dd><dt>X204</dt><dd>0</dd><dt>X205</dt><dd>0</dd><dt>X206</dt><dd>0</dd><dt>X207</dt><dd>0</dd><dt>X208</dt><dd>0</dd><dt>X209</dt><dd>0</dd><dt>X210</dt><dd>0</dd><dt>X211</dt><dd>0</dd><dt>X212</dt><dd>0</dd><dt>X213</dt><dd>0</dd><dt>X214</dt><dd>0</dd><dt>X215</dt><dd>0</dd><dt>X216</dt><dd>0</dd><dt>X217</dt><dd>0</dd><dt>X218</dt><dd>0</dd><dt>X219</dt><dd>0</dd><dt>X220</dt><dd>0</dd><dt>X221</dt><dd>0</dd><dt>X222</dt><dd>0</dd><dt>X223</dt><dd>0</dd><dt>X224</dt><dd>0</dd><dt>X225</dt><dd>0</dd><dt>X226</dt><dd>0</dd><dt>X227</dt><dd>0</dd><dt>X228</dt><dd>0</dd><dt>X229</dt><dd>0</dd><dt>X230</dt><dd>0</dd><dt>X231</dt><dd>0</dd><dt>X232</dt><dd>0</dd><dt>X233</dt><dd>0</dd><dt>X234</dt><dd>0</dd><dt>X235</dt><dd>0</dd><dt>X236</dt><dd>0</dd><dt>X237</dt><dd>0</dd><dt>X238</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE</dt><dd>0</dd><dt>PROMIS_PHYSICAL_FUNCTION</dt><dd>0</dd><dt>PROMIS_PAIN_BEHAVIOR</dt><dd>0.294117647058824</dd><dt>PROMIS_DEPRESSION</dt><dd>0.00401699141194939</dd><dt>PROMIS_ANXIETY</dt><dd>0.00401699141194939</dd><dt>PROMIS_SLEEP_DISTURB_V1_0</dt><dd>0.00401699141194939</dd><dt>PROMIS_PAIN_INTERFERENCE</dt><dd>0.00697201957706159</dd><dt>GH_MENTAL_SCORE</dt><dd>0.136023640225321</dd><dt>GH_PHYSICAL_SCORE</dt><dd>0.136023640225321</dd><dt>AGE_AT_CONTACT</dt><dd>0</dd><dt>BMI</dt><dd>0.260042478529873</dd><dt>CCI_TOTAL_SCORE</dt><dd>0</dd><dt>PAIN_INTENSITY_AVERAGE.FOLLOW_UP</dt><dd>0.67042201495983</dd><dt>PAT_SEX</dt><dd>0</dd><dt>PAT_RACE</dt><dd>0.00651029642626281</dd><dt>CCI_BIN</dt><dd>0</dd><dt>MEDICAID_BIN</dt><dd>0.0138516945239634</dd><dt>NUM_REGIONS</dt><dd>0</dd><dt>LOWER_BACK</dt><dd>0</dd></dl>
 </div></div>
 </div>
 <p>We will create two new columns: first, we create a column for the change in pain at follow-up, and second, we create a column which is the percent change in pain at follow-up.</p>
@@ -983,7 +974,7 @@ Traceback:
 </section>
 </section>
 <section id="using-logic-to-subset-summarize-and-transform">
-<h2>Using Logic to Subset, Summarize, and Transform<a class="headerlink" href="#using-logic-to-subset-summarize-and-transform" title="Permalink to this headline">#</a></h2>
+<h2>Using Logic to Subset, Summarize, and Transform<a class="headerlink" href="#using-logic-to-subset-summarize-and-transform" title="Permalink to this heading">#</a></h2>
 <p>Above, we used TRUE/FALSE values to select rows in a data frame. The logic operators in R allow us to expand on this capability to write more complex logic. The operators are given below.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">&lt;</span></code> less than</p></li>
@@ -1095,7 +1086,7 @@ Traceback:
 </div>
 </div>
 <section id="id2">
-<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>Subset the <code class="docutils literal notranslate"><span class="pre">pain</span></code> data to those who have follow-up and have an initial average pain intensity of 5 or above. Name this subset of the data <code class="docutils literal notranslate"><span class="pre">pain_subset</span></code>. Print the head of this data. The first 6 patient IDs in this new dataset should be 13118, 21384, 1827, 11309, 11093, and 14667.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1167,7 +1158,7 @@ Traceback:
 </div>
 </section>
 <section id="other-selection-functions">
-<h3>Other Selection Functions<a class="headerlink" href="#other-selection-functions" title="Permalink to this headline">#</a></h3>
+<h3>Other Selection Functions<a class="headerlink" href="#other-selection-functions" title="Permalink to this heading">#</a></h3>
 <p>Above, we selected rows using TRUE/FALSE boolean values. Instead, we could have also used the <code class="docutils literal notranslate"><span class="pre">which()</span></code> function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as <code class="docutils literal notranslate"><span class="pre">DECLINED</span></code> as not specified.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1213,14 +1204,14 @@ Traceback:
 </section>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
 <p>In the video below, we reference the population mean and standard deviations for the instrument variables in the data. Use the help operator (<code class="docutils literal notranslate"><span class="pre">?pain</span></code>) to refresh your memory about these variables.</p>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/EU0UJN68OWQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <p>For these exercises, we will again be using the <code class="docutils literal notranslate"><span class="pre">pain</span></code> data from the <code class="docutils literal notranslate"><span class="pre">HDSinRdata</span></code> package.</p>
 <ol class="arabic simple">
 <li><p>Print summary statistics for the <code class="docutils literal notranslate"><span class="pre">PROMIS_PHYSICAL_FUNTION</span></code> and <code class="docutils literal notranslate"><span class="pre">PROMIS_ANXIETY</span></code> columns in this dataset. Read the data documentation for these two columns, which both have range 0 to 100, and then comment on the distributions of these columns.</p></li>

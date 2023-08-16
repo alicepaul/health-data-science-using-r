@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>5. Data Transformations and Summaries &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="6. Merging and Reshaping Data" href="6_merging_data.html" />
     <link rel="prev" title="4. Intro to Exploratory Data Analysis" href="4_exploratory_analysis.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -230,7 +231,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/main/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/5_data_transformations_summaries.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/5_data_transformations_summaries.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -379,7 +380,7 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="data-transformations-and-summaries">
-<h1>5. Data Transformations and Summaries<a class="headerlink" href="#data-transformations-and-summaries" title="Permalink to this headline">#</a></h1>
+<h1>5. Data Transformations and Summaries<a class="headerlink" href="#data-transformations-and-summaries" title="Permalink to this heading">#</a></h1>
 <p>In this chapter, we will introduce the <code class="docutils literal notranslate"><span class="pre">dyplr</span></code> package, which is part of the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. We will use the same sample of the National Health and Nutrition Examination Survey (<a class="reference external" href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) as in <a class="reference external" href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -389,19 +390,9 @@ document.write(`
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(HDSinRdata): there is no package called ‘HDSinRdata’
-Traceback:
-
-1. suppressPackageStartupMessages(library(HDSinRdata))
-2. withCallingHandlers(expr, packageStartupMessage = function(c) tryInvokeRestart(&quot;muffleMessage&quot;))
-3. library(HDSinRdata)
-</pre></div>
-</div>
-</div>
 </div>
 <section id="tibbles-and-data-frames">
-<h2>Tibbles and Data Frames<a class="headerlink" href="#tibbles-and-data-frames" title="Permalink to this headline">#</a></h2>
+<h2>Tibbles and Data Frames<a class="headerlink" href="#tibbles-and-data-frames" title="Permalink to this heading">#</a></h2>
 <p>Take a look at the class of <code class="docutils literal notranslate"><span class="pre">NHANESsample</span></code>. As we might expect, the data is stored as a data frame.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -466,7 +457,7 @@ Traceback:
 <p>We mention tibbles here since some functions in the <code class="docutils literal notranslate"><span class="pre">tidyverse</span></code> package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.</p>
 </section>
 <section id="subsetting-data">
-<h2>Subsetting Data<a class="headerlink" href="#subsetting-data" title="Permalink to this headline">#</a></h2>
+<h2>Subsetting Data<a class="headerlink" href="#subsetting-data" title="Permalink to this heading">#</a></h2>
 <p>In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the <code class="docutils literal notranslate"><span class="pre">subset()</span></code> function. The <code class="docutils literal notranslate"><span class="pre">dplyr</span></code> package has its own functions that are useful to subset the data. The <code class="docutils literal notranslate"><span class="pre">select()</span></code> function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator <code class="docutils literal notranslate"><span class="pre">%&gt;%</span></code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -604,7 +595,7 @@ Traceback:
 </div></div>
 </div>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 <p>Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the data below.</p>
 <a class="reference internal image-reference" href="../_images/5-practicequestion1answer.png"><img alt="“”" class="align-center" src="../_images/5-practicequestion1answer.png" style="width: 200pt;" /></a>
 <div class="cell docutils container">
@@ -617,7 +608,7 @@ Traceback:
 </section>
 </section>
 <section id="updating-rows-and-columns">
-<h2>Updating Rows and Columns<a class="headerlink" href="#updating-rows-and-columns" title="Permalink to this headline">#</a></h2>
+<h2>Updating Rows and Columns<a class="headerlink" href="#updating-rows-and-columns" title="Permalink to this heading">#</a></h2>
 <p>The next few functions we will look at will allow us to update the rows and columns in our data. For example, the <code class="docutils literal notranslate"><span class="pre">rename()</span></code> function allows us to change the names of columns. Below, we change the name of <code class="docutils literal notranslate"><span class="pre">INCOME</span></code> to <code class="docutils literal notranslate"><span class="pre">PIR</span></code> since this variable is the poverty income ratio and also update the name of <code class="docutils literal notranslate"><span class="pre">SMOKE</span></code> to be <code class="docutils literal notranslate"><span class="pre">SMOKE_STATUS</span></code>. When specifying these names, the new name is on the left of the <code class="docutils literal notranslate"><span class="pre">=</span></code> and the old name is on the right.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -713,7 +704,7 @@ Current Smoker   Never Smoked   Quit Smoking
 </div></div>
 </div>
 <section id="id1">
-<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h3>
 <p>Create a new column called <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> that is equal to the difference between a patient’s first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four <code class="docutils literal notranslate"><span class="pre">DBP_CHANGE</span></code> values in the head of the resulting dataset should be -66, -64, -64, and -62.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -725,7 +716,7 @@ Current Smoker   Never Smoked   Quit Smoking
 </section>
 </section>
 <section id="summarizing-and-grouping">
-<h2>Summarizing and Grouping<a class="headerlink" href="#summarizing-and-grouping" title="Permalink to this headline">#</a></h2>
+<h2>Summarizing and Grouping<a class="headerlink" href="#summarizing-and-grouping" title="Permalink to this heading">#</a></h2>
 <p>If we wanted to understand how many observations there are for each given race category, we could use the <code class="docutils literal notranslate"><span class="pre">table()</span></code> function as we described in earlier chapters. Another similar function is the <code class="docutils literal notranslate"><span class="pre">count()</span></code> function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -908,7 +899,7 @@ Current Smoker   Never Smoked   Quit Smoking
 </div></div>
 </div>
 <section id="id2">
-<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like this:</p>
 <a class="reference internal image-reference" href="../_images/5-practicequestion3answer.png"><img alt="“”" class="align-center" src="../_images/5-practicequestion3answer.png" style="width: 200pt;" /></a>
 <div class="cell docutils container">
@@ -921,13 +912,13 @@ Current Smoker   Never Smoked   Quit Smoking
 </section>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/IeRMFCCuxwc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <p>The following exercises use the <code class="docutils literal notranslate"><span class="pre">covidcases</span></code> dataset from the <code class="docutils literal notranslate"><span class="pre">HDSinRdata</span></code> package. Before completing the exercises, be sure to read the documentation for this data (<code class="docutils literal notranslate"><span class="pre">?covidcases</span></code>).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">

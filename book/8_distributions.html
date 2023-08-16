@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 
 
-<html data-theme="light">
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>8. Probability Distributions in R &#8212; R for Health Data Science</title>
   
@@ -44,6 +44,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -70,7 +71,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="next" title="9. Hypothesis Testing" href="9_hypothesis_tests.html" />
     <link rel="prev" title="7. Visualization with ggplot2" href="7_visualization_ggplot.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="docsearch:language" content="None"/>
+  <meta name="docsearch:language" content="en"/>
   </head>
   
   
@@ -230,7 +231,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/main/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/8_distributions.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/master?urlpath=tree/book/8_distributions.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -379,23 +380,13 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <section class="tex2jax_ignore mathjax_ignore" id="probability-distributions-in-r">
-<h1>8. Probability Distributions in R<a class="headerlink" href="#probability-distributions-in-r" title="Permalink to this headline">#</a></h1>
+<h1>8. Probability Distributions in R<a class="headerlink" href="#probability-distributions-in-r" title="Permalink to this heading">#</a></h1>
 <p>In this chapter, we will cover how to generate random samples in R from known probability distributions and empirical distributions. All of the common probability distributions have a set of four functions in base R that can be used to generate random samples and to calculate the corresponding density, quantile, and cumulative functions that correspond to that distribution.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">))</span>
 <span class="nf">suppressPackageStartupMessages</span><span class="p">(</span><span class="nf">library</span><span class="p">(</span><span class="n">HDSinRdata</span><span class="p">))</span>
 <span class="nf">data</span><span class="p">(</span><span class="n">NHANESsample</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>Error in library(HDSinRdata): there is no package called ‘HDSinRdata’
-Traceback:
-
-1. suppressPackageStartupMessages(library(HDSinRdata))
-2. withCallingHandlers(expr, packageStartupMessage = function(c) tryInvokeRestart(&quot;muffleMessage&quot;))
-3. library(HDSinRdata)
 </pre></div>
 </div>
 </div>
@@ -408,7 +399,7 @@ Traceback:
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html">6</div></div>
+<div class="output text_html">4</div></div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -421,7 +412,7 @@ Traceback:
 <div class="output text_html">2</div></div>
 </div>
 <section id="id1">
-<h2>Probability Distributions in R<a class="headerlink" href="#id1" title="Permalink to this headline">#</a></h2>
+<h2>Probability Distributions in R<a class="headerlink" href="#id1" title="Permalink to this heading">#</a></h2>
 <p>All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">r[dist]()</span></code>: generates random samples from the given distribution (e.g. <code class="docutils literal notranslate"><span class="pre">rnorm()</span></code>, <code class="docutils literal notranslate"><span class="pre">runif()</span></code>)</p></li>
@@ -431,7 +422,7 @@ Traceback:
 </ul>
 <p>Let’s see how these work in practice, using the normal and binomial distributions as examples.</p>
 <section id="random-samples">
-<h3>Random Samples<a class="headerlink" href="#random-samples" title="Permalink to this headline">#</a></h3>
+<h3>Random Samples<a class="headerlink" href="#random-samples" title="Permalink to this heading">#</a></h3>
 <p>The code below generates a sample of 100 random numbers following a normal distribution with mean 5 and standard deviation 1. As you can see, the function takes in <code class="docutils literal notranslate"><span class="pre">n</span></code> (the number of observations), <code class="docutils literal notranslate"><span class="pre">mean</span></code> (the mean with default value 0), and <code class="docutils literal notranslate"><span class="pre">sd</span></code> (the standard deviation with default value 1). A histogram plot (using the built-in <code class="docutils literal notranslate"><span class="pre">hist</span></code> function) shows that the generated values look roughly normally distributed.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -482,7 +473,7 @@ Traceback:
 </div>
 </section>
 <section id="density-function">
-<h3>Density Function<a class="headerlink" href="#density-function" title="Permalink to this headline">#</a></h3>
+<h3>Density Function<a class="headerlink" href="#density-function" title="Permalink to this heading">#</a></h3>
 <p>Next, we look at the density function. Recall that the probability density function for a normal distribution with mean <span class="math notranslate nohighlight">\(\mu\)</span> and standard deviation <span class="math notranslate nohighlight">\(\sigma\)</span> is given by the following formula:
 $<span class="math notranslate nohighlight">\( f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) \)</span>$
 Below, we can compare some of the values from the <code class="docutils literal notranslate"><span class="pre">dnorm()</span></code> function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function. Below we use the default values (mean = 0 and sd = 1).</p>
@@ -555,7 +546,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </div>
 </section>
 <section id="cumulative-distribution">
-<h3>Cumulative Distribution<a class="headerlink" href="#cumulative-distribution" title="Permalink to this headline">#</a></h3>
+<h3>Cumulative Distribution<a class="headerlink" href="#cumulative-distribution" title="Permalink to this heading">#</a></h3>
 <p>Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by <code class="docutils literal notranslate"><span class="pre">pnorm()</span></code>, which takes in a value <code class="docutils literal notranslate"><span class="pre">x</span></code>, a <code class="docutils literal notranslate"><span class="pre">mean</span></code>, and a <code class="docutils literal notranslate"><span class="pre">sd</span></code> and returns the probability that a random variable following a <span class="math notranslate nohighlight">\(N(mean, sd)\)</span> distribution is less than <code class="docutils literal notranslate"><span class="pre">x</span></code>. For example, for <code class="docutils literal notranslate"><span class="pre">x</span></code> equal to the mean, this will be a fifty percent probability because the normal distribution is symmetric with mean equal to the median. Below, we verify this for two different values of the mean.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -601,7 +592,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </div>
 </section>
 <section id="quantile-distribution">
-<h3>Quantile Distribution<a class="headerlink" href="#quantile-distribution" title="Permalink to this headline">#</a></h3>
+<h3>Quantile Distribution<a class="headerlink" href="#quantile-distribution" title="Permalink to this heading">#</a></h3>
 <p>Lastly, we have the quantile distribution function, which is the inverse of the cumulative distribution function. This function takes in a probability <code class="docutils literal notranslate"><span class="pre">x</span></code>, a <code class="docutils literal notranslate"><span class="pre">mean</span></code>, and a <code class="docutils literal notranslate"><span class="pre">sd</span></code> and returns the value for which the cumulative distribution function is equal to <code class="docutils literal notranslate"><span class="pre">x</span></code>. Thus, when <code class="docutils literal notranslate"><span class="pre">x</span></code> is equal to 0.5, the <code class="docutils literal notranslate"><span class="pre">qnorm()</span></code> function returns the median of the distribution, which is equal to the mean for the normal distribution.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -631,7 +622,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </div>
 </section>
 <section id="reference-list-for-probability-distributions">
-<h3>Reference List for Probability Distributions<a class="headerlink" href="#reference-list-for-probability-distributions" title="Permalink to this headline">#</a></h3>
+<h3>Reference List for Probability Distributions<a class="headerlink" href="#reference-list-for-probability-distributions" title="Permalink to this heading">#</a></h3>
 <p>In the examples above, we only used the normal and binomial distributions - the other probability distributions available in R are given below. For each distribution, we have given the arguments for the <code class="docutils literal notranslate"><span class="pre">r[dist]()</span></code> function. The other three functions have a similar format. Unless otherwise stated, the parameter <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations.</p>
 <ul class="simple">
 <li><p><strong>Beta</strong>: <code class="docutils literal notranslate"><span class="pre">rbeta(n,</span> <span class="pre">shape1,</span> <span class="pre">shape2,</span> <span class="pre">ncp</span> <span class="pre">=</span> <span class="pre">0)</span></code> with shape parameters <code class="docutils literal notranslate"><span class="pre">shape1</span></code> and <code class="docutils literal notranslate"><span class="pre">shape2</span></code> (and optional non-centrality parameter <code class="docutils literal notranslate"><span class="pre">ncp</span></code>).</p></li>
@@ -656,7 +647,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </ul>
 </section>
 <section id="practice-question">
-<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#practice-question" title="Permalink to this heading">#</a></h3>
 <p>Set the random seed to be <code class="docutils literal notranslate"><span class="pre">123</span></code>, and then generate 5 random numbers following a <a class="reference external" href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Uniform">uniform distribution</a> with min 1 and max 5. Then, find the 0.15 quantile for this same distribution (it should be equal to 1.6).</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -668,7 +659,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </section>
 </section>
 <section id="empirical-distributions-and-sampling-data">
-<h2>Empirical Distributions and Sampling Data<a class="headerlink" href="#empirical-distributions-and-sampling-data" title="Permalink to this headline">#</a></h2>
+<h2>Empirical Distributions and Sampling Data<a class="headerlink" href="#empirical-distributions-and-sampling-data" title="Permalink to this heading">#</a></h2>
 <p>At the start of this chapter, we used the <code class="docutils literal notranslate"><span class="pre">sample()</span></code> function. This function can also be used to sample from an empirical distribution. The <code class="docutils literal notranslate"><span class="pre">sample(x,</span> <span class="pre">size,</span> <span class="pre">replace=FALSE,</span> <span class="pre">prob=NULL)</span></code> function takes in the values we want to sample from <code class="docutils literal notranslate"><span class="pre">x</span></code>, the number of observations we want to sample <code class="docutils literal notranslate"><span class="pre">size</span></code>, and whether we want to sample with replacement <code class="docutils literal notranslate"><span class="pre">replace</span></code>. If we don’t want to sample such that each value has an equal probability of being chosen, we can also set a probability vector <code class="docutils literal notranslate"><span class="pre">prob</span></code>, which must have the same length as <code class="docutils literal notranslate"><span class="pre">x</span></code>. Below we sample 500 rows without replacement from the <code class="docutils literal notranslate"><span class="pre">NHANESsample</span></code> data. To do so, we select 500 values from the indices 1 to the number of rows in the data. We then select rows of the data using these indices.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -724,7 +715,7 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </div></div>
 </div>
 <section id="id2">
-<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this headline">#</a></h3>
+<h3>Practice Question<a class="headerlink" href="#id2" title="Permalink to this heading">#</a></h3>
 <p>Set the random seed to <code class="docutils literal notranslate"><span class="pre">5</span></code> and then sample 50 observations with replacement from the set of integers from 1 to 100. Take the mean of those observations - it should be 56.7.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -776,12 +767,12 @@ Below, we can compare some of the values from the <code class="docutils literal 
 </section>
 </section>
 <section id="recap-video">
-<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this headline">#</a></h2>
+<h2>Recap Video<a class="headerlink" href="#recap-video" title="Permalink to this heading">#</a></h2>
 <div class="video-container">
     <iframe width="700" height="500" src="https://www.youtube.com/embed/gi6nDWWRSeQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div></section>
 <section id="exercises">
-<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p>Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 2.2 inches. Using this distribution, answer the following questions.</p></li>
 </ol>
