@@ -28,7 +28,6 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 - gtsummary_1.7.1
 - kableExtra_1.3.4
 
-- [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/alicepaul/health-data-science-in-r/main)
 
 ## Guideline for this repository
 
