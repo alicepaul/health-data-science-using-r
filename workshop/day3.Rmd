@@ -10,8 +10,8 @@ Today we will switch gears to linear regression in R. We will use the same NHANE
 ```{r}
 suppressPackageStartupMessages(library(HDSinRdata))
 suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(broom))
-
+suppressPackageStartupMessages(library(gtsummary)) 
+suppressPackageStartupMessages(library(gt))
 data(NHANESsample)
 ```
 
@@ -71,10 +71,11 @@ adj_model <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
 summary(adj_model)
 ```
 
-We can also extract the estimated regression coefficients from the model using the `coef()` function or by using the `tidy` function from the `broom` package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval by specifying `conf.int = TRUE`. Below, we add a 95% confidence interval (which is the default value for `conf.level`). 
+We can also extract the estimated regression coefficients from the model using the `coef()` function or by using the `tbl_regression()` function from the `gtsummary` package. This function puts the coefficient estimates, the 95% confidence intervals for those estimates, and the p-values for those estimates in a data frame. You can also change how many decimals are displayed in the resulting table using `fmt_number()`. 
 
 ```{r}
-tidy(adj_model, conf.int=TRUE, conf.level=0.95)
+tbl_regression(adj_model) %>% as_gt() %>% fmt_number(decimals = 3) %>% 
+  gt:::as.tags.gt_tbl()
 ```
 
 Some other useful summary functions are `resid()`, which returns the residual values for the model, and `fitted()`, which returns the fitted values or estimated y values. We can also predict on new data using the `predict()` function. Below we look at the distribution of the residual values and then plot the fitted vs. true values. We observe some extreme residual values as well as the fact that the absolute residual values increase with increased blood pressure values. 
@@ -226,7 +227,7 @@ BIC(model_interaction)
 The `predict()` function allows us to calculate the predicted `y` values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the `newdata` argument. The new data provided must contain the columns given in the model formula. Below, we use the `predict()` function to find the predicted values from our model and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. The mean absolute error indicates that our model has fairly high residuals on average. While this model may be helpful to understand the relationship between blood lead level and systolic blood pressure, it would not be very useful as a tool to predict the latter. 
 
 ```{r}
-pred_y <- predict(model_interaction)
+pred_y <- exp(predict(model_interaction))
 ```
 
 ```{r}
@@ -269,6 +270,7 @@ In binary logistic regression, we assume a binomial outcome and use the logit li
 Our outcome of interest will be current e-cigarette use, `e_cig_use`. We need to create this variable from the variables currently in the data. We set `e_cig_use` to 0 if the respondent answered that they have not used e-cigarettes in the last 30 days and 1 otherwise. We can see that there are only 1,435 respondents who reported e-cigarette use. This is a low percentage of the overall sample and will likely impact our results. 
 
 ```{r}
+data(nyts)
 nyts$e_cig_use <- as.factor(ifelse(nyts$num_e_cigs==0, "0", "1"))
 table(nyts$e_cig_use)
 ```
@@ -288,19 +290,21 @@ mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + location,
 summary(mod_start)
 ```
 
-We can use the `tidy()` function from the `broom` package to display the estimated coefficients. This time we add the `exponentiate = TRUE` argument to exponentiate our coefficients so we can interpret them as estimated change in odds rather than log odds. For example, those who answered at school have double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity. 
+We can again use the `tbl_regression()` function from the `gtsummary` package to display the estimated coefficients. This time we add the `exponentiate = TRUE` argument in order to exponentiate our coefficients so we can interpret them as estimated change in odds rather than log odds. For example, those who answered at school have double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity. 
 
 ```{r}
-tidy(mod_start, exponentiate=TRUE)
+tbl_regression(mod_start, exponentiate = TRUE) %>% as_gt() %>% 
+  gt:::as.tags.gt_tbl()
 ```
 
 ## Exercises
 
 1. Construct a linear model using `DBP` as the output and `LEAD`, `AGE`, and `EVER_SMOKE` as features, and print the output.
 
-2. Use forward stepwise selection to determine whether to add any interactions to the linear model from the previous question.
+2. Use forward stepwise selection to add possible interactions to the linear model from the previous question.
 
-3. Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that will improve the fit of this model. Then, fit and summarize this new model with the transformation included. How do the AIC and BIC of the new model compare to the previous one?
+3. Draw a QQ plot for the model in Question 2, and describe the distribution that you observe.
 
-4. Report the MAE and MSE of the model developed in Question 3. Then, find the row numbers of the observations with the top 10 largest standardized residuals for this model. What do you notice about these observations?
+4. Report the MAE and MSE of the model developed in Question 2. Then, find the row numbers of the observations with the top 5 Cook’s Distance values for this model.
 
+5. Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that will improve the fit of this model. Then, fit and summarize this new model with the transformation included. How do the MSE and MAE of the new model compare to the previous one? Note that your predictions will be on the transformed scale so you’ll need to convert them to the correct scale.
