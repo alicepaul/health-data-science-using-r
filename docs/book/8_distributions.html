@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Alice Paul">
+
+<title>Mastering Health Data Science in R - 8&nbsp; Probability Distributions in R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../book/9_hypothesis_tests.html" rel="next">
+<link href="../book/7_visualization_ggplot.html" rel="prev">
+<link href="../fav.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../book/8_distributions.html">Distributions and Hypothesis Testing</a></li><li class="breadcrumb-item"><a href="../book/8_distributions.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Probability Distributions in R</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Mastering Health Data Science in R</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/alicepaul/health-data-science-in-r" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Mastering-Health-Data-Science-in-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Mastering Health Data Science Using R</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+ <span class="menu-text">Introduction to R</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/1_intro_to_r.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/2_data_structures.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Structures in R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/3_data_files.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Working with Data Files in R</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+ <span class="menu-text">Exploratory Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/4_exploratory_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Intro to Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/5_data_transformations_summaries.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Data Transformations and Summaries</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/6_merging_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Merging and Reshaping Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/7_visualization_ggplot.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Visualization with ggplot2</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+ <span class="menu-text">Distributions and Hypothesis Testing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/8_distributions.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Probability Distributions in R</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/9_hypothesis_tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Hypothesis Testing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+ <span class="menu-text">Regression</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/10_linear_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Linear Regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/11_logistic_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Logistic Regression</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Extra Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/12_rmarkdown_reports.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Writing Reports in R Markdown</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../book/13_expanding_r_skills.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#probability-distributions-in-r" id="toc-probability-distributions-in-r" class="nav-link active" data-scroll-target="#probability-distributions-in-r"><span class="header-section-number">8.1</span> Probability Distributions in R</a>
+  <ul class="collapse">
+  <li><a href="#random-samples" id="toc-random-samples" class="nav-link" data-scroll-target="#random-samples"><span class="header-section-number">8.1.1</span> Random Samples</a></li>
+  <li><a href="#density-function" id="toc-density-function" class="nav-link" data-scroll-target="#density-function"><span class="header-section-number">8.1.2</span> Density Function</a></li>
+  <li><a href="#cumulative-distribution" id="toc-cumulative-distribution" class="nav-link" data-scroll-target="#cumulative-distribution"><span class="header-section-number">8.1.3</span> Cumulative Distribution</a></li>
+  <li><a href="#quantile-distribution" id="toc-quantile-distribution" class="nav-link" data-scroll-target="#quantile-distribution"><span class="header-section-number">8.1.4</span> Quantile Distribution</a></li>
+  <li><a href="#reference-list-for-probability-distributions" id="toc-reference-list-for-probability-distributions" class="nav-link" data-scroll-target="#reference-list-for-probability-distributions"><span class="header-section-number">8.1.5</span> Reference List for Probability Distributions</a></li>
+  <li><a href="#practice-question" id="toc-practice-question" class="nav-link" data-scroll-target="#practice-question"><span class="header-section-number">8.1.6</span> Practice Question</a></li>
+  </ul></li>
+  <li><a href="#empirical-distributions-and-sampling-data" id="toc-empirical-distributions-and-sampling-data" class="nav-link" data-scroll-target="#empirical-distributions-and-sampling-data"><span class="header-section-number">8.2</span> Empirical Distributions and Sampling Data</a>
+  <ul class="collapse">
+  <li><a href="#practice-question-1" id="toc-practice-question-1" class="nav-link" data-scroll-target="#practice-question-1"><span class="header-section-number">8.2.1</span> Practice Question</a></li>
+  </ul></li>
+  <li><a href="#recap-video" id="toc-recap-video" class="nav-link" data-scroll-target="#recap-video"><span class="header-section-number">8.3</span> Recap Video</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.4</span> Exercises</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Probability Distributions in R</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this chapter, we will cover how to generate random samples in R from known probability distributions and empirical distributions. All of the common probability distributions have a set of four functions in base R that can be used to generate random samples and to calculate the corresponding density, quantile, and cumulative functions that correspond to that distribution.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-1_9f7b2d23e782b244099e12fd18abf8af">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Below, we demonstrate an example of drawing random samples. Anytime we do something in R in which the outcome has some randomness, we are using R’s random number generator under the hood. This means that the results will change every time we run our code. In order to make sure our code is replicable, we have to set a random seed, which makes the results the same every time. The <code>set.seed()</code> function takes in a numeric seed value. You can use any number as the seed. Below, we first sample a random value from the numbers 1 to 10 without setting a seed. Note that every time you run this code chunk, the output can change. However, in the second code chunk we set a seed, which means that the result will always be the same (in this case, it’s equal to 2).</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-2_180b41d0e6bf7e6fae368cb65950c367">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-3_b668b45768c4142d91295686be0ffd6f">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">1</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="probability-distributions-in-r" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="probability-distributions-in-r"><span class="header-section-number">8.1</span> Probability Distributions in R</h2>
+<p>All of the common discrete (e.g.&nbsp;Bernoulli, binomial) and continuous (e.g.&nbsp;normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:</p>
+<ul>
+<li><code>r[dist]()</code>: generates random samples from the given distribution (e.g.&nbsp;<code>rnorm()</code>, <code>runif()</code>)<br>
+</li>
+<li><code>d[dist]()</code>: density function for the distribution (e.g.&nbsp;<code>dnorm()</code>, <code>dunif()</code>)<br>
+</li>
+<li><code>p[dist]()</code>: cumulative distribution function for the distribution (e.g.&nbsp;<code>pnorm()</code>, <code>punif()</code>)<br>
+</li>
+<li><code>q[dist]()</code>: quantile function for the distribution (e.g.&nbsp;<code>qnorm()</code>, <code>qunif()</code>)</li>
+</ul>
+<p>Let’s see how these work in practice, using the normal and binomial distributions as examples.</p>
+<section id="random-samples" class="level3" data-number="8.1.1">
+<h3 data-number="8.1.1" class="anchored" data-anchor-id="random-samples"><span class="header-section-number">8.1.1</span> Random Samples</h3>
+<p>The code below generates a sample of 100 random numbers following a normal distribution with mean 5 and standard deviation 1. As you can see, the function takes in <code>n</code> (the number of observations), <code>mean</code> (the mean with default value 0), and <code>sd</code> (the standard deviation with default value 1). A histogram plot (using the built-in <code>hist</code> function) shows that the generated values look roughly normally distributed.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-4_4ff7992fd316dc721fa74e54e4de8f4f">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="8_distributions_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also input a vector instead of a single value for the <code>mean</code> or <code>sd</code> arguments if we want each sample to come from its own normal distribution. As an example, below we generate 100 random numbers with the default standard deviation of 1 where half of the samples have mean 0 and the other half have mean 5.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-5_8aaa4b2ab52a2e6742a3e04d8ebcbd26">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">mean =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>),<span class="dv">50</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="8_distributions_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>For the binomial distribution, the difference is that we need to specify a probability <code>p</code> and number of trials <code>size</code> (rather than <code>mean</code> and <code>sd</code> in the normal case) to specify the distribution. Below, we generate 100 random numbers following a binomial distribution with 10 trials and probability 0.5.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-6_6af4bcf514ca23a8944681b2aeba9801">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">p =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">10</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="8_distributions_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can also specify a different size or probability of success for each sample. Below, we repeat our sample but this time let the probability of success be 0.25 for half of the sample and 0.75 for the other half.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-7_535d6f955e0e4686b50693c1814ec6df">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">p =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.75</span>), <span class="dv">50</span>), <span class="at">size =</span> <span class="dv">10</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="8_distributions_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="density-function" class="level3" data-number="8.1.2">
+<h3 data-number="8.1.2" class="anchored" data-anchor-id="density-function"><span class="header-section-number">8.1.2</span> Density Function</h3>
+<p>Next, we look at the density function. Recall that the probability density function for a normal distribution with mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span> is given by the following formula: <span class="math display">\[ f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) \]</span> Below, we can compare some of the values from the <code>dnorm()</code> function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function. Below we use the default values (mean = 0 and sd = 1).</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-8_b12c36295997b1bffb375483479b87e6">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="dv">0</span>) <span class="sc">==</span> <span class="dv">1</span><span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span><span class="sc">*</span>pi)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="dv">1</span>) <span class="sc">==</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span><span class="sc">*</span>pi)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="dv">2</span>) <span class="sc">==</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">1</span><span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">2</span><span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="fu">sqrt</span>(<span class="dv">2</span><span class="sc">*</span>pi)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we wanted to find the density function for several values, we can input a vector to this density function. Below we find the values of the density function for a normal distribution with mean 1 and standard deviation 2 for values <code>c(-1, 0, 1, 2, 3)</code>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-9_d24063aa6a1ea091d265b4879cbf8e45">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dnorm</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>), <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.121 0.176 0.199 0.176 0.121</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For the binomial distribution, <code>dbinom()</code> will return the probability of a certain number of successes and corresponds to the probability density function <span class="math display">\[ P(X = x) = \binom{size}{x} p^x (1-p)^{size-x}. \]</span> Below, we find the probability of getting exactly 3 heads from 10 coin flips, each with a probability of 0.5 for heads.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-10_e91dbc334359971d275ea6e6b3528855">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="dv">3</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.117</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>While <code>dnorm()</code> allows us to specify any continuous values for <span class="math inline">\(x\)</span>, <code>dbinom()</code> will give us a warning if <code>x</code> contains non-integer values since the support of a binomial variable only includes integers.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-11_41f1f3dab4afd5bbfb5fc88fd08afb5b">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="fl">2.4</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in dbinom(2.4, size = 10, p = 0.5): non-integer x = 2.400000</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can also specify a vector for a distribution’s parameters to find the distribution function for different distributions. For example, below I find the the probability density function for <span class="math inline">\(X=4\)</span> for the distribution with <span class="math inline">\(p=0.25\)</span> and <span class="math inline">\(p=0.5\)</span>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-12_dab134450ca724f1a0e8bd149ab5cfe4">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dbinom</span>(<span class="dv">4</span>, <span class="at">size =</span> <span class="dv">10</span>, <span class="at">p =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.146 0.205</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cumulative-distribution" class="level3" data-number="8.1.3">
+<h3 data-number="8.1.3" class="anchored" data-anchor-id="cumulative-distribution"><span class="header-section-number">8.1.3</span> Cumulative Distribution</h3>
+<p>Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by <code>pnorm()</code>, which takes in a value <code>x</code>, a <code>mean</code>, and a <code>sd</code> and returns the probability that a random variable following a <span class="math inline">\(N(mean, sd)\)</span> distribution is less than <code>x</code>. For example, for <code>x</code> equal to the mean, this will be a fifty percent probability because the normal distribution is symmetric with mean equal to the median. Below, we verify this for two different values of the mean.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-13_4bbee49aee90d2fda58cfe39161f9c5b">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">0</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pnorm</span>(<span class="dv">5</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Since the binomial distribution is discrete, it can only take on integer values from 0 to <code>size</code>. This means that, for example, the <code>pbinom()</code> function will return the same value for 3, 3.5, 3.6, all the way up to, but not including, 4 - this is because <span class="math inline">\(P(X \leq 3) = P(X \leq 3.2) = P(X \leq 3.5) = P(X \leq 3.6)\)</span> and so on. Note that here we passed in a vector of values <code>x</code>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-14_2b610d026e3cb5519db966a2f12b894d">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pbinom</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="fl">3.5</span>, <span class="fl">3.6</span>, <span class="dv">4</span>), <span class="at">size =</span> <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.172 0.172 0.172 0.377</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can also vary the parameters for the distribution by passing a vector for <code>size</code> and/or <code>p</code> to the cumulative distribution function. Below, we find the probability that <span class="math inline">\(X \leq 3\)</span> and the probability that <span class="math inline">\(X \leq 4\)</span> with 12 trials and probability 0.25 and with 10 trials and probability 0.5.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-15_20c8da86d8021ede00fdbdf211f6d25f">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pbinom</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">4</span>), <span class="at">size =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">10</span>), <span class="at">p=</span><span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.649 0.172 0.842 0.377</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="quantile-distribution" class="level3" data-number="8.1.4">
+<h3 data-number="8.1.4" class="anchored" data-anchor-id="quantile-distribution"><span class="header-section-number">8.1.4</span> Quantile Distribution</h3>
+<p>Lastly, we have the quantile distribution function, which is the inverse of the cumulative distribution function. This function takes in a probability <code>x</code>, a <code>mean</code>, and a <code>sd</code> and returns the value for which the cumulative distribution function is equal to <code>x</code>. Thus, when <code>x</code> is equal to 0.5, the <code>qnorm()</code> function returns the median of the distribution, which is equal to the mean for the normal distribution.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-16_74f11524e78bde578046959b4a4745c0">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fl">0.5</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qnorm</span>(<span class="fl">0.5</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For the discrete binomial distribution, the <code>qbinom()</code> function returns the largest integer value for which the probability of being less than or equal to that value is at most the inputted value x.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-17_d66b1d69f69c070014d6d5c05e820aac">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qbinom</span>(<span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.3</span>), <span class="at">size =</span> <span class="dv">10</span>, <span class="at">p =</span> <span class="fl">0.5</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2 3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="reference-list-for-probability-distributions" class="level3" data-number="8.1.5">
+<h3 data-number="8.1.5" class="anchored" data-anchor-id="reference-list-for-probability-distributions"><span class="header-section-number">8.1.5</span> Reference List for Probability Distributions</h3>
+<p>In the examples above, we only used the normal and binomial distributions - the other probability distributions available in R are given below. For each distribution, we have given the arguments for the <code>r[dist]()</code> function. The other three functions have a similar format. Unless otherwise stated, the parameter <code>n</code> is the number of observations.</p>
+<ul>
+<li><strong>Beta</strong>: <code>rbeta(n, shape1, shape2, ncp = 0)</code> with shape parameters <code>shape1</code> and <code>shape2</code> (and optional non-centrality parameter <code>ncp</code>).</li>
+<li><strong>Binomial</strong>: <code>rbinom(n, size, prob)</code> with probability of success <code>prob</code> and number of trials <code>size</code></li>
+<li><strong>Cauchy</strong>: <code>rcauchy(n, location = 0, scale = 1)</code> with location parameter <code>location</code> and scale parameter <code>scale</code>.</li>
+<li><strong>Chi-Square</strong>: <code>rchisq(n, df, ncp = 0)</code> with <code>df</code> degrees of freedom and optional non-centrality parameter <code>ncp</code>.</li>
+<li><strong>Exponential</strong>: <code>rexp(n, rate = 1)</code> with rate <code>rate</code> (i.e., mean = 1/rate).</li>
+<li><strong>F</strong>: <code>rf(n, df1, df2, ncp)</code> with <code>df1</code> and <code>df2</code> degrees of freedom (and optional non-centrality parameter <code>ncp</code>).</li>
+<li><strong>Gamma</strong>: <code>rgamma(n, shape, rate = 1, scale = 1/rate)</code> with parameters <code>shape</code> and <code>scale</code> (or alternatively specified by <code>rate</code>).</li>
+<li><strong>Geometric</strong>: <code>rgeom(n, prob)</code> with probability parameter <code>prob</code>.</li>
+<li><strong>Hypergeometric</strong>: <code>rhyper(nn, m, n, k)</code> with <code>m</code> white balls, <code>n</code> black balls, and <code>k</code> balls chosen.</li>
+<li><strong>Logistic</strong>: <code>rlogis(n, location = 0, scale = 1)</code> with parameters <code>location</code> and <code>scale</code>.</li>
+<li><strong>Log Normal</strong>: <code>rlnorm(n, meanlog = 0, sdlog = 1)</code> with mean <code>meanlog</code> and standard deviation <code>sdlog</code> on the log scale.</li>
+<li><strong>Negative Binomial</strong>: <code>rnbinom(n, size, prob, mu)</code> with parameters <code>size</code> and <code>prob</code>.</li>
+<li><strong>Normal</strong>: <code>rnorm(n, mean = 0, sd = 1)</code> with mean equal to <code>mean</code> and standard deviation equal to <code>sd</code>.</li>
+<li><strong>Poisson</strong>: <code>rpois(n, lambda)</code> with parameter <code>lambda</code>.</li>
+<li><strong>Student t</strong>: <code>rt(n, df, ncp)</code> with <code>df</code> degrees of freedom (and optional non-centrality parameter <code>ncp</code>).</li>
+<li><strong>Uniform</strong>: <code>runif(n, min = 0, max = 1)</code> with minimum value <code>min</code> and maximum value <code>max</code>.</li>
+<li><strong>Weibull</strong>: <code>rweibull(n, shape, scale = 1)</code> with parameters <code>shape</code> and <code>scale</code>.</li>
+<li><strong>Wilcoxon Rank Sum</strong>: <code>rwilcox(nn, m, n)</code> with <code>nn</code> number of observations and sample sizes <code>m</code> and <code>n</code>.</li>
+<li><strong>Wilcoxon Signed Rank</strong>: <code>rsignrank(nn, n)</code> with <code>nn</code> number of observations and sample size <code>n</code>.</li>
+</ul>
+</section>
+<section id="practice-question" class="level3" data-number="8.1.6">
+<h3 data-number="8.1.6" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">8.1.6</span> Practice Question</h3>
+<p>Set the random seed to be <code>123</code>, and then generate 5 random numbers following a <a href="https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Uniform">uniform distribution</a> with min 1 and max 5. Then, find the 0.15 quantile for this same distribution (it should be equal to 1.6).</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-18_eb30f840cda44b34391848a15549a038">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="empirical-distributions-and-sampling-data" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="empirical-distributions-and-sampling-data"><span class="header-section-number">8.2</span> Empirical Distributions and Sampling Data</h2>
+<p>At the start of this chapter, we used the <code>sample()</code> function. This function can also be used to sample from an empirical distribution. The <code>sample(x, size, replace=FALSE, prob=NULL)</code> function takes in the values we want to sample from <code>x</code>, the number of observations we want to sample <code>size</code>, and whether we want to sample with replacement <code>replace</code>. If we don’t want to sample such that each value has an equal probability of being chosen, we can also set a probability vector <code>prob</code>, which must have the same length as <code>x</code>. Below we sample 500 rows without replacement from the <code>NHANESsample</code> data. To do so, we select 500 values from the indices 1 to the number of rows in the data. We then select rows of the data using these indices.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-19_a4b6deec435a0aebd8e3dabd91f9f95e">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nhanes_sample_ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(NHANESsample), <span class="dv">500</span>, <span class="at">replace=</span><span class="cn">FALSE</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>nhanes_sample <span class="ot">&lt;-</span> NHANESsample[nhanes_sample_ids, ]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(nhanes_sample)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 500  21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We now demonstrate sampling with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a <em>bootstrap sample</em>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-20_2777f9d75f2ea30420f720ffa121e46c">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nhanes_sample_ids <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(NHANESsample), <span class="fu">nrow</span>(NHANESsample), <span class="at">replace=</span><span class="cn">TRUE</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>nhanes_sample <span class="ot">&lt;-</span> NHANESsample[nhanes_sample_ids, ]</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(nhanes_sample)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 31265    21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Another way to sample from a data frame is to use the <code>slice_sample()</code> function from the tidyverse. In this function, we can either specify the number of observations to sample <code>n</code> or the proportion of observations to sample <code>prop</code>. Additionally, we can sample with or without replacement by setting the value of the argument <code>replace</code> (with default value FALSE). We use this function below to randomly sample 20% of observations without replacement.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-21_030a3166f98f31575f51940e2f51e1fe">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nhanes_sample <span class="ot">&lt;-</span> NHANESsample <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_sample</span>(<span class="at">prop =</span> <span class="fl">0.2</span>, <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(nhanes_sample)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 6253   21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="practice-question-1" class="level3" data-number="8.2.1">
+<h3 data-number="8.2.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">8.2.1</span> Practice Question</h3>
+<p>Set the random seed to <code>5</code> and then sample 50 observations with replacement from the set of integers from 1 to 100. Take the mean of those observations - it should be 56.7.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-22_0328d6fd766dbb5b60fccd9ba84ea8a3">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Beyond sampling, we can also find the empirical cumulative distribution. That is, we can use a given vector to infer a distribution. In the case below, we draw a random sample from a normal distribution <code>vec</code> and then find its empirical cumulative distribution using the <code>ecdf()</code> function. This function actually returns a function, which can then be used to find the sample cumulative distribution for different values similar to the <code>p[dist]()</code> functions. Below, we find the sample probability that <span class="math inline">\(X \leq 0\)</span>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-23_6b716b0ab1ffaaad189389adea5e8ccc">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>vec <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>) </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ecdf_vec <span class="ot">&lt;-</span> <span class="fu">ecdf</span>(vec)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ecdf_vec</span>(<span class="dv">0</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.63</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We plot this empirical distribution against the actual cdf using the <code>pnorm()</code> function below. Note that in order to do so, we create a sequence of possible <code>x</code> values to pass to both <code>pnorm()</code> and <code>ecdf_vec()</code>.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-24_285b7c2601961ef2d18f582e4e8c3e1f">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="fl">0.05</span>))</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>ecdf <span class="ot">&lt;-</span> <span class="fu">ecdf_vec</span>(df<span class="sc">$</span>x)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>distn <span class="ot">=</span> <span class="fu">pnorm</span>(df<span class="sc">$</span>x)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df) <span class="sc">+</span> </span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>ecdf), <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span> </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>distn), <span class="at">color=</span> <span class="st">"red"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="8_distributions_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In practice, the empirical cumulative distribution might involve data from a given data set that you want to use to represent the population’s distribution. As an example, below we find the empirical distribution of blood lead level from the <code>NHANESsample</code> data frame. A blood lead level of 5 µg/dL or above is considered elevated. We can see 96.4% of observations have a blood lead level below this threshold.</p>
+<div class="cell" data-layout-align="center" data-hash="8_distributions_cache/html/unnamed-chunk-25_69643b7ddeeb40db862bd46f15327d43">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ecdf_lead <span class="ot">&lt;-</span> <span class="fu">ecdf</span>(nhanes_sample<span class="sc">$</span>LEAD)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ecdf_lead</span>(<span class="dv">5</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.961</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="recap-video" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="recap-video"><span class="header-section-number">8.3</span> Recap Video</h2>
+<div class="video-container">
+<pre><code>&lt;iframe width="700" height="500" src="https://www.youtube.com/embed/gi6nDWWRSeQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen&gt;&lt;/iframe&gt;</code></pre>
+</div>
+</section>
+<section id="exercises" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">8.4</span> Exercises</h2>
+<ol type="1">
+<li>Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 2.2 inches. Using this distribution, answer the following questions.</li>
+</ol>
+<ul>
+<li>What is the probability that a randomly chosen female is 5 feet or shorter?</li>
+<li>What is the probability that a randomly chosen female is 6 feet or taller?</li>
+<li>Generate 500 random observations following this distribution and find the sample 0.15 quantile. Then, compare this to the 0.15 quantile using the <code>qdist()</code> function.</li>
+</ul>
+<ol start="2" type="1">
+<li><p>Compute the probability that the height of a randomly chosen female is within 1 SD from the average height.</p></li>
+<li><p>Create a vector of 100 patient IDs, and then use the sample() function to assign half of them to a treatment group and the other half to a control group. Then, suppose those in the control group have a reduction in viral load distributed as <span class="math inline">\(X \sim 100*exp(mean = V)\)</span>, where <span class="math inline">\(V\)</span> follows a uniform distribution between 1 and 2, whereas those who are in the treatment group have a reduction in viral load distributed as <span class="math inline">\(X \sim 100*exp(mean = 3)\)</span>. Plot distributions of reduction in viral load for both groups.</p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../book/7_visualization_ggplot.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Visualization with ggplot2</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../book/9_hypothesis_tests.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Hypothesis Testing</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
