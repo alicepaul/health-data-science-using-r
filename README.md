@@ -1,6 +1,6 @@
-# Health Data Science in R
+# Mastering Health Data Science Using R
 
-The "Health Data Science in R" is a comprehensive guide designed to provide learners with the essential skills and knowledge needed to analyze health data using the R programming language. This book covers data structures in R, exploratory data analysis, data manipulation, data visualization, probability distributions, hypothesis testing, and regression analysis. Prior knowledge with the statistical methodology underlying the analysis is assumed. 
+The "Mastering Health Data Science Using R" is a comprehensive guide designed to provide learners with the essential skills and knowledge needed to analyze health data using the R programming language. This book covers data structures in R, exploratory data analysis, data manipulation, data visualization, probability distributions, hypothesis testing, and regression analysis. Prior knowledge with the statistical methodology underlying the analysis is assumed. 
 
 ## License
 
@@ -12,7 +12,7 @@ This book is written by [Alice Paul](alicepaul.github.io) with the support of Ji
 
 ## Credits
 
-This project is created using the [Jupyter Book project](https://jupyterbook.org/) and the [executablebooks/cookiecutter-jupyter-book template](https://github.com/executablebooks/cookiecutter-jupyter-book).
+This project was created using [Quarto Books](https://quarto.org/docs/books/).
 
 ## Environment Version Information
 
@@ -31,4 +31,4 @@ This project is created using the [Jupyter Book project](https://jupyterbook.org
 
 ## Guideline for this repository
 
-In this github repo, you can find jupyter notebook version of each chapter inside `book` folder along with the corresponding R markdown file in the `rmarkdown` folder. Most of data used in the examples is provided in the library `RforHDSdata`, but there are two toy datasets stored in the `data` folder inside `book` folder. You can find the dockerfile inside `binder` folder. The `workflow` binder contains two files for deployment and building the notebook container. All the required packages and version information can be found in the `environment.yml` file, and it is also available in this `README` file.
+In this github repo, you can find Quarto file version of each chapter inside `book` folder along with the corresponding Jupyter notebook file in the `jupyter` folder. Most of data used in the examples is provided in the library `HDSinRdata`, but there are two toy datasets stored in the `data` folder inside the `book` folder. 
