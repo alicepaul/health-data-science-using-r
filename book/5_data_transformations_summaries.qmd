@@ -1,11 +1,10 @@
-
 # Data Transformations and Summaries {#sec-transformations-summaries}
-  
-In this chapter, we will introduce the `dyplr` package, which is part of the `tidyverse` group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) as in [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html).
+
+In this chapter, we will introduce the **dyplr** package [@R-dplyr], which is part of the **tidyverse** group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator `%>%`. We will use the same sample of the National Health and Nutrition Examination Survey [@nhanes] as in [Chapter -@sec-exploratory].
 
 ```{r}
-suppressPackageStartupMessages(library(HDSinRdata))
-suppressPackageStartupMessages(library(tidyverse))
+library(HDSinRdata)
+library(tidyverse)
 data(NHANESsample)
 ```
 
@@ -29,11 +28,11 @@ nhanes_df <- as.data.frame(nhanes_df)
 print(head(nhanes_df))
 ```
 
-We mention tibbles here since some functions in the `tidyverse` package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.
+We mention tibbles here since some functions in the **tidyverse** package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.
 
 ## Subsetting Data
 
-In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()` function. The `dplyr` package has its own functions that are useful to subset the data. The `select()` function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%`. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.
+In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()` function. The **dplyr** package has its own functions that are useful to subset the data. The `select()` function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%`. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.
 
 ```{r}
 select(nhanes_df, c(RACE, LEAD)) %>% head()
@@ -46,7 +45,7 @@ nhanes_df <- nhanes_df %>% select(-c(ID, LEAD_QUANTILE))
 names(nhanes_df)
 ```
 
-While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows. The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html). Below, we choose to filter the data to only observations after 2008.
+While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows. The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter -@sec-exploratory]. Below, we choose to filter the data to only observations after 2008.
 
 ```{r}
 nhanes_df_recent <- nhanes_df %>% filter(YEAR >= 2008)
@@ -96,9 +95,9 @@ nhanes_df %>%
 
 ### Practice Question
 
-Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the data below.
+Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the result in @fig-pq1.
 
-<img src="images/5-practicequestion1answer.png" alt="“”" width="200pt" align="center"/>
+![Filtering and Selecting Data.](images/5-practicequestion1answer.png){#fig-pq1 fig-align="center" width="150pt"}
 
 ```{r}
 # Insert your solution here:
@@ -124,7 +123,8 @@ Another useful function from the tidyverse is the `case_when()` function, which 
 ```{r}
 case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
           nhanes_df$SMOKE_STATUS == "QuitSmoke" ~ "Quit Smoking",
-          nhanes_df$SMOKE_STATUS == "StillSmoke" ~ "Current Smoker") %>% table()
+          nhanes_df$SMOKE_STATUS == "StillSmoke" ~ "Current Smoker") %>% 
+  table()
 ```
 
 Above, we did not store the columns we created. To do so, we could use the `$` operator or the `cbind()` function. The tidyverse also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and it will interpret it as that column.
@@ -134,7 +134,8 @@ nhanes_df <- nhanes_df %>%
   mutate(EVER_SMOKE = ifelse(SMOKE_STATUS == "NeverSmoke", "No", "Yes"), 
          SMOKE_STATUS = case_when(SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
                                   SMOKE_STATUS == "QuitSmoke" ~ "Quit Smoking",
-                                  SMOKE_STATUS == "StillSmoke" ~ "Current Smoker")) 
+                                  SMOKE_STATUS == "StillSmoke" ~ 
+                                    "Current Smoker")) 
 ```
 
 The last function we will demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the code below filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order.
@@ -149,7 +150,7 @@ nhanes_df %>%
 
 ### Practice Question
 
-Create a new column called `DBP_CHANGE` that is equal to the difference between a patient's first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four `DBP_CHANGE` values in the head of the resulting dataset should be -66, -64, -64, and -62.
+Create a new column called `DBP_CHANGE` that is equal to the difference between a patient's first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four `DBP_CHANGE` values in the head of the resulting data frame should be -66, -64, -64, and -62.
 
 ```{r}
 # Insert your solution here:                    
@@ -203,31 +204,32 @@ nhanes_df %>%
 
 ### Practice Question
 
-Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like this:
+Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like @fig-pq3.
 
-<img src="images/5-practicequestion3answer.png" alt="“”" width="200pt" align="center"/>
+  ![Grouping and Summarizing Data.](images/5-practicequestion3answer.png){#fig-pq3 fig-align="center" width="150pt"}
 
 ```{r}
 # Insert your solution here:
 ```
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 {{< video https://www.youtube.com/embed/IeRMFCCuxwc width="700" height="500" >}}
-
+:::
 
 ## Exercises
 
-The following exercises use the `covidcases` dataset from the `HDSinRdata` package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
+The following exercises use the `covidcases` dataset from the **HDSinRdata** package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
 
 ```{r}
 data(covidcases)
 ```
 
-1.  Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using [this list](https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States) of which states are in which region or you can use [state.region](https://search.r-project.org/CRAN/refmans/usa/html/state.region.html) from the `datasets` package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast.
+1.  Suppose we are interested in the distribution of weekly cases by state. First, create a new column in `covidcases` called `region` specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using [this list](https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States) of which states are in which region or you can use `state.region` from the **datasets** package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast.
 
 2.  Now, create a data frame with the average and standard deviation summarized for each region rather than for just one selected region as in Question 1. Sort this data frame from highest to lowest average weekly cases. What other information would you need in order to more accurately compare these regions in terms of their average cases?
 
-3.  Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use `?slice_min` to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values.
+3.  Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use `slice_min()` to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values.
 
 4.  Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases.

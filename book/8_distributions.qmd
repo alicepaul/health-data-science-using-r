@@ -1,11 +1,10 @@
-
 # Probability Distributions in R {#sec-probability-distributions}
-  
+
 In this chapter, we will cover how to generate random samples in R from known probability distributions and empirical distributions. All of the common probability distributions have a set of four functions in base R that can be used to generate random samples and to calculate the corresponding density, quantile, and cumulative functions that correspond to that distribution.
 
-```{r}
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(HDSinRdata))
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
 data(NHANESsample)
 ```
 
@@ -63,7 +62,11 @@ hist(x)
 
 ### Density Function
 
-Next, we look at the density function. Recall that the probability density function for a normal distribution with mean $\mu$ and standard deviation $\sigma$ is given by the following formula: $$ f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) $$ Below, we can compare some of the values from the `dnorm()` function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function. Below we use the default values (mean = 0 and sd = 1).
+Next, we look at the density function. Recall that the probability density function for a normal distribution with mean $\mu$ and standard deviation $\sigma$ is given by the following formula.
+
+$$ f_X(x) = \frac{1}{\sigma \sqrt{2 \pi}} \exp \left(-\frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2 \right) $$
+
+Below, we can compare some of the values from the `dnorm()` function to this equation and see that they are in fact equal. You can also specify the mean and standard deviation in this function. Below we use the default values (mean = 0 and sd = 1).
 
 ```{r}
 dnorm(0) == 1/sqrt(2*pi)
@@ -77,7 +80,11 @@ If we wanted to find the density function for several values, we can input a vec
 dnorm(c(-1,0,1,2,3), mean = 1, sd = 2)
 ```
 
-For the binomial distribution, `dbinom()` will return the probability of a certain number of successes and corresponds to the probability density function $$ P(X = x) = \binom{size}{x} p^x (1-p)^{size-x}. $$ Below, we find the probability of getting exactly 3 heads from 10 coin flips, each with a probability of 0.5 for heads.
+For the binomial distribution, `dbinom()` will return the probability of a certain number of successes and corresponds to the probability density function.
+
+$$ P(X = x) = \binom{size}{x} p^x (1-p)^{size-x}. $$
+
+Below, we find the probability of getting exactly 3 heads from 10 coin flips, each with a probability of 0.5 for heads.
 
 ```{r}
 dbinom(3, size = 10, p = 0.5)
@@ -157,7 +164,7 @@ In the examples above, we only used the normal and binomial distributions - the 
 
 ### Practice Question
 
-Set the random seed to be `123`, and then generate 5 random numbers following a [uniform distribution](https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/Uniform) with min 1 and max 5. Then, find the 0.15 quantile for this same distribution (it should be equal to 1.6).
+Set the random seed to be `123`, and then generate 5 random numbers following a uniform distribution with min 1 and max 5. Then, find the 0.15 quantile for this same distribution (it should be equal to 1.6).
 
 ```{r}
 # Insert your solution here:
@@ -224,16 +231,20 @@ ecdf_lead <- ecdf(nhanes_sample$LEAD)
 ecdf_lead(5)
 ```
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 {{< video https://www.youtube.com/embed/gi6nDWWRSeQ width="700" height="500" >}}
+:::
 
 ## Exercises
 
 1.  Assume the distribution of female heights is approximated by a normal distribution with a mean of 64 inches and a standard deviation of 2.2 inches. Using this distribution, answer the following questions.
 
 -   What is the probability that a randomly chosen female is 5 feet or shorter?
+
 -   What is the probability that a randomly chosen female is 6 feet or taller?
+
 -   Generate 500 random observations following this distribution and find the sample 0.15 quantile. Then, compare this to the 0.15 quantile using the `qdist()` function.
 
 2.  Compute the probability that the height of a randomly chosen female is within 1 SD from the average height.

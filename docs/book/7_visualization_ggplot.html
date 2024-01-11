@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -127,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -276,6 +295,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -323,73 +348,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p><code>ggplot2</code> is another useful package in the tidyverse that allows statisticians to use visualizations to communicate key findings and results in a compelling format. We will first learn about the three main components in a ggplot object and then expand on that format by learning more about the different layers we can use to create various plots. As with the tidyverse functions, there are quite a few functions to cover, and the functions build on each other.</p>
-<p>The three packages we will use in this chapter are <code>tidyverse</code>, <code>HDSinRdata</code>, and <code>patchwork</code>, the last of which is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic introduced in <a href="3_data_files.html">Chapter&nbsp;<span>3</span></a> to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we take a sample of 5,000 patients that are complete cases at baseline to reduce the computation time to display each plot. You can ignore how the code used to find this sample works.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-1_d7a6373f1d43a3660da1d5d985971381">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(patchwork))</span>
+<p>The package <strong>ggplot2</strong> is another useful package in the tidyverse that allows statisticians to use visualizations to communicate key findings and results in a compelling format. We will first learn about the three main components in a ggplot object and then expand on that format by learning more about the different layers we can use to create various plots. As with the tidyverse functions, there are quite a few functions to cover, and the functions build on each other.</p>
+<p>The three packages we will use in this chapter are <strong>tidyverse</strong>, <strong>HDSinRdata</strong>, and <strong>patchwork</strong> <span class="citation" data-cites="R-patchwork">(<a href="../references.html#ref-R-patchwork" role="doc-biblioref">Pedersen 2022</a>)</span>, the last of which is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic <span class="citation" data-cites="alter2021hierarchical">(<a href="../references.html#ref-alter2021hierarchical" role="doc-biblioref">Alter et al. 2021</a>)</span> introduced in <a href="3_data_files.html">Chapter&nbsp;<span>3</span></a> to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we take a sample of 5,000 patients that are complete cases at baseline to reduce the computation time to display each plot. You can ignore how the code used to find this sample works.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pain)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># sampling data</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pain_df <span class="ot">&lt;-</span> pain[<span class="fu">complete.cases</span>(<span class="fu">subset</span>(pain, </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))),]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pain_df_sub <span class="ot">&lt;-</span> <span class="fu">subset</span>(pain, <span class="at">select=</span><span class="sc">-</span><span class="fu">c</span>(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pain_df <span class="ot">&lt;-</span> pain[<span class="fu">complete.cases</span>(pain_df_sub),]</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pain_df <span class="ot">&lt;-</span> pain_df[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(pain_df), <span class="dv">5000</span>, <span class="at">replace=</span><span class="cn">FALSE</span>),] </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="intro-to-ggplot" class="level2" data-number="7.1">
 <h2 data-number="7.1" class="anchored" data-anchor-id="intro-to-ggplot"><span class="header-section-number">7.1</span> Intro to ggplot</h2>
 <p>We’ll begin by demonstrating how to create a scatter plot in <code>ggplot2</code> to introduce the three key elements of a <code>ggplot2</code> object. Specifically, we will create a scatter plot of a patient’s depression vs.&nbsp;anxiety score. To start a graph, we can use the <code>ggplot()</code> function to create a <code>ggplot</code> object as below. Note that this brings up a gray box - this will be the base that we will build up from.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-2_038de23d218d81624fe539d298175e8d">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Now we can start adding layers to our <code>ggplot</code> object. One type of layer is a <strong>geom</strong>, which creates a geometric object. Below, we use the <code>geom_point()</code> function to add a scatter plot layer. For this function, we first need to specify which data we want to use, and then we need to tell R how to use that data to create the scatter plot using the <code>aes()</code> function, which creates an <strong>aesthetic</strong>. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. Both the data and the aesthetic can either be specified in our initial <code>ggplot()</code> function, which will pass this information to all future layers, or in the <code>geom_point()</code> function itself. Below, we specify the aesthetic in the geom function but also include two alternative ways to code the same image that are commented out. The resulting plot shows a fairly linear relationship between anxiety and depression.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-3_de0b3d1136bf2628098fba358a4d594f">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, <span class="at">y =</span> PROMIS_DEPRESSION))</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION)) + geom_point()</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ggplot() + geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, <span class="at">y =</span> PROMIS_DEPRESSION))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>If we want to improve our plot, we may want to add different labels and a title. To do so, we use the <code>labs()</code> function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the <a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">color, size, and shape</a> of the points. These things are specified outside of the <code>aes()</code> function since they do not come from the data - every point has the same color, size, and shape in this example.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-4_38ef180e41ec7768ae85594cebcc4b35">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, <span class="at">y =</span> PROMIS_DEPRESSION), </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="st">"blue"</span>, <span class="at">size=</span><span class="dv">2</span>, <span class="at">shape=</span><span class="dv">5</span>) <span class="sc">+</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Anxiety Score"</span>, <span class="at">ylab=</span><span class="st">"PROMIS Depression Score"</span>, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Depression vs Anxiety Scores"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative 1:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df, <span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, <span class="at">y =</span> PROMIS_DEPRESSION)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternative 2:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">data =</span> pain_df, <span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">y =</span> PROMIS_DEPRESSION))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we want to improve our plot, we may want to add different labels and a title. To do so, we use the <code>labs()</code> function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color, size, and shape of the points. These things are specified outside of the <code>aes()</code> function since they do not come from the data - every point has the same color, size, and shape in this example.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_ANXIETY, <span class="at">y =</span> PROMIS_DEPRESSION), </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">color=</span><span class="st">"blue"</span>, <span class="at">size=</span><span class="dv">2</span>, <span class="at">shape=</span><span class="dv">5</span>) <span class="sc">+</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Anxiety Score"</span>, <span class="at">ylab=</span><span class="st">"PROMIS Depression Score"</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Depression vs Anxiety Scores"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Let’s create another example. This time, I will create a histogram for initial recorded pain level. To find the corresponding geom for the type of plot we’d like to make, we can use the <a href="https://posit.co/wp-content/uploads/2022/10/data-visualization-1.pdf">data visualization cheat sheet from Posit</a>. The first page lists all the geom options available along with what aesthetics we can set for each option. For example, here we are interested in plotting the distribution of one continuous variable, and under the <code>geom_histogram()</code> function we can see that we can specify <code>x</code> (the variable whose distribution we want to plot) as well as <code>binwidth</code>, <code>y</code>, <code>alpha</code>, <code>color</code>, <code>fill</code>, <code>linetype</code>, <code>size</code>, and <code>weight</code>. By default, the <code>y</code> value in a histogram is the count for each bin.</p>
 <p>In the code below, you can see that we updated the color (<code>color</code>), fill (<code>fill</code>), and opacity (<code>alpha</code>) of our histogram bars and updated the number of bins to be 11 (to account for the possible values 0-10). Additionally, we used the <code>theme_minimal()</code> function to change the background colors used. You can find the available themes on the second page of the cheat sheet. Try changing the theme of the above plot to <code>theme_bw()</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-5_9c8547dbc1a34682c42b6383f3b45510">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE), <span class="at">color=</span><span class="st">"violetred"</span>, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"lightblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="at">bins =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Patient Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Count"</span>)<span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE), <span class="at">color=</span><span class="st">"violetred"</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"lightblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="at">bins =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Patient Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Count"</span>)<span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -398,38 +428,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="7.1.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">7.1.1</span> Practice Question</h3>
 <p>Recreate the following plot.</p>
 <p><img src="images/7-practicequestion1answer.png" alt="“”" width="400pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-6_93c3492717d291588b59e4e804fb8d32">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here: </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here: </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="adjusting-the-axes-and-aesthetics" class="level2" data-number="7.2">
 <h2 data-number="7.2" class="anchored" data-anchor-id="adjusting-the-axes-and-aesthetics"><span class="header-section-number">7.2</span> Adjusting the Axes and Aesthetics</h2>
 <p>We can further control how each part specified in the aesthetic is displayed using <strong>scale</strong> functions. For example, suppose that I wanted to update the plot above. In particular, I first want to update the x-axis to display all of the values 0 to 10 instead of 0, 2.5, 5, etc.. To update the x-axis, I need to find the corresponding scale function for x with continuous values. This function is <code>scale_x_continuous()</code>, which allows me to specify limits (<code>limits</code>), breaks (<code>breaks</code>), and labels (<code>labels</code>). The scale functions can be found on the second sheet of the cheat sheet. In this case, I just want to update the breaks to be all integer values from 0 to 10.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-7_614a822c6570563c13c6c1caf2e32072">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE), <span class="at">color=</span><span class="st">"violetred"</span>, </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"lightblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="at">bins =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Patient Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Count"</span>)<span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)<span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE), <span class="at">color=</span><span class="st">"violetred"</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"lightblue"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>, <span class="at">bins =</span> <span class="dv">11</span>) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Patient Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Count"</span>)<span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)<span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Now, let’s take a more complex example. The plot below shows each patient’s reported sleep disturbance vs.&nbsp;physical function and colors each point by their reported pain intensity. Since some points might overlap in values, we added <code>position="jitter"</code> to the <code>geom_point()</code> function to jitter the points, which corresponds to adding some random noise to each point’s position. As it stands, this plot is difficult to read. For example, the color of pain intensity makes it hard to see how pain changes, and the legend title needs to be simpler.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-8_ea84de29707b8acb61b4453671423af6">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">y=</span>PROMIS_SLEEP_DISTURB_V1_0, </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span>PAIN_INTENSITY_AVERAGE), <span class="at">position=</span><span class="st">"jitter"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">y=</span>PROMIS_SLEEP_DISTURB_V1_0, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span>PAIN_INTENSITY_AVERAGE), <span class="at">position=</span><span class="st">"jitter"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -437,81 +467,88 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Suppose that we wanted to visualize the pain intensity and sleep disturbance for patients with below-average physical function. Note that both sleep disturbance and physical function are reported as T-Scores, meaning that the raw scores have been converted to a standardized score with mean 50 and standard deviation 10 within the population. We can use the scale functions to update our axes and labels to reflect this information. As before, we need to use the <code>scale_x_continuous()</code> function to update the x-axis for a continuous variable. In this case, we update the limits (to restrict to below average physical function), breaks, and labels. We similarly update the y-axis.</p>
 <p>Lastly, suppose we want to update the color aesthetic. As before, this aesthetic corresponds to a continuous variable. The cheat sheet provides several possible scale functions depending on how we want to specify the color gradient. We choose the <code>scale_color_gradient()</code> function, since this allows us to specify the low and high end colors. We can also specify the breaks for the legend values similar to how we specified the breaks for the x and y axes. The argument <code>name</code> also allows us to rename this legend. The palette then converts this to a continuous color gradient. Note that in contrast to the <code>scale_color_gradient()</code> function that we chose to use for this example, the functions <code>scale_color_gradient2()</code> and <code>scale_color_gradientn()</code> allow you to specify more color points in the gradient rather than just the two extreme colors.</p>
 <p>We can observe that decreased physical function is associated with higher sleep disturbance and that those with worse physical function and worse sleep disturbance tend to have higher reported pain. Note that this time we receive a warning message, which is because our axis limits have cut off some points. To avoid this message, we could use the function <code>coord_cartesian()</code> to specify our limits which clips the values rather than removing points outside the limits.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-9_e2223c53c57e3ad046d1d8543eda34b2">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">y=</span>PROMIS_SLEEP_DISTURB_V1_0, </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span>PAIN_INTENSITY_AVERAGE), <span class="at">position=</span><span class="st">"jitter"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">50</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>), </span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"-3 SD"</span>, <span class="st">"-2 SD"</span>, <span class="st">"-1 SD"</span>, <span class="st">"Pop Mean"</span>)) <span class="sc">+</span> </span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">70</span>, <span class="dv">80</span>), </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"-1 SD"</span>, <span class="st">"Pop Mean"</span>, <span class="st">"+1 SD"</span>, <span class="st">"+2 SD"</span>, <span class="st">"+3 SD"</span>)) <span class="sc">+</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">breaks=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">2</span>), <span class="at">low=</span><span class="st">"green"</span>, <span class="at">high=</span><span class="st">"red"</span>, <span class="st">"Reported Pain"</span>) <span class="sc">+</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Physical Function T-Score"</span>, <span class="at">y =</span> <span class="st">"PROMIS Sleep Disturbance T-Score"</span>) <span class="sc">+</span> </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 121 rows containing missing values (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">y=</span>PROMIS_SLEEP_DISTURB_V1_0, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span>PAIN_INTENSITY_AVERAGE), <span class="at">position=</span><span class="st">"jitter"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="dv">15</span>,<span class="dv">50</span>), <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>, <span class="dv">50</span>), </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"-3 SD"</span>, <span class="st">"-2 SD"</span>, <span class="st">"-1 SD"</span>, <span class="st">"Pop Mean"</span>)) <span class="sc">+</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="dv">50</span>, <span class="dv">60</span>, <span class="dv">70</span>, <span class="dv">80</span>), </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"-1 SD"</span>, <span class="st">"Pop Mean"</span>, <span class="st">"+1 SD"</span>, <span class="st">"+2 SD"</span>, </span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"+3 SD"</span>)) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradient</span>(<span class="at">breaks=</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">10</span>,<span class="dv">2</span>), <span class="at">low=</span><span class="st">"green"</span>, <span class="at">high=</span><span class="st">"red"</span>, </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"Reported Pain"</span>) <span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Physical Function T-Score"</span>, </span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"PROMIS Sleep Disturbance T-Score"</span>) <span class="sc">+</span> </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 121 rows containing missing values (`geom_point()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We now demonstrate these scale functions for discrete variables. In the example below, we first create a new race variable that has only three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis. This plot shows a higher median pain for black patients compared to other races.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-10_187712ae71e4d46a0fa5740a3a339813">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>PAT_RACE_CAT <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pain_df<span class="sc">$</span>PAT_RACE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"BLACK"</span>, <span class="st">"WHITE"</span>), </span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>                               pain_df<span class="sc">$</span>PAT_RACE, <span class="st">"OTHER"</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>PAT_RACE_CAT <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(pain_df<span class="sc">$</span>PAT_RACE_CAT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>PAT_RACE_CAT <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pain_df<span class="sc">$</span>PAT_RACE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"BLACK"</span>, <span class="st">"WHITE"</span>), </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                               pain_df<span class="sc">$</span>PAT_RACE, <span class="st">"OTHER"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>PAT_RACE_CAT <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(pain_df<span class="sc">$</span>PAT_RACE_CAT)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-11_d3c4ef68119d3e63b7591ceb33933067">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y=</span>PAT_RACE_CAT, <span class="at">x=</span>PAIN_INTENSITY_AVERAGE, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill=</span>PAT_RACE_CAT), <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>The function <code>scale_y_discrete()</code> is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels of this y-axis. To update the order, we can either refactor the variable using <code>factor()</code> prior to plotting or update the <code>limits</code> argument of the scale function. The function <code>scale_fill_brewer()</code> is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the <a href="https://r-graph-gallery.com/38-rcolorbrewers-palettes.html">color palette</a> (<code>palette</code>) and to specify that that we do not want a legend (<code>guide</code>). Since we do not have a legend, we do not update the values and labels in this function.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-12_14964310ac4b58c01161670e72cf1a4e">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y=</span>PAT_RACE_CAT, <span class="at">x=</span>PAIN_INTENSITY_AVERAGE, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill=</span>PAT_RACE_CAT), <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="st">"OTHER"</span>, <span class="st">"WHITE"</span>, <span class="st">"BLACK"</span>), </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Other"</span>, <span class="st">"White"</span>, <span class="st">"Black"</span>)) <span class="sc">+</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Dark2"</span>, <span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Reported Race"</span>) <span class="sc">+</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Here is one more example of how you can use the scale functions - take a look at the code below. We used two <code>geom_histogram()</code> calls, or layers, to plot a histogram of pain at baseline and at follow-up. This allows us to visualize that pain at follow-up tends to be lower than at baseline.</p>
-<p>We also specify the fill to be by “Baseline” and “Follow-up” within the aesthetic, even though this isn’t a column in the data: this is a sort of manual way to color the bars. We use the <code>scale_fill_manual()</code> function to then specify the colors we want to use for these two categories using the <code>values</code> argument. We received three warnings when creating this plot! This is because we have many NA values for follow-up and because we did not specify the bin size for either histogram. C’est la vie.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-13_9197fd00591c802298106f8ac5351616">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">fill=</span><span class="st">"Baseline"</span>)) <span class="sc">+</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP, <span class="at">fill=</span><span class="st">"Follow-Up"</span>)) <span class="sc">+</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"violetred"</span>, <span class="st">"pink"</span>), <span class="at">name=</span><span class="st">"Measurement"</span>) <span class="sc">+</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 3604 rows containing non-finite values (`stat_bin()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The function <code>scale_y_discrete()</code> is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels of this y-axis. To update the order, we can either refactor the variable using <code>factor()</code> prior to plotting or update the <code>limits</code> argument of the scale function. The function <code>scale_fill_brewer()</code> is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the color palette (<code>palette</code>) and to specify that that we do not want a legend (<code>guide</code>). Since we do not have a legend, we do not update the values and labels in this function.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">y=</span>PAT_RACE_CAT, <span class="at">x=</span>PAIN_INTENSITY_AVERAGE, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">fill=</span>PAT_RACE_CAT), <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>(<span class="at">limits=</span><span class="fu">c</span>(<span class="st">"OTHER"</span>, <span class="st">"WHITE"</span>, <span class="st">"BLACK"</span>), </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"Other"</span>, <span class="st">"White"</span>, <span class="st">"Black"</span>)) <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette=</span><span class="st">"Dark2"</span>, <span class="at">guide=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y=</span><span class="st">"Reported Race"</span>) <span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The <strong>RColorBrewer</strong> package <span class="citation" data-cites="R-RColorBrewer">(<a href="../references.html#ref-R-RColorBrewer" role="doc-biblioref">Neuwirth 2022</a>)</span> contains several default palettes to choose from, shown below. You can also create your own palette using the <code>brewer.pal()</code> function from this package. To visualize a palette you can use the available <a href="https://colorbrewer2.org/">online tool</a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">display.brewer.all</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="images/7-palettes.png" class="img-fluid" alt="RColorBrewer Palettes.">{{width=“300pt”}}</p>
+<p>Here is one more example of how you can use the scale functions - take a look at the code below. We used two <code>geom_histogram()</code> calls, or layers, to plot a histogram of pain at baseline and at follow-up. This allows us to visualize that pain at follow-up tends to be lower than at baseline.</p>
+<p>We also specify the fill to be by “Baseline” and “Follow-up” within the aesthetic, even though this isn’t a column in the data: this is a sort of manual way to color the bars. We use the <code>scale_fill_manual()</code> function to then specify the colors we want to use for these two categories using the <code>values</code> argument. We received three warnings when creating this plot! This is because we have many NA values for follow-up and because we did not specify the bin size for either histogram. C’est la vie.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">fill=</span><span class="st">"Baseline"</span>)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP, <span class="at">fill=</span><span class="st">"Follow-Up"</span>)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"violetred"</span>, <span class="st">"pink"</span>), <span class="at">name=</span><span class="st">"Measurement"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 3604 rows containing non-finite values (`stat_bin()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -520,53 +557,53 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="adding-groups" class="level2" data-number="7.3">
 <h2 data-number="7.3" class="anchored" data-anchor-id="adding-groups"><span class="header-section-number">7.3</span> Adding Groups</h2>
 <p>In the example above, we created two histograms using two calls to the <code>geom_histogram()</code> function, but there is another way to create multiple layers like this when you have a variable that you want to separate the geom layer on. For example, suppose we want to visualize the distribution of physical function by whether someone has follow-up information. Below we create the variable <code>HAS_FOLLOW_UP</code> before using it in our aesthetic for <code>geom_density()</code> as both the color and group. In fact, we do not have to add the <code>group</code> argument because as soon as we specify to R that we want to color the density plots by this variable, R will create the grouping. Finally, we update the legend for this grouping using the <code>scale_color_discrete()</code> function, since the discrete variable <code>HAS_FOLLOW_UP</code> specifies the color.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-14_97e8212f4ee1619a1884e04d01f1f897">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>HAS_FOLLOW_UP <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(pain_df<span class="sc">$</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">group=</span>HAS_FOLLOW_UP, </span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>HAS_FOLLOW_UP)) <span class="sc">+</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name=</span><span class="st">"Follow-Up"</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)) <span class="sc">+</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Physical Function T-Score"</span>, <span class="at">y=</span><span class="st">"Estimated Density"</span>) <span class="sc">+</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pain_df<span class="sc">$</span>HAS_FOLLOW_UP <span class="ot">&lt;-</span> <span class="sc">!</span><span class="fu">is.na</span>(pain_df<span class="sc">$</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="fu">aes</span>(<span class="at">x=</span>PROMIS_PHYSICAL_FUNCTION, <span class="at">group=</span>HAS_FOLLOW_UP, </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color=</span>HAS_FOLLOW_UP)) <span class="sc">+</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(<span class="at">name=</span><span class="st">"Follow-Up"</span>, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)) <span class="sc">+</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"PROMIS Physical Function T-Score"</span>, <span class="at">y=</span><span class="st">"Estimated Density"</span>) <span class="sc">+</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Let’s try another example. Suppose that we want to find the distribution of initial overall pain by those that do and do not have follow up. In this case, we want to plot the proportion of each pain score for each group rather than comparing counts. We first need to find these proportions, which we do by grouping and summarizing over our data.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-15_791ec1637d46d8627fadc92c38930b74">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>pain_df_grp <span class="ot">&lt;-</span> pain_df <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(HAS_FOLLOW_UP, PAIN_INTENSITY_AVERAGE) <span class="sc">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> tot<span class="sc">/</span><span class="fu">sum</span>(tot)) <span class="sc">%&gt;%</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pain_df_grp)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 4</span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   HAS_FOLLOW_UP PAIN_INTENSITY_AVERAGE   tot    prop</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;lgl&gt;                          &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 FALSE                              0     8 0.00222</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 FALSE                              1    16 0.00444</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 FALSE                              2    62 0.0172 </span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 FALSE                              3   132 0.0366 </span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 FALSE                              4   273 0.0757 </span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>pain_df_grp <span class="ot">&lt;-</span> pain_df <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(HAS_FOLLOW_UP, PAIN_INTENSITY_AVERAGE) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> tot<span class="sc">/</span><span class="fu">sum</span>(tot)) <span class="sc">%&gt;%</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pain_df_grp)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 4</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   HAS_FOLLOW_UP PAIN_INTENSITY_AVERAGE   tot    prop</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;lgl&gt;                          &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 FALSE                              0     8 0.00222</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 FALSE                              1    16 0.00444</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 FALSE                              2    62 0.0172 </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 FALSE                              3   132 0.0366 </span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 FALSE                              4   273 0.0757 </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now use the <code>geom_col()</code> function to create a bar plot of these proportions. By default, this function will stack the bars on top of each other when there is grouping. Try adding <code>position="dodge"</code> to the <code>geom_col()</code> function to place the bars side by side instead of on top of each other.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-16_df7c4bfcfc4d31d86c6c3bca62a5d74b">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df_grp)<span class="sc">+</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">y=</span>prop, <span class="at">fill=</span>HAS_FOLLOW_UP)) <span class="sc">+</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">name=</span><span class="st">"Seen at Follow Up"</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)) <span class="sc">+</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df_grp)<span class="sc">+</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">y=</span>prop, <span class="at">fill=</span>HAS_FOLLOW_UP)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_discrete</span>(<span class="at">name=</span><span class="st">"Seen at Follow Up"</span>, <span class="at">labels=</span><span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Yes"</span>)) <span class="sc">+</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Proportion"</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -575,26 +612,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="7.3.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">7.3.1</span> Practice Question</h3>
 <p>Recreate the following plot.</p>
 <p><img src="images/7-practicequestion2answer.png" alt="“”" width="400pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-17_e3f1852ad4d16a932a602f7def9a975c">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another way to visualize data by group is to add a facet wrap to your ggplot object. Facets divide a plot into subplots based on one or more discrete variable values. We can either arrange these plots as a grid where the rows and/or columns correspond to the variables we are grouping by using <code>facet_grid()</code> and specifying the column and row variables using the <code>col</code> and <code>row</code> arguments respectively. Or we can wrap the plots into a rectangular format using <code>facet_wrap()</code> and specifying the columns using the <code>facet</code> argument. Below, we take one of our previous plots and add a facet grid where the columns of the grid are given by racial group. If we had set <code>row=vars(PAT_RACE_CAT)</code>, then this would stack the plots vertically. Note that we have to specify the variables inside the <code>vars()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-18_c0b36859caf0ab0e85002d529b4ed9f8">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">fill=</span><span class="st">"Baseline"</span>)) <span class="sc">+</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP, <span class="at">fill=</span><span class="st">"Follow-Up"</span>)) <span class="sc">+</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"violetred"</span>, <span class="st">"pink"</span>), <span class="at">name=</span><span class="st">"Measurement"</span>) <span class="sc">+</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">row=</span><span class="fu">vars</span>(PAT_RACE_CAT))<span class="sc">+</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 3604 rows containing non-finite values (`stat_bin()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_df)<span class="sc">+</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE, <span class="at">fill=</span><span class="st">"Baseline"</span>)) <span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>PAIN_INTENSITY_AVERAGE.FOLLOW_UP, <span class="at">fill=</span><span class="st">"Follow-Up"</span>)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">10</span>)) <span class="sc">+</span> </span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values=</span><span class="fu">c</span>(<span class="st">"violetred"</span>, <span class="st">"pink"</span>), <span class="at">name=</span><span class="st">"Measurement"</span>) <span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Reported Pain Intensity"</span>, <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(<span class="at">row=</span><span class="fu">vars</span>(PAT_RACE_CAT))<span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 3604 rows containing non-finite values (`stat_bin()`).</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -604,89 +639,90 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="extra-options" class="level2" data-number="7.4">
 <h2 data-number="7.4" class="anchored" data-anchor-id="extra-options"><span class="header-section-number">7.4</span> Extra Options</h2>
 <p>To create our final plot, we will demonstrate some extra features we haven’t covered so far. To create this plot, we first find the number of participants who selected each body region as well as the average pain intensity for those patients. We also classify each body part region into larger groups.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-19_cd11fc6e820b979579614d33ad346900">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>pain_body_map <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">part =</span> <span class="fu">names</span>(pain_df)[<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>])</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>num_patients <span class="ot">&lt;-</span> <span class="fu">colSums</span>(pain_df[,<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>])</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>perc_patients <span class="ot">&lt;-</span> pain_body_map<span class="sc">$</span>num_patients<span class="sc">/</span><span class="fu">nrow</span>(pain_df)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>avg_pain <span class="ot">&lt;-</span> <span class="fu">colSums</span>(pain_df[,<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>] <span class="sc">*</span> pain_df<span class="sc">$</span>PAIN_INTENSITY_AVERAGE)<span class="sc">/</span>pain_body_map<span class="sc">$</span>num_patients</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>pain_body_map <span class="ot">&lt;-</span> pain_body_map <span class="sc">%&gt;%</span> </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>( <span class="at">region =</span> <span class="fu">case_when</span>(</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X208"</span>, <span class="st">"X209"</span>, <span class="st">"X218"</span>,<span class="st">"X219"</span>,<span class="st">"X212"</span>,<span class="st">"X213"</span>) <span class="sc">~</span> <span class="st">"Back"</span>,</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X105"</span>, <span class="st">"X106"</span>, <span class="st">"X205"</span>,<span class="st">"X206"</span>) <span class="sc">~</span> <span class="st">"Neck"</span>,</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X107"</span>, <span class="st">"X110"</span>, <span class="st">"X207"</span>,<span class="st">"X210"</span>) <span class="sc">~</span> <span class="st">"Shoulders"</span>,</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X108"</span>,<span class="st">"X109"</span>,<span class="st">"X112"</span>,<span class="st">"X113"</span>) <span class="sc">~</span> <span class="st">"Chest/Abs"</span>,</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X126"</span>,<span class="st">"X127"</span>,<span class="st">"X228"</span>,<span class="st">"X229"</span>,</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X131"</span>,<span class="st">"X132"</span>,<span class="st">"X233"</span>,<span class="st">"X234"</span>)<span class="sc">~</span><span class="st">"Legs"</span>,</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X111"</span>,<span class="st">"X114"</span>,<span class="st">"X211"</span>,<span class="st">"X214"</span>,<span class="st">"X115"</span>,<span class="st">"X116"</span>,</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X117"</span>,<span class="st">"X118"</span>,<span class="st">"X217"</span>,<span class="st">"X220"</span>)<span class="sc">~</span><span class="st">"Arms"</span>,</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X119"</span>,<span class="st">"X124"</span>,<span class="st">"X221"</span>,<span class="st">"X226"</span>,<span class="st">"X125"</span>,<span class="st">"X128"</span>,</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X227"</span>,<span class="st">"X230"</span>)<span class="sc">~</span><span class="st">"Wrists/Hands"</span>,</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X215"</span>,<span class="st">"X216"</span>)<span class="sc">~</span><span class="st">"Elbows"</span>,</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X135"</span>,<span class="st">"X136"</span>,<span class="st">"X237"</span>,<span class="st">"X238"</span>,<span class="st">"X133"</span>,<span class="st">"X134"</span>,</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X235"</span>,<span class="st">"X236"</span>)<span class="sc">~</span><span class="st">"Feet/Ankles"</span>,</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X129"</span>,<span class="st">"X130"</span>,<span class="st">"X231"</span>,<span class="st">"X232"</span>)<span class="sc">~</span><span class="st">"Knees"</span>,</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X101"</span>,<span class="st">"X102"</span>,<span class="st">"X103"</span>,<span class="st">"X104"</span>,<span class="st">"X201"</span>,<span class="st">"X203"</span>,</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X202"</span>,<span class="st">"X204"</span>)<span class="sc">~</span><span class="st">"Head"</span>,</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X120"</span>,<span class="st">"X121"</span>,<span class="st">"X122"</span>,<span class="st">"X123"</span>,<span class="st">"X222"</span>,<span class="st">"X223"</span>,</span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X224"</span>,<span class="st">"X225"</span>)<span class="sc">~</span><span class="st">"Hips"</span>))</span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pain_body_map)</span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   part num_patients perc_patients avg_pain region</span></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 X101          323        0.0646     6.69   Head</span></span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 X102          322        0.0644     6.82   Head</span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 X103          165        0.0330     6.86   Head</span></span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 X104          165        0.0330     6.95   Head</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 X105          493        0.0986     6.90   Neck</span></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 X106          507        0.1014     6.92   Neck</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>pain_body_map <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">part =</span> <span class="fu">names</span>(pain_df)[<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>])</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>num_patients <span class="ot">&lt;-</span> <span class="fu">colSums</span>(pain_df[,<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>])</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>perc_patients <span class="ot">&lt;-</span> pain_body_map<span class="sc">$</span>num_patients<span class="sc">/</span><span class="fu">nrow</span>(pain_df)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>pain_body_map<span class="sc">$</span>avg_pain <span class="ot">&lt;-</span> <span class="fu">colSums</span>(pain_df[,<span class="dv">2</span><span class="sc">:</span><span class="dv">75</span>] <span class="sc">*</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                                pain_df<span class="sc">$</span>PAIN_INTENSITY_AVERAGE) <span class="sc">/</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  pain_body_map<span class="sc">$</span>num_patients</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>pain_body_map <span class="ot">&lt;-</span> pain_body_map <span class="sc">%&gt;%</span> </span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>( <span class="at">region =</span> <span class="fu">case_when</span>(</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X208"</span>, <span class="st">"X209"</span>, <span class="st">"X218"</span>,<span class="st">"X219"</span>,<span class="st">"X212"</span>,<span class="st">"X213"</span>) <span class="sc">~</span> <span class="st">"Back"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X105"</span>, <span class="st">"X106"</span>, <span class="st">"X205"</span>,<span class="st">"X206"</span>) <span class="sc">~</span> <span class="st">"Neck"</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X107"</span>, <span class="st">"X110"</span>, <span class="st">"X207"</span>,<span class="st">"X210"</span>) <span class="sc">~</span> <span class="st">"Shoulders"</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X108"</span>,<span class="st">"X109"</span>,<span class="st">"X112"</span>,<span class="st">"X113"</span>) <span class="sc">~</span> <span class="st">"Chest/Abs"</span>,</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X126"</span>,<span class="st">"X127"</span>,<span class="st">"X228"</span>,<span class="st">"X229"</span>,</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X131"</span>,<span class="st">"X132"</span>,<span class="st">"X233"</span>,<span class="st">"X234"</span>)<span class="sc">~</span><span class="st">"Legs"</span>,</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X111"</span>,<span class="st">"X114"</span>,<span class="st">"X211"</span>,<span class="st">"X214"</span>,<span class="st">"X115"</span>,<span class="st">"X116"</span>,</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X117"</span>,<span class="st">"X118"</span>,<span class="st">"X217"</span>,<span class="st">"X220"</span>)<span class="sc">~</span><span class="st">"Arms"</span>,</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X119"</span>,<span class="st">"X124"</span>,<span class="st">"X221"</span>,<span class="st">"X226"</span>,<span class="st">"X125"</span>,<span class="st">"X128"</span>,</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X227"</span>,<span class="st">"X230"</span>)<span class="sc">~</span><span class="st">"Wrists/Hands"</span>,</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X215"</span>,<span class="st">"X216"</span>)<span class="sc">~</span><span class="st">"Elbows"</span>,</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X135"</span>,<span class="st">"X136"</span>,<span class="st">"X237"</span>,<span class="st">"X238"</span>,<span class="st">"X133"</span>,<span class="st">"X134"</span>,</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X235"</span>,<span class="st">"X236"</span>)<span class="sc">~</span><span class="st">"Feet/Ankles"</span>,</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X129"</span>,<span class="st">"X130"</span>,<span class="st">"X231"</span>,<span class="st">"X232"</span>)<span class="sc">~</span><span class="st">"Knees"</span>,</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X101"</span>,<span class="st">"X102"</span>,<span class="st">"X103"</span>,<span class="st">"X104"</span>,<span class="st">"X201"</span>,<span class="st">"X203"</span>,</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X202"</span>,<span class="st">"X204"</span>)<span class="sc">~</span><span class="st">"Head"</span>,</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>    part <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"X120"</span>,<span class="st">"X121"</span>,<span class="st">"X122"</span>,<span class="st">"X123"</span>,<span class="st">"X222"</span>,<span class="st">"X223"</span>,</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">"X224"</span>,<span class="st">"X225"</span>)<span class="sc">~</span><span class="st">"Hips"</span>))</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pain_body_map)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   part num_patients perc_patients avg_pain region</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 X101          323        0.0646     6.69   Head</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 X102          322        0.0644     6.82   Head</span></span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 X103          165        0.0330     6.86   Head</span></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 X104          165        0.0330     6.95   Head</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 X105          493        0.0986     6.90   Neck</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 X106          507        0.1014     6.92   Neck</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Within the theme we’ve chosen, we are able to update any of the <a href="https://ggplot2.tidyverse.org/reference/theme.html">theme options</a>. Below we use the <code>theme()</code> function to update the legend position to the bottom and the grid lines to light pink. Additionally, we add a horizontal line using the <code>geom_hline()</code> function (<code>geom_vline()</code> and <code>geom_abline()</code> can add vertical or diagonal lines respectively) and add a text annotation using the <code>annotate()</code> function. The resulting plot below shows the average pain value for each body part as well as the proportion of patients who categorized it as being painful.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-20_8158cf2423c832a41c8fc6d591385e90">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients, <span class="at">y=</span>avg_pain, <span class="at">label=</span>part, <span class="at">color=</span>region)) <span class="sc">+</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fu">mean</span>(pain_body_map<span class="sc">$</span>avg_pain)) <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">label=</span><span class="st">"Average Pain Value"</span>, <span class="at">x=</span><span class="fl">0.35</span>, <span class="at">y=</span><span class="fl">7.0</span>) <span class="sc">+</span> </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Average Pain of Patients"</span>) <span class="sc">+</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>, <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Within the theme we’ve chosen, we are able to update any of the theme options (see <code>?theme</code>). Below we use the <code>theme()</code> function to update the legend position to the bottom and the grid lines to light pink. Additionally, we add a horizontal line using the <code>geom_hline()</code> function (<code>geom_vline()</code> and <code>geom_abline()</code> can add vertical or diagonal lines respectively) and add a text annotation using the <code>annotate()</code> function. The resulting plot below shows the average pain value for each body part as well as the proportion of patients who categorized it as being painful.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients, <span class="at">y=</span>avg_pain, <span class="at">label=</span>part, <span class="at">color=</span>region)) <span class="sc">+</span> </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fu">mean</span>(pain_body_map<span class="sc">$</span>avg_pain)) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">label=</span><span class="st">"Average Pain Value"</span>, <span class="at">x=</span><span class="fl">0.35</span>, <span class="at">y=</span><span class="fl">7.0</span>) <span class="sc">+</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Average Pain of Patients"</span>) <span class="sc">+</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>, </span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>So far we have not saved any of our figures as objects. Below, I create two plots and save them as objects named <code>p1</code> and <code>p2</code>. If we want to save these plots, we can use the <code>ggsave()</code> function, which saves the last plot generated under the file name provided. Additionally, I can use the <code>patchwork</code> package to incorporate multiple plots together. A <code>+</code> between plots puts them side by side whereas <code>/</code> stacks them.</p>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-21_206f922aa790bc592d76914acf857c41">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients, <span class="at">y=</span>avg_pain, <span class="at">label=</span>part, <span class="at">color=</span>region)) <span class="sc">+</span> </span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fu">mean</span>(pain_body_map<span class="sc">$</span>avg_pain)) <span class="sc">+</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">label=</span><span class="st">"Average Pain Value"</span>, <span class="at">x=</span><span class="fl">0.35</span>, <span class="at">y=</span><span class="fl">7.0</span>) <span class="sc">+</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Average Pain of Patients"</span>) <span class="sc">+</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>, <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients), <span class="at">color=</span><span class="st">"violetred"</span>, <span class="at">fill=</span><span class="st">"lightpink"</span>) <span class="sc">+</span> </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion of Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Count"</span>) <span class="sc">+</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So far we have not saved any of our figures as objects. Below, I create two plots and save them as objects named <code>p1</code> and <code>p2</code>. If we want to save these plots, we can use the <code>ggsave()</code> function, which saves the last plot generated under the file name provided. Additionally, I can use the <strong>patchwork</strong> package to incorporate multiple plots together. A <code>+</code> between plots puts them side by side whereas <code>/</code> stacks them.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients, <span class="at">y=</span>avg_pain, <span class="at">label=</span>part, <span class="at">color=</span>region)) <span class="sc">+</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fu">mean</span>(pain_body_map<span class="sc">$</span>avg_pain)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom=</span><span class="st">"text"</span>, <span class="at">label=</span><span class="st">"Average Pain Value"</span>, <span class="at">x=</span><span class="fl">0.35</span>, <span class="at">y=</span><span class="fl">7.0</span>) <span class="sc">+</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Average Pain of Patients"</span>) <span class="sc">+</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"bottom"</span>, </span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pain_body_map) <span class="sc">+</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_patients), <span class="at">color=</span><span class="st">"violetred"</span>, <span class="at">fill=</span><span class="st">"lightpink"</span>) <span class="sc">+</span> </span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Proportion of Patients Selected Region"</span>, <span class="at">y=</span><span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()<span class="sc">+</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">colour =</span> <span class="st">"lightpink"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-22_9b0818708e07ef10e1696ee38306ce11">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="7_visualization_ggplot_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="7_visualization_ggplot_cache/html/unnamed-chunk-23_5360ee00e55457cae0c23b2b75f3fd80">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"images/myplot.png"</span>) </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Saving 6 x 3.71 in image</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"images/myplot.png"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="recap-video" class="level2" data-number="7.5">
@@ -695,17 +731,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exercises" class="level2" data-number="7.6">
 <h2 data-number="7.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.6</span> Exercises</h2>
-<p>For this chapter’s exercises, use the <code>covidcases</code> data set that we first introduced in <a href="https://alicepaul.github.io/health-data-science-in-r/book/5_data_transformations_summaries.html">Chapter 5</a> to recreate the plots below. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.</p>
+<p>For this chapter’s exercises, use the <code>covidcases</code> data set that we first introduced in <a href="5_data_transformations_summaries.html">Chapter&nbsp;<span>5</span></a> to recreate the plots below. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.</p>
 <ol type="1">
-<li>Replicate the plot below, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark (this date was taken from this <a href="https://www.ajmc.com/view/a-timeline-of-covid19-developments-in-2020">timeline</a>, and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation.</li>
+<li>Replicate the plot in <a href="#fig-q1">Figure&nbsp;<span>7.1</span></a>, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark <span class="citation" data-cites="covid_timeline">(<a href="../references.html#ref-covid_timeline" role="doc-biblioref">Staff, n.d.</a>)</span>, and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation.</li>
 </ol>
-<p><img src="images/7-exercise1plot.png" alt="“”" width="400pt" align="center"></p>
+<div id="fig-q1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/7-exercise1plot.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;7.1: Covid-19 Cases Over Time by State.</figcaption>
+</figure>
+</div>
 <ol start="2" type="1">
-<li>Replicate the plot below, which is a stacked area chart for the total deaths from Covid-19 in the states with the top ten total death counts overall.</li>
+<li>Replicate the plot in <a href="#fig-q2">Figure&nbsp;<span>7.2</span></a>, which is a stacked area chart for the total deaths from Covid-19 in the states with the top ten total death counts overall.</li>
 </ol>
-<p><img src="images/7-exercise2plot.png" alt="“”" width="400pt" align="center"></p>
+<div id="fig-q2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/7-exercise2plot.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;7.2: Covid-19 Cases Over Time by State.</figcaption>
+</figure>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-alter2021hierarchical" class="csl-entry" role="listitem">
+Alter, Benedict J, Nathan P Anderson, Andrea G Gillman, Qing Yin, Jong-Hyeon Jeong, and Ajay D Wasan. 2021. <span>“Hierarchical Clustering by Patient-Reported Pain Distribution Alone Identifies Distinct Chronic Pain Subgroups Differing by Pain Intensity, Quality, and Clinical Outcomes.”</span> <em>PLoS One</em> 16 (8): e0254862.
+</div>
+<div id="ref-R-RColorBrewer" class="csl-entry" role="listitem">
+Neuwirth, Erich. 2022. <em>RColorBrewer: ColorBrewer Palettes</em>. <a href="https://CRAN.R-project.org/package=RColorBrewer">https://CRAN.R-project.org/package=RColorBrewer</a>.
+</div>
+<div id="ref-R-patchwork" class="csl-entry" role="listitem">
+Pedersen, Thomas Lin. 2022. <em>Patchwork: The Composer of Plots</em>. <a href="https://CRAN.R-project.org/package=patchwork">https://CRAN.R-project.org/package=patchwork</a>.
+</div>
+<div id="ref-covid_timeline" class="csl-entry" role="listitem">
+Staff, AJMC. n.d. <span>“A Timeline of COVID-19 Developments in 2020.”</span> <a href="https://www.ajmc.com/view/a-timeline-of-covid19-developments-in-2020">https://www.ajmc.com/view/a-timeline-of-covid19-developments-in-2020</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

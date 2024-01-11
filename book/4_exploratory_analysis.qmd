@@ -1,18 +1,17 @@
-
 # Intro to Exploratory Data Analysis {#sec-exploratory}
-  
-In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we will learn how to conduct more exploratory analysis, focusing on the univariate and bivariate sample distributions of the data. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to create summary plots using the `GGally` package and tables using the `gt` and `gtsummary` packages.
 
-```{r}
-suppressPackageStartupMessages(library(HDSinRdata))
-suppressPackageStartupMessages(library(GGally)) 
-suppressPackageStartupMessages(library(gt))
-suppressPackageStartupMessages(library(gtsummary))
+In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we will learn how to conduct more exploratory analysis, focusing on the univariate and bivariate sample distributions of the data. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to create summary plots using the **GGally** package [@R-GGally] and tables using the **gt** [@R-gt] and **gtsummary** [@R-gtsummary] packages.
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(HDSinRdata)
+library(GGally) 
+library(gt)
+library(gtsummary)
 ```
 
 ## Univariate Distributions
 
-In this chapter, we will use a sample of the National Health and Nutrition Examination Survey ([NHANES](https://www.cdc.gov/nchs/nhanes/index.htm)) containing lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. There are 31,625 observations in this sample. Use the help operator `?NHANESsample` to read the column descriptions.
+In this chapter, we will use a sample of the National Health and Nutrition Examination Survey [@nhanes] containing lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering followed the analysis in @huang2022association. There are 31,625 observations in this sample. Use the help operator `?NHANESsample` to read the column descriptions.
 
 ```{r}
 data(NHANESsample)
@@ -48,7 +47,8 @@ nhanes_df <- subset(nhanes_df, nhanes_df$YEAR==2017)
 As shown above, smoking status has been coded into three categories: "NeverSmoke", "QuitSmoke", and "StillSmoke". We want to create a new column to represent whether someone has ever smoked. To do so, we use the `ifelse()` function, which allows us to create a new vector using logic. The logic captured by this function is that we will take one value if we meet some condition(s) and we will take a second value otherwise. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value to use if we meet the condition(s), and the last argument is the value to use otherwise. We use this function to create a new vector `EVER_SMOKE` that is equal to "Yes" for those who are either still smoking or quit smoking and equal to "No" otherwise.
 
 ```{r}
-nhanes_df$EVER_SMOKE <- ifelse(nhanes_df$SMOKE %in% c("QuitSmoke", "StillSmoke"), 
+nhanes_df$EVER_SMOKE <- ifelse(nhanes_df$SMOKE %in% c("QuitSmoke", 
+                                                      "StillSmoke"), 
                                "Yes", "No")
 table(nhanes_df$EVER_SMOKE)
 ```
@@ -59,7 +59,7 @@ The `summary()` and `table()` functions allow us to summarize the univariate sam
 hist(log(nhanes_df$LEAD))
 ```
 
-If we want to polish this figure, we can use some of the other optional arguments to the `hist()` function. For example, we may want to update the text `log(nhanes_df$lead)` in the title and x-axis. Below, we update the [color](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf), labels, and number of bins for the plot. The argument `breaks` specifies the number of bins to use to create the histogram, `col` specifies the color, `main` specifies the title of the plot, and `xlab` specifies the x-axis label (using `ylab` would specify the y-axis label). Read the documentation `?hist` for the full list of arguments available.
+If we want to polish this figure, we can use some of the other optional arguments to the `hist()` function. For example, we may want to update the text `log(nhanes_df$lead)` in the title and x-axis. Below, we update the color, labels, and number of bins for the plot. The function `colors()` returns all recognized colors in R. The argument `breaks` specifies the number of bins to use to create the histogram, `col` specifies the color, `main` specifies the title of the plot, and `xlab` specifies the x-axis label (using `ylab` would specify the y-axis label). Read the documentation `?hist` for the full list of arguments available.
 
 ```{r}
 hist(log(nhanes_df$LEAD), breaks = 30, col="blue", 
@@ -85,7 +85,9 @@ barplot(height=smoke_counts, names=names(smoke_counts),
 
 ### Practice Question
 
-Recreate the following barplot of the percentage of values in each `LEAD_QUANTILE` category: <img src="images/4-practicequestion1answer.png" alt="“”" width="300pt" align="center"/>
+Recreate the barplot in @fig-pq1 showing the proportion of values in each `LEAD_QUANTILE` category.
+
+![Lead Quantile Bar Plot.](images/4-practicequestion1answer.png){#fig-pq1 fig-align="center" width="200pt"}
 
 ```{r}
 # Insert your solution here:
@@ -124,7 +126,8 @@ boxplot(log(LEAD)~SEX+EVER_SMOKE, data=nhanes_df,
 To visualize the bivariate distributions between two continuous columns, we can use scatter plots. To create a scatter plot, we use the `plot()` function again. Below, we use this function to show the relationship between systolic and diastolic blood pressure.
 
 ```{r}
-plot(nhanes_df$SBP1, nhanes_df$DBP1, col="blue", xlab="Systolic Blood Pressure",
+plot(nhanes_df$SBP1, nhanes_df$DBP1, col="blue", 
+     xlab="Systolic Blood Pressure",
     ylab="Diastolic Blood Pressure")
 ```
 
@@ -151,7 +154,8 @@ The plots above are all displayed as a single figure. If we want to display mult
 par(mfrow=c(1,2))
 
 # boxplot
-boxplot(log(LEAD)~HYP, data=nhanes_df, xlab="Hypertension", ylab="Log Blood Lead Level")
+boxplot(log(LEAD)~HYP, data=nhanes_df, xlab="Hypertension", 
+        ylab="Log Blood Lead Level")
 
 # scatterplot
 plot(nhanes_df$SBP1, nhanes_df$DBP1, col=as.factor(nhanes_df$HYP), 
@@ -169,9 +173,9 @@ par(mfrow=c(1,1))
 
 ### Practice Question
 
-Recreate these three boxplots (one for each education level) of income by BMI category and arrange them next to each other using the par() function.
+Recreate the three boxplots in @fig-pq2 (one for each education level) of income by BMI category and arrange them next to each other using the par() function.
 
-<img src="images/4-practicequestion2answer.png" alt="“”" width="400pt" align="center"/>
+![Box Plot Example.](images/4-practicequestion2answer.png){#fig-pq2 fig-align="center" width="300pt"}
 
 ```{r}
 # Insert your solution here:
@@ -179,7 +183,7 @@ Recreate these three boxplots (one for each education level) of income by BMI ca
 
 ## Autogenerated Plots
 
-Above, we learned some new functions for visualizing the relationship between columns. The `GGally` package contains some useful functions for looking at multiple univariate and bivariate relationships at the same time, such as the `ggpairs()` function. `ggpairs()` takes the data as its first argument. By default, it will plot the pairwise distributions for all columns, but we can also specify to only select a subset of columns using the `columns` argument. You can see below that it plots bar plots and density plots for each univariate sample distribution. It then plots the bivariate distributions and calculates the Pearson correlation for all pairs of continuous columns. That's a lot of information!
+Above, we learned some new functions for visualizing the relationship between columns. The **GGally** package [@R-GGally] contains some useful functions for looking at multiple univariate and bivariate relationships at the same time, such as the `ggpairs()` function. `ggpairs()` takes the data as its first argument. By default, it will plot the pairwise distributions for all columns, but we can also specify to only select a subset of columns using the `columns` argument. You can see below that it plots bar plots and density plots for each univariate sample distribution. It then plots the bivariate distributions and calculates the Pearson correlation for all pairs of continuous columns. That's a lot of information!
 
 ```{r}
 ggpairs(nhanes_df, columns = c("SEX", "AGE", "LEAD", "SBP1", "DBP1"))
@@ -194,21 +198,20 @@ ggcorr(nhanes_cont, label=TRUE)
 
 ## Tables
 
-Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The `gt` package is designed to create polished tables that can include footnotes, titles, column labels, etc. The `gtsummary` package is an extension of this package that can create summary tables. We will focus on the latter but come back to creating nice tables in [Chapter -@sec-rmarkdown].
+Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The **gt** package [@R-gt] is designed to create polished tables that can include footnotes, titles, column labels, etc. The **gtsummary** package [@R-gtsummary] is an extension of this package that can create summary tables. We will focus on the latter but come back to creating nice tables in [Chapter -@sec-rmarkdown].
 
-To start, we create a gt object (a special type of table) of the first six rows of our data using the `gt()` function. In R Markdown, the table would be automatically displayed nicely when knit. Since we are using this within a Jupyter notebook, however, we need to pass this to another function to make sure it displays correctly as HTML. The pipe operator `%>%` passes the result on the left hand side as the first argument to the function on the right hand side. You can see the difference in the formatting as opposed to printing the data.
+To start, we create a gt object (a special type of table) of the first six rows of our data using the `gt()` function. You can see the difference in the formatting as opposed to printing the data.
 
 ```{r}
-gt(head(nhanes_df)) %>% gt:::as.tags.gt_tbl()
+gt(head(nhanes_df[, c("ID", "AGE", "SEX", "RACE")])) 
 ```
 
-We will now show you how to use the `tbl_summary()` function in the `gtsummary` package. The first argument to this function is again the data frame. By default, this function will summarize all the columns in the data. Instead, we use the `include` argument to specify a list of columns to include. We then pipe this result to `as_gt()` which creates a gt table from the summary output. Again, we then need to pass this to `gt:::as.tags.gt_tbl()` to display this table as HTML within a Jupyter notebook. Note that the table computes the total number of observations and the proportions for categorical columns and the median and interquartile range for continuous columns.
+We will now show you how to use the `tbl_summary()` function in the **gtsummary** package. The first argument to this function is again the data frame. By default, this function will summarize all the columns in the data. Instead, we use the `include` argument to specify a list of columns to include. We then pipe this result to `as_gt()` which creates a gt table from the summary output. Again, we then need to pass this to `gt:::as.tags.gt_tbl()` to display this table as HTML within a Jupyter notebook. Note that the table computes the total number of observations and the proportions for categorical columns and the median and interquartile range for continuous columns.
 
 ```{r}
 tbl_summary(nhanes_df, include= c("SEX", "RACE", "AGE", "EDUCATION", "SMOKE",
                                   "BMI_CAT", "LEAD", "SBP1", "DBP1", "HYP")) %>% 
-  as_gt() %>% 
-  gt:::as.tags.gt_tbl()
+  as_gt() 
 ```
 
 We can update our table by changing some of its arguments. This time, we specify that we want to stratify our table by hypertension status so that the table summarizes the data by this grouping. Additionally, we change how continuous columns are summarized by specifying that we want to report the mean and standard deviation instead of the median and interquartile range. We do this using the `statistic` argument. The documentation for the `tbl_summary()` function can help you format this argument depending on which statistics you would like to display.
@@ -217,15 +220,16 @@ We can update our table by changing some of its arguments. This time, we specify
 tbl_summary(nhanes_df, include= c("SEX", "RACE", "AGE", "EDUCATION", "SMOKE",
                                   "BMI_CAT", "LEAD", "SBP1", "DBP1", "HYP"),
            by = "HYP", statistic = list(all_continuous() ~ "{mean} ({sd})")) %>% 
-  as_gt() %>% 
-  gt:::as.tags.gt_tbl()
+  as_gt() 
 ```
 
-Outside of the `gt` and `gtsummary` packages, another common package used to create summary tables is the [`tableone` package](https://cran.r-project.org/web/packages/tableone/vignettes/introduction.html), which is not covered in this book.
+Outside of the **gt** and **gtsummary** packages, another common package used to create summary tables is the **tableone** package [@R-tableone], which is not covered in this book.
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 {{< video https://www.youtube.com/embed/Kdc6x-bDfso width="700" height="500" >}}
+:::
 
 ## Exercises
 
@@ -237,6 +241,8 @@ For these exercises, we will continue using the `nhanes_df` data.
 
 3.  For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum and maximum values for all continuous columns.
 
-4.  Recreate the following two plots in R. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.
+4.  Recreate the the plots in @fig-q41 and @fig-q42. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.
 
-<img src="images/4-exercise4plot1.png" alt="“”" width="250pt" align="left"/> <img src="images/4-exercise4plot2.png" alt="“”" width="250pt" align="left"/>
+![Education Levels Over Time.](images/4-exercise4plot1.png){#fig-q41 fig-align="center" width="150pt"}
+
+![Blood Lead Level by Education Level.](images/4-exercise4plot2.png){#fig-q42 fig-align="center" width="150pt"}

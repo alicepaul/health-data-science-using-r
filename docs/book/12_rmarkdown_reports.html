@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -98,6 +117,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -129,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -278,6 +300,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -326,39 +354,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This chapter will introduce you to R Markdown, which is a document format that combines markdown text with R code. Writing in R markdown can help you write reproducible code and create polished reports to present your analyses.</p>
 <section id="starting-an-r-markdown-file" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="starting-an-r-markdown-file"><span class="header-section-number">12.1</span> Starting an R Markdown file</h2>
-<p>To create an R Markdown file, you will need to have RStudio installed as an application. You’ll also need to install the <code>rmarkdown</code> package in addition to the <code>knitr</code> package. We also recommend the <code>bookdown</code> package, which allows us to create section, figure, and table references, as well as the <code>kableExtra</code> package for formatting your tables.</p>
-<p>Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in <a href="https://alicepaul.github.io/health-data-science-in-r/book/1_intro_to_r.html">Chapter 1</a>. Just like opening a new R file, you’ll want to go to File -&gt; New File, but instead of selecting ‘R Script’, you’ll now select ‘R Markdown…’. This should bring up a window that looks like the following:</p>
-<p><img src="images/12-new-r-markdown-window.png" alt="“”" width="400pt" align="center"></p>
-<p>First, enter a title of your choosing for your report and type your name in the Author field - note that you can always change these later - and then click on OK. This will open an R Markdown file that has the extension .Rmd. Make sure to save this file with a suitable name in your desired location on your computer by selecting File -&gt; Save, and then you’re ready to start writing your report!</p>
-<p>Your file should now look like this:</p>
-<p><img src="images/12-r-markdown-file.png" alt="“”" width="1000pt" align="center"></p>
-<p>You will write all of the text and code that you would like to include in your report in this .Rmd file, and then you can produce a nicely formatted report from this file by ‘knitting’ the file. You can either knit to HTML, PDF, or WORD by clicking on the knit icon (below) from the toolbar at the top of the page and then selecting your desired output file type.</p>
-<p><img src="images/12-knit-icon.png" alt="“”" width="80pt" align="center"></p>
+<p>To create an R Markdown file, you will need to have RStudio installed as an application. You’ll also need to install the <strong>rmarkdown</strong> package <span class="citation" data-cites="R-rmarkdown">(<a href="../references.html#ref-R-rmarkdown" role="doc-biblioref">Xie, Dervieux, and Riederer 2020</a>)</span> in addition to the <strong>knitr</strong> package <span class="citation" data-cites="R-knitr">(<a href="../references.html#ref-R-knitr" role="doc-biblioref">Xie 2023</a>)</span>. We also recommend the <strong>bookdown</strong> package <span class="citation" data-cites="R-bookdown">(<a href="../references.html#ref-R-bookdown" role="doc-biblioref">Xie 2016</a>)</span>, which allows us to create section, figure, and table references, as well as the <strong>kableExtra</strong> package <span class="citation" data-cites="R-kableExtra">(<a href="../references.html#ref-R-kableExtra" role="doc-biblioref">Zhu 2021</a>)</span> for formatting your tables.</p>
+<p>Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in <a href="1_intro_to_r.html">Chapter&nbsp;<span>1</span></a>. Just like opening a new R file, you’ll want to go to File -&gt; New File, but instead of selecting ‘R Script’, you’ll now select ‘R Markdown…’. This should bring up a window that looks like <a href="#fig-new-markdown">Figure&nbsp;<span>12.1</span></a>.</p>
+<div id="fig-new-markdown" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/12-new-r-markdown-window.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;12.1: Creating a New R Markdown Document.</figcaption>
+</figure>
+</div>
+<p>First, enter a title of your choosing for your report and type your name in the Author field - note that you can always change these later - and then click on OK. This will open an R Markdown file that has the extension .Rmd. Make sure to save this file with a suitable name in your desired location on your computer by selecting File -&gt; Save, and then you’re ready to start writing your report! Your file should now look like <a href="#fig-rmarkdown-file">Figure&nbsp;<span>12.2</span></a>.</p>
+<div id="fig-rmarkdown-file" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/12-r-markdown-file.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;12.2: A New R Markdown Document.</figcaption>
+</figure>
+</div>
+<p>You will write all of the text and code that you would like to include in your report in this .Rmd file, and then you can produce a nicely formatted report from this file by ‘knitting’ the file. You can either knit to HTML, PDF, or WORD by clicking on the knit icon <img src="images/12-knit-icon.png" class="img-fluid" style="width:0.41667in"> from the toolbar at the top of the page and then selecting your desired output file type.</p>
 <section id="adding-code-chunks" class="level3" data-number="12.1.1">
 <h3 data-number="12.1.1" class="anchored" data-anchor-id="adding-code-chunks"><span class="header-section-number">12.1.1</span> Adding Code Chunks</h3>
 <p>Each of the darker gray rectangles is called a code chunk - all of the code used to generate your report will go in these chunks, and all of your writing will go between them. Each code chunk starts with <code>```{r}</code> and ends with <code>```</code>. To create a chunk, you can either</p>
 <ul>
-<li>click on this green “add chunk” symbol <img src="images/12-add-chunk.png" alt="“”" width="30pt" align="left"> in the toolbar at the top of the page</li>
-<li>type <code>```{r}</code> and <code>```</code></li>
-<li>use the keyboard shortcut <strong>Ctrl + Alt + I</strong> (<strong>Cmd + Option + I</strong> on Macs)</li>
+<li><p>click on this green “add chunk” symbol <img src="images/12-add-chunk.png" class="img-fluid" style="width:0.34722in"> in the toolbar at the top of the page,</p></li>
+<li><p>type <code>```{r}</code> and <code>```</code>, OR</p></li>
+<li><p>use the keyboard shortcut <strong>Ctrl + Alt + I</strong> (<strong>Cmd + Option + I</strong> on Macs).</p></li>
 </ul>
-<p>To run the code in a chunk, you can either use the keyboard shortcut <strong>Ctrl + Enter</strong> (<strong>Cmd + Return</strong> on Mac), or you can use one of the following buttons at the top right of the chunks: * <img src="images/12-run-all-chunks-above.png" alt="“”" width="20pt" align="left"> runs all chunks above the current chunk * <i class="fa-play fa" style="font-size: 15px;color: green;"></i> runs the current chunk</p>
+<p>To run the code in a chunk, you can either use the keyboard shortcut <strong>Ctrl + Enter</strong> (<strong>Cmd + Return</strong> on Mac), or you can use one of the following buttons at the top right of the chunks: <img src="images/12-run-all-chunks-above.png" class="img-fluid" style="width:0.27778in"> runs all chunks above the current chunk and <img src="images/12-run-current-chunk.png" class="img-fluid" style="width:0.27778in"> runs the current chunk.</p>
 </section>
 <section id="customizing-chunks" class="level3" data-number="12.1.2">
 <h3 data-number="12.1.2" class="anchored" data-anchor-id="customizing-chunks"><span class="header-section-number">12.1.2</span> Customizing Chunks</h3>
 <p>You can specify whether you want to include the code and/or its various output in your final report by adding the following commands, separated by commas, to the right of the <code>{r}</code> at the top of the code chunk:</p>
 <ul>
-<li><code>include = FALSE</code> makes it so that neither code nor its output will appear in your report</li>
-<li><code>echo = FALSE</code> makes it so that the output of the code but not the code itself will appear in your report</li>
-<li><code>message = FALSE</code>, <code>warning = FALSE</code>, and <code>error = FALSE</code> make it so that messages, warnings, and errors (respectively) that are generated from the code in the chunk won’t appear in your report</li>
+<li><p><code>include = FALSE</code> makes it so that neither code nor its output will appear in your report.</p></li>
+<li><p><code>echo = FALSE</code> makes it so that the output of the code but not the code itself will appear in your report.</p></li>
+<li><p><code>message = FALSE</code>, <code>warning = FALSE</code>, and <code>error = FALSE</code> make it so that messages, warnings, and errors (respectively) that are generated from the code in the chunk won’t appear in your report.</p></li>
 </ul>
 <p>To customize a single code chunk, you can either type one of the above commands next to the <code>{r}</code> at the top of the code chunk by yourself or you can click on the ‘Modify Chunk Options’ symbol <i class="fa-gear fa" style="font-size: 22px; color: gray;"></i> at the top right of the code chunk and change the settings there.</p>
-<p>To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with <code>```{r setup, include=FALSE}</code> using the <code>knitr::opts_chunk$set</code> function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the <code>library()</code> function. For example, below we load the <code>tidyverse</code> and <code>HDSinRdata</code> packages.</p>
-<p><code>{{r setup, include = FALSE}} knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE) library(tidyverse) library(HDSinRdata)</code></p>
+<p>To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with <code>```{r setup, include=FALSE}</code> using the <code>knitr::opts_chunk$set</code> function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the <code>library()</code> function. For example, below we load the <strong>tidyverse</strong> and <strong>HDSinRdata</strong> packages.</p>
+<pre><code>  </code></pre>
 <p>If you want to display the code for your report in a code appendix, you can easily do this by creating an empty code chunk at the end of your .Rmd file with these chunk options <code>ref.label=knitr::all_labels()</code>, <code>echo = TRUE</code>, and <code>eval = FALSE</code>.</p>
-<p><code>{{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}}</code></p>
-<p>You can also have inline R code by using single backticks around your code <code>`r max(c(1,2,3)) `</code>. The code must start with <code>r</code> to be run when knit. This allows you to reference variables in your text. For example, we could display the variance of a column in our data without having to copy the value over.</p>
-<p><code>`r round(var(cars$speed),2)`</code></p>
+<pre><code>  ::: {.cell layout-align="center"}
+  
+  ```{.r .cell-code .code-overflow-wrap}
+  library(tidyverse)
+  library(HDSinRdata)
+  library(kableExtra)
+  library(gt)
+  data(breastcancer)
+  knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE)
+  library(tidyverse)
+  library(HDSinRdata)
+  breastcancer %&gt;% 
+    select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %&gt;%   
+    head()
+  breastcancer %&gt;% 
+    select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %&gt;% 
+    head() %&gt;% 
+    kable(caption = "Head of the Breast Cancer Dataset", 
+        col.names = c("ID", "Diagnosis", "Mean Radius", "Mean Texture", 
+        "Mean Perimeter")) %&gt;%   
+    kable_styling(latex_options = c("scale_down", "HOLD_position"))
+  breastcancer %&gt;% 
+    select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %&gt;% 
+    head() %&gt;% 
+    gt() %&gt;%
+    tab_header(title = "Head of the Breast Cancer Dataset") %&gt;%
+    cols_label(id ~ "ID", 
+               diagnosis ~ "Diagnosis", 
+               radius_mean ~ "Mean Radius", 
+               texture_mean ~ "Mean Texture",
+               perimeter_mean ~ "Mean Perimeter")
+  ```
+  :::</code></pre>
+<p>You can also have inline R code by using single backticks around your code <code>3</code>. The code must start with <code>r</code> to be run when knit. This allows you to reference variables in your text. For example, we could display the variance of a column in our data without having to copy the value over.</p>
+<p><code>27.96</code></p>
 </section>
 </section>
 <section id="formatting-text-in-markdown" class="level2" data-number="12.2">
@@ -372,13 +440,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code># Header</code></p>
 <p><code>## Smaller Header</code></p>
 <p><code>### Even Smaller Header</code></p>
-<p><img src="images/12-headers.png" alt="“”" width="250pt" align="center"></p>
+<div id="fig-headers" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/12-headers.png" class="img-fluid figure-img" style="width:2.77778in"></p>
+<figcaption class="figure-caption">Figure&nbsp;12.3: Example header sizes.</figcaption>
+</figure>
+</div>
 <p>You can also add links <code>[text](www.example.com)</code> and images <code>![alt text](image.png)</code></p>
-<p><a href="https://github.com/alicepaul/r-for-health-data-science">my link</a></p>
+<p><a href="https://alicepaul.github.io/health-data-science-using-r/">Example link.</a></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../images/logo.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">my image</figcaption>
+<figcaption class="figure-caption">Example Image.</figcaption>
 </figure>
 </div>
 <p><a href="https://www.markdownguide.org/">The Markdown Guide</a> has a great <a href="https://www.markdownguide.org/cheat-sheet/">cheat sheet</a> as well as more resources for formatting markdown text.</p>
@@ -396,29 +469,117 @@ ggplot(breastcancer) +
   labs(y = "Average Radius") + 
   scale_x_discrete("Diagnosis", labels = c("Benign", "Malignant"))
 ```</code></pre>
-<p><img src="images/12-example-figure.png" alt="“”" width="600pt" align="center"></p>
-<p>If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the <code>gt</code> and <code>kableExtra</code> packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries.</p>
-<p>To demonstrate the abilities of these package, let’s suppose that we wanted to display the head of the first few columns of the <code>breastcancer</code> dataset from the <code>HDSinRdata</code> package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>breastcancer <span class="sc">%&gt;%</span> <span class="fu">select</span>(id, diagnosis, radius_mean, texture_mean, perimeter_mean) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="images/12-unformatted-table.png" alt="“”" width="500pt" align="center"></p>
-<p>We use the <code>kable()</code> and <code>kable_styling()</code> functions from the <code>kableExtra</code> package to produce a more nicely formatted table. The <code>kable()</code> function generates a table from a data frame. The <code>kable()</code> function allows you to specify some display options for your table. For example, you can add a caption to your table using the <code>caption</code> argument, and you can change the names of the columns in the table using the <code>col.names</code> argument. The <code>kable_styling()</code> has additional options available. Similar to the <code>fig.pos = H</code> command described for figures in the previous section, adding “HOLD_position” to the <code>kable_styling()</code> function will prevent the table from floating on the report; adding <code>"scale_down"</code> scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the <a href="https://www.rdocumentation.org/packages/knitr/versions/1.43/topics/kable">kable</a> and <a href="https://www.rdocumentation.org/packages/kableExtra/versions/1.3.4/topics/kable_styling">kable_styling</a> functions for more options available.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>breastcancer <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, diagnosis, radius_mean, texture_mean, perimeter_mean) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Head of the Breast Cancer Dataset"</span>, </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"ID"</span>, <span class="st">"Diagnosis"</span>, <span class="st">"Mean Radius"</span>, <span class="st">"Mean Texture"</span>, <span class="st">"Mean Perimeter"</span>)) <span class="sc">%&gt;%</span>   </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"scale_down"</span>, <span class="st">"HOLD_position"</span>))</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="images/12-formatted-table.png" alt="“”" width="500pt" align="center"></p>
-<p>Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In <a href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>, we also introduced the <code>gt</code> package. This package is an alternative package to <code>kableExtra</code> that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the <a href="https://gt.rstudio.com/articles/intro-creating-gt-tables.html">package introduction</a> for more details about this package. An example <code>gt</code> table is given below.</p>
-<p><img src="images/12-gt-example.png" alt="“”" width="350pt" align="center"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/12-example-figure.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+</figure>
+</div>
+<p>If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the <strong>gt</strong> and <strong>kableExtra</strong> packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries.</p>
+<p>To demonstrate the abilities of these package, let’s suppose that we wanted to display the head of the first few columns of the <code>breastcancer</code> dataset from the <strong>HDSinRdata</strong> package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>breastcancer <span class="sc">%&gt;%</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, diagnosis, radius_mean, texture_mean, perimeter_mean) <span class="sc">%&gt;%</span>   </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         id diagnosis radius_mean texture_mean perimeter_mean</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   842302         M        18.0         10.4          122.8</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   842517         M        20.6         17.8          132.9</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 84300903         M        19.7         21.2          130.0</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 84348301         M        11.4         20.4           77.6</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 84358402         M        20.3         14.3          135.1</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   843786         M        12.4         15.7           82.6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We use the <code>kable()</code> and <code>kable_styling()</code> functions from the <strong>kableExtra</strong> package to produce a more nicely formatted table. The <code>kable()</code> function generates a table from a data frame. The <code>kable()</code> function allows you to specify some display options for your table. For example, you can add a caption to your table using the <code>caption</code> argument, and you can change the names of the columns in the table using the <code>col.names</code> argument. The <code>kable_styling()</code> has additional options available. Similar to the <code>fig.pos = H</code> command described for figures in the previous section, adding “HOLD_position” to the <code>kable_styling()</code> function will prevent the table from floating on the report; adding <code>"scale_down"</code> scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the <code>kable()</code> and <code>kable_styling()</code> functions for more options available.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>breastcancer <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, diagnosis, radius_mean, texture_mean, perimeter_mean) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Head of the Breast Cancer Dataset"</span>, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"ID"</span>, <span class="st">"Diagnosis"</span>, <span class="st">"Mean Radius"</span>, <span class="st">"Mean Texture"</span>, </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Mean Perimeter"</span>)) <span class="sc">%&gt;%</span>   </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">latex_options =</span> <span class="fu">c</span>(<span class="st">"scale_down"</span>, <span class="st">"HOLD_position"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Head of the Breast Cancer Dataset</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;" data-quarto-table-cell-role="th">ID</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Diagnosis</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean Radius</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean Texture</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Mean Perimeter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">842302</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">18.0</td>
+<td style="text-align: right;">10.4</td>
+<td style="text-align: right;">122.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">842517</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">20.6</td>
+<td style="text-align: right;">17.8</td>
+<td style="text-align: right;">132.9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">84300903</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">19.7</td>
+<td style="text-align: right;">21.2</td>
+<td style="text-align: right;">130.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">84348301</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">11.4</td>
+<td style="text-align: right;">20.4</td>
+<td style="text-align: right;">77.6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">84358402</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">20.3</td>
+<td style="text-align: right;">14.3</td>
+<td style="text-align: right;">135.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">843786</td>
+<td style="text-align: left;">M</td>
+<td style="text-align: right;">12.4</td>
+<td style="text-align: right;">15.7</td>
+<td style="text-align: right;">82.6</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>, we also introduced the <strong>gt</strong> package. This package is an alternative package to <strong>kableExtra</strong> that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the <a href="https://gt.rstudio.com/articles/intro-creating-gt-tables.html">package introduction</a> for more details about this package. An example <code>gt</code> table is given below.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>breastcancer <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, diagnosis, radius_mean, texture_mean, perimeter_mean) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">"Head of the Breast Cancer Dataset"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(id <span class="sc">~</span> <span class="st">"ID"</span>, </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>             diagnosis <span class="sc">~</span> <span class="st">"Diagnosis"</span>, </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>             radius_mean <span class="sc">~</span> <span class="st">"Mean Radius"</span>, </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>             texture_mean <span class="sc">~</span> <span class="st">"Mean Texture"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>             perimeter_mean <span class="sc">~</span> <span class="st">"Mean Perimeter"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/12-example-gt.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+</figure>
+</div>
 </section>
 <section id="using-bookdown-for-references" class="level2" data-number="12.4">
 <h2 data-number="12.4" class="anchored" data-anchor-id="using-bookdown-for-references"><span class="header-section-number">12.4</span> Using Bookdown for References</h2>
-<p>R Markdown automatically adds figure and table numbers to the figures and tables in your report. The <code>bookdown</code> package allows us to add references. To use this package, make sure you have installed the <code>bookdown</code> package and then add the following text to the top of your .Rmd file, next to “output”.</p>
+<p>R Markdown automatically adds figure and table numbers to the figures and tables in your report. The <strong>bookdown</strong> package allows us to add references. To use this package, make sure you have installed the <strong>bookdown</strong> package and then add the following text to the top of your .Rmd file, next to “output”.</p>
 <pre><code>output:
   bookdown::pdf_document2:
     toc: false</code></pre>
@@ -431,13 +592,27 @@ ggplot(breastcancer) +
 <p>Another useful option in markdown is the option to add in mathematical equations. If you want to insert math equations, you can do so by writing LaTeX expressions. To write a math equation inline, you put a single dollar sign <code>$</code> on either side of your equation, and to write a math equation on its own line, you put a double dollar sign <code>$$</code> on either side of the equation, like so:</p>
 <p>Here’s an equation that is inline with the text: <code>$5x^2 + 9x^3$</code> produces <span class="math inline">\(5x^2 + 9x^3\)</span>. On the other hand, here’s an equation that is on its own line: <code>$$5x^2 + 9x^3$$</code> produces <span class="math display">\[5x^2 + 9x^3\]</span></p>
 <p>Here is some other LaTeX notation that you should know in order to write common equations: * To create a fraction, type <code>\frac{numerator}{denominator}</code>. For example, <code>\frac{2}{3}</code> produces <span class="math inline">\(\frac{2}{3}\)</span>. * To create a subscript, type <code>_</code>. For example, <code>x_{2}</code> produces <span class="math inline">\(x_2\)</span>. * To create a superscript, type <code>^</code>. For example, <code>x^{2}</code> produces <span class="math inline">\(x^2\)</span>.</p>
-<p>If you want to learn more about how to write in LaTeX, <a href="https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Art of Problem Solving</a> provides a great reference for LaTeX symbols and [Overleaf](https://www.overleaf.com/learn/latex/Free_online_introduction_to_LaTeX_(part_1) provides a helpful introduction to LaTeX in general.</p>
+<p>If you want to learn more about how to write in LaTeX, <a href="https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols">Art of Problem Solving</a> provides a great reference for LaTeX symbols and <a href="https://www.overleaf.com/learn/latex/Tutorials#Learn_LaTeX_in_30_minutes">Overleaf</a> provides a helpful introduction to LaTeX in general.</p>
 </section>
 <section id="exercises" class="level2" data-number="12.6">
 <h2 data-number="12.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">12.6</span> Exercises</h2>
-<p>The exercise for this chapter is to recreate <a href="https://github.com/alicepaul/health-data-science-in-r/blob/main/book/docs/ExampleRMarkdown.pdf">this example pdf</a> created from an R Markdown file. You will need to use the <code>breastcancer</code> dataset from the <code>HDSinRdata</code> package.</p>
+<p>The exercise for this chapter is to recreate <a href="https://github.com/alicepaul/health-data-science-using-r/blob/main/book/docs/ExampleRMarkdown.pdf">this example pdf</a> created from an R Markdown file. You will need to use the <code>breastcancer</code> dataset from the <strong>HDSinRdata</strong> package.</p>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-R-bookdown" class="csl-entry" role="listitem">
+Xie, Yihui. 2016. <em>Bookdown: Authoring Books and Technical Documents with <span>R</span> Markdown</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/bookdown">https://bookdown.org/yihui/bookdown</a>.
+</div>
+<div id="ref-R-knitr" class="csl-entry" role="listitem">
+———. 2023. <em>Knitr: A General-Purpose Package for Dynamic Report Generation in r</em>. <a href="https://yihui.org/knitr/">https://yihui.org/knitr/</a>.
+</div>
+<div id="ref-R-rmarkdown" class="csl-entry" role="listitem">
+Xie, Yihui, Christophe Dervieux, and Emily Riederer. 2020. <em>R Markdown Cookbook</em>. Boca Raton, Florida: Chapman; Hall/CRC. <a href="https://bookdown.org/yihui/rmarkdown-cookbook">https://bookdown.org/yihui/rmarkdown-cookbook</a>.
+</div>
+<div id="ref-R-kableExtra" class="csl-entry" role="listitem">
+Zhu, Hao. 2021. <em>kableExtra: Construct Complex Table with Kable and Pipe Syntax</em>. <a href="https://CRAN.R-project.org/package=kableExtra">https://CRAN.R-project.org/package=kableExtra</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

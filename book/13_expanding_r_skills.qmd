@@ -2,18 +2,18 @@
 
 Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that R has. As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered here.
 
-We will demonstrate these skills using the `stringr` package, which is a package that is part of the tidyverse and has several functions for dealing with text data.
+We will demonstrate these skills using the **stringr** package [@R-stringr], which is a package that is part of the tidyverse and has several functions for dealing with text data.
 
-```{r}
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(HDSinRdata))
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
 ```
 
 ## Reading Documentation for New Packages
 
-Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [stringr](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette [Introduction to String R](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
+Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [stringr](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette ["Introduction to String R"](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
 
-We will use this `stringr` package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from [Adatia et al. (2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41](https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130). Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
+We will use this **stringr** package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from @GUE202131. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
 
 ```{r}
 sample_str <- " A systematic search will be performed in PubMed, Embase, and the 
@@ -68,16 +68,16 @@ When a function doesn't return what we expect it to, it is a good idea to first 
 The code below is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out to two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
 
 ```{r}
-sample_strA <- " A systematic search will be performed in PubMed, Embase, and the 
-Cochrane Library, using the following search query:   ('out-of-hospital cardiac 
-arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' 
-OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
+sample_strA <- " A systematic search will be performed in PubMed, Embase, and 
+the Cochrane Library, using the following search query:   ('out-of-hospital 
+cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' 
+OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
 
-sample_strB <- "Searches will be conducted in MEDLINE via PubMed, Web of Science,
-Scopus and Embase. The following search strategy will be 
-used:(child OR infant OR preschool child OR preschool children OR preschooler
-OR pre-school child OR pre-school children OR pre school child OR pre school 
-children OR pre-schooler OR pre schooler OR children OR adolescent OR adolescents)AND
+sample_strB <- "Searches will be conducted in MEDLINE via PubMed, Web of 
+Science, Scopus and Embase. The following search strategy will be used:(child 
+OR infant OR preschool child OR preschool children OR preschooler OR pre-school 
+child OR pre-school children OR pre school child OR pre school children OR 
+pre-schooler OR pre schooler OR children OR adolescent OR adolescents)AND
 (attention deficit disorder with hyperactivity OR ADHD OR attention deficit
 disorder OR ADD OR hyperkinetic disorder OR minimal brain disorder) Submitted "
 ```
@@ -108,53 +108,63 @@ search_terms <- str_split_1(search_terms, " AND | OR ")
 search_terms
 ```
 
+::: {.content-visible when-format="html"}
 ## Video Solution
 
 We will show how we can test and fix the code above by using some simple debugging principles.
 
 {{< video https://www.youtube.com/embed/2yfjXyAbbK8 width="700" height="500" >}}
+:::
 
 ## General Programming Tips
 
 As you write more complex code and functions, it is inevitable that you will run into errors or unexpected behavior. Below are some simple principles that are applicable to debugging in any setting. When it comes to testing code, a good mantra is *test early and test often*. So, try to avoid writing too much code before running and checking that the results match what you expect.
 
-1.  Check that all parentheses (), brackets \[\], and curly braces {} match.\
-2.  Check that object names are correct.\
+1.  Check that all parentheses (), brackets \[\], and curly braces {} match.
+
+2.  Check that object names are correct.
+
 3.  Check whether you use the same name for different objects or whether you use different names for the same object. You can do this by using the `ls()` function to find all current objects.
-4.  Check that the input arguments to a function match what is expected.\
+
+4.  Check that the input arguments to a function match what is expected.
+
 5.  Try simple examples first. You can use the documentation or vignette examples for ideas.
-6.  Localize your error by checking the values of objects at different points.\
-7.  Modify your code one piece at a time before checking it to avoid introducing new errors.\
+
+6.  Localize your error by checking the values of objects at different points.
+
+7.  Modify your code one piece at a time before checking it to avoid introducing new errors.
+
 8.  Google error messages you don't understand. R's messages can sometimes hint at what the error might stem from, but they are not always direct.
 
 ## Exercises
 
 1.  Suppose we want to replace the words "Thank you" in the following string with the word "Thanks". Why does the below code fail? How can we correct it?
 
-```{r}
+    ```{r}
 string <- "Congratulations on finishing the book! Thank you for reading it."
 str_sub(string, c(35, 42)) <- "Thanks"
 string
-```
+    ```
 
-2.  The code below uses the `NHANESsample` data from the `HDSinRdata` package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.
+2.  The code below uses the `NHANESsample` data from the **HDSinRdata** package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.
 
-```{r, eval=FALSE}
+    ```{r, eval=FALSE}
 data(NHANESsample)
 
 nhanes_df <- NHANESsample %>% mutate(worst_DBP = max(DBP1, DBP2, DBP3, DBP4),
                                      worst_SBP = max(SBP1, SBP2, SBP3, SBP4))
 
-ggplot() %>% geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP), color = HYP)
-```
+ggplot() %>% geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP), 
+                        color = HYP)
+    ```
 
-3.  The code below uses the `breastcancer` data from the `HDSinRdata` package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter 11](https://alicepaul.github.io/health-data-science-in-r/book/11_logistic_regression.html). What is wrong with the code below? Debug it. Hint: there are three separate errors.
+3.  The code below uses the `breastcancer` data from the **HDSinRdata** package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter -@sec-logistic-regression]. What is wrong with the code below? Debug it. Hint: there are three separate errors.
 
-```{r, eval = FALSE}
+    ```{r, eval = FALSE}
 data(breastcancer)
 
-model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + radius_mean,
-                 data = breastcancer, family = binomial)
+model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + 
+               radius_mean, data = breastcancer, family = binomial)
 
 pred_probs <- predict(model)
 
@@ -178,4 +188,6 @@ ggplot(calib_data) +
   geom_point(aes(x = expected, y = observed)) +
   labs(x="Expected Proportion", y="Observed Proportion") +
   theme_minimal()
-```
+    ```
+
+

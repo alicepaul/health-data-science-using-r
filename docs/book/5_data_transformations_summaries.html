@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -127,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -276,6 +295,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -326,68 +351,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>In this chapter, we will introduce the <code>dyplr</code> package, which is part of the <code>tidyverse</code> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g.&nbsp;adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g.&nbsp;grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code>%&gt;%</code>. We will use the same sample of the National Health and Nutrition Examination Survey (<a href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) as in <a href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-1_60e31851b9a7b11cd9b0fc4bc90f4c06">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
+<p>In this chapter, we will introduce the <strong>dyplr</strong> package <span class="citation" data-cites="R-dplyr">(<a href="../references.html#ref-R-dplyr" role="doc-biblioref">Wickham et al. 2023</a>)</span>, which is part of the <strong>tidyverse</strong> group of packages, to expand our tools in exploring and transforming our data. We will learn how to do some basic manipulations of data (e.g.&nbsp;adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g.&nbsp;grouping by values, calculating summary statistics). We will also practice combining these operations using the pipe operator <code>%&gt;%</code>. We will use the same sample of the National Health and Nutrition Examination Survey <span class="citation" data-cites="nhanes">(<a href="../references.html#ref-nhanes" role="doc-biblioref">Disease Control and (CDC) 1999-2018</a>)</span> as in <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="tibbles-and-data-frames" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="tibbles-and-data-frames"><span class="header-section-number">5.1</span> Tibbles and Data Frames</h2>
 <p>Take a look at the class of <code>NHANESsample</code>. As we might expect, the data is stored as a data frame.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-2_3f3701bce2263447fe15997d6f49b307">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(NHANESsample)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(NHANESsample)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "data.frame"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, the tidyverse also works with another data structure called a <strong>tibble</strong>. A <strong>tibble</strong> has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the <code>as_tibble()</code> function. In practice, there are only very slight difference between the two data structures, and you generally do not need to convert data frames to tibbles. Below we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-3_7a1e1d23e63dc8a12e690785c004996f">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(NHANESsample)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(NHANESsample)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(nhanes_df))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 21</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ID   AGE SEX   RACE      EDUCATION INCOME SMOKE  YEAR  LEAD BMI_CAT</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;     &lt;fct&gt;      &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  </span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     2    77 Male  Non-Hisp… MoreThan…   5    Neve…  1999   5   BMI&lt;=25</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     5    49 Male  Non-Hisp… MoreThan…   5    Quit…  1999   1.6 25&lt;BMI…</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    12    37 Male  Non-Hisp… MoreThan…   4.93 Neve…  1999   2.4 BMI&gt;=30</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    13    70 Male  Mexican … LessThan…   1.07 Quit…  1999   1.6 25&lt;BMI…</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    14    81 Male  Non-Hisp… LessThan…   2.67 Stil…  1999   5.5 25&lt;BMI…</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      ID   AGE SEX   RACE              EDUCATION INCOME SMOKE  YEAR  LEAD BMI_CAT</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt;             &lt;fct&gt;      &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     2    77 Male  Non-Hispanic Whi… MoreThan…   5    Neve…  1999   5   BMI&lt;=25</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     5    49 Male  Non-Hispanic Whi… MoreThan…   5    Quit…  1999   1.6 25&lt;BMI…</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    12    37 Male  Non-Hispanic Whi… MoreThan…   4.93 Neve…  1999   2.4 BMI&gt;=30</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    13    70 Male  Mexican American  LessThan…   1.07 Quit…  1999   1.6 25&lt;BMI…</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    14    81 Male  Non-Hispanic Whi… LessThan…   2.67 Stil…  1999   5.5 25&lt;BMI…</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 11 more variables: LEAD_QUANTILE &lt;fct&gt;, HYP &lt;dbl&gt;, ALC &lt;chr&gt;,</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   DBP1 &lt;dbl&gt;, DBP2 &lt;dbl&gt;, DBP3 &lt;dbl&gt;, DBP4 &lt;dbl&gt;, SBP1 &lt;dbl&gt;,</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   SBP2 &lt;dbl&gt;, SBP3 &lt;dbl&gt;, SBP4 &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 11 more variables: LEAD_QUANTILE &lt;fct&gt;, HYP &lt;dbl&gt;, ALC &lt;chr&gt;, DBP1 &lt;dbl&gt;,</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   DBP2 &lt;dbl&gt;, DBP3 &lt;dbl&gt;, DBP4 &lt;dbl&gt;, SBP1 &lt;dbl&gt;, SBP2 &lt;dbl&gt;, SBP3 &lt;dbl&gt;,</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   SBP4 &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-4_65cf940920ba2899e3266870d0578e91">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(nhanes_df)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(nhanes_df)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">head</span>(nhanes_df))</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID AGE    SEX               RACE  EDUCATION INCOME      SMOKE YEAR</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  2  77   Male Non-Hispanic White MoreThanHS   5.00 NeverSmoke 1999</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  5  49   Male Non-Hispanic White MoreThanHS   5.00  QuitSmoke 1999</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 12  37   Male Non-Hispanic White MoreThanHS   4.93 NeverSmoke 1999</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 13  70   Male   Mexican American LessThanHS   1.07  QuitSmoke 1999</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 14  81   Male Non-Hispanic White LessThanHS   2.67 StillSmoke 1999</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 15  38 Female Non-Hispanic White MoreThanHS   4.52 StillSmoke 1999</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   LEAD   BMI_CAT LEAD_QUANTILE HYP ALC DBP1 DBP2 DBP3 DBP4 SBP1 SBP2</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  5.0   BMI&lt;=25            Q4   0 Yes   58   56   56   NA  106   98</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  1.6 25&lt;BMI&lt;30            Q3   1 Yes   82   84   82   NA  122  122</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  2.4   BMI&gt;=30            Q4   1 Yes  108   98  100   NA  182  172</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  1.6 25&lt;BMI&lt;30            Q3   1 Yes   78   62   70   NA  140  130</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  5.5 25&lt;BMI&lt;30            Q4   1 Yes   56   NA   58   64  142   NA</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  1.5 25&lt;BMI&lt;30            Q3   0 Yes   68   68   70   NA  106  112</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   SBP3 SBP4</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   98   NA</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  122   NA</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  176   NA</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  130   NA</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  134  138</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6  106   NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ID AGE    SEX               RACE  EDUCATION INCOME      SMOKE YEAR LEAD</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  2  77   Male Non-Hispanic White MoreThanHS   5.00 NeverSmoke 1999  5.0</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  5  49   Male Non-Hispanic White MoreThanHS   5.00  QuitSmoke 1999  1.6</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 12  37   Male Non-Hispanic White MoreThanHS   4.93 NeverSmoke 1999  2.4</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 13  70   Male   Mexican American LessThanHS   1.07  QuitSmoke 1999  1.6</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 14  81   Male Non-Hispanic White LessThanHS   2.67 StillSmoke 1999  5.5</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 15  38 Female Non-Hispanic White MoreThanHS   4.52 StillSmoke 1999  1.5</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     BMI_CAT LEAD_QUANTILE HYP ALC DBP1 DBP2 DBP3 DBP4 SBP1 SBP2 SBP3 SBP4</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   BMI&lt;=25            Q4   0 Yes   58   56   56   NA  106   98   98   NA</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 25&lt;BMI&lt;30            Q3   1 Yes   82   84   82   NA  122  122  122   NA</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   BMI&gt;=30            Q4   1 Yes  108   98  100   NA  182  172  176   NA</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 25&lt;BMI&lt;30            Q3   1 Yes   78   62   70   NA  140  130  130   NA</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 25&lt;BMI&lt;30            Q4   1 Yes   56   NA   58   64  142   NA  134  138</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 25&lt;BMI&lt;30            Q3   0 Yes   68   68   70   NA  106  112  106   NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We mention tibbles here since some functions in the <code>tidyverse</code> package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.</p>
+<p>We mention tibbles here since some functions in the <strong>tidyverse</strong> package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.</p>
 </section>
 <section id="subsetting-data" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="subsetting-data"><span class="header-section-number">5.2</span> Subsetting Data</h2>
-<p>In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the <code>subset()</code> function. The <code>dplyr</code> package has its own functions that are useful to subset the data. The <code>select()</code> function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator <code>%&gt;%</code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-5_b456a474c911bfd4832fd66107fe7159">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(nhanes_df, <span class="fu">c</span>(RACE, LEAD)) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
+<p>In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the <code>subset()</code> function. The <strong>dplyr</strong> package has its own functions that are useful to subset the data. The <code>select()</code> function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator <code>%&gt;%</code>. Recall that this takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The output below shows that there are only two columns in the filtered data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(nhanes_df, <span class="fu">c</span>(RACE, LEAD)) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                 RACE LEAD</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Non-Hispanic White  5.0</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Non-Hispanic White  1.6</span></span>
@@ -397,21 +415,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 Non-Hispanic White  1.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>select()</code> function can also be used to <em>remove</em> columns by adding a negative sign in front of the vector of column names in its arguments. For example, below we keep all columns except <code>ID</code> and <code>LEAD_QUANTILE</code>. Note that in this case we have saved the selected data back to our data frame <code>nhanes_df</code>. Additionally, this time we used a pipe operator to pipe the data to the select function itself.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-6_e241f6170a239cc7ce853e1dac04b162">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ID, LEAD_QUANTILE))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ID, LEAD_QUANTILE))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(nhanes_df)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "AGE"       "SEX"       "RACE"      "EDUCATION" "INCOME"   </span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] "SMOKE"     "YEAR"      "LEAD"      "BMI_CAT"   "HYP"      </span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] "ALC"       "DBP1"      "DBP2"      "DBP3"      "DBP4"     </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [16] "SBP1"      "SBP2"      "SBP3"      "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "AGE"       "SEX"       "RACE"      "EDUCATION" "INCOME"    "SMOKE"    </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [7] "YEAR"      "LEAD"      "BMI_CAT"   "HYP"       "ALC"       "DBP1"     </span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] "DBP2"      "DBP3"      "DBP4"      "SBP1"      "SBP2"      "SBP3"     </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [19] "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>While <code>select()</code> allows us to choose a subset of columns, the <code>filter()</code> function allows us to choose a subset of rows. The <code>filter()</code> function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in <a href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>. Below, we choose to filter the data to only observations after 2008.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-7_083bb1c5af0f116093116834c30851f6">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nhanes_df_recent <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(YEAR <span class="sc">&gt;=</span> <span class="dv">2008</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>While <code>select()</code> allows us to choose a subset of columns, the <code>filter()</code> function allows us to choose a subset of rows. The <code>filter()</code> function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>. Below, we choose to filter the data to only observations after 2008.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nhanes_df_recent <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">filter</span>(YEAR <span class="sc">&gt;=</span> <span class="dv">2008</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can combine conditions by using multiple <code>filter</code> calls, by creating a more complicated conditional statement using the <code>&amp;</code> (and), <code>|</code> (or), and <code>%in%</code> (in) operators, or by separating the conditions with commas within filter. Below, we demonstrate these three ways to filter the data to males between 2008 and 2012. Note that the <code>between()</code> function allows us to capture the logic <code>YEAR &gt;= 2008 &amp; YEAR &lt;= 2012</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-8_a251d4a75d484b43604a46b945a1a84a">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 1: multiple filter calls</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 1: multiple filter calls</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nhanes_df_males1 <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">&lt;=</span> <span class="dv">2012</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">&gt;=</span> <span class="dv">2008</span>) <span class="sc">%&gt;%</span></span>
@@ -427,18 +445,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The use of parentheses in the code above is especially important in order to capture our desired logic. In all these examples, we broke our code up into multiple lines, which makes it easier to read. A good rule of thumb is to not go past 80 characters in a line, and R Studio conveniently has a vertical gray line at this limit. To create a new line, you can hit enter either after an operator (e.g.&nbsp;<code>%&gt;%</code>, <code>+</code>, <code>|</code>) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet.</p>
 <p>Lastly, we can subset the data using the <code>slice()</code> function to select a slice of rows by their index. The function takes in the data set and a vector of indices. Below, we find the first and last rows of the data.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-9_08570c75775a55402a510da42944e9a2">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slice</span>(nhanes_df, <span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(nhanes_df)))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   AGE  SEX               RACE  EDUCATION INCOME      SMOKE YEAR LEAD</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  77 Male Non-Hispanic White MoreThanHS   5.00 NeverSmoke 1999  5.0</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  38 Male Non-Hispanic White MoreThanHS   1.56 StillSmoke 2017  0.9</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   BMI_CAT HYP ALC DBP1 DBP2 DBP3 DBP4 SBP1 SBP2 SBP3 SBP4</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 BMI&lt;=25   0 Yes   58   56   56   NA  106   98   98   NA</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 BMI&gt;=30   1 Yes   98   92   98   NA  150  146  148   NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">slice</span>(nhanes_df, <span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">nrow</span>(nhanes_df)))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   AGE  SEX               RACE  EDUCATION INCOME      SMOKE YEAR LEAD BMI_CAT</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  77 Male Non-Hispanic White MoreThanHS   5.00 NeverSmoke 1999  5.0 BMI&lt;=25</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2  38 Male Non-Hispanic White MoreThanHS   1.56 StillSmoke 2017  0.9 BMI&gt;=30</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   HYP ALC DBP1 DBP2 DBP3 DBP4 SBP1 SBP2 SBP3 SBP4</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   0 Yes   58   56   56   NA  106   98   98   NA</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   1 Yes   98   92   98   NA  150  146  148   NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A few other useful slice functions are <code>slice_sample()</code>, <code>slice_max()</code>, and <code>slice_min()</code>. The first takes in an argument <code>n</code> which specifies the number of <em>random</em> rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument <code>order_by</code> and return the <code>n</code> rows with either the highest or lowest values in that column. Below we find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-10_8153ec231efb43a0e2734d622b5b7eab">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># three male observations with highest blood lead level in 2007</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># three male observations with highest blood lead level in 2007</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(YEAR <span class="sc">==</span> <span class="dv">2007</span>, SEX <span class="sc">==</span> <span class="st">"Male"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(RACE, EDUCATION, SMOKE, LEAD, SBP1, DBP1)) <span class="sc">%&gt;%</span></span>
@@ -460,52 +478,58 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="practice-question" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">5.2.1</span> Practice Question</h3>
-<p>Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the data below.</p>
-<p><img src="images/5-practicequestion1answer.png" alt="“”" width="200pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-11_1ad6b211c10d708d18f7f4f783452251">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Filter the data to only those with an education level of more than HS who report alcohol use. Then, select only the diastolic blood pressure variables and display the 4th and 10th rows. Your result should match the result in <a href="6_merging_data.html#fig-pq1">Figure&nbsp;<span>6.2</span></a>.</p>
+<div id="fig-pq1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/5-practicequestion1answer.png" class="img-fluid figure-img" style="width:2.08333in"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.1: Filtering and Selecting Data.</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="updating-rows-and-columns" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="updating-rows-and-columns"><span class="header-section-number">5.3</span> Updating Rows and Columns</h2>
 <p>The next few functions we will look at will allow us to update the rows and columns in our data. For example, the <code>rename()</code> function allows us to change the names of columns. Below, we change the name of <code>INCOME</code> to <code>PIR</code> since this variable is the poverty income ratio and also update the name of <code>SMOKE</code> to be <code>SMOKE_STATUS</code>. When specifying these names, the new name is on the left of the <code>=</code> and the old name is on the right.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-12_f236aab70e3ec48d253f69b730ef084f">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">PIR =</span> INCOME, <span class="at">SMOKE_STATUS =</span> SMOKE)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="at">PIR =</span> INCOME, <span class="at">SMOKE_STATUS =</span> SMOKE)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(nhanes_df)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "AGE"          "SEX"          "RACE"         "EDUCATION"   </span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] "PIR"          "SMOKE_STATUS" "YEAR"         "LEAD"        </span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] "BMI_CAT"      "HYP"          "ALC"          "DBP1"        </span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] "DBP2"         "DBP3"         "DBP4"         "SBP1"        </span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] "SBP2"         "SBP3"         "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "AGE"          "SEX"          "RACE"         "EDUCATION"    "PIR"         </span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] "SMOKE_STATUS" "YEAR"         "LEAD"         "BMI_CAT"      "HYP"         </span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [11] "ALC"          "DBP1"         "DBP2"         "DBP3"         "DBP4"        </span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [16] "SBP1"         "SBP2"         "SBP3"         "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In the last chapter, we created a new variable called <code>EVER_SMOKE</code> based on the smoking status variable using the <code>ifelse()</code> function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-13_a23786cdd677b81ebf658ce7d4098f3a">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ifelse</span>(nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ifelse</span>(nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    No   Yes </span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15087 16178</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another useful function from the tidyverse is the <code>case_when()</code> function, which is an extension of the <code>ifelse()</code> function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the <code>SMOKE_STATUS</code> column. For each condition, we use the right side of the <code>~</code> to specify the value associated with a TRUE for that condition.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-14_3b8d0e1d8b0fa797e987102bd74715f3">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">case_when</span>(nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span> <span class="sc">~</span> <span class="st">"Never Smoked"</span>,</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">case_when</span>(nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span> <span class="sc">~</span> <span class="st">"Never Smoked"</span>,</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>          nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"QuitSmoke"</span> <span class="sc">~</span> <span class="st">"Quit Smoking"</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>          nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"StillSmoke"</span> <span class="sc">~</span> <span class="st">"Current Smoker"</span>) <span class="sc">%&gt;%</span> <span class="fu">table</span>()</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Current Smoker   Never Smoked   Quit Smoking </span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           7317          15087           8861</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>          nhanes_df<span class="sc">$</span>SMOKE_STATUS <span class="sc">==</span> <span class="st">"StillSmoke"</span> <span class="sc">~</span> <span class="st">"Current Smoker"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; .</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Current Smoker   Never Smoked   Quit Smoking </span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           7317          15087           8861</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Above, we did not store the columns we created. To do so, we could use the <code>$</code> operator or the <code>cbind()</code> function. The tidyverse also includes an alternative function to add columns called <code>mutate()</code>. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column <code>EVER_SMOKE</code> and update the column <code>SMOKE_STATUS</code>. Within the <code>mutate()</code> function, we do not have to use the <code>$</code> operator to reference the column <code>SMOKE_STATUS</code>. Instead, we can specify just the column name and it will interpret it as that column.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-15_51b1cce58f254662fcb69efc3d074d63">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> nhanes_df <span class="sc">%&gt;%</span> </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EVER_SMOKE =</span> <span class="fu">ifelse</span>(SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>), </span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">SMOKE_STATUS =</span> <span class="fu">case_when</span>(SMOKE_STATUS <span class="sc">==</span> <span class="st">"NeverSmoke"</span> <span class="sc">~</span> <span class="st">"Never Smoked"</span>,</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                                  SMOKE_STATUS <span class="sc">==</span> <span class="st">"QuitSmoke"</span> <span class="sc">~</span> <span class="st">"Quit Smoking"</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                  SMOKE_STATUS <span class="sc">==</span> <span class="st">"StillSmoke"</span> <span class="sc">~</span> <span class="st">"Current Smoker"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                  SMOKE_STATUS <span class="sc">==</span> <span class="st">"StillSmoke"</span> <span class="sc">~</span> </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Current Smoker"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The last function we will demonstrate in this section is the <code>arrange()</code> function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the <code>arrange()</code> function sorts the data in increasing order, but we can use the <code>desc()</code> function to instead sort in descending order. For example, the code below filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-16_e3b322cba33cc3cd02088a59d85ca8d1">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(YEAR, SEX, SMOKE_STATUS, SBP1, DBP1, LEAD)) <span class="sc">%&gt;%</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SEX <span class="sc">==</span> <span class="st">"Male"</span>, SMOKE_STATUS <span class="sc">==</span> <span class="st">"Current Smoker"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(SBP1), <span class="fu">desc</span>(DBP1)) <span class="sc">%&gt;%</span></span>
@@ -524,17 +548,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="practice-question-1" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">5.3.1</span> Practice Question</h3>
-<p>Create a new column called <code>DBP_CHANGE</code> that is equal to the difference between a patient’s first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four <code>DBP_CHANGE</code> values in the head of the resulting dataset should be -66, -64, -64, and -62.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-17_38333995ddbaac0bca5df0a656cd43c0">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:                    </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a new column called <code>DBP_CHANGE</code> that is equal to the difference between a patient’s first and fourth diastolic blood pressure readings. Then, sort the data frame by this new column in increasing order and print the first four rows. The first four <code>DBP_CHANGE</code> values in the head of the resulting data frame should be -66, -64, -64, and -62.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:                    </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="summarizing-and-grouping" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="summarizing-and-grouping"><span class="header-section-number">5.4</span> Summarizing and Grouping</h2>
 <p>If we wanted to understand how many observations there are for each given race category, we could use the <code>table()</code> function as we described in earlier chapters. Another similar function is the <code>count()</code> function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. Below, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-18_493cc086038d9763d861739f76aab3bb">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(nhanes_df)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(nhanes_df)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       n</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 31265</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">count</span>(nhanes_df, RACE, YEAR)</span>
@@ -591,8 +615,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-55"><a href="#cb18-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 50         Other Race 2017  595</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finding the counts like we did above is a form of a summary statistic for our data. The <code>summarize()</code> function in the tidyverse is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the example below, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the <code>n()</code> function is the function within <code>summarize()</code> that finds the number of observations. In the <code>mean()</code> and <code>median()</code> functions we set <code>na.rm=TRUE</code> to remove NAs before computing these values (otherwise we could get NA as our output).</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-19_3461532ae056abdf8ac403369d7df46f">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(RACE <span class="sc">==</span> <span class="st">"Non-Hispanic Black"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">TOT =</span> <span class="fu">n</span>(), <span class="at">MEAN_SBP =</span> <span class="fu">mean</span>(SBP1, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">MEAN_DBP =</span> <span class="fu">mean</span>(DBP1, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
@@ -600,26 +624,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 6041      129     72.6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we wanted to repeat this for the other race groups, we would have to change the arguments to the <code>filter()</code> function each time. To avoid having to repeat our code and/or do this multiple times, we can use the <code>group_by()</code> function, which takes a data frame and one or more columns with which to group the data by. Below, we group using the <code>RACE</code> variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the <code>slice()</code> function with index 1, it will return the first row for each group.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-20_5ad08c24f040a8fba8231db156adc335">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(RACE) <span class="sc">%&gt;%</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="dv">1</span>)</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 5 × 20</span></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   RACE [5]</span></span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     AGE SEX    RACE     EDUCATION   PIR SMOKE_STATUS  YEAR  LEAD BMI_CAT</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;fct&gt;  &lt;fct&gt;    &lt;fct&gt;     &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;  </span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    70 Male   Mexican… LessThan…  1.07 Quit Smoking  1999   1.6 25&lt;BMI…</span></span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    61 Female Other H… MoreThan…  3.33 Current Smo…  1999   2.2 BMI&lt;=25</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    77 Male   Non-His… MoreThan…  5    Never Smoked  1999   5   BMI&lt;=25</span></span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    38 Female Non-His… HS         0.92 Current Smo…  1999   1.8 25&lt;BMI…</span></span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    63 Female Other R… MoreThan…  5    Never Smoked  1999   1.2 BMI&lt;=25</span></span>
-<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 11 more variables: HYP &lt;dbl&gt;, ALC &lt;chr&gt;, DBP1 &lt;dbl&gt;, DBP2 &lt;dbl&gt;,</span></span>
-<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   DBP3 &lt;dbl&gt;, DBP4 &lt;dbl&gt;, SBP1 &lt;dbl&gt;, SBP2 &lt;dbl&gt;, SBP3 &lt;dbl&gt;,</span></span>
-<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   SBP4 &lt;dbl&gt;, EVER_SMOKE &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     AGE SEX   RACE  EDUCATION   PIR SMOKE_STATUS  YEAR  LEAD BMI_CAT   HYP ALC  </span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;fct&gt; &lt;fct&gt; &lt;fct&gt;     &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;chr&gt;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    70 Male  Mexi… LessThan…  1.07 Quit Smoking  1999   1.6 25&lt;BMI…     1 Yes  </span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    61 Fema… Othe… MoreThan…  3.33 Current Smo…  1999   2.2 BMI&lt;=25     0 Yes  </span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    77 Male  Non-… MoreThan…  5    Never Smoked  1999   5   BMI&lt;=25     0 Yes  </span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    38 Fema… Non-… HS         0.92 Current Smo…  1999   1.8 25&lt;BMI…     0 Yes  </span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    63 Fema… Othe… MoreThan…  5    Never Smoked  1999   1.2 BMI&lt;=25     1 Yes  </span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 9 more variables: DBP1 &lt;dbl&gt;, DBP2 &lt;dbl&gt;, DBP3 &lt;dbl&gt;, DBP4 &lt;dbl&gt;,</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   SBP1 &lt;dbl&gt;, SBP2 &lt;dbl&gt;, SBP3 &lt;dbl&gt;, SBP4 &lt;dbl&gt;, EVER_SMOKE &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Grouping data is very helpful in combination with the <code>summarize()</code> function. Like with the <code>slice()</code> function, <code>summarize()</code> will calculate the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each racial group. Note that the returned summarized data is in a tibble.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-21_3112dce6954519030e66f9a06fddad90">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(RACE) <span class="sc">%&gt;%</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">TOT =</span> <span class="fu">n</span>(), <span class="at">MEAN_SBP =</span> <span class="fu">mean</span>(SBP1, <span class="at">na.rm=</span><span class="cn">TRUE</span>), </span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">MEAN_DBP =</span> <span class="fu">mean</span>(DBP1, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
@@ -633,8 +656,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Other Race          2195     122.     72.6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the <code>ungroup()</code> function, which restores the data to a single data frame. After ungrouping by race below, we can see that we get a single observation returned by the <code>slice()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-22_8337f811d7064d116f96c22557a9c64b">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="sc">%&gt;%</span> </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(SEX, RACE, SBP1, DBP1) <span class="sc">%&gt;%</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(RACE) <span class="sc">%&gt;%</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
@@ -647,10 +670,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="practice-question-2" class="level3" data-number="5.4.1">
 <h3 data-number="5.4.1" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">5.4.1</span> Practice Question</h3>
-<p>Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like this:</p>
-<p><img src="images/5-practicequestion3answer.png" alt="“”" width="200pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-23_929a6b92d96a1d26299b8926ad714aee">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a data frame summarizing the percent of patients with hypertension by smoking status. The result should look like <a href="#fig-pq3">Figure&nbsp;<span>5.2</span></a>.</p>
+<div id="fig-pq3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/5-practicequestion3answer.png" class="img-fluid figure-img" style="width:2.08333in"></p>
+<figcaption class="figure-caption">Figure&nbsp;5.2: Grouping and Summarizing Data.</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -660,18 +688,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exercises" class="level2" data-number="5.6">
 <h2 data-number="5.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.6</span> Exercises</h2>
-<p>The following exercises use the <code>covidcases</code> dataset from the <code>HDSinRdata</code> package. Before completing the exercises, be sure to read the documentation for this data (<code>?covidcases</code>).</p>
-<div class="cell" data-layout-align="center" data-hash="5_data_transformations_summaries_cache/html/unnamed-chunk-24_04f892678c304ec19df468283748f72e">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(covidcases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The following exercises use the <code>covidcases</code> dataset from the <strong>HDSinRdata</strong> package. Before completing the exercises, be sure to read the documentation for this data (<code>?covidcases</code>).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(covidcases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
-<li><p>Suppose we are interested in the distribution of weekly cases by state. First, create a new column in <code>covidcases</code> called <code>region</code> specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using <a href="https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States">this list</a> of which states are in which region or you can use <a href="https://search.r-project.org/CRAN/refmans/usa/html/state.region.html">state.region</a> from the <code>datasets</code> package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast.</p></li>
+<li><p>Suppose we are interested in the distribution of weekly cases by state. First, create a new column in <code>covidcases</code> called <code>region</code> specifying whether each state is in the Northeast, Midwest, South, or West (you can either do this by hand using <a href="https://en.wikipedia.org/wiki/List_of_regions_of_the_United_States">this list</a> of which states are in which region or you can use <code>state.region</code> from the <strong>datasets</strong> package in R). Then, create a data frame summarizing the average and standard deviation of the weekly cases for the Northeast.</p></li>
 <li><p>Now, create a data frame with the average and standard deviation summarized for each region rather than for just one selected region as in Question 1. Sort this data frame from highest to lowest average weekly cases. What other information would you need in order to more accurately compare these regions in terms of their average cases?</p></li>
-<li><p>Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use <code>?slice_min</code> to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values.</p></li>
+<li><p>Find the ten counties in the Midwest with the lowest weekly deaths in week 15 of this data ignoring ties (use <code>slice_min()</code> to find the argument needed for this). What do you notice about the minimum values? See the data documentation for why we observe these values.</p></li>
 <li><p>Filter the data to between weeks 9 and 20 (around the start of the pandemic), get the total cases per county during that time frame, and then find the county in each state that had the highest number of total cases.</p></li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-nhanes" class="csl-entry" role="listitem">
+Disease Control, Centers for, and Prevention (CDC). 1999-2018. <span>“<span class="nocase">National Health and Nutrition Examination Survey Data (NHANES)</span>.”</span> U.S. Department of Health; Human Services. <a href="http://www.cdc.gov/nchs/nhanes.htm">http://www.cdc.gov/nchs/nhanes.htm</a>.
+</div>
+<div id="ref-R-dplyr" class="csl-entry" role="listitem">
+Wickham, Hadley, Romain François, Lionel Henry, Kirill Müller, and Davis Vaughan. 2023. <em>Dplyr: A Grammar of Data Manipulation</em>. <a href="https://CRAN.R-project.org/package=dplyr">https://CRAN.R-project.org/package=dplyr</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

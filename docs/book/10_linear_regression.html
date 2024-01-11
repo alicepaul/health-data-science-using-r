@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -129,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -278,6 +297,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -334,20 +359,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection.</p>
-<p>For this chapter, we will use the <code>NHANESsample</code> dataset, which was retrieved from the National Health and Nutrition Examination Survey (<a href="https://www.cdc.gov/nchs/nhanes/index.htm">NHANES</a>) and is in the <code>HDSinRdata</code> package. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <a href="https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full">Huang, Z. (2022). Association Between Blood Lead Level With High Blood Pressure in US (NHANES 1999-2018). Frontiers in Public Health, 892</a>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
-<p>We will use the <code>broom</code> package to present the estimated coefficients for our regression models and the <code>car</code> package to compute variance inflation factors.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-1_cc3fd61ea997fef65a9d17c7d7793f16">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(broom))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(car))</span>
+<p>For this chapter, we will use the <code>NHANESsample</code> dataset seen in <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="citation" data-cites="huang2022association">Huang (<a href="../references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
+<p>We will use the <strong>broom</strong> package <span class="citation" data-cites="R-broom">(<a href="../references.html#ref-R-broom" role="doc-biblioref">Robinson, Hayes, and Couch 2023</a>)</span> to present the estimated coefficients for our regression models and the <strong>car</strong> package to compute variance inflation factors.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="simple-linear-regression" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="simple-linear-regression"><span class="header-section-number">10.1</span> Simple Linear Regression</h2>
-<p>In <a href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>, we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of <a href="https://www.frontiersin.org/articles/10.3389/fpubh.2022.836357/full">Huang</a>, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-2_d7dd059c4843e8d35cf82b344be9da0a">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NHANESsample<span class="sc">$</span>SBP <span class="ot">&lt;-</span> <span class="fu">apply</span>(NHANESsample[,<span class="fu">c</span>(<span class="st">"SBP1"</span>, <span class="st">"SBP2"</span>, <span class="st">"SBP3"</span>, <span class="st">"SBP4"</span>)], <span class="dv">1</span>, </span>
+<p>In <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>, we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of <span class="citation" data-cites="huang2022association">Huang (<a href="../references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NHANESsample<span class="sc">$</span>SBP <span class="ot">&lt;-</span> <span class="fu">apply</span>(NHANESsample[,<span class="fu">c</span>(<span class="st">"SBP1"</span>, <span class="st">"SBP2"</span>, <span class="st">"SBP3"</span>, <span class="st">"SBP4"</span>)], <span class="dv">1</span>, </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">function</span>(x) <span class="fu">case_when</span>(<span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x)) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="cn">NA</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x)) <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fu">sum</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>),</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x)) <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">~</span> <span class="fu">mean</span>(x[<span class="sc">-</span><span class="dv">1</span>], <span class="at">na.rm=</span><span class="cn">TRUE</span>))) </span>
@@ -361,29 +386,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 30405    15</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, we make sure any categorical variables are coded as factors.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-3_9039949daf944b860fa90900ca676fb9">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>SEX <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>SEX)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>SEX <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>SEX)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>RACE <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>RACE)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>EDUCATION <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>EDUCATION)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>BMI_CAT <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>BMI_CAT)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>LEAD_QUANTILE <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>LEAD_QUANTILE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We will start with simple linear regression. Below, we plot the relationship between blood lead level and systolic blood pressure. For a simple linear regression scenario with a single continuous independent variable, a scatter plot allows us to easily visualize whether we meet the assumptions underlying linear regression. The survey sampling for the NHANES survey allows us to assume that each observation is independent. Looking at the plots below, we expect to see that the average systolic blood pressure increases linearly with blood lead level and that the observations look normally distributed with equal variance along that line. Below, we do not observe that to be the case. We will come back to this in the section on transformations and interactions.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-4_ab70c9c95801867c98940f7a0ff94ce3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, nhanes_df<span class="sc">$</span>SBP,</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, nhanes_df<span class="sc">$</span>SBP,</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Blood Lead Level"</span>, <span class="at">ylab =</span> <span class="st">"Systolic Blood Pressure"</span>, <span class="at">pch=</span><span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Despite our observations above, we will continue by fiting a simple linear regression model to explain the association between <code>SBP</code> and <code>LEAD</code>. The function <code>lm(formula = y ~ x, data)</code> fits a linear model in R. The first argument is the formula of the linear model: on the left hand side of the <code>~</code> we put the outcome variable, and on the right hand side we put the independent variable. When we have multiple indepedent variables we separate them with a <code>+</code> (e.g.&nbsp;<code>y~x1+x2</code>). The output of this function is an <code>lm</code> object.</p>
 <p>We can call the <code>summary()</code> function on this object to print a summary of the model, which includes the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. Recall, that we previously used the <code>summary()</code> function to get summary statistics about a vector. This is an example of how multiple functions can have the same name. R figues out which <code>summary()</code> function to use by identifying that the argument we passed in is a <code>lm</code> object.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-5_9be0a5259f5665ea1e3fd9c79b877e71">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>simp_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> SBP<span class="sc">~</span>LEAD, <span class="at">data =</span> nhanes_df)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>simp_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="at">formula =</span> SBP<span class="sc">~</span>LEAD, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(simp_model)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
@@ -405,15 +430,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; F-statistic:  867 on 1 and 30403 DF,  p-value: &lt;2e-16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To visualize this model, we can add the estimated regression line to our scatter plot from above. In <code>ggplot2</code>, this can be done with the <code>geom_smooth()</code> function. In base R, we use the <code>abline()</code> function, which can take in a regression model as an input. We can see that the estimated regression line does not fit our data very well.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-6_6a6c12ace920f19db0ca7d205bee2164">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, nhanes_df<span class="sc">$</span>SBP, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, nhanes_df<span class="sc">$</span>SBP, </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="fu">c</span>(<span class="st">"Systolic Blood Pressure"</span>),</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="fu">c</span>(<span class="st">"Blood Lead Level"</span>), <span class="at">pch=</span><span class="dv">16</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(simp_model, <span class="at">col=</span><span class="dv">2</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -421,16 +446,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="practice-question" class="level3" data-number="10.1.1">
 <h3 data-number="10.1.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">10.1.1</span> Practice Question</h3>
 <p>Fit a simple linear regression model with <code>SBP</code> as the outcome and <code>AGE</code> as the independent variable. The estimated coefficient for <code>AGE</code> should be 0.47693. Then, plot these two variables against each other and add the estimated regression line to the plot, as we did above. You should see that this regression has a better fit than the previous one.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-7_e28205941cae6308b6dd67b1bc7c9267">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="multiple-linear-regression" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="multiple-linear-regression"><span class="header-section-number">10.2</span> Multiple Linear Regression</h2>
 <p>We now create a model that is similar to the previous one except that it also adjusts for age and sex. To add these variables into the model, we have to specify a new formula. Below, we fit this model and then print a summary, again using the <code>summary()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-8_6df797d86d00787c9e6f6bf94ce8ca1d">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>adj_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>adj_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(adj_model)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
@@ -453,14 +478,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Multiple R-squared:  0.212,  Adjusted R-squared:  0.212 </span></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; F-statistic: 2.72e+03 on 3 and 30401 DF,  p-value: &lt;2e-16</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can also extract the estimated regression coefficients from the model using the <code>coef()</code> function or by using the <code>tidy</code> function from the <code>broom</code> package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval by specifying <code>conf.int = TRUE</code>. Below, we add a 95% confidence interval (which is the default value for <code>conf.level</code>).</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-9_1145a5e9d02eb05c876d0da55f7a2909">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(adj_model)</span>
+<p>We can also extract the estimated regression coefficients from the model using the <code>coef()</code> function or by using the <code>tidy()</code> function from the <strong>broom</strong> package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval by specifying <code>conf.int = TRUE</code>. Below, we add a 95% confidence interval (which is the default value for <code>conf.level</code>).</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(adj_model)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)        LEAD         AGE   SEXFemale </span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     101.785       0.400       0.462      -2.778</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-10_8e6b4bbcae561fdd2c1bad49582234cc">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(adj_model, <span class="at">conf.int=</span><span class="cn">TRUE</span>, <span class="at">conf.level=</span><span class="fl">0.95</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(adj_model, <span class="at">conf.int=</span><span class="cn">TRUE</span>, <span class="at">conf.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 7</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   term        estimate std.error statistic  p.value conf.low conf.high</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;</span></span>
@@ -470,27 +495,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 SEXFemale     -2.78    0.196      -14.2  1.36e-45   -3.16     -2.39</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Some other useful summary functions are <code>resid()</code>, which returns the residual values for the model, and <code>fitted()</code>, which returns the fitted values or estimated y values. We can also predict on new data using the <code>predict()</code> function. Below we look at the distribution of the residual values and then plot the fitted vs.&nbsp;true values. We observe some extreme residual values as well as the fact that the absolute residual values increase with increased blood pressure values.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-11_522cf2e4c6da4c2c6e666514a725e4f5">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">resid</span>(adj_model))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">resid</span>(adj_model))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   -65.6   -10.6    -1.6     0.0     8.5   131.6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-12_95674661ee26bfa3f811f5d583a6de49">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP, <span class="fu">fitted</span>(adj_model), </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP, <span class="fu">fitted</span>(adj_model), </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span><span class="st">"True Systolic Blood Pressure"</span>, </span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Predicted Systolic Blood Pressure"</span>, <span class="at">pch=</span><span class="dv">16</span>)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">0</span>, <span class="at">b=</span><span class="dv">1</span>, <span class="at">col=</span><span class="st">"red"</span>, <span class="at">lwd=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We can next perform a nested hypothesis test between our simple linear regresion model and our adjusted model using the <code>anova()</code> function. We pass both models to this function along with the argument <code>test="F"</code> to indicate that we are performing an F-test. The <code>print()</code> function shows the two tested models along with the associated p-value, which indicates a significantly better fit for the adjusted model.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-13_f0f22de7a55445ec3c68f9878f1da6ef">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">anova</span>(simp_model, adj_model, <span class="at">test=</span><span class="st">"F"</span>))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">anova</span>(simp_model, adj_model, <span class="at">test=</span><span class="st">"F"</span>))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Analysis of Variance Table</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Model 1: SBP ~ LEAD</span></span>
@@ -502,8 +527,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The model summary for the adjusted model displays the estimated coefficient for <code>sex</code> as <code>SEXFemale</code>, which indicates that the reference level for sex is male. If we want to change our reference level, we can reorder the factor variable either by using the <code>factor()</code> function and specifying <code>Female</code> as the first level or by using the <code>relevel()</code> function. The <code>ref</code> argument in the <code>relevel()</code> function specifies the new reference level. Now, when we run the model, we can see that the estimated coefficient for <code>sex</code> is labeled as <code>SEXMale</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-14_e9b441ea24fe7e6e1e5b5ea317e017e8">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>SEX <span class="ot">&lt;-</span> <span class="fu">relevel</span>(nhanes_df<span class="sc">$</span>SEX, <span class="at">ref=</span><span class="st">"Female"</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>SEX <span class="ot">&lt;-</span> <span class="fu">relevel</span>(nhanes_df<span class="sc">$</span>SEX, <span class="at">ref=</span><span class="st">"Female"</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>adj_model2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(adj_model2)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 5</span></span>
@@ -515,8 +540,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 SEXMale        2.78    0.196       14.2  1.36e-45</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The formula passed to the <code>lm()</code> function also allows us to use the <code>.</code> to indicate that we would like to include all remaining columns as independent variables or the <code>-</code> to exclude variables. Below, we show how we could use these to fit a model with <code>LEAD</code>, <code>AGE</code>, and <code>SEX</code> as included covariates by excluding all other variables instead of by specifying these three variables themselves.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-15_12e9d994601a6f42214b9596cd3a5aa2">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(SBP <span class="sc">~</span> . <span class="sc">-</span> ID <span class="sc">-</span> RACE <span class="sc">-</span> EDUCATION <span class="sc">-</span> INCOME <span class="sc">-</span> SMOKE <span class="sc">-</span> YEAR <span class="sc">-</span> BMI_CAT <span class="sc">-</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(SBP <span class="sc">~</span> . <span class="sc">-</span> ID <span class="sc">-</span> RACE <span class="sc">-</span> EDUCATION <span class="sc">-</span> INCOME <span class="sc">-</span> SMOKE <span class="sc">-</span> YEAR <span class="sc">-</span> BMI_CAT <span class="sc">-</span> </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>   LEAD_QUANTILE <span class="sc">-</span> DBP <span class="sc">-</span> ALC <span class="sc">-</span> HYP <span class="sc">-</span> RACE, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
@@ -532,13 +557,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="diagnostic-plots-and-measures" class="level2" data-number="10.3">
 <h2 data-number="10.3" class="anchored" data-anchor-id="diagnostic-plots-and-measures"><span class="header-section-number">10.3</span> Diagnostic Plots and Measures</h2>
 <p>We can tell from the above plot that our model doesn’t have a great fit. We will use some further diagnostic plots and measures to learn more. R has some built-in plots available for linear regression models, which can be displayed using the <code>plot()</code> function. Similar the <code>summary()</code> function, this function acts differently when passed an <code>lm</code> object. The four plots include (a) Residuals vs.&nbsp;Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs.&nbsp;Fitted, and (d) Standardized Residuals vs.&nbsp;Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook’s distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals, so this last plot summarizes the outliers, leverage, and influential points. The plots below show that our residuals do not look normally distributed and that we have may have some high leverage points.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-16_4a0cb62f487e3707d97e788e7b5289df">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)) <span class="co"># plots all four plots together</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)) <span class="co"># plots all four plots together</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(adj_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -546,22 +571,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="normality" class="level3" data-number="10.3.1">
 <h3 data-number="10.3.1" class="anchored" data-anchor-id="normality"><span class="header-section-number">10.3.1</span> Normality</h3>
 <p>Beyond the default plots, we can also plot a histogram of the residuals and a qq-plot. The <code>qqnorm()</code> and <code>qqline()</code> functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot shown, the residuals are positively skewed, and thus the assumption of normality is not satisfied for our residuals. Later in this chapter, we will discuss how we might transform this dataset and/or model to satisfy this assumption.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-17_aaf2291d9a4f2ba04988267d43cf5f83">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="co"># plot next to each other</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) <span class="co"># plot next to each other</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">resid</span>(adj_model), <span class="at">xlab=</span><span class="st">"Residuals"</span>, <span class="at">main=</span><span class="st">"Histogram of Residuals"</span>) </span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">resid</span>(adj_model))</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">resid</span>(adj_model),<span class="at">col=</span><span class="st">"red"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Instead of using the direct residuals, we can create the plots above using the standardized residuals with the function <code>rstandard()</code>. The standardized residuals are the raw residuals divided by an estimate of the standard deviation for the residual, which will be different for each observation.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-18_4d5c8c0175d48d234618ace0bbdbdf84">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) </span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">rstandard</span>(adj_model), <span class="at">xlab=</span><span class="st">"Standardized Residuals"</span>, </span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Histogram of Standardized Residuals"</span>) </span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">rstandard</span>(adj_model)) </span>
@@ -569,7 +594,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -578,82 +603,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="homoscedasticity-linearity-and-collinearity" class="level3" data-number="10.3.2">
 <h3 data-number="10.3.2" class="anchored" data-anchor-id="homoscedasticity-linearity-and-collinearity"><span class="header-section-number">10.3.2</span> Homoscedasticity, Linearity, and Collinearity</h3>
 <p>We can also create a residual vs.&nbsp;fitted plot or plot the residuals against included covariates. Below, we plot the blood lead level against the residuals. In both plots, we are looking for the points to be spread roughly evenly around 0 with no discerning pattern. However, both plots shows a tunnel shape, indicating a growing and shrinking variance of residuals by level, respectively. This indicates that we are violating the homoscedasticity assumption.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-19_9d27eb7af7ba12191364d6bb8b93283b">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(adj_model), <span class="fu">resid</span>(adj_model), <span class="at">xlab=</span><span class="st">"Fitted Values"</span>, <span class="at">ylab=</span><span class="st">"Residuals"</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, <span class="fu">resid</span>(adj_model), <span class="at">xlab=</span><span class="st">"Blood Lead Level"</span>, <span class="at">ylab=</span><span class="st">"Residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">fitted</span>(adj_model), <span class="fu">resid</span>(adj_model), <span class="at">xlab=</span><span class="st">"Fitted Values"</span>, </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Residuals"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>LEAD, <span class="fu">resid</span>(adj_model), <span class="at">xlab=</span><span class="st">"Blood Lead Level"</span>, </span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Residuals"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>To quantify any collinearity between the included covariates, we can calculate the variance inflation factors. The <code>vif()</code> function in the <code>car</code> package allows us to calculate the variance inflation factors or generalized variance inflation factors for all covariates. In our case, all the VIF values are around 1, indicating low levels of collinearity.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-20_b0422fcb923bb84e6ea67a54e50ea98d">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(adj_model)</span>
+<p>To quantify any collinearity between the included covariates, we can calculate the variance inflation factors. The <code>vif()</code> function in the <strong>car</strong> package allows us to calculate the variance inflation factors or generalized variance inflation factors for all covariates. In our case, all the VIF values are around 1, indicating low levels of collinearity.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">vif</span>(adj_model)</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; LEAD  AGE  SEX </span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1.12 1.07 1.05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="practice-question-1" class="level3" data-number="10.3.3">
 <h3 data-number="10.3.3" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">10.3.3</span> Practice Question</h3>
-<p>Fit a linear regression model with <code>SBP</code> as the outcome and with <code>INCOME</code>, <code>RACE</code>, <code>EDUCATION</code>, and <code>ALC</code> as independent variables. Then, plot the residuals vs.&nbsp;the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like this:</p>
-<p><img src="images/10-practicequestion2answer.png" alt="“”" width="400pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-21_f4d15db4f6738a3897169d6f8c3c25ea">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here: </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Fit a linear regression model with <code>SBP</code> as the outcome and with <code>INCOME</code>, <code>RACE</code>, <code>EDUCATION</code>, and <code>ALC</code> as independent variables. Then, plot the residuals vs.&nbsp;the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like <a href="11_logistic_regression.html#fig-pq2">Figure&nbsp;<span>11.1</span></a>.</p>
+<div id="fig-pq2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/10-practicequestion2answer.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;10.1: Stratified Summary Table.</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here: </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="leverage-and-influence" class="level3" data-number="10.3.4">
 <h3 data-number="10.3.4" class="anchored" data-anchor-id="leverage-and-influence"><span class="header-section-number">10.3.4</span> Leverage and Influence</h3>
 <p>We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation’s <span class="math inline">\(y\)</span> value influences its own predicted value and indicate whether observations have extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. Below we find the ten highest leverage values and then find those observations in the data.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-22_1681fc6bd11f1a50d7a800385d57521b">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">hatvalues</span>(adj_model), <span class="at">decreasing=</span><span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   23016    2511    3091   21891    3661     511   21892   15321    6511 </span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.03899 0.02936 0.02270 0.01484 0.01443 0.01399 0.01159 0.01080 0.01022 </span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    3452 </span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.00968</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>nhanes_df[<span class="fu">order</span>(<span class="fu">hatvalues</span>(adj_model), <span class="at">decreasing=</span><span class="cn">TRUE</span>),] <span class="sc">%&gt;%</span> </span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(SBP, LEAD, AGE, SEX)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       SBP LEAD AGE  SEX</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23016 129 61.3  38 Male</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2511  139 54.0  61 Male</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3091  154 48.0  72 Male</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21891 123 38.9  54 Male</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3661  101 38.0  39 Male</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 511   118 37.3  34 Male</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21892 107 33.7  21 Male</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15321 104 33.1  39 Male</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6511  175 33.0  71 Male</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3452  113 31.4  38 Male</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sort</span>(<span class="fu">hatvalues</span>(adj_model), <span class="at">decreasing=</span><span class="cn">TRUE</span>)[<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>]</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   23016    2511    3091   21891    3661     511   21892   15321    6511    3452 </span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.03899 0.02936 0.02270 0.01484 0.01443 0.01399 0.01159 0.01080 0.01022 0.00968</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>nhanes_df[<span class="fu">order</span>(<span class="fu">hatvalues</span>(adj_model), <span class="at">decreasing=</span><span class="cn">TRUE</span>),] <span class="sc">%&gt;%</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(SBP, LEAD, AGE, SEX)) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       SBP LEAD AGE  SEX</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 23016 129 61.3  38 Male</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2511  139 54.0  61 Male</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3091  154 48.0  72 Male</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21891 123 38.9  54 Male</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3661  101 38.0  39 Male</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 511   118 37.3  34 Male</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 21892 107 33.7  21 Male</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 15321 104 33.1  39 Male</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6511  175 33.0  71 Male</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3452  113 31.4  38 Male</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Some other measures of influence are the DFBETAs and Cook’s distance, which measure how much each observation influences the estimated coefficients and the estimated <code>y</code> values, respectively. The <code>influence.measures()</code> function provides a set of measures that quantify the influence of each observation on a linear regression model: these include the DFBETAS for each model variable, DFFITS, covariance ratios, Cook’s distances, and the leverage values. The output returns the values in a matrix called <code>infmat</code>, which we convert to a data frame below.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-23_41981f6c4d4913cbf3d7a02377cabbc5">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>inf_mat <span class="ot">&lt;-</span> <span class="fu">influence.measures</span>(adj_model)[[<span class="st">'infmat'</span>]]</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>inf_mat <span class="ot">&lt;-</span> <span class="fu">influence.measures</span>(adj_model)[[<span class="st">'infmat'</span>]]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">as.data.frame</span>(inf_mat) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      dfb.1_  dfb.LEAD   dfb.AGE  dfb.SEXF    dffit cov.r   cook.d</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  0.013880 -0.017564 -1.68e-02  0.008319 -0.03427 1.000 2.93e-04</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 -0.000732  0.000348 -3.92e-05  0.001051 -0.00150 1.000 5.59e-07</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  0.022137  0.005749 -1.45e-02 -0.016843  0.02964 0.999 2.19e-04</span></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  0.000499  0.001043 -2.07e-03  0.001631 -0.00312 1.000 2.43e-06</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  0.002259 -0.002725 -2.50e-03  0.000973 -0.00498 1.000 6.20e-06</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 -0.001283 -0.000559  1.65e-03 -0.002929 -0.00441 1.000 4.87e-06</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        hat</span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 1.90e-04</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 6.61e-05</span></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 8.28e-05</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 1.18e-04</span></span>
-<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 2.35e-04</span></span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 8.09e-05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      dfb.1_  dfb.LEAD   dfb.AGE  dfb.SEXF    dffit cov.r   cook.d      hat</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1  0.013880 -0.017564 -1.68e-02  0.008319 -0.03427 1.000 2.93e-04 1.90e-04</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 -0.000732  0.000348 -3.92e-05  0.001051 -0.00150 1.000 5.59e-07 6.61e-05</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3  0.022137  0.005749 -1.45e-02 -0.016843  0.02964 0.999 2.19e-04 8.28e-05</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4  0.000499  0.001043 -2.07e-03  0.001631 -0.00312 1.000 2.43e-06 1.18e-04</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5  0.002259 -0.002725 -2.50e-03  0.000973 -0.00498 1.000 6.20e-06 2.35e-04</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 -0.001283 -0.000559  1.65e-03 -0.002929 -0.00441 1.000 4.87e-06 8.09e-05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="interactions-and-transformations" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="interactions-and-transformations"><span class="header-section-number">10.4</span> Interactions and Transformations</h2>
 <p>We now try to improve our model. To start, we look at potential transformations for our outcome variable. We will consider a log transformation for both our outcome, systolic blood pressure, and our predictor of interest, blood lead level. Both of these variables have a fairly skewed distribution and may benefit from such a transformation. Below, you can see that the transformed variables have distributions that are more symmetrical.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-24_392163a9bd031bf960153f8c8393f6a6">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nhanes_df<span class="sc">$</span>SBP, <span class="at">xlab=</span><span class="st">"Systolic Blood Pressure"</span>, <span class="at">main=</span><span class="st">""</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(nhanes_df<span class="sc">$</span>SBP), <span class="at">xlab=</span><span class="st">"Log Systolic Blood Pressure"</span>, <span class="at">main=</span><span class="st">""</span>)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nhanes_df<span class="sc">$</span>LEAD, <span class="at">xlab=</span><span class="st">"Blood Lead Level"</span>, <span class="at">main=</span><span class="st">""</span>)</span>
@@ -661,20 +684,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>To add a transformation to a model, we can simply apply the transformation in the formula for <code>lm()</code>. We will calculate the adjusted R-squared for each potential model to compare their fits in addition to plotting the four qq-plots. Both indicate that the model with the log-log transformation (that is, with a log transformation applied to both the <code>SBP</code> and the <code>LEAD</code> variables) is the best fit though the model with just a log transformation for <code>SBP</code> has a similar qq-plot.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-25_2b6f797545475d62f9a358366e66a22d">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model_nlog_nlog <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>model_nlog_nlog <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>model_log_nlog <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(SBP) <span class="sc">~</span> LEAD <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>model_nlog_log <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> <span class="fu">log</span>(LEAD) <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>model_log_log <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(SBP) <span class="sc">~</span> <span class="fu">log</span>(LEAD) <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-26_56f9fe800882ba1094cb533cb1c10f34">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_nlog_nlog)<span class="sc">$</span>adj.r.squared</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_nlog_nlog)<span class="sc">$</span>adj.r.squared</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.212</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_log_nlog)<span class="sc">$</span>adj.r.squared</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.215</span></span>
@@ -683,8 +706,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_log_log)<span class="sc">$</span>adj.r.squared</span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.215</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-27_badbf3cc15d4242e25f8f6bf57894232">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">2</span>))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">rstandard</span>(model_nlog_nlog), <span class="at">main=</span><span class="st">"Original Model"</span>) </span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">qqline</span>(<span class="fu">rstandard</span>(model_nlog_nlog),<span class="at">col=</span><span class="st">"red"</span>)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">qqnorm</span>(<span class="fu">rstandard</span>(model_log_nlog), <span class="at">main=</span><span class="st">"Log SBP"</span>) </span>
@@ -696,25 +719,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="10_linear_regression_files/figure-html/unnamed-chunk-27-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <section id="practice-question-2" class="level3" data-number="10.4.1">
 <h3 data-number="10.4.1" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">10.4.1</span> Practice Question</h3>
-<p>Instead of adding in a log transformation for <code>LEAD</code> like we did above, try a square root transformation <code>sqrt(LEAD)</code> and an inverse transformation <code>1/LEAD</code> while keeping the log transformation for the outcome <code>log(SBP)</code>. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like this:</p>
-<p><img src="images/10-practicequestion3answer.png" alt="“”" width="400pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-28_0eff6c463a287cfa277881111742dc9b">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Instead of adding in a log transformation for <code>LEAD</code> like we did above, try a square root transformation <code>sqrt(LEAD)</code> and an inverse transformation <code>1/LEAD</code> while keeping the log transformation for the outcome <code>log(SBP)</code>. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like <a href="11_logistic_regression.html#fig-pq2">Figure&nbsp;<span>11.1</span></a>.</p>
+<div id="fig-pq2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/10-practicequestion3answer.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;10.2: QQ Plots for Possible Transformations.</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Additionally, we might consider polynomial transformations. The <code>poly(x, degree=1)</code> function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this for this particular example, but we show some example code below for creating such a transformation (in this case, a cubic transformation for blood lead level).</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-29_1ec398675212390865b1cc69b8f745b3">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>model_poly <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> <span class="fu">poly</span>(LEAD, <span class="dv">3</span>) <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>model_poly <span class="ot">&lt;-</span> <span class="fu">lm</span>(SBP <span class="sc">~</span> <span class="fu">poly</span>(LEAD, <span class="dv">3</span>) <span class="sc">+</span> AGE <span class="sc">+</span> SEX, <span class="at">data =</span> nhanes_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can summarize the outcome for our log-log model using the <code>tidy()</code> function again. We observe small p-values for each estimated coefficient.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-30_51801693be5e3b12b620458614ed60cb">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_log_log)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(model_log_log)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 5</span></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   term        estimate std.error statistic  p.value</span></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;</span></span>
@@ -724,8 +752,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 SEXMale      0.0254  0.00155       16.4  2.06e-60</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another component that we may want to add to our model is an interaction term. For example, we may consider an interaction between sex and blood lead level. We add an interaction to the formula using a <code>:</code> between the two variables. The output below shows that the coefficient for this interaction is indeed significant.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-31_bb5e0f5fee5d51714373b0f5a506c867">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>model_interaction <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(SBP) <span class="sc">~</span> <span class="fu">log</span>(LEAD) <span class="sc">+</span> AGE <span class="sc">+</span> SEX <span class="sc">+</span> SEX<span class="sc">:</span><span class="fu">log</span>(LEAD), </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>model_interaction <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(SBP) <span class="sc">~</span> <span class="fu">log</span>(LEAD) <span class="sc">+</span> AGE <span class="sc">+</span> SEX <span class="sc">+</span> SEX<span class="sc">:</span><span class="fu">log</span>(LEAD), </span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">data=</span>nhanes_df) </span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_interaction)</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -756,29 +784,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="evaluation-metrics" class="level2" data-number="10.5">
 <h2 data-number="10.5" class="anchored" data-anchor-id="evaluation-metrics"><span class="header-section-number">10.5</span> Evaluation Metrics</h2>
 <p>Besides the adjusted R-squared, there are a few other metrics that can help us to understand how well our model fits the data and to help with model selection. The <code>AIC()</code> and <code>BIC()</code> functions find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-32_8790a42c4e648624ab9163006ba81d74">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model_log_log)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model_log_log)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -38610</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">AIC</span>(model_interaction)</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -38760</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-33_7cc72da93ae193611b2f698b72d4837b">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">BIC</span>(model_log_log)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">BIC</span>(model_log_log)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -38569</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">BIC</span>(model_interaction)</span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -38710</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>predict()</code> function allows us to calculate the predicted <code>y</code> values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the <code>newdata</code> argument. The new data provided must contain the columns given in the model formula. Below, we use the <code>predict()</code> function to find the predicted values from our model and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. The mean absolute error indicates that our model has fairly high residuals on average. While this model may be helpful to understand the relationship between blood lead level and systolic blood pressure, it would not be very useful as a tool to predict the latter.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-34_8283029823bd3db52e1b9518817fbbec">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pred_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_interaction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pred_y <span class="ot">&lt;-</span> <span class="fu">predict</span>(model_interaction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-35_a6d124fcad9da5b78bc1a8255ebe9b52">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mae <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(nhanes_df<span class="sc">$</span>SBP <span class="sc">-</span> pred_y))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>mae <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">abs</span>(nhanes_df<span class="sc">$</span>SBP <span class="sc">-</span> pred_y))</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>mae</span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 119</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-36_48f12a269e8bf60e16fafb7871de60d0">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">&lt;-</span> <span class="fu">mean</span>((nhanes_df<span class="sc">$</span>SBP<span class="sc">-</span> pred_y)<span class="sc">^</span><span class="dv">2</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mse <span class="ot">&lt;-</span> <span class="fu">mean</span>((nhanes_df<span class="sc">$</span>SBP<span class="sc">-</span> pred_y)<span class="sc">^</span><span class="dv">2</span>)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>mse</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 14502</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -787,64 +815,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="10.6" class="anchored" data-anchor-id="stepwise-selection"><span class="header-section-number">10.6</span> Stepwise Selection</h2>
 <p>So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We will end this chapter by demonstrating how to implement one such method, <strong>stepwise selection</strong>, in R. The <code>step()</code> function takes in an initial model to perform stepwise selection on along with a direction <code>direction</code> (“forward”, “backward”, or “both”), and a scope <code>scope</code>. The scope specifies the lower and upper model formulas to consider. Below, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.</p>
 <p>By default, the <code>step()</code> function prints each step in the process and uses AIC to guide its decisions. We can set <code>trace=0</code> to avoid the print behavior and update the argument <code>k</code> to <code>log(n)</code> to use BIC, where <code>n</code> is the number of observations. Below we see that the algorithm first adds in race, then BMI, then income, then education, and then smoking status. In fact, all variables were added to the model! The final output is an <code>lm</code> object that we can use just like the ones earlier in this chapter. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.</p>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-37_4de7ef70b9958e3d99d7b5d7436b4256">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>mod_step <span class="ot">&lt;-</span> <span class="fu">step</span>(model_interaction, <span class="at">direction =</span> <span class="st">'forward'</span>, </span>
-<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> <span class="st">"log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD)"</span>, </span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">upper =</span> <span class="st">"log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + </span></span>
-<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="st">                              SEX + RACE + EDUCATION + SMOKE + INCOME + BMI_CAT"</span>))</span>
-<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Start:  AIC=-125048</span></span>
-<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + SEX:log(LEAD)</span></span>
-<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
-<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + RACE       4      9.16 488 -125605</span></span>
-<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + BMI_CAT    2      8.97 488 -125597</span></span>
-<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1      2.87 494 -125222</span></span>
-<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2      1.90 495 -125160</span></span>
-<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2      0.35 497 -125065</span></span>
-<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   497 -125048</span></span>
-<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-125605</span></span>
-<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + log(LEAD):SEX</span></span>
-<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
-<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + BMI_CAT    2      7.16 481 -126050</span></span>
-<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1      1.80 486 -125715</span></span>
-<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2      1.34 487 -125684</span></span>
-<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2      0.13 488 -125609</span></span>
-<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   488 -125605</span></span>
-<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126050</span></span>
-<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + log(LEAD):SEX</span></span>
-<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
-<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1     1.617 479 -126151</span></span>
-<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2     1.112 480 -126117</span></span>
-<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2     0.261 481 -126063</span></span>
-<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   481 -126050</span></span>
-<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126151</span></span>
-<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
-<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     log(LEAD):SEX</span></span>
-<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
-<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2     0.418 479 -126173</span></span>
-<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2     0.258 479 -126163</span></span>
-<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   479 -126151</span></span>
-<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126173</span></span>
-<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
-<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     EDUCATION + log(LEAD):SEX</span></span>
-<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Df Sum of Sq RSS     AIC</span></span>
-<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE  2     0.286 479 -126187</span></span>
-<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;               479 -126173</span></span>
-<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
-<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126187</span></span>
-<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
-<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     EDUCATION + SMOKE + log(LEAD):SEX</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>lower_formula <span class="ot">&lt;-</span> <span class="st">"log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD)"</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>upper_formula <span class="ot">&lt;-</span> <span class="st">"log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + SEX + RACE + </span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="st">  EDUCATION + SMOKE + INCOME + BMI_CAT"</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>mod_step <span class="ot">&lt;-</span> <span class="fu">step</span>(model_interaction, <span class="at">direction =</span> <span class="st">'forward'</span>, </span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">scope =</span> <span class="fu">list</span>(<span class="at">lower =</span> lower_formula, </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>                              <span class="at">upper =</span> upper_formula))</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Start:  AIC=-125048</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + SEX:log(LEAD)</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + RACE       4      9.16 488 -125605</span></span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + BMI_CAT    2      8.97 488 -125597</span></span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1      2.87 494 -125222</span></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2      1.90 495 -125160</span></span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2      0.35 497 -125065</span></span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   497 -125048</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-125605</span></span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + log(LEAD):SEX</span></span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + BMI_CAT    2      7.16 481 -126050</span></span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1      1.80 486 -125715</span></span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2      1.34 487 -125684</span></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2      0.13 488 -125609</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   488 -125605</span></span>
+<span id="cb37-27"><a href="#cb37-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-28"><a href="#cb37-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126050</span></span>
+<span id="cb37-29"><a href="#cb37-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + log(LEAD):SEX</span></span>
+<span id="cb37-30"><a href="#cb37-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-31"><a href="#cb37-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
+<span id="cb37-32"><a href="#cb37-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + INCOME     1     1.617 479 -126151</span></span>
+<span id="cb37-33"><a href="#cb37-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2     1.112 480 -126117</span></span>
+<span id="cb37-34"><a href="#cb37-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2     0.261 481 -126063</span></span>
+<span id="cb37-35"><a href="#cb37-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   481 -126050</span></span>
+<span id="cb37-36"><a href="#cb37-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-37"><a href="#cb37-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126151</span></span>
+<span id="cb37-38"><a href="#cb37-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
+<span id="cb37-39"><a href="#cb37-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     log(LEAD):SEX</span></span>
+<span id="cb37-40"><a href="#cb37-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-41"><a href="#cb37-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             Df Sum of Sq RSS     AIC</span></span>
+<span id="cb37-42"><a href="#cb37-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + EDUCATION  2     0.418 479 -126173</span></span>
+<span id="cb37-43"><a href="#cb37-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE      2     0.258 479 -126163</span></span>
+<span id="cb37-44"><a href="#cb37-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;                   479 -126151</span></span>
+<span id="cb37-45"><a href="#cb37-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-46"><a href="#cb37-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126173</span></span>
+<span id="cb37-47"><a href="#cb37-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
+<span id="cb37-48"><a href="#cb37-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     EDUCATION + log(LEAD):SEX</span></span>
+<span id="cb37-49"><a href="#cb37-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-50"><a href="#cb37-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Df Sum of Sq RSS     AIC</span></span>
+<span id="cb37-51"><a href="#cb37-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; + SMOKE  2     0.286 479 -126187</span></span>
+<span id="cb37-52"><a href="#cb37-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &lt;none&gt;               479 -126173</span></span>
+<span id="cb37-53"><a href="#cb37-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb37-54"><a href="#cb37-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Step:  AIC=-126187</span></span>
+<span id="cb37-55"><a href="#cb37-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + INCOME + </span></span>
+<span id="cb37-56"><a href="#cb37-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     EDUCATION + SMOKE + log(LEAD):SEX</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="10_linear_regression_cache/html/unnamed-chunk-38_291149c185e0b9f9c809305a3e18e255">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_step)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod_step)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lm(formula = log(SBP) ~ log(LEAD) + AGE + SEX + RACE + BMI_CAT + </span></span>
@@ -896,6 +926,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-huang2022association" class="csl-entry" role="listitem">
+Huang, Ziyao. 2022. <span>“Association Between Blood Lead Level with High Blood Pressure in Us (Nhanes 1999–2018).”</span> <em>Frontiers in Public Health</em> 10: 836357.
+</div>
+<div id="ref-R-broom" class="csl-entry" role="listitem">
+Robinson, David, Alex Hayes, and Simon Couch. 2023. <em>Broom: Convert Statistical Objects into Tidy Tibbles</em>. <a href="https://CRAN.R-project.org/package=broom">https://CRAN.R-project.org/package=broom</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

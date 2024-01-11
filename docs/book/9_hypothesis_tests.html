@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -129,7 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -278,6 +297,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -330,33 +355,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests for comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
-<p>We will use the <code>tidyverse</code>, <code>gt</code>, and <code>gtsummary</code> packages to help manipulate and summarize the data. The <code>car</code> package contains the function <code>leveneTest()</code> to implement a Levene’s test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-1_4eae2b10c494b4b82222949fd79b8c63">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(car))</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(gt))</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(gtsummary))</span>
+<p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests for comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county <span class="citation" data-cites="itop">(<a href="../references.html#ref-itop" role="doc-biblioref">Human Services Commission 2016-2021</a>)</span>. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
+<p>We will use the <strong>tidyverse</strong>, <strong>gt</strong>, and <strong>gtsummary</strong> packages to help manipulate and summarize the data. The <strong>car</strong> package <span class="citation" data-cites="R-car">(<a href="../references.html#ref-R-car" role="doc-biblioref">Fox, Weisberg, and Price 2023</a>)</span> contains the function <code>leveneTest()</code> to implement a Levene’s test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(tex_itop)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="univariate-distributions-and-one-sample-tests" class="level2" data-number="9.1">
 <h2 data-number="9.1" class="anchored" data-anchor-id="univariate-distributions-and-one-sample-tests"><span class="header-section-number">9.1</span> Univariate Distributions and One Sample Tests</h2>
 <p>Let’s begin by looking at a single outcome of interest - the number of induced terminations of pregnancy (referred to as ITOPs or abortions below) in 2021 per 1000 females ages 15-49 in each county. We use the number of females ages 15-49 as a proxy to scale the number of abortions by the population size, though this is not truly reflective of the number of people who can give birth in each county.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-2_577636e956c0b970e99ca9913b69eea3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>county_rates_2021 <span class="ot">&lt;-</span> tex_itop<span class="sc">$</span>total_rate[tex_itop<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">2021</span>]</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>county_rates_2021 <span class="ot">&lt;-</span> tex_itop<span class="sc">$</span>total_rate[tex_itop<span class="sc">$</span>year <span class="sc">==</span> <span class="dv">2021</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(county_rates_2021, <span class="at">breaks =</span> <span class="dv">35</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="9_hypothesis_tests_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="9_hypothesis_tests_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We can see in the figure that this is a heavy-tailed distribution. Below, we find the 10 counties with the highest rates and see that there are some counties that very few total abortions but that have some of the highest abortion rates. This indicates a small population. On the other hand, we also observe Harris county, which contains the city of Houston and has both a high total abortion count and a high abortion rate.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-3_8146774ae18d66662ffa3dcdd07d168b">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tex_itop <span class="sc">%&gt;%</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tex_itop <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(year<span class="sc">==</span><span class="dv">2021</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="at">n=</span><span class="dv">10</span>, total_rate) <span class="sc">%&gt;%</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(county, total_itop, total_rate))</span>
@@ -370,15 +395,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Irion            3       12.9</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 5 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math inline">\(\mu\)</span> we can do so by simply using the <code>mean()</code> function. For reference, the <a href="https://www.cdc.gov/reproductivehealth/data_stats/abortion.htm">CDC</a> estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15–44 years.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-4_6cded82ef2b33694e6a28bc50773c1f1">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(county_rates_2021, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math inline">\(\mu\)</span> we can do so by simply using the <code>mean()</code> function. For reference, the Center for Disease Control estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15–44 years <span class="citation" data-cites="kortsmit2023abortion">(<a href="../references.html#ref-kortsmit2023abortion" role="doc-biblioref">Kortsmit 2023</a>)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(county_rates_2021, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Within R we can also calculate a confidence interval for this mean. Recall that a <span class="math inline">\((1-\alpha)\)</span>% confidence interval for the mean is given by the equation <span class="math inline">\(\hat{\mu} \pm z_{1-\alpha/2} \cdot \frac{\hat{\sigma}}{\sqrt{n}}\)</span>, where <span class="math inline">\(\hat{\mu}\)</span> is our sample mean, <span class="math inline">\(\hat{\sigma}^2\)</span> is the sample variance, and <span class="math inline">\(n\)</span> is the number of observations.</p>
 <p>Below, we use this formula to calculate a 95% confidence interval for the mean abortion rate among counties:</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-5_530f9e8c745be3f389caae4bcb101da3">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>est_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(county_rates_2021, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>est_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(county_rates_2021, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>est_sd <span class="ot">&lt;-</span> <span class="fu">sd</span>(county_rates_2021)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>z_alpha <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(<span class="dv">1</span><span class="fl">-0.05</span><span class="sc">/</span><span class="dv">2</span>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(county_rates_2021)</span>
@@ -386,15 +411,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.04 5.29</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we want to display this nicely, we can use the <code>round()</code> function, which allows us to specify a number of digits to be displayed, and the <code>paste()</code> function, which creates a single character string from multiple inputs.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-6_41345e3166fcb9042d01e1cd0d6ac70c">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> <span class="fu">round</span>(est_mean <span class="sc">-</span> z_alpha<span class="sc">*</span>est_sd<span class="sc">/</span><span class="fu">sqrt</span>(n),<span class="dv">3</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>lower <span class="ot">&lt;-</span> <span class="fu">round</span>(est_mean <span class="sc">-</span> z_alpha<span class="sc">*</span>est_sd<span class="sc">/</span><span class="fu">sqrt</span>(n),<span class="dv">3</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>upper <span class="ot">&lt;-</span> <span class="fu">round</span>(est_mean <span class="sc">+</span> z_alpha<span class="sc">*</span>est_sd<span class="sc">/</span><span class="fu">sqrt</span>(n),<span class="dv">3</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">"Confidence Interval: ("</span>, lower, <span class="st">","</span>, upper, <span class="st">")"</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Confidence Interval: ( 5.044 , 5.289 )"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Suppose that we wanted to run a hypothesis test to compare the mean to a pre-determined value. In particular, the Texas Heartbeat Act was introduced in 2021 and drastically reduced the number of eligible abortions. We could test whether there were significantly fewer abortions in 2021 compared to 2020 using a one-sided t-test. Our null hypothesis is that <span class="math inline">\(\mu \geq 6.23\)</span>, the mean abortion rate in 2020. To run this hypothesis test, we use the <code>t.test()</code> function. For a one sample t-test, we need to specify our sample <code>x</code>, the alternative hypothesis <code>alternative</code> (default is a two-sided test), the true value of the mean <code>mu</code> (default 0), and a confidence level <code>conf.level</code> (default 0.95). Below, we run this t-test, and we can see from the result that we reject the null hypothesis at the 0.05 level and observe a statistically significant decline in the abortion rate in 2021.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-7_8097f6a4472b5736dcbcbd4b7bcc1d3c">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, <span class="at">mu =</span> <span class="fl">6.23</span>, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, <span class="at">mu =</span> <span class="fl">6.23</span>, </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">conf.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  One Sample t-test</span></span>
@@ -409,27 +434,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      5.17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The output for this test is printed above. If we want to reference these values, we will need to save the result. The object <code>t_test_res</code> is a list that contains information about the statistic, p-value, confidence interval, etc. The list of outputs are similar to other test objects, so it is useful to look at what is contained in each by reading the test documentation (<code>?t.test</code>). Below, we find the p-value from <code>t_test_res</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-8_671bdb506e757a45db811b38287ed018">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t_test_res <span class="ot">&lt;-</span> <span class="fu">t.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, <span class="at">mu =</span> <span class="fl">6.23</span>, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t_test_res <span class="ot">&lt;-</span> <span class="fu">t.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, <span class="at">mu =</span> <span class="fl">6.23</span>, </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>       <span class="at">conf.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(t_test_res)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "statistic"   "parameter"   "p.value"     "conf.int"   </span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] "estimate"    "null.value"  "stderr"      "alternative"</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] "method"      "data.name"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] "statistic"   "parameter"   "p.value"     "conf.int"    "estimate"   </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [6] "null.value"  "stderr"      "alternative" "method"      "data.name"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-9_dfe646bf108881282cdefcba58a742e2">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>t_test_res<span class="sc">$</span>p.value</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>t_test_res<span class="sc">$</span>p.value</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.0161</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="practice-question" class="level3" data-number="9.1.1">
 <h3 data-number="9.1.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">9.1.1</span> Practice Question</h3>
 <p>Test whether there were significantly more abortions in 2019 compared to 2020 using a one-sided t-test. Your test statistic should be -6.4736.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-10_366b7b0af513eed2a8aa4c5d2d14b507">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>One thing to consider is that the <code>t.test()</code> function assumes that the sample <code>x</code> comes from a normal distribution. The one-sample Wilcoxon signed rank test is a non-parametric alternative to the one-sample t-test that can be used to compare the median value of a sample to a theoretical value without assuming that the data is normally distributed. This test can be performed using the <code>wilcox.test()</code> function and takes in the same arguments as the <code>t.test()</code> function. Below, we can see that we again reject the null hypothesis at the 0.05 level and conclude that the median abortion rate in 2021 was significantly lower than 5.14, which was the median rate in 2020.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-11_25b99b4976d3ccaa7313f2572e688be8">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wilcox_res <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wilcox_res <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(county_rates_2021, <span class="at">alternative =</span> <span class="st">"less"</span>, </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                          <span class="at">mu =</span> <span class="fl">5.14</span>, <span class="at">conf.level=</span><span class="fl">0.95</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>wilcox_res</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -446,8 +470,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="correlation-and-covariance" class="level2" data-number="9.2">
 <h2 data-number="9.2" class="anchored" data-anchor-id="correlation-and-covariance"><span class="header-section-number">9.2</span> Correlation and Covariance</h2>
 <p>We now look at two sample tests. To start, we look at the 2020 and 2021 rates by county. We pivot our data into a wider format in order to create 2020 and 2021 rate columns, and, this time, we filter out the Loving and Terrel counties to remove outliers. We then create a scatter plot of 2021 vs.&nbsp;2020 rates and observe a linear correlation between the two.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-12_8afd919fb029e9a15b08c2d4310ba68a">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>county_rates <span class="ot">&lt;-</span> tex_itop <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>county_rates <span class="ot">&lt;-</span> tex_itop <span class="sc">%&gt;%</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(county, total_rate, year)) <span class="sc">%&gt;%</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(county <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Terrell"</span>, <span class="st">"Loving"</span>)), </span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>         year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2020</span>, <span class="dv">2021</span>)) <span class="sc">%&gt;%</span></span>
@@ -465,28 +489,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Archer    1.47 0.733</span></span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-13_1b062c30f20f295e36c748b22d0ab602">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(county_rates) <span class="sc">+</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(county_rates) <span class="sc">+</span> </span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span>y2020,<span class="at">y=</span>y2021)) <span class="sc">+</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"2020 ITOP Rates"</span>, <span class="at">y=</span><span class="st">"2021 ITOP Rates"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="9_hypothesis_tests_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<p><img src="9_hypothesis_tests_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>We have seen before how to calculate the correlation between two columns using the <code>cor()</code> function. We can also calculate the covariance using the <code>cov()</code> function. As suspected, there is a positive correlation. The estimated covariance is around 5.2.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-14_445e5fbf8f8bc3b0287b82912f3b6fb5">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(county_rates<span class="sc">$</span>y2020, county_rates<span class="sc">$</span>y2021)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(county_rates<span class="sc">$</span>y2020, county_rates<span class="sc">$</span>y2021)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.5</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(county_rates<span class="sc">$</span>y2020, county_rates<span class="sc">$</span>y2021)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Besides calculating the value of the correlation, we can also test whether this correlation is significantly different from zero. The function <code>cor.test()</code> tests for association between paired samples, using either Pearson’s product moment correlation coefficient, Kendall’s <span class="math inline">\(\tau\)</span>, or Spearman’s <span class="math inline">\(\rho\)</span>. Similar to the <code>t.test()</code> and <code>wilcox.test()</code> functions, we can also specify the <code>alternative</code> and <code>conf.level</code> arguments. Below, we test whether there is a non-zero correlation between the 2020 and 2021 county rates using Pearson’s product-moment correlation. We can see from the resulting p-value that we can reject the null hypothesis that the correlation is zero and conclude that it is instead significantly different than zero. This time we also print the computed confidence interval for our estimate.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-15_d6f230b7f4f970311353b5993dce671b">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cor_test_res <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(county_rates<span class="sc">$</span>y2020, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>cor_test_res <span class="ot">&lt;-</span> <span class="fu">cor.test</span>(county_rates<span class="sc">$</span>y2020, </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                         county_rates<span class="sc">$</span>y2021, <span class="at">method=</span><span class="st">"pearson"</span>)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>cor_test_res</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -501,8 +525,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; cor </span></span>
 <span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-16_9c116d4011a7caca29cf1f380b2a87ef">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cor_test_res<span class="sc">$</span>conf.int</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>cor_test_res<span class="sc">$</span>conf.int</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.401 0.587</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; attr(,"conf.level")</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.95</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -511,8 +535,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="two-sample-tests-for-continuous-variables" class="level2" data-number="9.3">
 <h2 data-number="9.3" class="anchored" data-anchor-id="two-sample-tests-for-continuous-variables"><span class="header-section-number">9.3</span> Two Sample Tests for Continuous Variables</h2>
 <p>If we wanted to directly compare the difference between 2020 and 2021 rates, we could use a two sample test. In this case, because our samples are paired by county, we can use a two sample paired t-test. Specifically, we use a two-sided test to test the null hypothesis that the rates are equal by specifying two different vectors <code>x</code> and <code>y</code>. Note that we used the default values of <code>mu=0</code> and <code>alternative="two.sided"</code>. Additionally, we used the default value <code>var.equal=FALSE</code>, which implies that the samples may have different variances. From the results below, we reject the null hypothesis that the two county rates are equal at the 0.05 level. We also print a 95% confidence interval of the difference in means.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-17_6128615e810a0d0c236542d770653097">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>t_test_two_res <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x=</span>county_rates<span class="sc">$</span>y2020, <span class="at">y=</span>county_rates<span class="sc">$</span>y2021)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>t_test_two_res <span class="ot">&lt;-</span> <span class="fu">t.test</span>(<span class="at">x=</span>county_rates<span class="sc">$</span>y2020, <span class="at">y=</span>county_rates<span class="sc">$</span>y2021)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>t_test_two_res</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Welch Two Sample t-test</span></span>
@@ -531,8 +555,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.95</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In the <code>tex_itop</code> dataset, each county has also been categorized by whether it was urban or rural. Suppose we want to compare the change in abortion rates from 2020 to 2021 between rural and urban counties. First, we create a variable describing the rate change between these years using the code below. We choose to use the change in rate rather than percent change to avoid infinite or undefined values.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-18_44034f3414dc181438ca712fa302be15">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>county_rates_type <span class="ot">&lt;-</span> tex_itop <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>county_rates_type <span class="ot">&lt;-</span> tex_itop <span class="sc">%&gt;%</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(county, urban, county_type, total_rate, year)) <span class="sc">%&gt;%</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(total_rate <span class="sc">&lt;</span> <span class="dv">15</span>, year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2020</span>, <span class="dv">2021</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> year, <span class="at">values_from =</span> total_rate) <span class="sc">%&gt;%</span></span>
@@ -541,8 +565,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate_change =</span> (y2021<span class="sc">-</span>y2020)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We again use a two-sample two-sided t-test, but this time the data is not paired. Below, we show an alternative way to specify a t-test test below using a formula <code>lhs ~ rhs</code>, where <code>lhs</code> is a numeric column and <code>rhs</code> is a factor column with two levels. We must also specify the data in this case. From the R output in this case, we would fail to reject the null hypothesis at the 0.05 level and conclude that the rate changes for urban and rural counties are not significantly different. We also print the estimates used in the t-test using <code>estimate</code>, which shows the estimated mean in both groups.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-19_54da1fee364df8630a34728bc5138724">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>t_test_unpaired <span class="ot">&lt;-</span> <span class="fu">t.test</span>(rate_change<span class="sc">~</span>urban, <span class="at">data=</span>county_rates_type)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>t_test_unpaired <span class="ot">&lt;-</span> <span class="fu">t.test</span>(rate_change<span class="sc">~</span>urban, <span class="at">data=</span>county_rates_type)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>t_test_unpaired</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Welch Two Sample t-test</span></span>
@@ -560,8 +584,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              -0.469              -0.503</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note that this yields the same results as if we had specified the data using two vectors <code>x</code> and <code>y</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-20_4faba06b3595f1e40e08476149357da3">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> county_rates_type<span class="sc">$</span>rate_change[county_rates_type<span class="sc">$</span>urban <span class="sc">==</span> <span class="st">'Urban'</span>]</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> county_rates_type<span class="sc">$</span>rate_change[county_rates_type<span class="sc">$</span>urban <span class="sc">==</span> <span class="st">'Urban'</span>]</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> county_rates_type<span class="sc">$</span>rate_change[county_rates_type<span class="sc">$</span>urban <span class="sc">==</span> <span class="st">'Rural'</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">paired =</span> <span class="cn">FALSE</span>) </span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -578,8 +602,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Besides a t-test, we can also use a two-sample Wilcoxon non-parametric test using the <code>wilcox.test()</code> function, which has the same arguments as the function <code>t.test()</code>. Both the <code>t.test()</code> and <code>wilcox.test()</code> can only compare two groups. When we want to compare two or more independent samples, we can use a Kruskal-Wallis rank sum test using the <code>kruskal.test()</code> function or a one-way analysis of variance (ANOVA) using the <code>aov()</code> function.</p>
 <p>This time we use the column <code>county_type</code>, which is an indicator for whether the county is urban, suburban, or rural according to the RUCC (rural-urban continuum codes) from the U.S. Department of Agriculture. For the <code>kruskal.test()</code> function, we can either specify the arguments <code>formula</code> (<code>rate_change ~ county_type</code>) and <code>data</code> (<code>county_rates_type</code>) or we can specify two vectors: <code>x</code>, a numeric vector, and <code>g</code>, a factor representing the group. For the <code>aov()</code> function, we specify the test using a formula and the data. To see the p-value, we have to use the <code>summary()</code> function to print the result. Again, both tests suggest that we fail to reject the null hypothesis at the 0.05 level.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-21_b8af8ac7569298ea84efa863f4335da7">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(county_rates_type<span class="sc">$</span>rate_change, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal.test</span>(county_rates_type<span class="sc">$</span>rate_change, </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>             county_rates_type<span class="sc">$</span>county_type)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Kruskal-Wallis rank sum test</span></span>
@@ -587,8 +611,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  county_rates_type$rate_change and county_rates_type$county_type</span></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Kruskal-Wallis chi-squared = 2, df = 2, p-value = 0.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-22_6ff3b520be4fcccc4945b237c1192f4e">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">aov</span>(rate_change<span class="sc">~</span>county_type, <span class="at">data=</span>county_rates_type)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>aov_res <span class="ot">&lt;-</span> <span class="fu">aov</span>(rate_change<span class="sc">~</span>county_type, <span class="at">data=</span>county_rates_type)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(aov_res)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Df Sum Sq Mean Sq F value Pr(&gt;F)</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; county_type   2      7    3.36    0.53   0.59</span></span>
@@ -597,15 +621,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="practice-question-1" class="level3" data-number="9.3.1">
 <h3 data-number="9.3.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">9.3.1</span> Practice Question</h3>
 <p>Use an appropriate test to determine whether the ITOP rates in 2016 significantly differed by race. The test statistic should be 264.27 with associated p-value &lt; 2.2e-16.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-23_3dbaea252d05b7917afa1bec648fc981">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="two-sample-variance-tests" class="level3" data-number="9.3.2">
 <h3 data-number="9.3.2" class="anchored" data-anchor-id="two-sample-variance-tests"><span class="header-section-number">9.3.2</span> Two Sample Variance Tests</h3>
 <p>We could also test whether the variance of a continous variable is equal between groups. To start, we compare the variance in abortion rates in 2021 between urban and rural counties using an F test. Our null hypothesis for this test is that the variance in both groups is equal. The function <code>var.test()</code> implements an F test and has the same main arguments as the <code>t.test()</code> function: vectors <code>x</code> and <code>y</code> OR a <code>formula</code> and <code>data</code>, the alternative hypothesis <code>alternative</code>, and <code>conf.level</code>. Additionally, we can specify the hypothesized ratio of the variances through the arugment <code>ratio</code> (default value 1). Note that this function assumes that the two samples come from normally distributed populations. We fail to reject the null hypothesis that the variance in rates are equal at the 0.05 level and print the estimate of the ratio of variances, which is around 1.11.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-24_2bd6f6ff434c57c1273e3584db4ab55d">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>f_test <span class="ot">&lt;-</span> <span class="fu">var.test</span>(y2021 <span class="sc">~</span> urban, county_rates_type)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>f_test <span class="ot">&lt;-</span> <span class="fu">var.test</span>(y2021 <span class="sc">~</span> urban, county_rates_type)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>f_test</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  F test to compare two variances</span></span>
@@ -622,9 +646,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ratio of variances </span></span>
 <span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;               1.12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Lastly, we implement a Levene’s test to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and data set, as below, or by providing two vectors <code>y</code>, a numeric vector, and <code>g</code>, a vector specifying the groups. This test is from the <code>car</code> package and has slightly different output than other tests. In particular, to access the p-value, we need to access the value named <code>'Pr(&gt;F)'</code>. In this case, we actually do reject the null hypothesis at the 0.05 level.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-25_c7f68eac64e3f2afe162390ccc58e77e">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>levene_test <span class="ot">&lt;-</span> <span class="fu">leveneTest</span>(y2021 <span class="sc">~</span> <span class="fu">as.factor</span>(county_type), </span>
+<p>Lastly, we implement a Levene’s test to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and data set, as below, or by providing two vectors <code>y</code>, a numeric vector, and <code>g</code>, a vector specifying the groups. This test is from the <strong>car</strong> package and has slightly different output than other tests. In particular, to access the p-value, we need to access the value named <code>'Pr(&gt;F)'</code>. In this case, we actually do reject the null hypothesis at the 0.05 level.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>levene_test <span class="ot">&lt;-</span> <span class="fu">leveneTest</span>(y2021 <span class="sc">~</span> <span class="fu">as.factor</span>(county_type), </span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>                              county_rates_type)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(levene_test)</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Levene's Test for Homogeneity of Variance (center = median)</span></span>
@@ -641,8 +665,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="two-sample-tests-for-categorical-variables" class="level2" data-number="9.4">
 <h2 data-number="9.4" class="anchored" data-anchor-id="two-sample-tests-for-categorical-variables"><span class="header-section-number">9.4</span> Two Sample Tests for Categorical Variables</h2>
 <p>In the two sample tests above, we were comparing the distributions of continuous variables. We now look at comparing distributions of categorical variables. We will first categorize counties by their abortion rate in 2020 being above or below 11.2, which was the national average rate that year. We display the distribution of this variable by the urban/rural grouping using a contingency table below.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-26_4e2c26bb7e4759fd74b000d2729a009e">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>county_rates_type<span class="sc">$</span>below_nat_avg <span class="ot">&lt;-</span> </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>county_rates_type<span class="sc">$</span>below_nat_avg <span class="ot">&lt;-</span> </span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(county_rates_type<span class="sc">$</span>y2020 <span class="sc">&gt;</span> <span class="fl">11.2</span>, <span class="st">"Above Nat Avg"</span>, </span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Below Nat Avg"</span>)</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(county_rates_type<span class="sc">$</span>below_nat_avg, county_rates_type<span class="sc">$</span>urban)</span>
@@ -652,8 +676,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Below Nat Avg   185    56</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can use a Fisher’s exact test to test whether the classifications of being above and below the national average and being rural and urban are associated with each other. In this case, the null hypothesis is that the odds or being below the national average is equal between rural and urban counties. The <code>fisher.test()</code> function can either take in a contingency table as a matrix or can be specified by two factor vectors <code>x</code> and <code>y</code>, which is how we implement it below. Additionally, there is the option to specify the <code>alternative</code> and <code>conf.level</code> arguments. We do not see a statistically significant difference between urban and rural counties at the 0.05 level with the estimated odds ratio is around 0.23.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-27_5fa80cfba11ad45bc113b75a3676ea25">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fisher_test <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(county_rates_type<span class="sc">$</span>urban, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>fisher_test <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(county_rates_type<span class="sc">$</span>urban, </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                           county_rates_type<span class="sc">$</span>below_nat_avg)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>fisher_test</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -672,8 +696,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      0.229</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>An alternative test is a Pearson’s Chi-Squared test, which can be used for large sample sizes. The counts of rural and urban counties in the ‘Above Nat Avg’ category are very small, so we recategorize our outcome to be at or above Texas’s average to avoid this complication. The <code>chisq.test()</code> function also takes in a contingency table as a matrix or can be specified by two factor vectors <code>x</code> and <code>y</code>. Another useful argument is <code>correct</code> (default is TRUE) which indicates whether to apply a continuity correction. For this test, we observe a statistically significant difference in the proportion of counties above the national average between rural and urban counties and reject the null hypothesis at the 0.05 level.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-28_3ade9c7bb4a2b5ccf6c86e2585bd2f54">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tex_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(county_rates_type<span class="sc">$</span>y2020)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tex_mean <span class="ot">&lt;-</span> <span class="fu">mean</span>(county_rates_type<span class="sc">$</span>y2020)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>county_rates_type<span class="sc">$</span>below_tex_avg <span class="ot">&lt;-</span> </span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(county_rates_type<span class="sc">$</span>y2020 <span class="sc">&gt;</span> tex_mean, <span class="st">"Above Texas Ave"</span>, </span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>         <span class="st">"Below Texas Ave"</span>)</span>
@@ -683,8 +707,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Above Texas Ave    84    39</span></span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Below Texas Ave   104    21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-29_e4d0b909f3f19ff6c17ce411f28cedad">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>chi_sq <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(county_rates_type<span class="sc">$</span>below_tex_avg, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>chi_sq <span class="ot">&lt;-</span> <span class="fu">chisq.test</span>(county_rates_type<span class="sc">$</span>below_tex_avg, </span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>           county_rates_type<span class="sc">$</span>urban)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>chi_sq</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -698,41 +722,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="practice-question-2" class="level3" data-number="9.4.1">
 <h3 data-number="9.4.1" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">9.4.1</span> Practice Question</h3>
 <p>Repeat the Chi-Squared test, but this time use the RUCC codes instead of the <code>urban</code> column. You should get a p-value of 0.2799. Think about what could explain the difference between these results.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-30_f0805aea158e5ffec22f7f007b076d5c">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="adding-hypothesis-tests-to-summary-tables" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="adding-hypothesis-tests-to-summary-tables"><span class="header-section-number">9.5</span> Adding Hypothesis Tests to Summary Tables</h2>
-<p>In <a href="https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html">Chapter 4</a>, we used the <code>gt</code> and <code>gtsummary</code> packages to create summary tables of variables. When creating a stratified table (done by add the <code>by</code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code>add_p()</code> function. By default, the <code>add_p()</code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code>by</code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-31_a5a454d42e78f1b25b0b5a1ab3c58c33">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(tex_itop, <span class="at">include =</span> <span class="fu">c</span>(total_rate, white_rate, asian_rate, </span>
+<p>In <a href="4_exploratory_analysis.html">Chapter&nbsp;<span>4</span></a>, we used the <strong>gt</strong> and <strong>gtsummary</strong> packages to create summary tables of variables. When creating a stratified table (done by add the <code>by</code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code>add_p()</code> function. By default, the <code>add_p()</code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code>by</code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(tex_itop, <span class="at">include =</span> <span class="fu">c</span>(total_rate, white_rate, asian_rate, </span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                                  hispanic_rate, black_rate, </span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                                  native_american_rate),</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">by =</span> <span class="st">"year"</span>, <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">:::</span><span class="fu">as.tags.gt_tbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">by =</span> <span class="st">"year"</span>, </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">:::</span><span class="fu">as.tags.gt_tbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div id="fzscljzsdy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#fzscljzsdy table {
+<div id="pbhwjsgwcl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pbhwjsgwcl table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#fzscljzsdy thead, #fzscljzsdy tbody, #fzscljzsdy tfoot, #fzscljzsdy tr, #fzscljzsdy td, #fzscljzsdy th {
+#pbhwjsgwcl thead, #pbhwjsgwcl tbody, #pbhwjsgwcl tfoot, #pbhwjsgwcl tr, #pbhwjsgwcl td, #pbhwjsgwcl th {
   border-style: none;
 }
 
-#fzscljzsdy p {
+#pbhwjsgwcl p {
   margin: 0;
   padding: 0;
 }
 
-#fzscljzsdy .gt_table {
+#pbhwjsgwcl .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -758,12 +783,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_caption {
+#pbhwjsgwcl .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#fzscljzsdy .gt_title {
+#pbhwjsgwcl .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -775,7 +800,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#fzscljzsdy .gt_subtitle {
+#pbhwjsgwcl .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -787,7 +812,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#fzscljzsdy .gt_heading {
+#pbhwjsgwcl .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -799,13 +824,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_bottom_border {
+#pbhwjsgwcl .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_col_headings {
+#pbhwjsgwcl .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -820,7 +845,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_col_heading {
+#pbhwjsgwcl .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -840,7 +865,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#fzscljzsdy .gt_column_spanner_outer {
+#pbhwjsgwcl .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -852,15 +877,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#fzscljzsdy .gt_column_spanner_outer:first-child {
+#pbhwjsgwcl .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#fzscljzsdy .gt_column_spanner_outer:last-child {
+#pbhwjsgwcl .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#fzscljzsdy .gt_column_spanner {
+#pbhwjsgwcl .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -872,11 +897,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#fzscljzsdy .gt_spanner_row {
+#pbhwjsgwcl .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#fzscljzsdy .gt_group_heading {
+#pbhwjsgwcl .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -902,7 +927,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#fzscljzsdy .gt_empty_group_heading {
+#pbhwjsgwcl .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -917,15 +942,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#fzscljzsdy .gt_from_md > :first-child {
+#pbhwjsgwcl .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#fzscljzsdy .gt_from_md > :last-child {
+#pbhwjsgwcl .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#fzscljzsdy .gt_row {
+#pbhwjsgwcl .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -944,7 +969,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#fzscljzsdy .gt_stub {
+#pbhwjsgwcl .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -957,7 +982,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#fzscljzsdy .gt_stub_row_group {
+#pbhwjsgwcl .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -971,15 +996,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#fzscljzsdy .gt_row_group_first td {
+#pbhwjsgwcl .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#fzscljzsdy .gt_row_group_first th {
+#pbhwjsgwcl .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#fzscljzsdy .gt_summary_row {
+#pbhwjsgwcl .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -989,16 +1014,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#fzscljzsdy .gt_first_summary_row {
+#pbhwjsgwcl .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_first_summary_row.thick {
+#pbhwjsgwcl .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#fzscljzsdy .gt_last_summary_row {
+#pbhwjsgwcl .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1008,7 +1033,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_grand_summary_row {
+#pbhwjsgwcl .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1018,7 +1043,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#fzscljzsdy .gt_first_grand_summary_row {
+#pbhwjsgwcl .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1028,7 +1053,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_last_grand_summary_row_top {
+#pbhwjsgwcl .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1038,11 +1063,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_striped {
+#pbhwjsgwcl .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#fzscljzsdy .gt_table_body {
+#pbhwjsgwcl .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1051,7 +1076,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_footnotes {
+#pbhwjsgwcl .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1065,7 +1090,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_footnote {
+#pbhwjsgwcl .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1074,7 +1099,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#fzscljzsdy .gt_sourcenotes {
+#pbhwjsgwcl .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1088,7 +1113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#fzscljzsdy .gt_sourcenote {
+#pbhwjsgwcl .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1096,63 +1121,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#fzscljzsdy .gt_left {
+#pbhwjsgwcl .gt_left {
   text-align: left;
 }
 
-#fzscljzsdy .gt_center {
+#pbhwjsgwcl .gt_center {
   text-align: center;
 }
 
-#fzscljzsdy .gt_right {
+#pbhwjsgwcl .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#fzscljzsdy .gt_font_normal {
+#pbhwjsgwcl .gt_font_normal {
   font-weight: normal;
 }
 
-#fzscljzsdy .gt_font_bold {
+#pbhwjsgwcl .gt_font_bold {
   font-weight: bold;
 }
 
-#fzscljzsdy .gt_font_italic {
+#pbhwjsgwcl .gt_font_italic {
   font-style: italic;
 }
 
-#fzscljzsdy .gt_super {
+#pbhwjsgwcl .gt_super {
   font-size: 65%;
 }
 
-#fzscljzsdy .gt_footnote_marks {
+#pbhwjsgwcl .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#fzscljzsdy .gt_asterisk {
+#pbhwjsgwcl .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#fzscljzsdy .gt_indent_1 {
+#pbhwjsgwcl .gt_indent_1 {
   text-indent: 5px;
 }
 
-#fzscljzsdy .gt_indent_2 {
+#pbhwjsgwcl .gt_indent_2 {
   text-indent: 10px;
 }
 
-#fzscljzsdy .gt_indent_3 {
+#pbhwjsgwcl .gt_indent_3 {
   text-indent: 15px;
 }
 
-#fzscljzsdy .gt_indent_4 {
+#pbhwjsgwcl .gt_indent_4 {
   text-indent: 20px;
 }
 
-#fzscljzsdy .gt_indent_5 {
+#pbhwjsgwcl .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1241,19 +1266,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exercises" class="level2" data-number="9.7">
 <h2 data-number="9.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">9.7</span> Exercises</h2>
-<p>For the following exercises, we will be using the <code>pain</code> data from the <code>HDSinRdata</code> package.</p>
-<div class="cell" data-layout-align="center" data-hash="9_hypothesis_tests_cache/html/unnamed-chunk-32_9f983819c1c064094ce7f55cf2caee36">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For the following exercises, we will be using the <code>pain</code> data from the <strong>HDSinRdata</strong> package.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
 <li><p>Determine whether the presence or absence of follow-up information is significantly associated with the initial average pain intensity. What do the results suggest?</p></li>
-<li><p>First, plot <code>PROMIS_PAIN_BEHAVIOR</code> grouped by race (you can use the <code>PAT_RACE_CAT</code> variable that we defined in <a href="https://alicepaul.github.io/health-data-science-in-r/book/7_visualization_ggplot.html">Chapter 7</a>). What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.</p></li>
+<li><p>First, plot <code>PROMIS_PAIN_BEHAVIOR</code> grouped by race (you can use the <code>PAT_RACE_CAT</code> variable that we defined in <a href="7_visualization_ggplot.html">Chapter&nbsp;<span>7</span></a>. What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.</p></li>
 <li><p>Examine the association between <code>CCI_BIN</code> and <code>MEDICAID_BIN</code>. Are these variable significantly related to each other? How would you describe their relationship?</p></li>
-<li><p>Recreate the summary table below. Then, recreate the p-values for <code>PROMIS_DEPRESSION</code>, <code>PROMIS_ANXIETY</code>, and <code>MEDICAID_BIN</code> using the appropriate tests.</p></li>
+<li><p>Recreate the summary table in <a href="#fig-q4">Figure&nbsp;<span>9.1</span></a>. Then, recreate the p-values for <code>PROMIS_DEPRESSION</code>, <code>PROMIS_ANXIETY</code>, and <code>MEDICAID_BIN</code> using the appropriate tests.</p></li>
 </ol>
-<p><img src="images/9-exercise4.png" alt="“”" width="500pt" align="center"></p>
+<div id="fig-q4" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/9-exercise4.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;9.1: Stratified Summary Table.</figcaption>
+</figure>
+</div>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-R-car" class="csl-entry" role="listitem">
+Fox, John, Sanford Weisberg, and Brad Price. 2023. <em>Car: Companion to Applied Regression</em>. <a href="https://CRAN.R-project.org/package=car">https://CRAN.R-project.org/package=car</a>.
+</div>
+<div id="ref-itop" class="csl-entry" role="listitem">
+Human Services Commission, Texas Health &amp;. 2016-2021. <span>“Induced Terminations of Pregnancy.”</span> Texas Department of State Health Services. <a href="https://www.hhs.texas.gov/about/records-statistics/data-statistics/itop-statistics">https://www.hhs.texas.gov/about/records-statistics/data-statistics/itop-statistics</a>.
+</div>
+<div id="ref-kortsmit2023abortion" class="csl-entry" role="listitem">
+Kortsmit, Katherine. 2023. <span>“Abortion Surveillance—United States, 2021.”</span> <em>MMWR. Surveillance Summaries</em> 72.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

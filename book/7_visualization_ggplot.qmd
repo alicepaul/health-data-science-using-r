@@ -1,20 +1,20 @@
 
 # Visualization with ggplot2 {#sec-ggplot2}
   
-`ggplot2` is another useful package in the tidyverse that allows statisticians to use visualizations to communicate key findings and results in a compelling format. We will first learn about the three main components in a ggplot object and then expand on that format by learning more about the different layers we can use to create various plots. As with the tidyverse functions, there are quite a few functions to cover, and the functions build on each other.
+The package **ggplot2** is another useful package in the tidyverse that allows statisticians to use visualizations to communicate key findings and results in a compelling format. We will first learn about the three main components in a ggplot object and then expand on that format by learning more about the different layers we can use to create various plots. As with the tidyverse functions, there are quite a few functions to cover, and the functions build on each other.
 
-The three packages we will use in this chapter are `tidyverse`, `HDSinRdata`, and `patchwork`, the last of which is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic introduced in [Chapter -@sec-data-files] to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we take a sample of 5,000 patients that are complete cases at baseline to reduce the computation time to display each plot. You can ignore how the code used to find this sample works.
+The three packages we will use in this chapter are **tidyverse**, **HDSinRdata**, and **patchwork** [@R-patchwork], the last of which is a nice package for combining multiple plots together into a single figure. We will use the data from the Pittsburgh pain clinic [@alter2021hierarchical] introduced in [Chapter -@sec-data-files] to create our visuals. You can refresh your memory about this data by reading the data documentation. For the purposes of this chapter, we take a sample of 5,000 patients that are complete cases at baseline to reduce the computation time to display each plot. You can ignore how the code used to find this sample works.
 
-```{r}
-suppressPackageStartupMessages(library(tidyverse))
-suppressPackageStartupMessages(library(HDSinRdata))
-suppressPackageStartupMessages(library(patchwork))
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
+library(patchwork)
 data(pain)
 
 # sampling data
 set.seed(5)
-pain_df <- pain[complete.cases(subset(pain, 
-                                      select=-c(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))),]
+pain_df_sub <- subset(pain, select=-c(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))
+pain_df <- pain[complete.cases(pain_df_sub),]
 pain_df <- pain_df[sample(1:nrow(pain_df), 5000, replace=FALSE),] 
 ```
 
@@ -30,11 +30,17 @@ Now we can start adding layers to our `ggplot` object. One type of layer is a **
 
 ```{r}
 ggplot(pain_df) + geom_point(aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))
-# ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION)) + geom_point()
-# ggplot() + geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))
 ```
 
-If we want to improve our plot, we may want to add different labels and a title. To do so, we use the `labs()` function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the [color, size, and shape](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) of the points. These things are specified outside of the `aes()` function since they do not come from the data - every point has the same color, size, and shape in this example.
+```{r, eval = FALSE}
+# Alternative 1:
+ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION)) + geom_point()
+# Alternative 2:
+ggplot() + geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, 
+                                          y = PROMIS_DEPRESSION))
+```
+
+If we want to improve our plot, we may want to add different labels and a title. To do so, we use the `labs()` function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color, size, and shape of the points. These things are specified outside of the `aes()` function since they do not come from the data - every point has the same color, size, and shape in this example.
 
 ```{r}
 ggplot(pain_df)+
@@ -100,9 +106,12 @@ ggplot(pain_df)+
   scale_x_continuous(limits=c(15,50), breaks = c(20, 30, 40, 50), 
                      labels = c("-3 SD", "-2 SD", "-1 SD", "Pop Mean")) + 
   scale_y_continuous(breaks = c(40, 50, 60, 70, 80), 
-                     labels = c("-1 SD", "Pop Mean", "+1 SD", "+2 SD", "+3 SD")) +
-  scale_color_gradient(breaks= seq(0,10,2), low="green", high="red", "Reported Pain") +
-  labs(x="PROMIS Physical Function T-Score", y = "PROMIS Sleep Disturbance T-Score") + 
+                     labels = c("-1 SD", "Pop Mean", "+1 SD", "+2 SD", 
+                                "+3 SD")) +
+  scale_color_gradient(breaks= seq(0,10,2), low="green", high="red", 
+                       "Reported Pain") +
+  labs(x="PROMIS Physical Function T-Score", 
+       y = "PROMIS Sleep Disturbance T-Score") + 
   theme_minimal()
 ```
 
@@ -121,7 +130,7 @@ ggplot(pain_df)+
   theme_minimal()
 ```
 
-The function `scale_y_discrete()` is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels of this y-axis. To update the order, we can either refactor the variable using `factor()` prior to plotting or update the `limits` argument of the scale function. The function `scale_fill_brewer()` is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the [color palette](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html) (`palette`) and to specify that that we do not want a legend (`guide`). Since we do not have a legend, we do not update the values and labels in this function.
+The function `scale_y_discrete()` is the scale function that corresponds to a discrete y-axis. In this case, we want to update the order and labels of this y-axis. To update the order, we can either refactor the variable using `factor()` prior to plotting or update the `limits` argument of the scale function. The function `scale_fill_brewer()` is a scale function to control the color palette of a discrete variable used for the fill aesthetic. We use this function to specify the color palette (`palette`) and to specify that that we do not want a legend (`guide`). Since we do not have a legend, we do not update the values and labels in this function.
 
 ```{r}
 ggplot(pain_df)+
@@ -134,6 +143,15 @@ ggplot(pain_df)+
   labs(x="Reported Pain Intensity", y="Reported Race") +
   theme_minimal()
 ```
+
+The **RColorBrewer** package [@R-RColorBrewer] contains several default palettes to choose from, shown below. You can also create your own palette using the `brewer.pal()` function from this package. To visualize a palette you can use the available [online tool](https://colorbrewer2.org/).
+
+```{r, eval = FALSE}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+![**RColorBrewer** Palettes.](images/7-palettes.png){{width="300pt"}}
 
 Here is one more example of how you can use the scale functions - take a look at the code below. We used two `geom_histogram()` calls, or layers, to plot a histogram of pain at baseline and at follow-up. This allows us to visualize that pain at follow-up tends to be lower than at baseline.
 
@@ -217,7 +235,9 @@ To create our final plot, we will demonstrate some extra features we haven't cov
 pain_body_map <- data.frame(part = names(pain_df)[2:75])
 pain_body_map$num_patients <- colSums(pain_df[,2:75])
 pain_body_map$perc_patients <- pain_body_map$num_patients/nrow(pain_df)
-pain_body_map$avg_pain <- colSums(pain_df[,2:75] * pain_df$PAIN_INTENSITY_AVERAGE)/pain_body_map$num_patients
+pain_body_map$avg_pain <- colSums(pain_df[,2:75] * 
+                                pain_df$PAIN_INTENSITY_AVERAGE) /
+  pain_body_map$num_patients
 pain_body_map <- pain_body_map %>% 
     mutate( region = case_when(
     part %in% c("X208", "X209", "X218","X219","X212","X213") ~ "Back",
@@ -242,7 +262,7 @@ pain_body_map <- pain_body_map %>%
 head(pain_body_map)
 ```
 
-Within the theme we've chosen, we are able to update any of the [theme options](https://ggplot2.tidyverse.org/reference/theme.html). Below we use the `theme()` function to update the legend position to the bottom and the grid lines to light pink. Additionally, we add a horizontal line using the `geom_hline()` function (`geom_vline()` and `geom_abline()` can add vertical or diagonal lines respectively) and add a text annotation using the `annotate()` function. The resulting plot below shows the average pain value for each body part as well as the proportion of patients who categorized it as being painful.
+Within the theme we've chosen, we are able to update any of the theme options (see `?theme`). Below we use the `theme()` function to update the legend position to the bottom and the grid lines to light pink. Additionally, we add a horizontal line using the `geom_hline()` function (`geom_vline()` and `geom_abline()` can add vertical or diagonal lines respectively) and add a text annotation using the `annotate()` function. The resulting plot below shows the average pain value for each body part as well as the proportion of patients who categorized it as being painful.
 
 ```{r}
 ggplot(pain_body_map) +
@@ -251,10 +271,11 @@ ggplot(pain_body_map) +
   annotate(geom="text", label="Average Pain Value", x=0.35, y=7.0) + 
   labs(x="Proportion Patients Selected Region", y="Average Pain of Patients") +
   theme_minimal()+
-  theme(legend.position="bottom", panel.grid.major = element_line(colour = "lightpink"))
+  theme(legend.position="bottom", 
+        panel.grid.major = element_line(colour = "lightpink"))
 ```
 
-So far we have not saved any of our figures as objects. Below, I create two plots and save them as objects named `p1` and `p2`. If we want to save these plots, we can use the `ggsave()` function, which saves the last plot generated under the file name provided. Additionally, I can use the `patchwork` package to incorporate multiple plots together. A `+` between plots puts them side by side whereas `/` stacks them.
+So far we have not saved any of our figures as objects. Below, I create two plots and save them as objects named `p1` and `p2`. If we want to save these plots, we can use the `ggsave()` function, which saves the last plot generated under the file name provided. Additionally, I can use the **patchwork** package to incorporate multiple plots together. A `+` between plots puts them side by side whereas `/` stacks them.
 
 ```{r}
 p1 <- ggplot(pain_body_map) +
@@ -263,7 +284,8 @@ p1 <- ggplot(pain_body_map) +
   annotate(geom="text", label="Average Pain Value", x=0.35, y=7.0) + 
   labs(x="Proportion Patients Selected Region", y="Average Pain of Patients") +
   theme_minimal()+
-  theme(legend.position="bottom", panel.grid.major = element_line(colour = "lightpink"))
+  theme(legend.position="bottom", 
+        panel.grid.major = element_line(colour = "lightpink"))
 
 p2 <- ggplot(pain_body_map) +
   geom_histogram(aes(x=perc_patients), color="violetred", fill="lightpink") + 
@@ -280,18 +302,23 @@ p1/p2
 ggsave("images/myplot.png") 
 ```
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 {{< video https://www.youtube.com/embed/0atAxk6Yk10 width="700" height="500" >}}
+:::
 
 ## Exercises
 
-For this chapter's exercises, use the `covidcases` data set that we first introduced in [Chapter 5](https://alicepaul.github.io/health-data-science-in-r/book/5_data_transformations_summaries.html) to recreate the plots below. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.
+For this chapter's exercises, use the `covidcases` data set that we first introduced in [Chapter -@sec-transformations-summaries] to recreate the plots below. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.
 
-1.  Replicate the plot below, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark (this date was taken from this [timeline](https://www.ajmc.com/view/a-timeline-of-covid19-developments-in-2020), and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation.
+1.  Replicate the plot in @fig-q1, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark [@covid_timeline], and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation.
 
-<img src="images/7-exercise1plot.png" alt="“”" width="400pt" align="center"/>
+  ![Covid-19 Cases Over Time by State.](images/7-exercise1plot.png){#fig-q1 fig-align="center" width="300pt"}
 
-2.  Replicate the plot below, which is a stacked area chart for the total deaths from Covid-19 in the states with the top ten total death counts overall.
+2.  Replicate the plot in @fig-q2, which is a stacked area chart for the total deaths from Covid-19 in the states with the top ten total death counts overall.
 
-<img src="images/7-exercise2plot.png" alt="“”" width="400pt" align="center"/>
+  ![Covid-19 Cases Over Time by State.](images/7-exercise2plot.png){#fig-q2 fig-align="center" width="300pt"}
+  
+  
+

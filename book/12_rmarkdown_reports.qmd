@@ -3,56 +3,69 @@
 
 This chapter will introduce you to R Markdown, which is a document format that combines markdown text with R code. Writing in R markdown can help you write reproducible code and create polished reports to present your analyses.
 
+```{r, echo = FALSE}
+library(tidyverse)
+library(HDSinRdata)
+library(kableExtra)
+library(gt)
+data(breastcancer)
+```
+
 ## Starting an R Markdown file
 
-To create an R Markdown file, you will need to have RStudio installed as an application. You'll also need to install the `rmarkdown` package in addition to the `knitr` package. We also recommend the `bookdown` package, which allows us to create section, figure, and table references, as well as the `kableExtra` package for formatting your tables.
+To create an R Markdown file, you will need to have RStudio installed as an application. You'll also need to install the **rmarkdown** package [@R-rmarkdown] in addition to the **knitr** package [@R-knitr]. We also recommend the **bookdown** package [@R-bookdown], which allows us to create section, figure, and table references, as well as the **kableExtra** package [@R-kableExtra] for formatting your tables.
 
-Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in [Chapter 1](https://alicepaul.github.io/health-data-science-in-r/book/1_intro_to_r.html). Just like opening a new R file, you'll want to go to File -\> New File, but instead of selecting 'R Script', you'll now select 'R Markdown...'. This should bring up a window that looks like the following:
+Now that you have these packages downloaded, opening a new R Markdown file is very similar to opening a new R file, which was covered in [Chapter -@sec-intro-to-r]. Just like opening a new R file, you'll want to go to File -\> New File, but instead of selecting 'R Script', you'll now select 'R Markdown...'. This should bring up a window that looks like @fig-new-markdown.
 
-<img src="images/12-new-r-markdown-window.png" alt="“”" width="400pt" align="center"/>
+![Creating a New R Markdown Document.](images/12-new-r-markdown-window.png){#fig-new-markdown fig-align="center" width="300pt"}
 
-First, enter a title of your choosing for your report and type your name in the Author field - note that you can always change these later - and then click on OK. This will open an R Markdown file that has the extension .Rmd. Make sure to save this file with a suitable name in your desired location on your computer by selecting File -\> Save, and then you're ready to start writing your report!
+First, enter a title of your choosing for your report and type your name in the Author field - note that you can always change these later - and then click on OK. This will open an R Markdown file that has the extension .Rmd. Make sure to save this file with a suitable name in your desired location on your computer by selecting File -\> Save, and then you're ready to start writing your report! Your file should now look like @fig-rmarkdown-file.
 
-Your file should now look like this:
+![A New R Markdown Document.](images/12-r-markdown-file.png){#fig-rmarkdown-file fig-align="center" width="300pt"}
 
-<img src="images/12-r-markdown-file.png" alt="“”" width="1000pt" align="center"/>
+You will write all of the text and code that you would like to include in your report in this .Rmd file, and then you can produce a nicely formatted report from this file by 'knitting' the file. You can either knit to HTML, PDF, or WORD by clicking on the knit icon ![](images/12-knit-icon.png){width=30pt} from the toolbar at the top of the page and then selecting your desired output file type.
 
-You will write all of the text and code that you would like to include in your report in this .Rmd file, and then you can produce a nicely formatted report from this file by 'knitting' the file. You can either knit to HTML, PDF, or WORD by clicking on the knit icon (below) from the toolbar at the top of the page and then selecting your desired output file type.
-
-<img src="images/12-knit-icon.png" alt="“”" width="80pt" align="center"/>
 
 ### Adding Code Chunks
 
 Each of the darker gray rectangles is called a code chunk - all of the code used to generate your report will go in these chunks, and all of your writing will go between them. Each code chunk starts with ```` ```{r} ```` and ends with ```` ``` ````. To create a chunk, you can either
 
--   click on this green "add chunk" symbol <img src="images/12-add-chunk.png" alt="“”" width="30pt" align="left"/> in the toolbar at the top of the page
--   type ```` ```{r} ```` and ```` ``` ````
--   use the keyboard shortcut **Ctrl + Alt + I** (**Cmd + Option + I** on Macs)
+-   click on this green "add chunk" symbol ![](images/12-add-chunk.png){width=25pt} in the toolbar at the top of the page, 
 
-To run the code in a chunk, you can either use the keyboard shortcut **Ctrl + Enter** (**Cmd + Return** on Mac), or you can use one of the following buttons at the top right of the chunks: \* <img src="images/12-run-all-chunks-above.png" alt="“”" width="20pt" align="left"/> runs all chunks above the current chunk \* <i class="fa-play fa" style="font-size: 15px;color: green;"></i> runs the current chunk
+-   type ```` ```{r} ```` and ```` ``` ````, OR
+
+-   use the keyboard shortcut **Ctrl + Alt + I** (**Cmd + Option + I** on Macs).
+
+To run the code in a chunk, you can either use the keyboard shortcut **Ctrl + Enter** (**Cmd + Return** on Mac), or you can use one of the following buttons at the top right of the chunks: ![](images/12-run-all-chunks-above.png){width=20pt} runs all chunks above the current chunk and ![](images/12-run-current-chunk.png){width=20pt} runs the current chunk.
 
 ### Customizing Chunks
 
 You can specify whether you want to include the code and/or its various output in your final report by adding the following commands, separated by commas, to the right of the `{r}` at the top of the code chunk:
 
--   `include = FALSE` makes it so that neither code nor its output will appear in your report
--   `echo = FALSE` makes it so that the output of the code but not the code itself will appear in your report
--   `message = FALSE`, `warning = FALSE`, and `error = FALSE` make it so that messages, warnings, and errors (respectively) that are generated from the code in the chunk won't appear in your report
+-   `include = FALSE` makes it so that neither code nor its output will appear in your report.
+
+-   `echo = FALSE` makes it so that the output of the code but not the code itself will appear in your report.
+
+-   `message = FALSE`, `warning = FALSE`, and `error = FALSE` make it so that messages, warnings, and errors (respectively) that are generated from the code in the chunk won't appear in your report.
 
 To customize a single code chunk, you can either type one of the above commands next to the `{r}` at the top of the code chunk by yourself or you can click on the 'Modify Chunk Options' symbol <i class="fa-gear fa" style="font-size: 22px; color: gray;"></i> at the top right of the code chunk and change the settings there.
 
-To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with ```` ```{r setup, include=FALSE} ```` using the `knitr::opts_chunk$set` function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the `library()` function. For example, below we load the `tidyverse` and `HDSinRdata` packages.
+To apply the same customizations to all chunks in the document at once, you can add them to the first chunk at the very top of your R Markdown that starts with ```` ```{r setup, include=FALSE} ```` using the `knitr::opts_chunk$set` function. These are called the global settings. For example, using the following code for your first code chunk will make it so that none of the errors, warnings, or messages from any of the code chunks will appear in your final report. It is also good practice to load all the packages you are using for your report within this first code chunk using the `library()` function. For example, below we load the **tidyverse** and **HDSinRdata** packages.
 
-```{{r setup, include = FALSE}}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE)
-library(tidyverse)
-library(HDSinRdata)
-```
+```` 
+  ```{r setup, include = FALSE}
+  knitr::opts_chunk$set(echo = TRUE, warning = FALSE, error = FALSE, echo = FALSE)
+  library(tidyverse)
+  library(HDSinRdata)
+  ```
+````
 
 If you want to display the code for your report in a code appendix, you can easily do this by creating an empty code chunk at the end of your .Rmd file with these chunk options `ref.label=knitr::all_labels()`, `echo = TRUE`, and `eval = FALSE`.
 
-```{{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE}} 
-```
+````
+  ```{r ref.label = knitr::all_labels(), echo = TRUE, eval = FALSE} 
+  ```
+````
 
 You can also have inline R code by using single backticks around your code `` `r max(c(1,2,3)) ` ``. The code must start with `r` to be run when knit. This allows you to reference variables in your text. For example, we could display the variance of a column in our data without having to copy the value over.
 
@@ -78,13 +91,13 @@ To create headers and sections, you can add the `#` symbol in front of your text
 
 `### Even Smaller Header`
 
-<img src="images/12-headers.png" alt="“”" width="250pt" align="center"/>
+![Example header sizes.](images/12-headers.png){#fig-headers fig-align="center" width="200pt"}
 
 You can also add links `[text](www.example.com)` and images `![alt text](image.png)`
 
-[my link](https://github.com/alicepaul/r-for-health-data-science)
+[Example link.](https://alicepaul.github.io/health-data-science-using-r/)
 
-![my image](../images/logo.png)
+![Example Image.](../images/logo.png)
 
 [The Markdown Guide](https://www.markdownguide.org/) has a great [cheat sheet](https://www.markdownguide.org/cheat-sheet/) as well as more resources for formatting markdown text.
 
@@ -106,38 +119,51 @@ ggplot(breastcancer) +
 ```
 ````
 
-<img src="images/12-example-figure.png" alt="“”" width="600pt" align="center"/>
+![](images/12-example-figure.png){fig-align="center" width="300pt"}
 
-If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the `gt` and `kableExtra` packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries.
+If you want to make data frames, matrices, or tables from your raw R output more polished and aesthetically pleasing, you can use the **gt** and **kableExtra** packages. Be sure to load the package you are using to the code chunk at the top of your R Markdown file that contains all of your libraries.
 
-To demonstrate the abilities of these package, let's suppose that we wanted to display the head of the first few columns of the `breastcancer` dataset from the `HDSinRdata` package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.
+To demonstrate the abilities of these package, let's suppose that we wanted to display the head of the first few columns of the `breastcancer` dataset from the **HDSinRdata** package. The following code produces the following output in the knitted pdf report - you can see that it essentially just copies the raw output from R, which is rather messy.
 
-```{{r}}
-breastcancer %>% select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>% head()
+```{r echo = TRUE, eval = TRUE}
+breastcancer %>% 
+  select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>%   
+  head()
 ```
 
-<img src="images/12-unformatted-table.png" alt="“”" width="500pt" align="center"/>
 
-We use the `kable()` and `kable_styling()` functions from the `kableExtra` package to produce a more nicely formatted table. The `kable()` function generates a table from a data frame. The `kable()` function allows you to specify some display options for your table. For example, you can add a caption to your table using the `caption` argument, and you can change the names of the columns in the table using the `col.names` argument. The `kable_styling()` has additional options available. Similar to the `fig.pos = H` command described for figures in the previous section, adding "HOLD_position" to the `kable_styling()` function will prevent the table from floating on the report; adding `"scale_down"` scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the [kable](https://www.rdocumentation.org/packages/knitr/versions/1.43/topics/kable) and [kable_styling](https://www.rdocumentation.org/packages/kableExtra/versions/1.3.4/topics/kable_styling) functions for more options available.
+We use the `kable()` and `kable_styling()` functions from the **kableExtra** package to produce a more nicely formatted table. The `kable()` function generates a table from a data frame. The `kable()` function allows you to specify some display options for your table. For example, you can add a caption to your table using the `caption` argument, and you can change the names of the columns in the table using the `col.names` argument. The `kable_styling()` has additional options available. Similar to the `fig.pos = H` command described for figures in the previous section, adding "HOLD_position" to the `kable_styling()` function will prevent the table from floating on the report; adding `"scale_down"` scales the table so that it fits in the margins of the paper. The updated code and output are below. See the documentation for the `kable()` and `kable_styling()` functions for more options available.
 
-```{{r}}
+```{r echo =TRUE, eval = TRUE}
 breastcancer %>% 
   select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>% 
   head() %>% 
   kable(caption = "Head of the Breast Cancer Dataset", 
-      col.names = c("ID", "Diagnosis", "Mean Radius", "Mean Texture", "Mean Perimeter")) %>%   
+      col.names = c("ID", "Diagnosis", "Mean Radius", "Mean Texture", 
+      "Mean Perimeter")) %>%   
   kable_styling(latex_options = c("scale_down", "HOLD_position"))
 ```
 
-<img src="images/12-formatted-table.png" alt="“”" width="500pt" align="center"/>
+Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In [Chapter -@sec-exploratory], we also introduced the **gt** package. This package is an alternative package to **kableExtra** that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the [package introduction](https://gt.rstudio.com/articles/intro-creating-gt-tables.html) for more details about this package. An example `gt` table is given below.
 
-Above, we can see that kable produces a much nicer table in the knitted pdf that is more suitable for a data analysis report. In [Chapter 4](https://alicepaul.github.io/health-data-science-in-r/book/4_exploratory_analysis.html), we also introduced the `gt` package. This package is an alternative package to `kableExtra` that allows you to format each part of the table and includes options for formatting the columns, adding footers or subtitles, or grouping your table. See the [package introduction](https://gt.rstudio.com/articles/intro-creating-gt-tables.html) for more details about this package. An example `gt` table is given below.
+```{r, echo = TRUE, eval = FALSE}
+breastcancer %>% 
+  select(id, diagnosis, radius_mean, texture_mean, perimeter_mean) %>% 
+  head() %>% 
+  gt() %>%
+  tab_header(title = "Head of the Breast Cancer Dataset") %>%
+  cols_label(id ~ "ID", 
+             diagnosis ~ "Diagnosis", 
+             radius_mean ~ "Mean Radius", 
+             texture_mean ~ "Mean Texture",
+             perimeter_mean ~ "Mean Perimeter")
+```
+![](images/12-example-gt.png){fig-align="center" width="300pt"}
 
-<img src="images/12-gt-example.png" alt="“”" width="350pt" align="center"/>
 
 ## Using Bookdown for References
 
-R Markdown automatically adds figure and table numbers to the figures and tables in your report. The `bookdown` package allows us to add references. To use this package, make sure you have installed the `bookdown` package and then add the following text to the top of your .Rmd file, next to "output".
+R Markdown automatically adds figure and table numbers to the figures and tables in your report. The **bookdown** package allows us to add references. To use this package, make sure you have installed the **bookdown** package and then add the following text to the top of your .Rmd file, next to "output".
 
 ```         
 output:
@@ -159,8 +185,10 @@ Here's an equation that is inline with the text: `$5x^2 + 9x^3$` produces $5x^2 
 
 Here is some other LaTeX notation that you should know in order to write common equations: \* To create a fraction, type `\frac{numerator}{denominator}`. For example, `\frac{2}{3}` produces $\frac{2}{3}$. \* To create a subscript, type `_`. For example, `x_{2}` produces $x_2$. \* To create a superscript, type `^`. For example, `x^{2}` produces $x^2$.
 
-If you want to learn more about how to write in LaTeX, [Art of Problem Solving](https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols) provides a great reference for LaTeX symbols and \[Overleaf\](https://www.overleaf.com/learn/latex/Free_online_introduction_to_LaTeX\_(part_1) provides a helpful introduction to LaTeX in general.
+If you want to learn more about how to write in LaTeX, [Art of Problem Solving](https://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols) provides a great reference for LaTeX symbols and [Overleaf](https://www.overleaf.com/learn/latex/Tutorials#Learn_LaTeX_in_30_minutes) provides a helpful introduction to LaTeX in general.
 
 ## Exercises
 
-The exercise for this chapter is to recreate [this example pdf](https://github.com/alicepaul/health-data-science-in-r/blob/main/book/docs/ExampleRMarkdown.pdf) created from an R Markdown file. You will need to use the `breastcancer` dataset from the `HDSinRdata` package.
+The exercise for this chapter is to recreate [this example pdf](https://github.com/alicepaul/health-data-science-using-r/blob/main/book/docs/ExampleRMarkdown.pdf) created from an R Markdown file. You will need to use the `breastcancer` dataset from the **HDSinRdata** package.
+
+

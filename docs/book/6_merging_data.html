@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -127,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -276,6 +295,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -324,16 +349,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>In this chapter, we continue to look at some of the ways to manipulate data using the tidyverse packages. In particular, we will look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert between <em>wide form</em> (more columns, fewer rows) and <em>long form</em> (fewer columns, more rows). We can also use data pivots to put our data into what is called <em>tidy form</em>. Additionally, we will look at combining information from multiple data frames into a single data frame. The key ideas when merging data are to think about what the common information is between the data frames and to consider which values we want to keep.</p>
-<p>For this chapter, we will use three data sets. The first data set is <code>covidcases</code>, which contains the weekly case and death counts by county in the United States for 2020; the second data set is <code>mobility</code>, which contains daily mobility estimates by state in 2020; and the third data set is <code>lockdowndates</code>, which contains the start and end dates for statewide stay at home orders. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-1_ed61ee6a7fd163bfc15206fc89c34ca4">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span>
+<p>For this chapter, we will use three data sets. The first data set is <code>covidcases</code>, which contains the weekly case and death counts by county in the United States for 2020 <span class="citation" data-cites="covid_data covid_article">(<a href="../references.html#ref-covid_data" role="doc-biblioref">Guidotti and Ardia 2020</a>; <a href="../references.html#ref-covid_article" role="doc-biblioref">Guidotti 2022</a>)</span>; the second data set is <code>mobility</code>, which contains daily mobility estimates by state in 2020 <span class="citation" data-cites="warren2020mobility">(<a href="../references.html#ref-warren2020mobility" role="doc-biblioref">Warren and Skillman 2020</a>)</span>; and the third data set is <code>lockdowndates</code>, which contains the start and end dates for statewide stay at home orders <span class="citation" data-cites="covid_policy">(<a href="../references.html#ref-covid_policy" role="doc-biblioref">Raifman et al. 2022</a>)</span>. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(covidcases)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(lockdowndates)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(mobility)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-2_45f97d6e066d29d0c2afe8c9ac50f3ce">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 5</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [6]</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county   week weekly_cases weekly_deaths</span></span>
@@ -345,8 +370,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Autauga    16            5             1</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-3_a644510f193074cf7b2435f939f40fb2">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mobility)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mobility)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 5</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state [1]</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   date       samples   m50 m50_index</span></span>
@@ -358,8 +383,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama 2020-03-05  288218  14.8     102. </span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-4_c7140f7fa14015d85febecd89326c00b">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(lockdowndates)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(lockdowndates)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   State      Lockdown_Start Lockdown_End</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;          &lt;chr&gt;       </span></span>
@@ -371,31 +396,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Both the mobility and lockdown data frames contain date columns. Right now, these columns in both data sets are of the class character, which we can see in the printed output above. We can use the <code>as.Date()</code> function to tell R to treat these columns as dates instead of characters. When using this function, we need to specify the date format as an argument so that R knows how to parse this text to a date. Our format is given as <code>%Y-%M-%D</code>, where the <code>%Y</code> stands for the full four-digit year, <code>%M</code> is a two-digit month (e.g.&nbsp;January is coded “01” vs “1”), and <code>%D</code> stands for the two-digit day (e.g.&nbsp;the third day is coded “03” vs “3”). Below, we convert the classes of these columns to ‘Date’.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-5_e462298c88e2ddff8107d44719991155">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mobility<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(mobility<span class="sc">$</span>date, <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lockdowndates<span class="sc">$</span>Lockdown_Start <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(lockdowndates<span class="sc">$</span>Lockdown_Start, <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>lockdowndates<span class="sc">$</span>Lockdown_End <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(lockdowndates<span class="sc">$</span>Lockdown_End, <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(mobility<span class="sc">$</span>date)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Date"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(lockdowndates<span class="sc">$</span>Lockdown_Start)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mobility<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(mobility<span class="sc">$</span>date, <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>lockdowndates<span class="sc">$</span>Lockdown_Start <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(lockdowndates<span class="sc">$</span>Lockdown_Start, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>lockdowndates<span class="sc">$</span>Lockdown_End <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(lockdowndates<span class="sc">$</span>Lockdown_End, </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">formula=</span><span class="st">"%Y-%M-%D"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(mobility<span class="sc">$</span>date)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Date"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(lockdowndates<span class="sc">$</span>Lockdown_End)</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Date"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(lockdowndates<span class="sc">$</span>Lockdown_Start)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Date"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(lockdowndates<span class="sc">$</span>Lockdown_End)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Date"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>After coding these columns as dates, we can access information such as the day, month, year, or week from them. These functions are all available in the <code>lubridate</code> package, which is a package in the tidyverse that allows us to manipulate dates.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-6_ab8dc397e874fbaa18d594b6017bf6c4">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">month</span>(mobility<span class="sc">$</span>date[<span class="dv">1</span>])</span>
+<p>After coding these columns as dates, we can access information such as the day, month, year, or week from them. These functions are all available in the <strong>lubridate</strong> package <span class="citation" data-cites="R-lubridate">(<a href="../references.html#ref-R-lubridate" role="doc-biblioref">Spinu, Grolemund, and Wickham 2023</a>)</span>, which is a package in the tidyverse that allows us to manipulate dates.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">month</span>(mobility<span class="sc">$</span>date[<span class="dv">1</span>])</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">week</span>(mobility<span class="sc">$</span>date[<span class="dv">1</span>])</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 9</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, we add a date column to <code>covidcases</code>. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates in the <code>lubridate</code> package. January 1, 2020 was a Wednesday and is counted as the first week, so to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019 (the last Sunday before 2020). We show a simple example of adding one week to this date below before doing this conversion for the entire column.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-7_00ef8d15f4323f82ff9e437db1341313">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.Date</span>(<span class="st">"2019-12-29"</span>)<span class="sc">+</span><span class="fu">weeks</span>(<span class="dv">1</span>)</span>
+<p>Next, we add a date column to <code>covidcases</code>. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates using the <strong>lubridate</strong> package. January 1, 2020 was a Wednesday and is counted as the first week, so to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019 (the last Sunday before 2020). We show a simple example of adding one week to this date below before doing this conversion for the entire column.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.Date</span>(<span class="st">"2019-12-29"</span>)<span class="sc">+</span><span class="fu">weeks</span>(<span class="dv">1</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "2020-01-05"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-8_7182e84c0b74b5df8e60d19d12b86e56">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>covidcases<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2019-12-29"</span>)<span class="sc">+</span><span class="fu">weeks</span>(covidcases<span class="sc">$</span>week<span class="dv">-1</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>covidcases<span class="sc">$</span>date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2019-12-29"</span>)<span class="sc">+</span><span class="fu">weeks</span>(covidcases<span class="sc">$</span>week<span class="dv">-1</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 6</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [6]</span></span>
@@ -411,27 +438,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="tidy-data" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="tidy-data"><span class="header-section-number">6.1</span> Tidy Data</h2>
 <p>The tidyverse is designed around interacting with <strong>tidy data</strong> with the premise that using data in a tidy format can streamline our analysis. Data is considered <strong>tidy</strong> if</p>
-<ol type="1">
-<li>Each variable is associated with a single column.</li>
-<li>Each observation is associated with a single row.</li>
-<li>Each value has its own cell.</li>
-</ol>
-<p>Take a look at the sample data below which stores information about the maternal mortality rate for five countries over time (source: https://ourworldindata.org/maternal-mortality). This data is <em>not</em> tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-9_749b213e6d7100179675756a126dc64d">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mat_mort1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">country =</span> <span class="fu">c</span>(<span class="st">"Turkey"</span>, <span class="st">"United States"</span>, <span class="st">"Sweden"</span>, <span class="st">"Japan"</span>),</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2002 =</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="fl">9.9</span>, <span class="fl">4.17</span>, <span class="fl">7.8</span>),</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2007 =</span> <span class="fu">c</span>(<span class="fl">21.9</span>, <span class="fl">12.7</span>, <span class="fl">1.86</span>, <span class="fl">3.6</span>),</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2012 =</span> <span class="fu">c</span>(<span class="fl">15.2</span>, <span class="dv">16</span>, <span class="fl">5.4</span>, <span class="fl">4.8</span>))</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mat_mort1)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         country y2002 y2007 y2012</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        Turkey 64.00 21.90  15.2</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 United States  9.90 12.70  16.0</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3        Sweden  4.17  1.86   5.4</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         Japan  7.80  3.60   4.8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p>Each variable is associated with a single column.</p></li>
+<li><p>Each observation is associated with a single row.</p></li>
+<li><p>Each value has its own cell.</p></li>
+</ul>
+<p>Take a look at the sample data below which stores information about the maternal mortality rate for five countries over time <span class="citation" data-cites="maternal_mortality">(<a href="../references.html#ref-maternal_mortality" role="doc-biblioref">Roser and Ritchie, n.d.</a>)</span>. This data is <em>not</em> tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mat_mort1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">country =</span> <span class="fu">c</span>(<span class="st">"Turkey"</span>, <span class="st">"United States"</span>, <span class="st">"Sweden"</span>, </span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="st">"Japan"</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2002 =</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="fl">9.9</span>, <span class="fl">4.17</span>, <span class="fl">7.8</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2007 =</span> <span class="fu">c</span>(<span class="fl">21.9</span>, <span class="fl">12.7</span>, <span class="fl">1.86</span>, <span class="fl">3.6</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">y2012 =</span> <span class="fu">c</span>(<span class="fl">15.2</span>, <span class="dv">16</span>, <span class="fl">5.4</span>, <span class="fl">4.8</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mat_mort1)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         country y2002 y2007 y2012</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        Turkey 64.00 21.90  15.2</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 United States  9.90 12.70  16.0</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3        Sweden  4.17  1.86   5.4</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4         Japan  7.80  3.60   4.8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, we can make this data tidy by creating separate columns for country, year, and maternity mortality rate as we demonstrate below. Now every observation is associated with an individual row.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-10_9b8aeabde184abb1e641109582eba3bb">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mat_mort2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mat_mort2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">country =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"Turkey"</span>, <span class="st">"United States"</span>, <span class="st">"Sweden"</span>, <span class="st">"Japan"</span>), <span class="dv">3</span>),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">year =</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">2002</span>, <span class="dv">4</span>), <span class="fu">rep</span>(<span class="dv">2007</span>, <span class="dv">4</span>), <span class="fu">rep</span>(<span class="dv">2012</span>, <span class="dv">4</span>)),</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mat_mort_rate =</span> <span class="fu">c</span>(<span class="fl">64.0</span>, <span class="fl">9.9</span>, <span class="fl">4.17</span>, <span class="fl">7.8</span>, <span class="fl">21.9</span>, <span class="fl">12.7</span>, <span class="fl">1.86</span>, <span class="fl">3.6</span>, </span>
@@ -449,12 +477,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="reshaping-data" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="reshaping-data"><span class="header-section-number">6.2</span> Reshaping Data</h2>
 <p>The mobility and covid case data are both already in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order.</p>
-<p>To reshape our data, we use the <code>pivot_longer()</code> function to change the data from what is called <strong>wide form</strong> to what is called <strong>long form</strong>. This kind of pivot involves taking a subset of columns that we will <em>gather</em> into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image below shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns <code>cols</code> that we want to transform (these <code>cols</code> are shown in light purple on the left). The long form contains a new column <code>names_to</code> that contains the exam type and <code>values_to</code> that contains a binary variable indicating whether or not each exam was completed.</p>
-<p><img src="images/6-pivot-long.png" alt="“”" width="500pt" align="center"></p>
+<p>To reshape our data, we use the <code>pivot_longer()</code> function to change the data from what is called <strong>wide form</strong> to what is called <strong>long form</strong>. This kind of pivot involves taking a subset of columns that we will <em>gather</em> into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image in <a href="#fig-pivot-long">Figure&nbsp;<span>6.1</span></a> shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns <code>cols</code> that we want to transform (these <code>cols</code> are shown in light purple on the left). The long form contains a new column <code>names_to</code> that contains the exam type and <code>values_to</code> that contains a binary variable indicating whether or not each exam was completed.</p>
+<div id="fig-pivot-long" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/6-pivot-long.png" class="img-fluid figure-img" style="width:4.16667in"></p>
+<figcaption class="figure-caption">Figure&nbsp;6.1: Pivoting Longer.</figcaption>
+</figure>
+</div>
 <p>In our case, we want to take the lockdown start and end columns and create two new columns: one column will indicate whether or not a date represents the start or end of a lockdown, and the other will contain the date itself. These are called the <em>key</em> and <em>value</em> columns, respectively. The key column will get its values from the names of the columns we are transforming (or the keys) whereas the value column will get its values from the entries in those columns (or the values).</p>
 <p>The <code>pivot_longer()</code> function takes in a data table, the columns <code>cols</code> that we are pivoting to longer form, the column name <code>names_to</code> that will store the data from the previous column names, and the column name <code>values_to</code> for the column that will store the information from the columns gathered. In our case, we will name the first column <code>Lockdown_Event</code> since it will contain whether each date is the start or end of a lockdown, and we will name the second column <code>Date</code>. Take a look at the result below.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-11_7ef918d3cd51223f6bf5c7328b2d3ba0">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lockdown_long <span class="ot">&lt;-</span> lockdowndates <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>lockdown_long <span class="ot">&lt;-</span> lockdowndates <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">c</span>(<span class="st">"Lockdown_Start"</span>, <span class="st">"Lockdown_End"</span>), </span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to=</span><span class="st">"Lockdown_Event"</span>, <span class="at">values_to=</span><span class="st">"Date"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Date =</span> <span class="fu">as.Date</span>(Date, <span class="at">formula =</span><span class="st">"%Y-%M-%D"</span>), </span>
@@ -473,8 +506,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form) using the function <code>pivot_wider()</code>. This function again first takes in a data table but now we specify the arguments <code>names_from</code> and <code>values_from</code>. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form below, we specify that <code>names_from</code> is the lockdown event and <code>values_from</code> is the date itself. Now we are back to the same form as before!</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-12_cb7ef6fc7b875f521fc16a72731d8ce8">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>lockdown_wide <span class="ot">&lt;-</span> <span class="fu">pivot_wider</span>(lockdown_long, <span class="at">names_from=</span>Lockdown_Event, </span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>lockdown_wide <span class="ot">&lt;-</span> <span class="fu">pivot_wider</span>(lockdown_long, <span class="at">names_from=</span>Lockdown_Event, </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                             <span class="at">values_from=</span>Date)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(lockdown_wide)</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 3</span></span>
@@ -488,10 +521,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here’s another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the <code>month()</code> function to be able to group by month and state. Additionally, you can see that I add an <code>ungroup()</code> at the end. When we summarize on data grouped by more than one variable, the summarized output will still be grouped. In this case, the warning message states that the data is still grouped by state.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-13_180d6d29dbd880940451a5d056458b2d">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ne_cases <span class="ot">&lt;-</span> covidcases <span class="sc">%&gt;%</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Maine"</span>, <span class="st">"Vermont"</span>, <span class="st">"New Hampshire"</span>, <span class="st">"Connecticut"</span>, <span class="st">"Rhode Island"</span>,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"Massachusetts"</span>)) <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ne_cases <span class="ot">&lt;-</span> covidcases <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Maine"</span>, <span class="st">"Vermont"</span>, <span class="st">"New Hampshire"</span>, <span class="st">"Connecticut"</span>, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"Rhode Island"</span>, <span class="st">"Massachusetts"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">month =</span> <span class="fu">month</span>(date)) <span class="sc">%&gt;%</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, month) <span class="sc">%&gt;%</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_cases =</span> <span class="fu">sum</span>(weekly_cases)) <span class="sc">%&gt;%</span></span>
@@ -508,27 +541,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, I need to convert this data to wide format with a column for each state, so my <code>names_from</code> argument will be <code>state</code>. Further, I want each row to have the case values for each state, so my <code>values_from</code> argument will be <code>total_cases</code>. The format of this data may not be tidy, but it allows me to quickly compare cases across states.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-14_352c3e8b710f98db8a8d640268f10a29">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_wider</span>(ne_cases, <span class="at">names_from=</span>state, <span class="at">values_from=</span>total_cases)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">pivot_wider</span>(ne_cases, <span class="at">names_from=</span>state, <span class="at">values_from=</span>total_cases)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 7 × 7</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   month Connecticut Maine Massachusetts `New Hampshire` `Rhode Island`</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;         &lt;int&gt;           &lt;int&gt;          &lt;int&gt;</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     3        6872   434         13118             651            827</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     4       18575   725         47499            1649           6843</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     5       11936  1575         28798            2179          14653</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     6        2619  1185          5545             751           1426</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     7        2290  1046          7621             827          65562</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: Vermont &lt;int&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   month Connecticut Maine Massachusetts `New Hampshire` `Rhode Island` Vermont</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt;       &lt;int&gt; &lt;int&gt;         &lt;int&gt;           &lt;int&gt;          &lt;int&gt;   &lt;int&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1     3        6872   434         13118             651            827     508</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     4       18575   725         47499            1649           6843     531</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3     5       11936  1575         28798            2179          14653    1201</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     6        2619  1185          5545             751           1426     815</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5     7        2290  1046          7621             827          65562     731</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="practice-question" class="level3" data-number="6.2.1">
 <h3 data-number="6.2.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">6.2.1</span> Practice Question</h3>
-<p>Create a similar data frame as we did above but this time using the <code>mobility</code> dataset. In other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like this:</p>
-<p><img src="images/6-practicequestion1answer.png" alt="“”" width="400pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-15_bc2f33f1236d39c479f7fc2412bd8dac">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Create a similar data frame as we did above but this time using the <code>mobility</code> dataset. In other words, create a data frame where the columns correspond to the average mobility for each state in New England and the rows correspond to the numbered months. You should get a result that looks like in <a href="#fig-pq1">Figure&nbsp;<span>6.2</span></a>.</p>
+<div id="fig-pq1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/6-practicequestion1answer.png" class="img-fluid figure-img" style="width:3.47222in"></p>
+<figcaption class="figure-caption">Figure&nbsp;6.2: Pivoting Mobility Data.</figcaption>
+</figure>
 </div>
-<p>The pivots above were relatively simple in that there was only one set of values we were pivoting on (e.g.&nbsp;the lockdown date, covid cases). The <a href="https://tidyr.tidyverse.org/articles/pivot.html"><code>tidyr</code> package</a> provides examples of more complex pivots that you might want to apply to your data. In the video below, we demonstrate a pivot longer when there is information in the column names, a pivot wider with multiple value columns, and a pivot longer with many variables in the columns.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The pivots above were relatively simple in that there was only one set of values we were pivoting on (e.g.&nbsp;the lockdown date, covid cases). The <a href="https://tidyr.tidyverse.org/articles/pivot.html"><strong>tidyr</strong> package</a> provides examples of more complex pivots that you might want to apply to your data. In the video below, we demonstrate a pivot longer when there is information in the column names, a pivot wider with multiple value columns, and a pivot longer with many variables in the columns.</p>
 </section>
 <section id="pivot-video" class="level3" data-number="6.2.2">
 <h3 data-number="6.2.2" class="anchored" data-anchor-id="pivot-video"><span class="header-section-number">6.2.2</span> Pivot Video</h3>
@@ -538,8 +575,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="merging-data-with-joins" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="merging-data-with-joins"><span class="header-section-number">6.3</span> Merging Data with Joins</h2>
 <p>Above, we saw how to manipulate our current data into new formats. Now, we will see how we can combine multiple data sources. Merging two data frames is called <em>joining</em>, and the functions we will use to perform this joining depends on how we want to match values between the data frames. For example, below we join information about age and statin use from <code>table1</code> and <code>table2</code> matching by name.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-16_98b9b531b457da0f66d9b7919753ad43">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="dv">26</span>, <span class="dv">32</span>), <span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Alice"</span>))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>table1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">14</span>, <span class="dv">26</span>, <span class="dv">32</span>), <span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Alice"</span>))</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>table2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">name =</span> <span class="fu">c</span>(<span class="st">"Carol"</span>, <span class="st">"Bob"</span>), <span class="at">statins =</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">full_join</span>(table1, table2, <span class="at">by =</span> <span class="st">"name"</span>)</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   age  name statins</span></span>
@@ -567,63 +604,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 data-number="6.3.1" class="anchored" data-anchor-id="types-of-joins-video"><span class="header-section-number">6.3.1</span> Types of Joins Video</h3>
 <div class="quarto-video"><iframe data-external="1" src="https://www.youtube.com/embed/slazeLLQBoY" width="700" height="500" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 <p>We will first demonstrate a left join using the <code>left_join()</code> function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. Below, we use a left join to add the lockdown information to our <code>covidcases</code> data. In this case, the first table will be <code>covidcases</code> and we will match by <code>state</code>. Since the state column has a slightly different name in the two data frames (“state” in <code>covidcases</code> and “State” in <code>lockdowndates</code>), we specify that <code>state</code> is equivalent to <code>State</code> in the <code>by</code> argument.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-17_0ab4b4770d47077a19e0da7139a6b59b">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> <span class="fu">left_join</span>(covidcases, lockdowndates, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"state"</span><span class="ot">=</span><span class="st">"State"</span>))</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> <span class="fu">left_join</span>(covidcases, lockdowndates, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"state"</span><span class="ot">=</span><span class="st">"State"</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases_full)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 8</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [6]</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county   week weekly_cases weekly_deaths date      </span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;    </span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Autauga    12            3             0 2020-03-15</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Autauga    13            3             0 2020-03-22</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Autauga    14            2             1 2020-03-29</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Autauga    15           11             1 2020-04-05</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Autauga    16            5             1 2020-04-12</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county   week weekly_cases weekly_deaths date       Lockdown_Start</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;date&gt;        </span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Autauga    12            3             0 2020-03-15 2020-04-04    </span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Autauga    13            3             0 2020-03-22 2020-04-04    </span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Autauga    14            2             1 2020-03-29 2020-04-04    </span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Autauga    15           11             1 2020-04-05 2020-04-04    </span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Autauga    16            5             1 2020-04-12 2020-04-04    </span></span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: Lockdown_Start &lt;date&gt;, Lockdown_End &lt;date&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: Lockdown_End &lt;date&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>These two new columns will allow us to determine whether the start of each recorded week was during a lockdown. We use the <code>between</code> function to create a new column <code>lockdown</code> before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-18_faf06126080c7df4a80aa761ca3d118d">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> covidcases_full <span class="sc">%&gt;%</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> covidcases_full <span class="sc">%&gt;%</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lockdown =</span> <span class="fu">between</span>(date, Lockdown_Start, Lockdown_End)) <span class="sc">%&gt;%</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(Lockdown_Start, Lockdown_End)) </span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="sc">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"Alabama"</span>, county <span class="sc">==</span> <span class="st">"Jefferson"</span>, date <span class="sc">&lt;=</span> <span class="fu">as.Date</span>(<span class="st">"2020-05-10"</span>))</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 7</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [10]</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county     week weekly_cases weekly_deaths date       lockdown</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;lgl&gt;   </span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Jefferson    11           19             0 2020-03-08 FALSE   </span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Jefferson    12           66             0 2020-03-15 FALSE   </span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Jefferson    13          153             0 2020-03-22 FALSE   </span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Jefferson    14          156             8 2020-03-29 FALSE   </span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Jefferson    15          128             2 2020-04-05 TRUE    </span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 5 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"Alabama"</span>, county <span class="sc">==</span> <span class="st">"Jefferson"</span>, </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>         date <span class="sc">&lt;=</span> <span class="fu">as.Date</span>(<span class="st">"2020-05-10"</span>))</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 10 × 7</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [10]</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county     week weekly_cases weekly_deaths date       lockdown</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;lgl&gt;   </span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Jefferson    11           19             0 2020-03-08 FALSE   </span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Jefferson    12           66             0 2020-03-15 FALSE   </span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Jefferson    13          153             0 2020-03-22 FALSE   </span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Jefferson    14          156             8 2020-03-29 FALSE   </span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Jefferson    15          128             2 2020-04-05 TRUE    </span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 5 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We now want to add in the mobility data. In the join above, we wanted to keep any observation in <code>covidcases</code> regardless if it was in the <code>lockdowndates</code> data frame. Therefore, we used a left join. In this case, we will only want to keep observations that have mobility date for that state on each date. This indicates that we want to use an <em>inner join</em>. The function <code>inner_join()</code> takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by both state and date.</p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-19_ea6d7ce77da0555df2ae1f76f18b9d28">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(covidcases_full, mobility, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"date"</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(samples, m50_index))</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases_full)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 8</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [6]</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county   week weekly_cases weekly_deaths date       lockdown</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;lgl&gt;   </span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Autauga    12            3             0 2020-03-15 FALSE   </span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Autauga    13            3             0 2020-03-22 FALSE   </span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Autauga    14            2             1 2020-03-29 FALSE   </span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Autauga    15           11             1 2020-04-05 TRUE    </span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Autauga    16            5             1 2020-04-12 TRUE    </span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: m50 &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>covidcases_full <span class="ot">&lt;-</span> <span class="fu">inner_join</span>(covidcases_full, mobility, </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>                              <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"state"</span>, <span class="st">"date"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(samples, m50_index))</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(covidcases_full)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 × 8</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # Groups:   state, county, week [6]</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   state   county   week weekly_cases weekly_deaths date       lockdown   m50</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt;        &lt;int&gt;         &lt;int&gt; &lt;date&gt;     &lt;lgl&gt;    &lt;dbl&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Alabama Autauga    12            3             0 2020-03-15 FALSE    8.77 </span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Alabama Autauga    13            3             0 2020-03-22 FALSE    4.73 </span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Alabama Autauga    14            2             1 2020-03-29 FALSE    4.43 </span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Alabama Autauga    15           11             1 2020-04-05 TRUE     2.27 </span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Alabama Autauga    16            5             1 2020-04-12 TRUE     0.759</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="practice-question-1" class="level3" data-number="6.3.2">
 <h3 data-number="6.3.2" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">6.3.2</span> Practice Question</h3>
-<p>Look at the two data frames, df_A and df_B, created in the below code. What kind of join would produce the following data frame? Perform this join yourself.</p>
-<p><img src="images/6-practicequestion2answer.png" alt="“”" width="300pt" align="center"></p>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-20_a1dc2dafb541adbff649efa390509f1d">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df_A <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">patient_id =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">8</span>, <span class="dv">14</span>, <span class="dv">8</span>), </span>
+<p>Look at the two data frames, <code>df_A</code> and <code>df_B</code>, created in the below code. What kind of join would produce the data frame in <a href="11_logistic_regression.html#fig-pq2">Figure&nbsp;<span>11.1</span></a>? Perform this join yourself.</p>
+<div id="fig-pq2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="images/6-practicequestion2answer.png" class="img-fluid figure-img" style="width:2.08333in"></p>
+<figcaption class="figure-caption">Figure&nbsp;6.3: Joining Data.</figcaption>
+</figure>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df_A <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">patient_id =</span> <span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">8</span>, <span class="dv">14</span>, <span class="dv">8</span>), </span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">visit_num =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>), </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">temp =</span> <span class="fu">c</span>(<span class="fl">97.5</span>, <span class="dv">96</span>, <span class="dv">98</span>, <span class="dv">99</span>, <span class="dv">102</span>, <span class="fl">98.6</span>), </span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">systolic_bp =</span> <span class="fu">c</span>(<span class="dv">120</span>, <span class="dv">138</span>, <span class="dv">113</span>, <span class="dv">182</span>, <span class="dv">132</span>, <span class="dv">146</span>))</span>
@@ -649,18 +692,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7         14         1          8</span></span>
 <span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8         14         2          7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-21_68186e8e5a6e2ae6635abb4233f75ee3">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="exercises" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">6.4</span> Exercises</h2>
 <ol type="1">
-<li>Take a look at the code below - what is wrong with it? Hint: think about what causes the warning message.</li>
-</ol>
-<div class="cell" data-layout-align="center" data-hash="6_merging_data_cache/html/unnamed-chunk-22_65b1ce196b354a36e36f2fb707c0e76f">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>visit_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<li><p>Take a look at the code below - what is wrong with it? Hint: think about what causes the warning message.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>visit_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name.f =</span> <span class="fu">c</span>(<span class="st">"Phillip"</span>, <span class="st">"Phillip"</span>, <span class="st">"Phillip"</span>, <span class="st">"Jessica"</span>, <span class="st">"Jessica"</span>),</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">name.l =</span> <span class="fu">c</span>(<span class="st">"Johnson"</span>, <span class="st">"Johnson"</span>, <span class="st">"Richards"</span>, <span class="st">"Smith"</span>, <span class="st">"Abrams"</span>),</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">measure =</span> <span class="fu">c</span>(<span class="st">"height"</span>, <span class="st">"age"</span>, <span class="st">"age"</span>, <span class="st">"age"</span>, <span class="st">"height"</span>),</span>
@@ -670,31 +712,51 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>contact_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">first_name =</span> <span class="fu">c</span>(<span class="st">"Phillip"</span>, <span class="st">"Phillip"</span>, <span class="st">"Jessica"</span>, <span class="st">"Margaret"</span>),</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">last_name =</span> <span class="fu">c</span>(<span class="st">"Richards"</span>, <span class="st">"Johnson"</span>, <span class="st">"Smith"</span>, <span class="st">"Reynolds"</span>),</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="at">email =</span> <span class="fu">c</span>(<span class="st">"pr@aol.com"</span>, <span class="st">"phillipj@gmail.com"</span>, <span class="st">"jesssmith@brown.edu"</span>, <span class="st">"marg@hotmail.com"</span>)</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(visit_info, contact_info, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"name.f"</span> <span class="ot">=</span> <span class="st">"first_name"</span>))</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in left_join(visit_info, contact_info, by = c(name.f = "first_name")): Detected an unexpected many-to-many relationship between `x` and `y`.</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Row 1 of `x` matches multiple rows in `y`.</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Row 1 of `y` matches multiple rows in `x`.</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ If a many-to-many relationship is expected, set `relationship =</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   "many-to-many"` to silence this warning.</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    name.f   name.l measure measurement last_name               email</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Phillip  Johnson  height          45  Richards          pr@aol.com</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Phillip  Johnson  height          45   Johnson  phillipj@gmail.com</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Phillip  Johnson     age         186  Richards          pr@aol.com</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Phillip  Johnson     age         186   Johnson  phillipj@gmail.com</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Phillip Richards     age          50  Richards          pr@aol.com</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 Phillip Richards     age          50   Johnson  phillipj@gmail.com</span></span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 Jessica    Smith     age          37     Smith jesssmith@brown.edu</span></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 Jessica   Abrams  height         156     Smith jesssmith@brown.edu</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ol start="2" type="1">
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="at">email =</span> <span class="fu">c</span>(<span class="st">"pr@aol.com"</span>, <span class="st">"phillipj@gmail.com"</span>, <span class="st">"jesssmith@brown.edu"</span>, </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">"marg@hotmail.com"</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(visit_info, contact_info, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"name.f"</span> <span class="ot">=</span> <span class="st">"first_name"</span>))</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in left_join(visit_info, contact_info, by = c(name.f = "first_name")): Detected an unexpected many-to-many relationship between `x` and `y`.</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Row 1 of `x` matches multiple rows in `y`.</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Row 1 of `y` matches multiple rows in `x`.</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ If a many-to-many relationship is expected, set `relationship =</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   "many-to-many"` to silence this warning.</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    name.f   name.l measure measurement last_name               email</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Phillip  Johnson  height          45  Richards          pr@aol.com</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Phillip  Johnson  height          45   Johnson  phillipj@gmail.com</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Phillip  Johnson     age         186  Richards          pr@aol.com</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Phillip  Johnson     age         186   Johnson  phillipj@gmail.com</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Phillip Richards     age          50  Richards          pr@aol.com</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 Phillip Richards     age          50   Johnson  phillipj@gmail.com</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 Jessica    Smith     age          37     Smith jesssmith@brown.edu</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 Jessica   Abrams  height         156     Smith jesssmith@brown.edu</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
 <li><p>First, use the <code>covidcases</code> data to create a new data frame called <code>sub_cases</code> containing the total number of cases by month for the states of California, Michigan, Connecticut, Rhode Island, Ohio, New York, and Massachusetts. Then, manipulate the <code>mobility</code> data to calculate the average <code>m50</code> mobility measure for each month. Finally, merge these two data sets using an appropriate joining function.</p></li>
 <li><p>Convert the <code>sub_cases</code> data frame from the previous exercise to wide format so that each row displays the cases in each state for a single month. Then, add on the average m50 overall for each month as an additional column using a join function.</p></li>
 </ol>
 
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-covid_article" class="csl-entry" role="listitem">
+Guidotti, Emanuele. 2022. <span>“A Worldwide Epidemiological Database for COVID-19 at Fine-Grained Spatial Resolution.”</span> <em>Scientific Data</em> 9 (1): 112. <a href="https://doi.org/10.1038/s41597-022-01245-1">https://doi.org/10.1038/s41597-022-01245-1</a>.
+</div>
+<div id="ref-covid_data" class="csl-entry" role="listitem">
+Guidotti, Emanuele, and David Ardia. 2020. <span>“COVID-19 Data Hub.”</span> <em>Journal of Open Source Software</em> 5 (51): 2376. <a href="https://doi.org/10.21105/joss.02376">https://doi.org/10.21105/joss.02376</a>.
+</div>
+<div id="ref-covid_policy" class="csl-entry" role="listitem">
+Raifman, Julia, Kristen Nocka, David Jones, Jacob Bor, Sarah Lipson, Jonathan Jay, Megan Cole, et al. 2022. Inter-university Consortium for Political; Social Research. <a href="https://doi.org/10.3886/E119446V143">https://doi.org/10.3886/E119446V143</a>.
+</div>
+<div id="ref-maternal_mortality" class="csl-entry" role="listitem">
+Roser, Max, and Hannah Ritchie. n.d. <span>“Maternal Mortality.”</span> <a href="https://ourworldindata.org/maternal-mortality">https://ourworldindata.org/maternal-mortality</a>.
+</div>
+<div id="ref-R-lubridate" class="csl-entry" role="listitem">
+Spinu, Vitalie, Garrett Grolemund, and Hadley Wickham. 2023. <em>Lubridate: Make Dealing with Dates a Little Easier</em>. <a href="https://CRAN.R-project.org/package=lubridate">https://CRAN.R-project.org/package=lubridate</a>.
+</div>
+<div id="ref-warren2020mobility" class="csl-entry" role="listitem">
+Warren, Michael S, and Samuel W Skillman. 2020. <span>“Mobility Changes in Response to COVID-19.”</span> <em>arXiv Preprint arXiv:2003.14228</em>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->

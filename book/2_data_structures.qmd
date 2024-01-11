@@ -1,6 +1,5 @@
-
 # Data Structures in R {#sec-data-structures}
-  
+
 In this chapter, we will demonstrate the key **data structures** in R. Data structures are how information is stored in R, and the data structures that we use inform R how to interpret our code. Any **object** is a named instance of a data structure. For example, the object `ex_num` below is a vector of numeric type.
 
 ```{r}
@@ -8,8 +7,6 @@ ex_num <- 4
 ```
 
 The main data structures in R are **vectors**, **factors**, **matrices**, **arrays**, **lists**, and **data frames**. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In the image below, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.
-
-<img src="images/2-data-structures.png" alt="“”" width="500pt" align="center"/>
 
 ## Data Types
 
@@ -48,7 +45,7 @@ To create all of the above objects, we used the assignment operator `<-`, which 
 
 In the examples above, we created objects with a single value. R actually uses a vector of length 1 to store this information. **Vectors** are 1-dimensional data structures that can store multiple data values of the same type (e.g. character, boolean, or numeric).
 
-<img src="images/2-vectors.png" alt="“”" width="500pt" align="center"/>
+![Vector Examples.](images/2-vectors.png){#fig-vectors fig-align="center"}
 
 We can confirm this by using the `is.vector()` function, which returns whether or not the inputted argument is a vector.
 
@@ -215,7 +212,8 @@ days[order(rain, decreasing=TRUE)]
 A **factor** is a special kind of vector that behaves exactly like a regular vector except that it represents values from a category. In particular, a factor keeps track of all possible values of that category, which are called the **levels** of the factor. Factors will be especially helpful when we start getting into data analysis and have categorical columns. The `as.factor()` function will convert a vector to a factor.
 
 ```{r}
-days <- c("Monday", "Tuesday", "Wednesday", "Monday", "Thursday", "Wednesday")
+days <- c("Monday", "Tuesday", "Wednesday", "Monday", 
+          "Thursday", "Wednesday")
 days_fct <- as.factor(days)
 
 class(days_fct)
@@ -252,12 +250,13 @@ levels(weekend)
 
 Matrices are similar to vectors in that they store data of the same type, but matrices are two-dimensional (as opposed to one-dimensional vectors), and consist of both rows and columns.
 
-<img src="images/2-matrix.png" alt="“”" width="300pt" align="center"/>
+![Matrix Example.](images/2-matrix.png){#fig-matrix fig-align="center" width="40%"}
 
 Below, we create a matrix reporting the daily rainfall over multiple weeks. We can create a matrix using the `matrix(data, nrow, ncol, byrow)` function. This creates a `nrow` by `ncol` matrix from the vector `data` values filling in by row if `byrow` is TRUE and by column otherwise. Run the code below. Then, change the last argument to `byrow=FALSE` and see what happens to the values.
 
 ```{r}
-rainfall <- matrix(c(5,6,0.1,3,0,1,0,1,0.4,0.2,0.5,0.3,0,0), ncol=7, nrow=2, byrow=TRUE)
+rainfall <- matrix(c(5,6,0.1,3,0,1,0,1,0.4,0.2,0.5,0.3,0,0), 
+                   ncol=7, nrow=2, byrow=TRUE)
 rainfall
 ```
 
@@ -356,14 +355,15 @@ Create a 3x4 matrix of all 1's using the `rep()` and `matrix()` functions. Then 
 
 Matrices can store data like the rainfall data, where everything is of the same type. However, if we want to capture more complex data records, we also want to allow for different measurement types: this is where data frames come in. A data frame is like a matrix in that data frames are two-dimensional, but unlike matrices, data frames allow for each column to be a different type. In this case, each row corresponds to a single data entry (or observation) and each column corresponds to a different variable.
 
-<img src="images/2-dataframe.png" alt="“”" width="250pt" align="center"/>
+![Data Frame Example.](images/2-dataframe.png){#fig-dataframe fig-align="center" width="30%"}
 
 For example, suppose that, for every day in a study, we want to record the temperature, rainfall, and day of the week. Temperature and rainfall can be numeric values, but day of the week will be character type. We create a data frame using the `data.frame()` function. Note that I am providing column names for each vector (column).
 
 The `head()` function prints the first six rows of a data frame (to avoid printing very large datasets). In our case, all the data is shown because we only created four rows. The column names are displayed as well as their type. By contrast, the `tail()` function prints the last six rows of a data frame.
 
 ```{r}
-weather_data <- data.frame(day_of_week = c("Monday","Tuesday","Wednesday","Monday"), 
+weather_data <- data.frame(day_of_week = c("Monday","Tuesday","Wednesday",
+                                           "Monday"), 
                            temp = c(70,62,75,50), rain = c(5,0.1,0.0,0.5))
 head(weather_data)
 ```
@@ -432,9 +432,9 @@ weather_data
 
 ### Practice Question
 
-Add a column to `weather_data` called `air_quality_index` using the `rep()` function so that all values are `NA` (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like this:
+Add a column to `weather_data` called `air_quality_index` using the `rep()` function so that all values are `NA` (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like @fig-practice-question.
 
-<img src="images/2-practicequestionanswer.png" alt="“”" width="300pt" align="center"/>
+![Air Quality Data.](images/2-practicequestionanswer.png){#fig-practice-question fig-align="center" width="70%"}
 
 ```{r}
 # Insert your solution here:
@@ -467,20 +467,22 @@ ex_list$supplements[2] <- "collagen"
 ex_list
 ```
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 {{< video https://www.youtube.com/embed/YKCQ6uhg0fM width="700" height="500" >}}
+:::
 
 ## Exercises
 
-1.  Recreate the following data frame in R, where `temperature` and `co2` represent the average temperature in Fahrenheit and the average $\text{CO}_2$ concentrations in $\text{mg}/\text{m}^3$ for the month of January 2008, and name it `city_air_quality`.
+1.  Recreate the data frame in @fig-city-air-quality in R, where `temperature` and `co2` represent the average temperature in Fahrenheit and the average $\text{CO}_2$ concentrations in $\text{mg}/\text{m}^3$ for the month of January 2008, and name it `city_air_quality`.
 
-<img src="images/2-exercise1df.png" alt="“”" width="250pt" align="center"/>
+![City Air Quality Data.](images/2-exercise1df.png){#fig-city-air-quality fig-align="center" width="70%"}
 
 2.  Create a character vector named `precipitation` with entries `Yes` or `No` indicating whether or not there was more precipitation than average in January 2008 in these cities (you can make this information up yourself). Then, append this vector to the `city_air_quality` data frame as a new column.
 
-3.  Convert the categorical column `precipitation` to a factor. Then, add the following row to the data frame `city_air_quality` using the `rbind()` function:
+3.  Convert the categorical column `precipitation` to a factor. Then, add a row to the data frame `city_air_quality` using the `rbind()` function to match @fig-city-air-quality-2.
 
-<img src="images/2-exercise3newrow.png" alt="“”" width="250pt" align="center"/>
+![Updated City Air Quality Data.](images/2-exercise3newrow.png){#fig-city-air-quality-2 fig-align="center" width="50%"}
 
 4.  Use single square brackets to access the precipitation and $\text{CO}_2$ concentration entries for San Francisco and Paris in your data frame. Then, create a list `city_list` which contains two lists, one for San Francisco and one for Paris, where each inner list contains the city name, precipitation, and $\text{CO}_2$ concentration information for that city.

@@ -55,7 +55,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -65,6 +84,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../references.html" rel="next">
 <link href="../book/12_rmarkdown_reports.html" rel="prev">
 <link href="../images/fav.png" rel="icon" type="image/png">
 <script src="../site_libs/quarto-html/quarto.js"></script>
@@ -126,7 +146,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-in-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
     <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
@@ -275,6 +295,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
       </ul>
   </li>
     </ul>
@@ -320,24 +346,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that R has. As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered here.</p>
-<p>We will demonstrate these skills using the <code>stringr</code> package, which is a package that is part of the tidyverse and has several functions for dealing with text data.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-1_386ba284b821ca729172974303736e96">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(tidyverse))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(HDSinRdata))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We will demonstrate these skills using the <strong>stringr</strong> package <span class="citation" data-cites="R-stringr">(<a href="../references.html#ref-R-stringr" role="doc-biblioref">Wickham 2022</a>)</span>, which is a package that is part of the tidyverse and has several functions for dealing with text data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="reading-documentation-for-new-packages" class="level2" data-number="13.1">
 <h2 data-number="13.1" class="anchored" data-anchor-id="reading-documentation-for-new-packages"><span class="header-section-number">13.1</span> Reading Documentation for New Packages</h2>
-<p>Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for <a href="https://cran.r-project.org/web/packages/stringr/index.html">stringr</a> and read the vignette <a href="https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html">Introduction to String R</a>.</p>
-<p>We will use this <code>stringr</code> package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from <a href="https://www.sciencedirect.com/science/article/abs/pii/S0002870320304130">Adatia et al.&nbsp;(2021). Out-of-hospital cardiac arrest: a systematic review of current risk scores to predict survival. American heart journal, 234, 31-41</a>. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-2_f2205825038247aee65f5c07fa9336c7">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> <span class="st">" A systematic search will be performed in PubMed, Embase, and the </span></span>
+<p>Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for <a href="https://cran.r-project.org/web/packages/stringr/index.html">stringr</a> and read the vignette <a href="https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html">“Introduction to String R”</a>.</p>
+<p>We will use this <strong>stringr</strong> package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from <span class="citation" data-cites="GUE202131">GUE et al. (<a href="../references.html#ref-GUE202131" role="doc-biblioref">2021</a>)</span>. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> <span class="st">" A systematic search will be performed in PubMed, Embase, and the </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">Cochrane Library, using the following search query:   ('out-of-hospital cardiac </span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="st">arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' </span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="st">OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The first thing we want to do with the text is clean up the whitespace by removing any trailing, leading, or repeated spaces. In our example, the string starts with a trailing space and there are also multiple spaces right before the search query. Searching for “whitespace” in the stringr reference manual, we find the <code>str_trim()</code> and <code>str_squish()</code> functions. Read the documentation for these two functions. You should find that <code>str_squish()</code> is the function we are looking for and that it takes a single argument.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-3_722c4f51f556fc5165a04a532a178769">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> <span class="fu">str_squish</span>(sample_str)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> <span class="fu">str_squish</span>(sample_str)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>sample_str</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "A systematic search will be performed in PubMed, Embase, and the Cochrane Library, using the following search query: ('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -345,8 +371,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="trying-simple-examples" class="level2" data-number="13.2">
 <h2 data-number="13.2" class="anchored" data-anchor-id="trying-simple-examples"><span class="header-section-number">13.2</span> Trying Simple Examples</h2>
 <p>The premise above is a good example of starting with a simple case. Rather than applying your function to your full data set right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. My next task will be to split the text into words and store this as a character vector. Read the documentation to determine why I used the <code>str_split_1()</code> function below. I then double check that the returned result is indeed a vector and print the result.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-4_d55655b03c12c03bad72c2b55c355014">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sample_str_words <span class="ot">&lt;-</span> <span class="fu">str_split_1</span>(sample_str, <span class="st">" "</span>)</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sample_str_words <span class="ot">&lt;-</span> <span class="fu">str_split_1</span>(sample_str, <span class="st">" "</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(sample_str_words)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "character"</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sample_str_words</span>
@@ -366,10 +392,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [40] "’SWAP’"            "OR"                "’TTM’)."</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We now want to identify words in this vector that have starting and/or end parentheses. The function <code>grepl()</code> takes in a character vector <code>x</code> and a pattern to search for. It returns a logical vector for whether or not each element of <code>x</code> has a match for that pattern.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-5_b90825f90b95882413fe1915df11d9f8">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(sample_str_words, <span class="st">")"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in grepl(sample_str_words, ")"): argument 'pattern' has length</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &gt; 1 and only the first element will be used</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(sample_str_words, <span class="st">")"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in grepl(sample_str_words, ")"): argument 'pattern' has length &gt; 1 and</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; only the first element will be used</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Huh, that didn’t match what I expected! I expected to have multiple TRUE/FALSE values outputted - one for each word. Let’s read the documentation again.</p>
@@ -377,41 +403,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="deciphering-error-messages-and-warnings" class="level2" data-number="13.3">
 <h2 data-number="13.3" class="anchored" data-anchor-id="deciphering-error-messages-and-warnings"><span class="header-section-number">13.3</span> Deciphering Error Messages and Warnings</h2>
 <p>The warning message above will give us a good clue for what went wrong. It says that the inputted pattern has length &gt; 1. However, the pattern I gave it is a single character. In fact, I specified the arguments in the wrong order. Let’s try again. This time I specify <code>x</code> and <code>pattern</code>.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-6_6e1c4d4ee10574d3735a5dde51fbfc0f">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(<span class="at">x=</span>sample_str_words, <span class="at">pattern=</span><span class="st">")"</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [34] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(<span class="at">x=</span>sample_str_words, <span class="at">pattern=</span><span class="st">")"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [37] FALSE FALSE FALSE FALSE FALSE  TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>That worked! However, it won’t work if we change that to a starting parentheses. Try it out for yourself to see this. The error message says that it is looking for an end parentheses. In this case, the documentation does not help us. Let’s try googling “stringr find start parentheses”. The first search result for me is a <a href="https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r">stack overflow question</a> that helps us out. We read that we need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-7_bdc18def67783c50cb424c01b74073a0">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(<span class="at">x=</span>sample_str_words, <span class="at">pattern=</span><span class="st">"</span><span class="sc">\\</span><span class="st">("</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [12] FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [23] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [34] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grepl</span>(<span class="at">x=</span>sample_str_words, <span class="at">pattern=</span><span class="st">"</span><span class="sc">\\</span><span class="st">("</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] FALSE FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25]  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [37] FALSE FALSE FALSE FALSE FALSE FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>When a function doesn’t return what we expect it to, it is a good idea to first test whether the arguments we gave it match what we expect, then to re-read the documentation, and then to look for other resources for help. For example, we could check that <code>sample_str_words</code> is indeed a character vector, then re-read the <code>stringr</code> documentation, and then google our problem.</p>
 <section id="debugging-code" class="level3" data-number="13.3.1">
 <h3 data-number="13.3.1" class="anchored" data-anchor-id="debugging-code"><span class="header-section-number">13.3.1</span> Debugging Code</h3>
 <p>The code below is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out to two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.</p>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-8_fa0d98eea20ba7b88d157be2f93950c8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sample_strA <span class="ot">&lt;-</span> <span class="st">" A systematic search will be performed in PubMed, Embase, and the </span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">Cochrane Library, using the following search query:   ('out-of-hospital cardiac </span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' </span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."</span></span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sample_strA <span class="ot">&lt;-</span> <span class="st">" A systematic search will be performed in PubMed, Embase, and </span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="st">the Cochrane Library, using the following search query:   ('out-of-hospital </span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="st">cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' </span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="st">OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sample_strB <span class="ot">&lt;-</span> <span class="st">"Searches will be conducted in MEDLINE via PubMed, Web of Science,</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">Scopus and Embase. The following search strategy will be </span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">used:(child OR infant OR preschool child OR preschool children OR preschooler</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">OR pre-school child OR pre-school children OR pre school child OR pre school </span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">children OR pre-schooler OR pre schooler OR children OR adolescent OR adolescents)AND</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sample_strB <span class="ot">&lt;-</span> <span class="st">"Searches will be conducted in MEDLINE via PubMed, Web of </span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="st">Science, Scopus and Embase. The following search strategy will be used:(child </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="st">OR infant OR preschool child OR preschool children OR preschooler OR pre-school </span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="st">child OR pre-school children OR pre school child OR pre school children OR </span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="st">pre-schooler OR pre schooler OR children OR adolescent OR adolescents)AND</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="st">(attention deficit disorder with hyperactivity OR ADHD OR attention deficit</span></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="st">disorder OR ADD OR hyperkinetic disorder OR minimal brain disorder) Submitted "</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-9_4a62b60d6cc5840756e8242fb270c02a">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> sample_strB</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> sample_strB</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># separate parentheses, remove extra whitespace, and split into words</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sample_str <span class="ot">&lt;-</span> <span class="fu">str_replace</span>(sample_str, <span class="st">"</span><span class="sc">\\</span><span class="st">)"</span>, <span class="st">" </span><span class="sc">\\</span><span class="st">) "</span>)</span>
@@ -452,78 +478,78 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="13.5" class="anchored" data-anchor-id="general-programming-tips"><span class="header-section-number">13.5</span> General Programming Tips</h2>
 <p>As you write more complex code and functions, it is inevitable that you will run into errors or unexpected behavior. Below are some simple principles that are applicable to debugging in any setting. When it comes to testing code, a good mantra is <em>test early and test often</em>. So, try to avoid writing too much code before running and checking that the results match what you expect.</p>
 <ol type="1">
-<li>Check that all parentheses (), brackets [], and curly braces {} match.<br>
-</li>
-<li>Check that object names are correct.<br>
-</li>
-<li>Check whether you use the same name for different objects or whether you use different names for the same object. You can do this by using the <code>ls()</code> function to find all current objects.</li>
-<li>Check that the input arguments to a function match what is expected.<br>
-</li>
-<li>Try simple examples first. You can use the documentation or vignette examples for ideas.</li>
-<li>Localize your error by checking the values of objects at different points.<br>
-</li>
-<li>Modify your code one piece at a time before checking it to avoid introducing new errors.<br>
-</li>
-<li>Google error messages you don’t understand. R’s messages can sometimes hint at what the error might stem from, but they are not always direct.</li>
+<li><p>Check that all parentheses (), brackets [], and curly braces {} match.</p></li>
+<li><p>Check that object names are correct.</p></li>
+<li><p>Check whether you use the same name for different objects or whether you use different names for the same object. You can do this by using the <code>ls()</code> function to find all current objects.</p></li>
+<li><p>Check that the input arguments to a function match what is expected.</p></li>
+<li><p>Try simple examples first. You can use the documentation or vignette examples for ideas.</p></li>
+<li><p>Localize your error by checking the values of objects at different points.</p></li>
+<li><p>Modify your code one piece at a time before checking it to avoid introducing new errors.</p></li>
+<li><p>Google error messages you don’t understand. R’s messages can sometimes hint at what the error might stem from, but they are not always direct.</p></li>
 </ol>
 </section>
 <section id="exercises" class="level2" data-number="13.6">
 <h2 data-number="13.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">13.6</span> Exercises</h2>
 <ol type="1">
-<li>Suppose we want to replace the words “Thank you” in the following string with the word “Thanks”. Why does the below code fail? How can we correct it?</li>
-</ol>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-10_494a16c9b66716623f643a94ac66508b">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>string <span class="ot">&lt;-</span> <span class="st">"Congratulations on finishing the book! Thank you for reading it."</span></span>
+<li><p>Suppose we want to replace the words “Thank you” in the following string with the word “Thanks”. Why does the below code fail? How can we correct it?</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>string <span class="ot">&lt;-</span> <span class="st">"Congratulations on finishing the book! Thank you for reading it."</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str_sub</span>(string, <span class="fu">c</span>(<span class="dv">35</span>, <span class="dv">42</span>)) <span class="ot">&lt;-</span> <span class="st">"Thanks"</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>string</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Congratulations on finishing the bThanks"       </span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2] "Congratulations on finishing the book! ThThanks"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ol start="2" type="1">
-<li>The code below uses the <code>NHANESsample</code> data from the <code>HDSinRdata</code> package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.</li>
-</ol>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-11_0f51ba63d79dee16ae97bc9bd7f6a5a6">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span>
+</div></li>
+<li><p>The code below uses the <code>NHANESsample</code> data from the <strong>HDSinRdata</strong> package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> NHANESsample <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">worst_DBP =</span> <span class="fu">max</span>(DBP1, DBP2, DBP3, DBP4),</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">worst_SBP =</span> <span class="fu">max</span>(SBP1, SBP2, SBP3, SBP4))</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">worst_SBP =</span> <span class="fu">max</span>(SBP1, SBP2, SBP3, SBP4))</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">%&gt;%</span> <span class="fu">geom_point</span>(<span class="at">data =</span> nhanes_df, <span class="fu">aes</span>(<span class="at">x =</span> worst_SBP, <span class="at">y =</span> worst_DBP), <span class="at">color =</span> HYP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<ol start="3" type="1">
-<li>The code below uses the <code>breastcancer</code> data from the <code>HDSinRdata</code> package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from <a href="https://alicepaul.github.io/health-data-science-in-r/book/11_logistic_regression.html">Chapter 11</a>. What is wrong with the code below? Debug it. Hint: there are three separate errors.</li>
-</ol>
-<div class="cell" data-layout-align="center" data-hash="13_expanding_r_skills_cache/html/unnamed-chunk-12_23404c225a6006c629d01deb18755158">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(breastcancer)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">%&gt;%</span> <span class="fu">geom_point</span>(<span class="at">data =</span> nhanes_df, <span class="fu">aes</span>(<span class="at">x =</span> worst_SBP, <span class="at">y =</span> worst_DBP), </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                    <span class="at">color =</span> HYP)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+<li><p>The code below uses the <code>breastcancer</code> data from the <strong>HDSinRdata</strong> package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from <a href="11_logistic_regression.html">Chapter&nbsp;<span>11</span></a>. What is wrong with the code below? Debug it. Hint: there are three separate errors.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(breastcancer)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(diagnosis <span class="sc">~</span> smoothness_worst <span class="sc">+</span> symmetry_mean <span class="sc">+</span> texture_se <span class="sc">+</span> radius_mean,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data =</span> breastcancer, <span class="at">family =</span> binomial)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">glm</span>(diagnosis <span class="sc">~</span> smoothness_worst <span class="sc">+</span> symmetry_mean <span class="sc">+</span> texture_se <span class="sc">+</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>           radius_mean, <span class="at">data =</span> breastcancer, <span class="at">family =</span> binomial)</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>pred_probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(model)</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>num_cuts <span class="ot">&lt;-</span> <span class="dv">10</span></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>calib_data <span class="ot">&lt;-</span>  <span class="fu">data.frame</span>(<span class="at">prob =</span> pred_probs,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                          <span class="at">bin =</span> <span class="fu">cut</span>(pred_probs, <span class="at">breaks =</span> num_cuts),</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                          <span class="at">class =</span> mod_start<span class="sc">$</span>y)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                      <span class="at">bin =</span> <span class="fu">cut</span>(pred_probs, <span class="at">breaks =</span> num_cuts),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">class =</span> mod_start<span class="sc">$</span>y)</span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>calib_data <span class="ot">&lt;-</span> calib_data <span class="sc">%&gt;%</span> </span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>             <span class="fu">group_by</span>(bin) <span class="sc">%&gt;%</span> </span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>             <span class="fu">summarize</span>(<span class="at">observed =</span> <span class="fu">sum</span>(class)<span class="sc">/</span><span class="fu">n</span>(), </span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">expected =</span> <span class="fu">sum</span>(prob)<span class="sc">/</span><span class="fu">n</span>(), </span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">se =</span> <span class="fu">sqrt</span>(observed<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>observed)<span class="sc">/</span><span class="fu">n</span>()))</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>         <span class="fu">group_by</span>(bin) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>         <span class="fu">summarize</span>(<span class="at">observed =</span> <span class="fu">sum</span>(class)<span class="sc">/</span><span class="fu">n</span>(), </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                   <span class="at">expected =</span> <span class="fu">sum</span>(prob)<span class="sc">/</span><span class="fu">n</span>(), </span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                   <span class="at">se =</span> <span class="fu">sqrt</span>(observed<span class="sc">*</span>(<span class="dv">1</span><span class="sc">-</span>observed)<span class="sc">/</span><span class="fu">n</span>()))</span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>calib_data</span>
 <span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(calib_data) <span class="sc">+</span> </span>
 <span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span> <span class="dv">1</span>, <span class="at">color=</span><span class="st">"red"</span>) <span class="sc">+</span> </span>
 <span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">x =</span> expected, <span class="at">ymin=</span>observed<span class="fl">-1.96</span><span class="sc">*</span>se, </span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax=</span>observed<span class="fl">+1.96</span><span class="sc">*</span>se), </span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                <span class="at">colour=</span><span class="st">"black"</span>, <span class="at">width=</span>.<span class="dv">01</span>)<span class="sc">+</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                <span class="at">ymax=</span>observed<span class="fl">+1.96</span><span class="sc">*</span>se), </span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">colour=</span><span class="st">"black"</span>, <span class="at">width=</span>.<span class="dv">01</span>)<span class="sc">+</span></span>
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x =</span> expected, <span class="at">y =</span> observed)) <span class="sc">+</span></span>
 <span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">"Expected Proportion"</span>, <span class="at">y=</span><span class="st">"Observed Proportion"</span>) <span class="sc">+</span></span>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></li>
+</ol>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-GUE202131" class="csl-entry" role="listitem">
+GUE, Ying X., Krishma ADATIA, Rahim KANJI, Tatjana POTPARA, Gregory Y. H. LIP, and Diana A. GOROG. 2021. <span>“Out-of-Hospital Cardiac Arrest: A Systematic Review of Current Risk Scores to Predict Survival.”</span> <em>American Heart Journal</em> 234: 31–41. https://doi.org/<a href="https://doi.org/10.1016/j.ahj.2020.12.011">https://doi.org/10.1016/j.ahj.2020.12.011</a>.
 </div>
-
-
+<div id="ref-R-stringr" class="csl-entry" role="listitem">
+Wickham, Hadley. 2022. <em>Stringr: Simple, Consistent Wrappers for Common String Operations</em>. <a href="https://CRAN.R-project.org/package=stringr">https://CRAN.R-project.org/package=stringr</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -767,6 +793,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->

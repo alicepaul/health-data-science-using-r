@@ -1,24 +1,23 @@
-
 # Working with Data Files in R {#sec-data-files}
-  
+
 In this chapter, we will be working with data in R. To start, we need to load our data into R: this requires identifying the type of data file we have (e.g. .csv, .xlsx, .dta) and finding the appropriate function to load in the data. This will create a data frame object containing the information from the file. After demonstrating how to load in such data, this chapter will show you how to find information about data columns, including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.
 
-In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single library `HDSinRdata` that contains the sample data sets used in this book.
+In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single package **HDSinRdata** that contains the sample data sets used in this book.
 
-```{r}
-suppressPackageStartupMessages(library(HDSinRdata))
+```{r results='hide', message=FALSE, warning=FALSE}
+library(HDSinRdata)
 ```
 
 ## Importing and Exporting Data
 
-The data we will use in this chapter contains information about patients who visited one of the University of Pittsburgh's seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions. Since this data is available in our R package, we can use the `data` function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
+The data we will use in this chapter contains information about patients who visited one of the University of Pittsburgh's seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up [@alter2021hierarchical]. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions. Since this data is available in our R package, we can use the `data()` function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
 
 ```{r}
 data(pain)
 dim(pain)
 ```
 
-In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the `readr` package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the `tidyverse` packages. We will cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
+In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the `readr` package [@R-readr], both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We will cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
 
 ```{r}
 read.csv("data/fake_names.csv")
@@ -35,7 +34,7 @@ df <- data.frame(x=c(1,0,1), y=c("A", "B", "C"))
 write.csv(df, "data/test.csv", row.names=FALSE)
 ```
 
-If your data is not in a .csv file, you may need to use another package to read in the file. The two most common packages are the `readxl` package, which makes it easy to read in Excel files, and the `haven` package, which can import SAS, SPSS, and Stata files. For each function, you need to specify the file path to the data file.
+If your data is not in a .csv file, you may need to use another package to read in the file. The two most common packages are the **readxl** package [@R-readxl], which makes it easy to read in Excel files, and the **haven** package [@R-haven], which can import SAS, SPSS, and Stata files. For each function, you need to specify the file path to the data file.
 
 -   **Excel Files**: You can read in a .xls or .xlsx file using `readxl::read_excel()`, which allows you to specify a sheet and/or cell range within a file. (e.g. `read_excel('test.xlsx', sheet="Sheet1")`)
 
@@ -104,9 +103,9 @@ hist(pain$PAIN_INTENSITY_AVERAGE)
 
 ### Practice Question
 
-Summarize the `PROMIS_SLEEP_DISTURB_V1_0` column both numerically and visually. Your results should look like this:
+Summarize the `PROMIS_SLEEP_DISTURB_V1_0` column both numerically and visually. Your results should look like the results in @fig-pq1.
 
-<img src="images/3-practicequestion1answer.png" alt="“”" width="300pt" align="center"/>
+![Summarizing a Column.](images/3-practicequestion1answer.png){#fig-pq1 fig-align="center" width="300pt"}
 
 ```{r}
 # Insert your solution here:
@@ -205,9 +204,9 @@ summary(perc_patients)
 
 ### Practice Question
 
-Find the sum of each of the PROMIS measures across all patients using `apply()` and then using `colSums()`. Verify that these two methods return the same result, which is given below:
+Find the sum of each of the PROMIS measures across all patients using `apply()` and then using `colSums()`. Verify that these two methods return the same result, which is given in @fig-pq2.
 
-<img src="images/3-practicequestion2answer.png" alt="“”" width="600pt" align="center"/>
+![Summing Across Columns.](images/3-practicequestion2answer.png){#fig-pq2 fig-align="center" width="300pt"}
 
 ```{r}
 # Insert your solution here:
@@ -253,7 +252,8 @@ num_missing_col
 We will create two new columns: first, we create a column for the change in pain at follow-up, and second, we create a column which is the percent change in pain at follow-up.
 
 ```{r}
-pain$PAIN_CHANGE <- pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP - pain$PAIN_INTENSITY_AVERAGE
+pain$PAIN_CHANGE <- pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP - 
+  pain$PAIN_INTENSITY_AVERAGE
 hist(pain$PAIN_CHANGE)
 ```
 
@@ -384,11 +384,12 @@ unique(pain$PAT_RACE)
 To combine some of these levels, we can use the `%in%` operator. We first create an Asian, Asian American, or Pacific Islander race category and then create an American Indian or Alaska Native category.
 
 ```{r}
-aapi_values <- c("CHINESE", "HAWAIIAN", "INDIAN (ASIAN)", "FILIPINO", "VIETNAMESE", 
-                 "JAPANESE", "KOREAN", "GUAM/CHAMORRO", "OTHER ASIAN", 
-                 "OTHER PACIFIC ISLANDER")
+aapi_values <- c("CHINESE", "HAWAIIAN", "INDIAN (ASIAN)", "FILIPINO", 
+                 "VIETNAMESE", "JAPANESE", "KOREAN", "GUAM/CHAMORRO", 
+                 "OTHER ASIAN", "OTHER PACIFIC ISLANDER")
 pain$PAT_RACE[pain$PAT_RACE %in% aapi_values] <- "AAPI"
-pain$PAT_RACE[pain$PAT_RACE %in% c("ALASKA NATIVE", "AMERICAN INDIAN")] <- "AI/AN"
+pain$PAT_RACE[pain$PAT_RACE %in% c("ALASKA NATIVE", "AMERICAN INDIAN")] <- 
+  "AI/AN"
 table(pain$PAT_RACE)
 ```
 
@@ -411,16 +412,17 @@ pain$PAT_RACE[pain$PATIENT_NUM==3588] <- "NOT SPECIFIED"
 table(pain$PAT_RACE)
 ```
 
+::: {.content-visible when-format="html"}
 ## Recap Video
 
 In the video below, we reference the population mean and standard deviations for the instrument variables in the data. Use the help operator (`?pain`) to refresh your memory about these variables.
 
 {{< video https://www.youtube.com/embed/EU0UJN68OWQ width="700" height="500" >}}
-
+:::
 
 ## Exercises
 
-For these exercises, we will again be using the `pain` data from the `HDSinRdata` package.
+For these exercises, we will again be using the `pain` data from the **HDSinRdata** package.
 
 1.  Print summary statistics for the `PROMIS_PHYSICAL_FUNTION` and `PROMIS_ANXIETY` columns in this dataset. Read the data documentation for these two columns, which both have range 0 to 100, and then comment on the distributions of these columns.
 
