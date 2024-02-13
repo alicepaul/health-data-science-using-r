@@ -134,6 +134,7 @@ lm(SBP ~ . - ID - RACE - EDUCATION - INCOME - SMOKE - YEAR - BMI_CAT -
 We can tell from the above plot that our model doesn't have a great fit. We will use some further diagnostic plots and measures to learn more. R has some built-in plots available for linear regression models, which can be displayed using the `plot()` function. Similar the `summary()` function, this function acts differently when passed an `lm` object. The four plots include (a) Residuals vs. Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs. Fitted, and (d) Standardized Residuals vs. Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook's distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals, so this last plot summarizes the outliers, leverage, and influential points. The plots below show that our residuals do not look normally distributed and that we have may have some high leverage points.
 
 ```{r}
+#| fig-height: 7
 par(mfrow=c(2,2)) # plots all four plots together
 plot(adj_model)
 ```
@@ -154,8 +155,8 @@ Instead of using the direct residuals, we can create the plots above using the s
 ```{r}
 par(mfrow=c(1,2)) 
 hist(rstandard(adj_model), xlab="Standardized Residuals", 
-     main="Histogram of Standardized Residuals") 
-qqnorm(rstandard(adj_model)) 
+     main="Histogram of Standardized Residuals", cex.main=0.75) 
+qqnorm(rstandard(adj_model), cex.main=0.75) 
 qqline(rstandard(adj_model),col="red")
 ```
 
@@ -181,7 +182,7 @@ vif(adj_model)
 
 Fit a linear regression model with `SBP` as the outcome and with `INCOME`, `RACE`, `EDUCATION`, and `ALC` as independent variables. Then, plot the residuals vs. the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like @fig-10-pq1.
 
-![Stratified Summary Table.](images/10-practicequestion2answer.png){#fig-10-pq1 fig-align="center" width="300pt"}
+![Residual Plots.](images/10-practicequestion2answer.png){#fig-10-pq1 fig-align="center" width="80%"}
 
 ```{r}
 # Insert your solution here: 
@@ -209,6 +210,7 @@ as.data.frame(inf_mat) %>% head()
 We now try to improve our model. To start, we look at potential transformations for our outcome variable. We will consider a log transformation for both our outcome, systolic blood pressure, and our predictor of interest, blood lead level. Both of these variables have a fairly skewed distribution and may benefit from such a transformation. Below, you can see that the transformed variables have distributions that are more symmetrical.
 
 ```{r}
+#| fig-height: 6
 par(mfrow=c(2,2))
 hist(nhanes_df$SBP, xlab="Systolic Blood Pressure", main="")
 hist(log(nhanes_df$SBP), xlab="Log Systolic Blood Pressure", main="")
@@ -233,6 +235,7 @@ summary(model_log_log)$adj.r.squared
 ```
 
 ```{r}
+#| fig-height: 7
 par(mfrow=c(2,2))
 qqnorm(rstandard(model_nlog_nlog), main="Original Model") 
 qqline(rstandard(model_nlog_nlog),col="red")
@@ -248,7 +251,7 @@ qqline(rstandard(model_log_log),col="red")
 
 Instead of adding in a log transformation for `LEAD` like we did above, try a square root transformation `sqrt(LEAD)` and an inverse transformation `1/LEAD` while keeping the log transformation for the outcome `log(SBP)`. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like @fig-10-pq2.
 
-![QQ Plots for Possible Transformations.](images/10-practicequestion3answer.png){#fig-10-pq2 fig-align="center" width="300pt"}
+![QQ Plots for Possible Transformations.](images/10-practicequestion3answer.png){#fig-10-pq2 fig-align="center" width="80%"}
 
 ```{r}
 # Insert your solution here:
