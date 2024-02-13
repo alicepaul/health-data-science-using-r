@@ -16,10 +16,11 @@ Every published package has a CRAN website. This website contains a reference ma
 We will use this **stringr** package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from @GUE202131. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
 
 ```{r}
-sample_str <- " A systematic search will be performed in PubMed, Embase, and the 
-Cochrane Library, using the following search query:   ('out-of-hospital cardiac 
-arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' 
-OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
+sample_str <- " A systematic search will be performed in PubMed, 
+Embase, and the Cochrane Library, using the following search query:   
+('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 
+'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR 
+’SWAP’ OR ’TTM’)."
 ```
 
 The first thing we want to do with the text is clean up the whitespace by removing any trailing, leading, or repeated spaces. In our example, the string starts with a trailing space and there are also multiple spaces right before the search query. Searching for "whitespace" in the stringr reference manual, we find the `str_trim()` and `str_squish()` functions. Read the documentation for these two functions. You should find that `str_squish()` is the function we are looking for and that it takes a single argument.
@@ -68,18 +69,20 @@ When a function doesn't return what we expect it to, it is a good idea to first 
 The code below is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out to two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
 
 ```{r}
-sample_strA <- " A systematic search will be performed in PubMed, Embase, and 
-the Cochrane Library, using the following search query:   ('out-of-hospital 
-cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 'OHCA' OR 'CAHP' OR 'C-GRAPH' 
-OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR ’SWAP’ OR ’TTM’)."
+sample_strA <- " A systematic search will be performed in PubMed, 
+Embase, and the Cochrane Library, using the following search query:   
+('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 
+'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR 
+’SWAP’ OR ’TTM’)."
 
-sample_strB <- "Searches will be conducted in MEDLINE via PubMed, Web of 
-Science, Scopus and Embase. The following search strategy will be used:(child 
-OR infant OR preschool child OR preschool children OR preschooler OR pre-school 
-child OR pre-school children OR pre school child OR pre school children OR 
-pre-schooler OR pre schooler OR children OR adolescent OR adolescents)AND
-(attention deficit disorder with hyperactivity OR ADHD OR attention deficit
-disorder OR ADD OR hyperkinetic disorder OR minimal brain disorder) Submitted "
+sample_strB <- "Searches will be conducted in MEDLINE via PubMed, Web 
+of Science, Scopus and Embase. The following search strategy will be 
+used:(child OR infant OR preschool child OR preschool children OR 
+preschooler OR pre-school child OR pre-school children OR pre school 
+child OR pre school children OR pre-schooler OR pre schooler OR 
+children OR adolescent OR adolescents)AND(attention deficit disorder 
+with hyperactivity OR ADHD OR attention deficit disorder OR ADD OR 
+hyperkinetic disorder OR minimal brain disorder) Submitted "
 ```
 
 ```{r}
@@ -141,7 +144,8 @@ As you write more complex code and functions, it is inevitable that you will run
 1.  Suppose we want to replace the words "Thank you" in the following string with the word "Thanks". Why does the below code fail? How can we correct it?
 
     ```{r}
-string <- "Congratulations on finishing the book! Thank you for reading it."
+string <- "Congratulations on finishing the book! 
+    Thank you for reading it."
 str_sub(string, c(35, 42)) <- "Thanks"
 string
     ```
@@ -151,11 +155,13 @@ string
     ```{r, eval=FALSE}
 data(NHANESsample)
 
-nhanes_df <- NHANESsample %>% mutate(worst_DBP = max(DBP1, DBP2, DBP3, DBP4),
-                                     worst_SBP = max(SBP1, SBP2, SBP3, SBP4))
+nhanes_df <- NHANESsample %>% 
+  mutate(worst_DBP = max(DBP1, DBP2, DBP3, DBP4), 
+         worst_SBP = max(SBP1, SBP2, SBP3, SBP4))
 
-ggplot() %>% geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP), 
-                        color = HYP)
+ggplot() %>% 
+  geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP), 
+             color = HYP)
     ```
 
 3.  The code below uses the `breastcancer` data from the **HDSinRdata** package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter -@sec-logistic-regression]. What is wrong with the code below? Debug it. Hint: there are three separate errors.
@@ -163,8 +169,9 @@ ggplot() %>% geom_point(data = nhanes_df, aes(x = worst_SBP, y = worst_DBP),
     ```{r, eval = FALSE}
 data(breastcancer)
 
-model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + texture_se + 
-               radius_mean, data = breastcancer, family = binomial)
+model <- glm(diagnosis ~ smoothness_worst + symmetry_mean + 
+               texture_se + radius_mean, 
+             data = breastcancer, family = binomial)
 
 pred_probs <- predict(model)
 

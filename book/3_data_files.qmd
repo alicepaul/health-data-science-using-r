@@ -157,7 +157,8 @@ hist(rowSums(pain_body_map))
 We can also see that some body parts are more often selected than others. We create a vector called `perc_patients` below by finding the number of patients who selected each region divided by the total number of patients. The histogram shows that some body regions are selected by over 50% of patients!
 
 ```{r}
-perc_patients <- colSums(pain_body_map, na.rm=TRUE)/nrow(pain_body_map)
+perc_patients <- colSums(pain_body_map, na.rm=TRUE) /
+  nrow(pain_body_map)
 hist(perc_patients)
 ```
 
@@ -198,7 +199,8 @@ min(any_selected, na.rm=TRUE)
 ```
 
 ```{r}
-perc_patients <- apply(pain_body_map, 2, sum, na.rm=TRUE)/nrow(pain_body_map)
+perc_patients <- apply(pain_body_map, 2, sum, na.rm=TRUE) /
+  nrow(pain_body_map)
 summary(perc_patients)
 ```
 
@@ -245,7 +247,8 @@ We remove that row and then find the percentage of missing values by column. We 
 
 ```{r}
 pain <- pain[-11749,]
-num_missing_col <- apply(pain, 2, function(x) sum(is.na(x))/nrow(pain))
+num_missing_col <- apply(pain, 2, 
+                         function(x) sum(is.na(x))/nrow(pain))
 num_missing_col
 ```
 
@@ -357,8 +360,8 @@ pain_follow_up <- pain[!is.na(pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP),]
 Earlier, we created a column indicating whether or not a patient has lower back pain. We now use the `any()` function to check whether a patient has general back pain. If at least one of these values is equal to 1, then the function will return TRUE. If we had used the `all()` function instead, this would check whether all values are equal to 1, indicating that a patient has pain on their whole back.
 
 ```{r}
-pain$BACK <- any(pain$X208==1, pain$X209==1, pain$X212==1, pain$X213==1, 
-                 pain$X218==1, pain$X219==1)
+pain$BACK <- any(pain$X208==1, pain$X209==1, pain$X212==1, 
+                 pain$X213==1, pain$X218==1, pain$X219==1)
 ```
 
 ### Practice Question
@@ -388,8 +391,8 @@ aapi_values <- c("CHINESE", "HAWAIIAN", "INDIAN (ASIAN)", "FILIPINO",
                  "VIETNAMESE", "JAPANESE", "KOREAN", "GUAM/CHAMORRO", 
                  "OTHER ASIAN", "OTHER PACIFIC ISLANDER")
 pain$PAT_RACE[pain$PAT_RACE %in% aapi_values] <- "AAPI"
-pain$PAT_RACE[pain$PAT_RACE %in% c("ALASKA NATIVE", "AMERICAN INDIAN")] <- 
-  "AI/AN"
+pain$PAT_RACE[pain$PAT_RACE %in% 
+                c("ALASKA NATIVE", "AMERICAN INDIAN")] <- "AI/AN"
 table(pain$PAT_RACE)
 ```
 

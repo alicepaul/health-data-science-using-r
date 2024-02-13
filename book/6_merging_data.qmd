@@ -68,8 +68,8 @@ The tidyverse is designed around interacting with **tidy data** with the premise
 Take a look at the sample data below which stores information about the maternal mortality rate for five countries over time [@maternal_mortality]. This data is *not* tidy because the variable for maternity mortality rate is associated with multiple columns. Every row should correspond to one class observation.
 
 ```{r}
-mat_mort1 <- data.frame(country = c("Turkey", "United States", "Sweden", 
-                                    "Japan"),
+mat_mort1 <- data.frame(country = c("Turkey", "United States", 
+                                    "Sweden", "Japan"),
                        y2002 = c(64, 9.9, 4.17, 7.8),
                        y2007 = c(21.9, 12.7, 1.86, 3.6),
                        y2012 = c(15.2, 16, 5.4, 4.8))
@@ -122,8 +122,9 @@ Here's another example: suppose that I want to create a data frame where the col
 
 ```{r}
 ne_cases <- covidcases %>% 
-  filter(state %in% c("Maine", "Vermont", "New Hampshire", "Connecticut", 
-                      "Rhode Island", "Massachusetts")) %>%
+  filter(state %in% c("Maine", "Vermont", "New Hampshire", 
+                      "Connecticut", "Rhode Island", 
+                      "Massachusetts")) %>%
   mutate(month = month(date)) %>%
   group_by(state, month) %>%
   summarize(total_cases = sum(weekly_cases)) %>%
@@ -161,8 +162,10 @@ The pivots above were relatively simple in that there was only one set of values
 Above, we saw how to manipulate our current data into new formats. Now, we will see how we can combine multiple data sources. Merging two data frames is called *joining*, and the functions we will use to perform this joining depends on how we want to match values between the data frames. For example, below we join information about age and statin use from `table1` and `table2` matching by name.
 
 ```{r}
-table1 <- data.frame(age = c(14, 26, 32), name = c("Alice", "Bob", "Alice"))
-table2 <- data.frame(name = c("Carol", "Bob"), statins = c(TRUE, FALSE))
+table1 <- data.frame(age = c(14, 26, 32), 
+                     name = c("Alice", "Bob", "Alice"))
+table2 <- data.frame(name = c("Carol", "Bob"), 
+                     statins = c(TRUE, FALSE))
 full_join(table1, table2, by = "name")
 ```
 
@@ -186,7 +189,8 @@ The list below shows an overview of the different possible joins, and the video 
 We will first demonstrate a left join using the `left_join()` function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. Below, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
 
 ```{r}
-covidcases_full <- left_join(covidcases, lockdowndates, by=c("state"="State"))
+covidcases_full <- left_join(covidcases, lockdowndates, 
+                             by=c("state"="State"))
 head(covidcases_full)
 ```
 
@@ -239,7 +243,8 @@ df_B
 
     ```{r}
     visit_info <- data.frame(
-      name.f = c("Phillip", "Phillip", "Phillip", "Jessica", "Jessica"),
+      name.f = c("Phillip", "Phillip", "Phillip", "Jessica", 
+                 "Jessica"),
       name.l = c("Johnson", "Johnson", "Richards", "Smith", "Abrams"),
       measure = c("height", "age", "age", "age", "height"),
       measurement = c(45, 186, 50, 37, 156)
@@ -248,11 +253,12 @@ df_B
     contact_info <- data.frame(
     first_name = c("Phillip", "Phillip", "Jessica", "Margaret"),
     last_name = c("Richards", "Johnson", "Smith", "Reynolds"),
-    email = c("pr@aol.com", "phillipj@gmail.com", "jesssmith@brown.edu", 
-          "marg@hotmail.com")
+    email = c("pr@aol.com", "phillipj@gmail.com", 
+              "jesssmith@brown.edu", "marg@hotmail.com")
     )
 
-    left_join(visit_info, contact_info, by = c("name.f" = "first_name"))
+    left_join(visit_info, contact_info, 
+              by = c("name.f" = "first_name"))
     ```
 
 2.  First, use the `covidcases` data to create a new data frame called `sub_cases` containing the total number of cases by month for the states of California, Michigan, Connecticut, Rhode Island, Ohio, New York, and Massachusetts. Then, manipulate the `mobility` data to calculate the average `m50` mobility measure for each month. Finally, merge these two data sets using an appropriate joining function.

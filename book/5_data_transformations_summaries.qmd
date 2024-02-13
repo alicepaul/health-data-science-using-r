@@ -115,7 +115,8 @@ names(nhanes_df)
 In the last chapter, we created a new variable called `EVER_SMOKE` based on the smoking status variable using the `ifelse()` function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked.
 
 ```{r}
-ifelse(nhanes_df$SMOKE_STATUS == "NeverSmoke", "No", "Yes") %>% table()
+ifelse(nhanes_df$SMOKE_STATUS == "NeverSmoke", "No", "Yes") %>% 
+  table()
 ```
 
 Another useful function from the tidyverse is the `case_when()` function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value associated with a TRUE for that condition.
@@ -123,7 +124,8 @@ Another useful function from the tidyverse is the `case_when()` function, which 
 ```{r}
 case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
           nhanes_df$SMOKE_STATUS == "QuitSmoke" ~ "Quit Smoking",
-          nhanes_df$SMOKE_STATUS == "StillSmoke" ~ "Current Smoker") %>% 
+          nhanes_df$SMOKE_STATUS == 
+            "StillSmoke" ~ "Current Smoker") %>% 
   table()
 ```
 
@@ -131,11 +133,12 @@ Above, we did not store the columns we created. To do so, we could use the `$` o
 
 ```{r}
 nhanes_df <- nhanes_df %>% 
-  mutate(EVER_SMOKE = ifelse(SMOKE_STATUS == "NeverSmoke", "No", "Yes"), 
-         SMOKE_STATUS = case_when(SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
-                                  SMOKE_STATUS == "QuitSmoke" ~ "Quit Smoking",
-                                  SMOKE_STATUS == "StillSmoke" ~ 
-                                    "Current Smoker")) 
+  mutate(EVER_SMOKE = ifelse(SMOKE_STATUS == "NeverSmoke", 
+                             "No", "Yes"), 
+         SMOKE_STATUS = 
+           case_when(SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
+                     SMOKE_STATUS == "QuitSmoke" ~ "Quit Smoking",
+                     SMOKE_STATUS == "StillSmoke" ~ "Current Smoker")) 
 ```
 
 The last function we will demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the code below filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order.

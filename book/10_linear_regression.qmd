@@ -20,16 +20,21 @@ data(NHANESsample)
 In [Chapter -@sec-exploratory], we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of @huang2022association, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.
 
 ```{r}
-NHANESsample$SBP <- apply(NHANESsample[,c("SBP1", "SBP2", "SBP3", "SBP4")], 1, 
+NHANESsample$SBP <- apply(NHANESsample[,c("SBP1", "SBP2", "SBP3", 
+                                          "SBP4")], 1, 
     function(x) case_when(sum(!is.na(x)) == 0 ~ NA, 
                           sum(!is.na(x)) == 1 ~ sum(x, na.rm=TRUE),
-                          sum(!is.na(x)) > 1 ~ mean(x[-1], na.rm=TRUE))) 
-NHANESsample$DBP <- apply(NHANESsample[,c("DBP1", "DBP2", "DBP3", "DBP4")], 1, 
+                          sum(!is.na(x)) > 1 ~ mean(x[-1], 
+                                                    na.rm=TRUE))) 
+NHANESsample$DBP <- apply(NHANESsample[,c("DBP1", "DBP2", "DBP3", 
+                                          "DBP4")], 1, 
     function(x) case_when(sum(!is.na(x)) == 0 ~ NA, 
                           sum(!is.na(x)) == 1 ~ sum(x, na.rm=TRUE),
-                          sum(!is.na(x)) > 1 ~ mean(x[-1], na.rm=TRUE))) 
-nhanes_df <- na.omit(subset(NHANESsample, select= -c(SBP1, SBP2, SBP3, SBP4, 
-                                                     DBP1, DBP2, DBP3, DBP4)))
+                          sum(!is.na(x)) > 1 ~ mean(x[-1], 
+                                                    na.rm=TRUE))) 
+nhanes_df <- na.omit(subset(NHANESsample, 
+                            select= -c(SBP1, SBP2, SBP3, SBP4, DBP1, 
+                                       DBP2, DBP3, DBP4)))
 dim(nhanes_df)
 ```
 
@@ -47,7 +52,8 @@ We will start with simple linear regression. Below, we plot the relationship bet
 
 ```{r}
 plot(nhanes_df$LEAD, nhanes_df$SBP,
-     xlab = "Blood Lead Level", ylab = "Systolic Blood Pressure", pch=16)
+     xlab = "Blood Lead Level", ylab = "Systolic Blood Pressure", 
+     pch=16)
 ```
 
 Despite our observations above, we will continue by fiting a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)` fits a linear model in R. The first argument is the formula of the linear model: on the left hand side of the `~` we put the outcome variable, and on the right hand side we put the independent variable. When we have multiple indepedent variables we separate them with a `+` (e.g. `y~x1+x2`). The output of this function is an `lm` object.
@@ -145,7 +151,8 @@ Beyond the default plots, we can also plot a histogram of the residuals and a qq
 
 ```{r}
 par(mfrow=c(1,2)) # plot next to each other
-hist(resid(adj_model), xlab="Residuals", main="Histogram of Residuals") 
+hist(resid(adj_model), xlab="Residuals", 
+     main="Histogram of Residuals") 
 qqnorm(resid(adj_model))
 qqline(resid(adj_model),col="red") 
 ```
@@ -224,7 +231,8 @@ To add a transformation to a model, we can simply apply the transformation in th
 model_nlog_nlog <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
 model_log_nlog <- lm(log(SBP) ~ LEAD + AGE + SEX, data = nhanes_df)
 model_nlog_log <- lm(SBP ~ log(LEAD) + AGE + SEX, data = nhanes_df)
-model_log_log <- lm(log(SBP) ~ log(LEAD) + AGE + SEX, data = nhanes_df)
+model_log_log <- lm(log(SBP) ~ log(LEAD) + AGE + SEX, 
+                    data = nhanes_df)
 ```
 
 ```{r}
@@ -272,8 +280,8 @@ tidy(model_log_log)
 Another component that we may want to add to our model is an interaction term. For example, we may consider an interaction between sex and blood lead level. We add an interaction to the formula using a `:` between the two variables. The output below shows that the coefficient for this interaction is indeed significant.
 
 ```{r}
-model_interaction <- lm(log(SBP) ~ log(LEAD) + AGE + SEX + SEX:log(LEAD), 
-                        data=nhanes_df) 
+model_interaction <- lm(log(SBP) ~ log(LEAD) + AGE + SEX + 
+                          SEX:log(LEAD), data=nhanes_df) 
 summary(model_interaction)
 ```
 
@@ -315,8 +323,8 @@ By default, the `step()` function prints each step in the process and uses AIC t
 
 ```{r}
 lower_formula <- "log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD)"
-upper_formula <- "log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + SEX + RACE + 
-  EDUCATION + SMOKE + INCOME + BMI_CAT"
+upper_formula <- "log(SBP) ~ log(LEAD) + AGE + SEX:log(LEAD) + SEX + 
+  RACE + EDUCATION + SMOKE + INCOME + BMI_CAT"
 mod_step <- step(model_interaction, direction = 'forward', 
                  scope = list(lower = lower_formula, 
                               upper = upper_formula))

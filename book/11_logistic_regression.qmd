@@ -37,7 +37,8 @@ Looking at the covariate of interest, survey setting, we can see that there are 
 
 ```{r}
 table(nyts$location)
-nyts$location <- ifelse(nyts$location == "In a school building/classroom",
+nyts$location <- ifelse(nyts$location == 
+                          "In a school building/classroom",
                         "school", "home/other")
 nyts$location <- as.factor(nyts$location)
 ```
@@ -45,8 +46,8 @@ nyts$location <- as.factor(nyts$location)
 To start, we will create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, and race and ethnicity. Note that we specify our formula and data as with the `lm()` function. We then use the `summary()` function again to print a summary of this fitted model. The output is slightly different from an `lm` object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the `lm()` function and is not demonstrated in this chapter.
 
 ```{r}
-mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + location,
-                 data = nyts, family = binomial)
+mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + 
+                   location, data = nyts, family = binomial)
 summary(mod_start)
 ```
 
@@ -210,8 +211,8 @@ plot(roc_mod_step, print.auc=TRUE, print.thres = TRUE)
 If we want to compare this model to our model above, we could use a likelihood ratio test since the two models are nested. The `lrtest()` function from the **lmtest** package allows us to input two nested `glm` models and performs a corresponding Chi-squared likelihood ratio test. First, we need to ensure that our initial model is fit on the same data used in the stepwise selection. The output below indicates a statistically significant improvement in the model likelihood with the inclusion of the other variables.
 
 ```{r}
-mod_start2 <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + location,
-                 data = nyts_sub, family = binomial)
+mod_start2 <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + 
+                    location, data = nyts_sub, family = binomial)
 ```
 
 ```{r}
@@ -223,8 +224,8 @@ print(lrtest(mod_start2, mod_step))
 The `glm()` function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the `family` argument. Below, we fit a Poisson model to model the number of e-cigarettes used in the last 30 days by setting `family = poisson`. However, despite the fact that our outcome is a count value, this model doesn't seem to be a good fit for our data.
 
 ```{r}
-mod_poisson <- glm(num_e_cigs ~ grade + sex + race_and_ethnicity + location,
-                 data = nyts, family = poisson)
+mod_poisson <- glm(num_e_cigs ~ grade + sex + race_and_ethnicity + 
+                     location, data = nyts, family = poisson)
 ```
 
 ```{r}

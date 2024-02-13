@@ -13,7 +13,8 @@ data(pain)
 
 # sampling data
 set.seed(5)
-pain_df_sub <- subset(pain, select=-c(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))
+pain_df_sub <- subset(pain, 
+                      select=-c(PAIN_INTENSITY_AVERAGE.FOLLOW_UP))
 pain_df <- pain[complete.cases(pain_df_sub),]
 pain_df <- pain_df[sample(1:nrow(pain_df), 5000, replace=FALSE),] 
 ```
@@ -29,15 +30,18 @@ ggplot()
 Now we can start adding layers to our `ggplot` object. One type of layer is a **geom**, which creates a geometric object. Below, we use the `geom_point()` function to add a scatter plot layer. For this function, we first need to specify which data we want to use, and then we need to tell R how to use that data to create the scatter plot using the `aes()` function, which creates an **aesthetic**. For a scatter plot, we need to at least specify the x-axis and y-axis in the aesthetic. Both the data and the aesthetic can either be specified in our initial `ggplot()` function, which will pass this information to all future layers, or in the `geom_point()` function itself. Below, we specify the aesthetic in the geom function but also include two alternative ways to code the same image that are commented out. The resulting plot shows a fairly linear relationship between anxiety and depression.
 
 ```{r}
-ggplot(pain_df) + geom_point(aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION))
+ggplot(pain_df) + geom_point(aes(x=PROMIS_ANXIETY, 
+                                 y = PROMIS_DEPRESSION))
 ```
 
 ```{r, eval = FALSE}
 # Alternative 1:
-ggplot(pain_df, aes(x=PROMIS_ANXIETY, y = PROMIS_DEPRESSION)) + geom_point()
+ggplot(pain_df, aes(x = PROMIS_ANXIETY, y = PROMIS_DEPRESSION)) + 
+  geom_point()
 # Alternative 2:
-ggplot() + geom_point(data = pain_df, aes(x=PROMIS_ANXIETY, 
-                                          y = PROMIS_DEPRESSION))
+ggplot() + 
+  geom_point(data = pain_df, aes(x = PROMIS_ANXIETY, 
+                                 y = PROMIS_DEPRESSION))
 ```
 
 If we want to improve our plot, we may want to add different labels and a title. To do so, we use the `labs()` function to add a layer in which we can specify all labels. Additionally, I have passed more information to the geometry layer by changing the color, size, and shape of the points. These things are specified outside of the `aes()` function since they do not come from the data - every point has the same color, size, and shape in this example.
@@ -89,7 +93,8 @@ Now, let's take a more complex example. The plot below shows each patient's repo
 
 ```{r}
 ggplot(pain_df)+
-  geom_point(aes(x=PROMIS_PHYSICAL_FUNCTION, y=PROMIS_SLEEP_DISTURB_V1_0, 
+  geom_point(aes(x=PROMIS_PHYSICAL_FUNCTION, 
+                 y=PROMIS_SLEEP_DISTURB_V1_0, 
                  color=PAIN_INTENSITY_AVERAGE), position="jitter")
 ```
 
@@ -101,10 +106,13 @@ We can observe that decreased physical function is associated with higher sleep 
 
 ```{r}
 ggplot(pain_df)+
-  geom_point(aes(x=PROMIS_PHYSICAL_FUNCTION, y=PROMIS_SLEEP_DISTURB_V1_0, 
-                 color=PAIN_INTENSITY_AVERAGE), position="jitter", alpha=0.5) +
+  geom_point(aes(x=PROMIS_PHYSICAL_FUNCTION, 
+                 y=PROMIS_SLEEP_DISTURB_V1_0, 
+                 color=PAIN_INTENSITY_AVERAGE), 
+             position="jitter", alpha=0.5) +
   scale_x_continuous(limits=c(15,50), breaks = c(20, 30, 40, 50), 
-                     labels = c("-3 SD", "-2 SD", "-1 SD", "Pop Mean")) + 
+                     labels = c("-3 SD", "-2 SD", "-1 SD", 
+                                "Pop Mean")) + 
   scale_y_continuous(breaks = c(40, 50, 60, 70, 80), 
                      labels = c("-1 SD", "Pop Mean", "+1 SD", "+2 SD", 
                                 "+3 SD")) +
@@ -118,7 +126,8 @@ ggplot(pain_df)+
 We now demonstrate these scale functions for discrete variables. In the example below, we first create a new race variable that has only three categories since other groups have limited observations. We then create a box plot for pain intensity by race. There are two discrete aesthetics here: color and the y-axis. This plot shows a higher median pain for black patients compared to other races.
 
 ```{r}
-pain_df$PAT_RACE_CAT <- ifelse(pain_df$PAT_RACE %in% c("BLACK", "WHITE"), 
+pain_df$PAT_RACE_CAT <- ifelse(pain_df$PAT_RACE %in% c("BLACK", 
+                                                       "WHITE"), 
                                pain_df$PAT_RACE, "OTHER")
 pain_df$PAT_RACE_CAT <- as.factor(pain_df$PAT_RACE_CAT)
 ```
@@ -160,9 +169,11 @@ We also specify the fill to be by "Baseline" and "Follow-up" within the aestheti
 ```{r}
 ggplot(pain_df)+
   geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE, fill="Baseline")) +
-  geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE.FOLLOW_UP, fill="Follow-Up")) +
+  geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE.FOLLOW_UP, 
+                     fill="Follow-Up")) +
   scale_x_continuous(breaks=c(0:10)) + 
-  scale_fill_manual(values=c("violetred", "pink"), name="Measurement") +
+  scale_fill_manual(values=c("violetred", "pink"), 
+                    name="Measurement") +
   labs(x="Reported Pain Intensity", y = "Count") +
   theme_minimal()
 ```
@@ -172,8 +183,9 @@ ggplot(pain_df)+
 In the example above, we created two histograms using two calls to the `geom_histogram()` function, but there is another way to create multiple layers like this when you have a variable that you want to separate the geom layer on. For example, suppose we want to visualize the distribution of physical function by whether someone has follow-up information. Below we create the variable `HAS_FOLLOW_UP` before using it in our aesthetic for `geom_density()` as both the color and group. In fact, we do not have to add the `group` argument because as soon as we specify to R that we want to color the density plots by this variable, R will create the grouping. Finally, we update the legend for this grouping using the `scale_color_discrete()` function, since the discrete variable `HAS_FOLLOW_UP` specifies the color.
 
 ```{r}
-pain_df$HAS_FOLLOW_UP <- !is.na(pain_df$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)
-ggplot(pain_df)+
+pain_df$HAS_FOLLOW_UP <- 
+  !is.na(pain_df$PAIN_INTENSITY_AVERAGE.FOLLOW_UP)
+ggplot(pain_df) +
   geom_density(aes(x=PROMIS_PHYSICAL_FUNCTION, group=HAS_FOLLOW_UP, 
                    color=HAS_FOLLOW_UP)) +
   scale_x_continuous(breaks=c(0:10)) + 
@@ -197,9 +209,11 @@ We can now use the `geom_col()` function to create a bar plot of these proportio
 
 ```{r}
 ggplot(pain_df_grp)+
-  geom_col(aes(x=PAIN_INTENSITY_AVERAGE, y=prop, fill=HAS_FOLLOW_UP)) +
+  geom_col(aes(x=PAIN_INTENSITY_AVERAGE, y=prop, 
+               fill=HAS_FOLLOW_UP)) +
   scale_x_continuous(breaks=c(0:10)) + 
-  scale_fill_discrete(name="Seen at Follow Up", labels=c("No", "Yes")) +
+  scale_fill_discrete(name="Seen at Follow Up", 
+                      labels=c("No", "Yes")) +
   labs(x="Reported Pain Intensity", y = "Proportion") +
   theme_minimal()
 ```
@@ -219,9 +233,11 @@ Another way to visualize data by group is to add a facet wrap to your ggplot obj
 ```{r}
 ggplot(pain_df)+
   geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE, fill="Baseline")) +
-  geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE.FOLLOW_UP, fill="Follow-Up")) +
+  geom_histogram(aes(x=PAIN_INTENSITY_AVERAGE.FOLLOW_UP, 
+                     fill="Follow-Up")) +
   scale_x_continuous(breaks=c(0:10)) + 
-  scale_fill_manual(values=c("violetred", "pink"), name="Measurement") +
+  scale_fill_manual(values=c("violetred", "pink"), 
+                    name="Measurement") +
   labs(x="Reported Pain Intensity", y = "Count") +
   facet_grid(row=vars(PAT_RACE_CAT))+
   theme_minimal()
@@ -234,10 +250,11 @@ To create our final plot, we will demonstrate some extra features we haven't cov
 ```{r}
 pain_body_map <- data.frame(part = names(pain_df)[2:75])
 pain_body_map$num_patients <- colSums(pain_df[,2:75])
-pain_body_map$perc_patients <- pain_body_map$num_patients/nrow(pain_df)
+pain_body_map$perc_patients <- pain_body_map$num_patients / 
+                               nrow(pain_df)
 pain_body_map$avg_pain <- colSums(pain_df[,2:75] * 
                                 pain_df$PAIN_INTENSITY_AVERAGE) /
-  pain_body_map$num_patients
+                                pain_body_map$num_patients
 pain_body_map <- pain_body_map %>% 
     mutate( region = case_when(
     part %in% c("X208", "X209", "X218","X219","X212","X213") ~ "Back",
@@ -267,10 +284,12 @@ Within the theme we've chosen, we are able to update any of the theme options (s
 ```{r}
 #| fig-height: 5
 ggplot(pain_body_map) +
-  geom_label(aes(x=perc_patients, y=avg_pain, label=part, color=region)) + 
+  geom_label(aes(x=perc_patients, y=avg_pain, label=part, 
+                 color=region)) + 
   geom_hline(yintercept=mean(pain_body_map$avg_pain)) +
   annotate(geom="text", label="Average Pain Value", x=0.35, y=7.0) + 
-  labs(x="Proportion Patients Selected Region", y="Average Pain of Patients") +
+  labs(x="Proportion Patients Selected Region", 
+       y="Average Pain of Patients") +
   theme_minimal()+
   theme(legend.position="bottom", 
         panel.grid.major = element_line(colour = "lightpink"))
@@ -280,16 +299,19 @@ So far we have not saved any of our figures as objects. Below, I create two plot
 
 ```{r}
 p1 <- ggplot(pain_body_map) +
-  geom_label(aes(x=perc_patients, y=avg_pain, label=part, color=region)) + 
+  geom_label(aes(x=perc_patients, y=avg_pain, label=part, 
+                 color=region)) + 
   geom_hline(yintercept=mean(pain_body_map$avg_pain)) +
   annotate(geom="text", label="Average Pain Value", x=0.35, y=7.0) + 
-  labs(x="Proportion Patients Selected Region", y="Average Pain of Patients") +
+  labs(x="Proportion Patients Selected Region", 
+       y="Average Pain of Patients") +
   theme_minimal()+
   theme(legend.position="bottom", 
         panel.grid.major = element_line(colour = "lightpink"))
 
 p2 <- ggplot(pain_body_map) +
-  geom_histogram(aes(x=perc_patients), color="violetred", fill="lightpink") + 
+  geom_histogram(aes(x=perc_patients), color="violetred", 
+                 fill="lightpink") + 
   labs(x="Proportion of Patients Selected Region", y="Count") +
   theme_minimal()+
   theme(panel.grid.major = element_line(colour = "lightpink"))
