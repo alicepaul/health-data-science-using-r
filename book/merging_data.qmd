@@ -91,7 +91,7 @@ head(mat_mort2)
 
 The mobility and covid case data are both already in tidy form - each observation corresponds to a single row and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order.
 
-To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to what is called **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image in @fig-pivot-long shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns `cols` that we want to transform (these `cols` are shown in light purple on the left). The long form contains a new column `names_to` that contains the exam type and `values_to` that contains a binary variable indicating whether or not each exam was completed.
+To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to what is called **long form**. This kind of pivot involves taking a subset of columns that we will *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image in @fig-pivot-long shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns `cols` that we want to transform (these `cols` are `phys`, `hear`, and `eye` in the left table). The long form contains a new column `names_to` that contains the exam type and `values_to` that contains a binary variable indicating whether or not each exam was completed.
 
 ![Pivoting Longer.](images/merging_data/pivot-long.png){#fig-pivot-long fig-align="center" width="300pt"}
 
@@ -178,7 +178,7 @@ The list below shows an overview of the different possible joins, and the video 
 -   `inner_join(table1, table2, by)`: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.\
 -   `full_join(table1, table2, by)`: Keeps all rows from both tables and joins those that match. Rows that do not find a match will have NA values filled in.\
 -   `semi_join(table1, table2, by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.\
--   `anti_join(table1, table2, by)`: Keeps all rows in table1 that *do not* have a match in table 2 but does not join to any information from table2. The opposite of a semi join.
+-   `anti_join(table1, table2, by)`: Keeps all rows in table1 that *do not* have a match in table2 but does not join to any information from table2. The opposite of a semi join.
 
 ::: {.content-visible when-format="html"}
 ### Types of Joins Video
@@ -186,7 +186,7 @@ The list below shows an overview of the different possible joins, and the video 
 {{< video https://www.youtube.com/embed/slazeLLQBoY width="700" height="500" >}}
 :::
 
-We will first demonstrate a left join using the `left_join()` function. This function takes in two data tables (table1 and table 2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. Below, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
+We will first demonstrate a left join using the `left_join()` function. This function takes in two data tables (table1 and table2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. Below, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table will be `covidcases` and we will match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
 
 ```{r}
 covidcases_full <- left_join(covidcases, lockdowndates, 
@@ -194,7 +194,7 @@ covidcases_full <- left_join(covidcases, lockdowndates,
 head(covidcases_full)
 ```
 
-These two new columns will allow us to determine whether the start of each recorded week was during a lockdown. We use the `between` function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.
+These two new columns will allow us to determine whether the start of each recorded week was during a lockdown. We use the `between()` function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.
 
 ```{r}
 covidcases_full <- covidcases_full %>%
