@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.521">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -127,6 +127,33 @@ div.csl-indent {
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -369,8 +396,8 @@ div.csl-indent {
 
 
 <p>This chapter will introduce you to linear regression analysis in R. We will cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection.</p>
-<p>For this chapter, we will use the <code>NHANESsample</code> dataset seen in <a href="#sec-exploratory" class="quarto-xref">Chapter&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-exploratory</span></a>. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="citation" data-cites="huang2022association">Huang (<a href="#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
-<p>We will use the <strong>broom</strong> package <span class="citation" data-cites="R-broom">(<a href="#ref-R-broom" role="doc-biblioref">Robinson, Hayes, and Couch 2023</a>)</span> to present the estimated coefficients for our regression models and the <strong>car</strong> package to compute variance inflation factors.</p>
+<p>For this chapter, we will use the <code>NHANESsample</code> dataset seen in <a href="exploratory_analysis.html" class="quarto-xref">Chapter&nbsp;<span>4</span></a>. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by <span class="citation" data-cites="huang2022association">Huang (<a href="../references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
+<p>We will use the <strong>broom</strong> package <span class="citation" data-cites="R-broom">(<a href="../references.html#ref-R-broom" role="doc-biblioref">Robinson, Hayes, and Couch 2023</a>)</span> to present the estimated coefficients for our regression models and the <strong>car</strong> package to compute variance inflation factors.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -380,7 +407,7 @@ div.csl-indent {
 </div>
 <section id="simple-linear-regression" class="level2" data-number="10.1">
 <h2 data-number="10.1" class="anchored" data-anchor-id="simple-linear-regression"><span class="header-section-number">10.1</span> Simple Linear Regression</h2>
-<p>In <a href="#sec-exploratory" class="quarto-xref">Chapter&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-exploratory</span></a>, we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of <span class="citation" data-cites="huang2022association">Huang (<a href="#ref-huang2022association" role="doc-biblioref">2022</a>)</span>, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
+<p>In <a href="exploratory_analysis.html" class="quarto-xref">Chapter&nbsp;<span>4</span></a>, we presented some initial exploratory analysis for this data. In this chapter, we will use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of <span class="citation" data-cites="huang2022association">Huang (<a href="../references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NHANESsample<span class="sc">$</span>SBP <span class="ot">&lt;-</span> <span class="fu">apply</span>(NHANESsample[,<span class="fu">c</span>(<span class="st">"SBP1"</span>, <span class="st">"SBP2"</span>, <span class="st">"SBP3"</span>, </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                                          <span class="st">"SBP4"</span>)], <span class="dv">1</span>, </span>
@@ -643,8 +670,8 @@ div.csl-indent {
 </section>
 <section id="practice-question-1" class="level3" data-number="10.3.3">
 <h3 data-number="10.3.3" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">10.3.3</span> Practice Question</h3>
-<p>Fit a linear regression model with <code>SBP</code> as the outcome and with <code>INCOME</code>, <code>RACE</code>, <code>EDUCATION</code>, and <code>ALC</code> as independent variables. Then, plot the residuals vs.&nbsp;the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like <a href="#fig-residual-plots" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-residual-plots</span></a>.</p>
-<div id="fig-residual-plots" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="80%">
+<p>Fit a linear regression model with <code>SBP</code> as the outcome and with <code>INCOME</code>, <code>RACE</code>, <code>EDUCATION</code>, and <code>ALC</code> as independent variables. Then, plot the residuals vs.&nbsp;the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like <a href="#fig-residual-plots" class="quarto-xref">Figure&nbsp;<span>10.1</span></a>.</p>
+<div id="fig-residual-plots" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-residual-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/linear_regression/residual-plots.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
@@ -757,8 +784,8 @@ Figure&nbsp;10.1: Residual Plots.
 </div>
 <section id="practice-question-2" class="level3" data-number="10.4.1">
 <h3 data-number="10.4.1" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">10.4.1</span> Practice Question</h3>
-<p>Instead of adding in a log transformation for <code>LEAD</code> like we did above, try a square root transformation <code>sqrt(LEAD)</code> and an inverse transformation <code>1/LEAD</code> while keeping the log transformation for the outcome <code>log(SBP)</code>. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like <a href="#fig-qq-plots" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-qq-plots</span></a>.</p>
-<div id="fig-qq-plots" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="80%">
+<p>Instead of adding in a log transformation for <code>LEAD</code> like we did above, try a square root transformation <code>sqrt(LEAD)</code> and an inverse transformation <code>1/LEAD</code> while keeping the log transformation for the outcome <code>log(SBP)</code>. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like <a href="#fig-qq-plots" class="quarto-xref">Figure&nbsp;<span>10.2</span></a>.</p>
+<div id="fig-qq-plots" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-qq-plots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/linear_regression/qq-plots.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
@@ -961,7 +988,7 @@ Figure&nbsp;10.2: QQ Plots for Possible Transformations.
 </ol>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-huang2022association" class="csl-entry" role="listitem">
 Huang, Ziyao. 2022. <span>“Association Between Blood Lead Level with High Blood Pressure in Us (Nhanes 1999–2018).”</span> <em>Frontiers in Public Health</em> 10: 836357.
 </div>
@@ -1100,27 +1127,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1135,10 +1141,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1147,8 +1157,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {

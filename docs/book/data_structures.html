@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.521">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -107,6 +107,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -356,8 +383,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ex_num <span class="ot">&lt;-</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The main data structures in R are <strong>vectors</strong>, <strong>factors</strong>, <strong>matrices</strong>, <strong>arrays</strong>, <strong>lists</strong>, and <strong>data frames</strong>. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In <a href="#fig-data-structures" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-data-structures</span></a>, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.</p>
-<div id="fig-data-structures" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="80%">
+<p>The main data structures in R are <strong>vectors</strong>, <strong>factors</strong>, <strong>matrices</strong>, <strong>arrays</strong>, <strong>lists</strong>, and <strong>data frames</strong>. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In <a href="#fig-data-structures" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.</p>
+<div id="fig-data-structures" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-data-structures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/data-structures.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
@@ -395,12 +422,12 @@ Figure&nbsp;2.1: Data structures.
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cn">TRUE</span><span class="sc">+</span><span class="cn">FALSE</span><span class="sc">+</span><span class="cn">TRUE</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To create all of the above objects, we used the assignment operator <code>&lt;-</code>, which we discussed in <a href="#sec-intro-to-r" class="quarto-xref">Chapter&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-intro-to-r</span></a>. You may see code elsewhere that uses an <code>=</code> instead. While <code>=</code> can also be used for assignment, it is more standard practice to use <code>&lt;-</code>.</p>
+<p>To create all of the above objects, we used the assignment operator <code>&lt;-</code>, which we discussed in <a href="intro_to_r.html" class="quarto-xref">Chapter&nbsp;<span>1</span></a>. You may see code elsewhere that uses an <code>=</code> instead. While <code>=</code> can also be used for assignment, it is more standard practice to use <code>&lt;-</code>.</p>
 </section>
 <section id="vectors" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="vectors"><span class="header-section-number">2.2</span> Vectors</h2>
 <p>In the examples above, we created objects with a single value. R actually uses a vector of length 1 to store this information. <strong>Vectors</strong> are 1-dimensional data structures that can store multiple data values of the same type (e.g.&nbsp;character, boolean, or numeric).</p>
-<div id="fig-vectors" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="60%">
+<div id="fig-vectors" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-vectors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/vectors.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%">
@@ -618,7 +645,7 @@ Figure&nbsp;2.2: Vector Examples.
 <section id="matrices" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="matrices"><span class="header-section-number">2.4</span> Matrices</h2>
 <p>Matrices are similar to vectors in that they store data of the same type, but matrices are two-dimensional (as opposed to one-dimensional vectors), and consist of both rows and columns.</p>
-<div id="fig-matrix" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="40%">
+<div id="fig-matrix" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-matrix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/matrix.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%">
@@ -739,7 +766,7 @@ Figure&nbsp;2.3: Matrix Example.
 <section id="data-frames" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="data-frames"><span class="header-section-number">2.5</span> Data Frames</h2>
 <p>Matrices can store data like the rainfall data, where everything is of the same type. However, if we want to capture more complex data records, we also want to allow for different measurement types: this is where data frames come in. A data frame is like a matrix in that data frames are two-dimensional, but unlike matrices, data frames allow for each column to be a different type. In this case, each row corresponds to a single data entry (or observation) and each column corresponds to a different variable.</p>
-<div id="fig-dataframe" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="40%">
+<div id="fig-dataframe" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dataframe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/dataframe.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%">
@@ -840,8 +867,8 @@ Figure&nbsp;2.4: Data Frame Example.
 </section>
 <section id="practice-question-2" class="level3" data-number="2.5.3">
 <h3 data-number="2.5.3" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">2.5.3</span> Practice Question</h3>
-<p>Add a column to <code>weather_data</code> called <code>air_quality_index</code> using the <code>rep()</code> function so that all values are <code>NA</code> (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like <a href="#fig-daily-air-quality" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-daily-air-quality</span></a>.</p>
-<div id="fig-daily-air-quality" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="70%">
+<p>Add a column to <code>weather_data</code> called <code>air_quality_index</code> using the <code>rep()</code> function so that all values are <code>NA</code> (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like <a href="#fig-daily-air-quality" class="quarto-xref">Figure&nbsp;<span>2.5</span></a>.</p>
+<div id="fig-daily-air-quality" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-daily-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/daily-air-quality.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
@@ -915,9 +942,9 @@ Figure&nbsp;2.5: Air Quality Data.
 <section id="exercises" class="level2" data-number="2.8">
 <h2 data-number="2.8" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.8</span> Exercises</h2>
 <ol type="1">
-<li>Recreate the data frame in <a href="#fig-city-air-quality" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-city-air-quality</span></a> in R, where <code>temperature</code> and <code>co2</code> represent the average temperature in Fahrenheit and the average <span class="math inline">\(\text{CO}_2\)</span> concentrations in <span class="math inline">\(\text{mg}/\text{m}^3\)</span> for the month of January 2008, and name it <code>city_air_quality</code>.</li>
+<li>Recreate the data frame in <a href="#fig-city-air-quality" class="quarto-xref">Figure&nbsp;<span>2.6</span></a> in R, where <code>temperature</code> and <code>co2</code> represent the average temperature in Fahrenheit and the average <span class="math inline">\(\text{CO}_2\)</span> concentrations in <span class="math inline">\(\text{mg}/\text{m}^3\)</span> for the month of January 2008, and name it <code>city_air_quality</code>.</li>
 </ol>
-<div id="fig-city-air-quality" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="70%">
+<div id="fig-city-air-quality" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-city-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/city-air-quality.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
@@ -929,9 +956,9 @@ Figure&nbsp;2.6: City Air Quality Data.
 </div>
 <ol start="2" type="1">
 <li><p>Create a character vector named <code>precipitation</code> with entries <code>Yes</code> or <code>No</code> indicating whether or not there was more precipitation than average in January 2008 in these cities (you can make this information up yourself). Then, append this vector to the <code>city_air_quality</code> data frame as a new column.</p></li>
-<li><p>Convert the categorical column <code>precipitation</code> to a factor. Then, add a row to the data frame <code>city_air_quality</code> using the <code>rbind()</code> function to match <a href="#fig-city-air-quality-2" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-city-air-quality-2</span></a>.</p></li>
+<li><p>Convert the categorical column <code>precipitation</code> to a factor. Then, add a row to the data frame <code>city_air_quality</code> using the <code>rbind()</code> function to match <a href="#fig-city-air-quality-2" class="quarto-xref">Figure&nbsp;<span>2.7</span></a>.</p></li>
 </ol>
-<div id="fig-city-air-quality-2" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="70%">
+<div id="fig-city-air-quality-2" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-city-air-quality-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/data_structures/city-air-quality-newrow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
@@ -1077,27 +1104,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1112,10 +1118,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1124,8 +1134,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {

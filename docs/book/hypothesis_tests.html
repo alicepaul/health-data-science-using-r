@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.521">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -127,6 +127,33 @@ div.csl-indent {
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -365,8 +392,8 @@ div.csl-indent {
 </header>
 
 
-<p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests for comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county <span class="citation" data-cites="itop">(<a href="#ref-itop" role="doc-biblioref">Human Services Commission 2016-2021</a>)</span>. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
-<p>We will use the <strong>tidyverse</strong>, <strong>gt</strong>, and <strong>gtsummary</strong> packages to help manipulate and summarize the data. The <strong>car</strong> package <span class="citation" data-cites="R-car">(<a href="#ref-R-car" role="doc-biblioref">Fox, Weisberg, and Price 2023</a>)</span> contains the function <code>leveneTest()</code> to implement a Levene’s test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.</p>
+<p>In this chapter, we will look at hypothesis testing in R. We will start with single sample distributions and tests, and then we will look at hypothesis tests for comparing two samples. Examples will include testing for positive correlations, performing two sample paired t-tests, and testing for equal variance among groups. The data we will use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county <span class="citation" data-cites="itop">(<a href="../references.html#ref-itop" role="doc-biblioref">Human Services Commission 2016-2021</a>)</span>. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.</p>
+<p>We will use the <strong>tidyverse</strong>, <strong>gt</strong>, and <strong>gtsummary</strong> packages to help manipulate and summarize the data. The <strong>car</strong> package <span class="citation" data-cites="R-car">(<a href="../references.html#ref-R-car" role="doc-biblioref">Fox, Weisberg, and Price 2023</a>)</span> contains the function <code>leveneTest()</code> to implement a Levene’s test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
@@ -405,7 +432,7 @@ div.csl-indent {
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Irion            3       12.9</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # ℹ 5 more rows</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math inline">\(\mu\)</span> we can do so by simply using the <code>mean()</code> function. For reference, the Center for Disease Control estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15–44 years <span class="citation" data-cites="kortsmit2023abortion">(<a href="#ref-kortsmit2023abortion" role="doc-biblioref">Kortsmit 2023</a>)</span>.</p>
+<p>Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, the rates in Loving County and Terrel County are so high that we might consider them to be outliers. For this one sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties <span class="math inline">\(\mu\)</span> we can do so by simply using the <code>mean()</code> function. For reference, the Center for Disease Control estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15–44 years <span class="citation" data-cites="kortsmit2023abortion">(<a href="../references.html#ref-kortsmit2023abortion" role="doc-biblioref">Kortsmit 2023</a>)</span>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(county_rates_2021, <span class="at">na.rm=</span><span class="cn">TRUE</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5.17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -741,7 +768,7 @@ div.csl-indent {
 </section>
 <section id="adding-hypothesis-tests-to-summary-tables" class="level2" data-number="9.5">
 <h2 data-number="9.5" class="anchored" data-anchor-id="adding-hypothesis-tests-to-summary-tables"><span class="header-section-number">9.5</span> Adding Hypothesis Tests to Summary Tables</h2>
-<p>In <a href="#sec-exploratory" class="quarto-xref">Chapter&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-exploratory</span></a>, we used the <strong>gt</strong> and <strong>gtsummary</strong> packages to create summary tables of variables. When creating a stratified table (done by adding the <code>by</code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code>add_p()</code> function. By default, the <code>add_p()</code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code>by</code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.</p>
+<p>In <a href="exploratory_analysis.html" class="quarto-xref">Chapter&nbsp;<span>4</span></a>, we used the <strong>gt</strong> and <strong>gtsummary</strong> packages to create summary tables of variables. When creating a stratified table (done by adding the <code>by</code> argument), we can automatically add p-values for hypothesis tests comparing across populations using the <code>add_p()</code> function. By default, the <code>add_p()</code> function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the <code>by</code> variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher’s Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(tex_itop, <span class="at">include =</span> <span class="fu">c</span>(total_rate, white_rate, asian_rate, </span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                                  hispanic_rate, black_rate, </span>
@@ -749,539 +776,10 @@ div.csl-indent {
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">by =</span> <span class="st">"year"</span>, </span>
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_p</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() <span class="co">#%&gt;% </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div id="jcjeaeqsbg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jcjeaeqsbg table {
-  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-#jcjeaeqsbg thead, #jcjeaeqsbg tbody, #jcjeaeqsbg tfoot, #jcjeaeqsbg tr, #jcjeaeqsbg td, #jcjeaeqsbg th {
-  border-style: none;
-}
-
-#jcjeaeqsbg p {
-  margin: 0;
-  padding: 0;
-}
-
-#jcjeaeqsbg .gt_table {
-  display: table;
-  border-collapse: collapse;
-  line-height: normal;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_caption {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-#jcjeaeqsbg .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#jcjeaeqsbg .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 3px;
-  padding-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#jcjeaeqsbg .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#jcjeaeqsbg .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#jcjeaeqsbg .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#jcjeaeqsbg .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#jcjeaeqsbg .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#jcjeaeqsbg .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#jcjeaeqsbg .gt_group_heading {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  text-align: left;
-}
-
-#jcjeaeqsbg .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#jcjeaeqsbg .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#jcjeaeqsbg .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#jcjeaeqsbg .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#jcjeaeqsbg .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jcjeaeqsbg .gt_stub_row_group {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 5px;
-  padding-right: 5px;
-  vertical-align: top;
-}
-
-#jcjeaeqsbg .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#jcjeaeqsbg .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#jcjeaeqsbg .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jcjeaeqsbg .gt_first_summary_row {
-  border-top-style: solid;
-  border-top-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#jcjeaeqsbg .gt_last_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jcjeaeqsbg .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_last_grand_summary_row_top {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-bottom-style: double;
-  border-bottom-width: 6px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#jcjeaeqsbg .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jcjeaeqsbg .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#jcjeaeqsbg .gt_sourcenote {
-  font-size: 90%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#jcjeaeqsbg .gt_left {
-  text-align: left;
-}
-
-#jcjeaeqsbg .gt_center {
-  text-align: center;
-}
-
-#jcjeaeqsbg .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#jcjeaeqsbg .gt_font_normal {
-  font-weight: normal;
-}
-
-#jcjeaeqsbg .gt_font_bold {
-  font-weight: bold;
-}
-
-#jcjeaeqsbg .gt_font_italic {
-  font-style: italic;
-}
-
-#jcjeaeqsbg .gt_super {
-  font-size: 65%;
-}
-
-#jcjeaeqsbg .gt_footnote_marks {
-  font-size: 75%;
-  vertical-align: 0.4em;
-  position: initial;
-}
-
-#jcjeaeqsbg .gt_asterisk {
-  font-size: 100%;
-  vertical-align: 0;
-}
-
-#jcjeaeqsbg .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#jcjeaeqsbg .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#jcjeaeqsbg .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#jcjeaeqsbg .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#jcjeaeqsbg .gt_indent_5 {
-  text-indent: 25px;
-}
-</style>
-
-<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-<thead>
-<tr class="header gt_col_headings">
-<th id="<strong>Characteristic</strong>" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
-<th id="<strong>2016</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2016</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>2017</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2017</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>2018</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2018</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>2019</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2019</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>2020</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2020</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>2021</strong>, N = 254<span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>2021</strong>, N = 254<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
-<th id="<strong>p-value</strong><span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>2</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>2</sup></span></th>
-</tr>
-</thead>
-<tbody class="gt_table_body">
-<tr class="odd">
-<td class="gt_row gt_left" headers="label">total_rate</td>
-<td class="gt_row gt_center" headers="stat_1">4.8 (3.0)</td>
-<td class="gt_row gt_center" headers="stat_2">4.9 (4.9)</td>
-<td class="gt_row gt_center" headers="stat_3">5.3 (4.2)</td>
-<td class="gt_row gt_center" headers="stat_4">4.9 (3.3)</td>
-<td class="gt_row gt_center" headers="stat_5">6.2 (14.1)</td>
-<td class="gt_row gt_center" headers="stat_6">5.2 (7.9)</td>
-<td class="gt_row gt_center" headers="p.value">0.2</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="label">white_rate</td>
-<td class="gt_row gt_center" headers="stat_1">4.7 (3.8)</td>
-<td class="gt_row gt_center" headers="stat_2">5.1 (5.8)</td>
-<td class="gt_row gt_center" headers="stat_3">5.4 (6.0)</td>
-<td class="gt_row gt_center" headers="stat_4">5.1 (5.1)</td>
-<td class="gt_row gt_center" headers="stat_5">6.8 (21.3)</td>
-<td class="gt_row gt_center" headers="stat_6">5.5 (8.0)</td>
-<td class="gt_row gt_center" headers="p.value">0.3</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="label">asian_rate</td>
-<td class="gt_row gt_center" headers="stat_1">7 (32)</td>
-<td class="gt_row gt_center" headers="stat_2">12 (46)</td>
-<td class="gt_row gt_center" headers="stat_3">8 (21)</td>
-<td class="gt_row gt_center" headers="stat_4">7 (20)</td>
-<td class="gt_row gt_center" headers="stat_5">14 (55)</td>
-<td class="gt_row gt_center" headers="stat_6">7 (37)</td>
-<td class="gt_row gt_center" headers="p.value">0.066</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="label">hispanic_rate</td>
-<td class="gt_row gt_center" headers="stat_1">3.9 (3.7)</td>
-<td class="gt_row gt_center" headers="stat_2">4.7 (6.3)</td>
-<td class="gt_row gt_center" headers="stat_3">4.6 (4.6)</td>
-<td class="gt_row gt_center" headers="stat_4">4.6 (5.0)</td>
-<td class="gt_row gt_center" headers="stat_5">4.6 (5.8)</td>
-<td class="gt_row gt_center" headers="stat_6">4.4 (4.8)</td>
-<td class="gt_row gt_center" headers="p.value">0.7</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="label">black_rate</td>
-<td class="gt_row gt_center" headers="stat_1">9 (21)</td>
-<td class="gt_row gt_center" headers="stat_2">13 (65)</td>
-<td class="gt_row gt_center" headers="stat_3">26 (153)</td>
-<td class="gt_row gt_center" headers="stat_4">20 (80)</td>
-<td class="gt_row gt_center" headers="stat_5">25 (111)</td>
-<td class="gt_row gt_center" headers="stat_6">26 (121)</td>
-<td class="gt_row gt_center" headers="p.value">0.13</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left" headers="label">native_american_rate</td>
-<td class="gt_row gt_center" headers="stat_1">5.0 (24.0)</td>
-<td class="gt_row gt_center" headers="stat_2">9.3 (65.0)</td>
-<td class="gt_row gt_center" headers="stat_3">4.9 (17.8)</td>
-<td class="gt_row gt_center" headers="stat_4">2.3 (12.4)</td>
-<td class="gt_row gt_center" headers="stat_5">4.1 (21.1)</td>
-<td class="gt_row gt_center" headers="stat_6">2.5 (10.1)</td>
-<td class="gt_row gt_center" headers="p.value">0.13</td>
-</tr>
-</tbody><tfoot class="gt_footnotes">
-<tr class="odd">
-<td colspan="8" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span> Mean (SD)</td>
-</tr>
-<tr class="even">
-<td colspan="8" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>2</sup></span> Kruskal-Wallis rank sum test</td>
-</tr>
-</tfoot>
-
-</table>
-
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gtsave</span>(<span class="at">filename =</span> <span class="st">"gt-summary-table.png"</span>, <span class="at">path =</span> <span class="st">"images/hypothesis_tests/"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>  <span class="co">#gtsave(filename = "gt-summary-table.png", path = "images/hypothesis_tests/")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="fig-gt-summary-table" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="100%">
+<div id="fig-gt-summary-table" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-gt-summary-table-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/hypothesis_tests/gt-summary-table.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%">
@@ -1301,15 +799,15 @@ Figure&nbsp;9.1: Summary Table Stratified by Year.
 <h2 data-number="9.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">9.7</span> Exercises</h2>
 <p>For the following exercises, we will be using the <code>pain</code> data from the <strong>HDSinRdata</strong> package.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(pain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol type="1">
 <li><p>Determine whether the presence or absence of follow-up information is significantly associated with the initial average pain intensity. What do the results suggest?</p></li>
-<li><p>First, plot <code>PROMIS_PAIN_BEHAVIOR</code> grouped by race (you can use the <code>PAT_RACE_CAT</code> variable that we defined in <a href="#sec-ggplot2" class="quarto-xref">Chapter&nbsp;<span class="quarto-unresolved-ref ref-noprefix">sec-ggplot2</span></a>. What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.</p></li>
+<li><p>First, plot <code>PROMIS_PAIN_BEHAVIOR</code> grouped by race (you can use the <code>PAT_RACE_CAT</code> variable that we defined in <a href="visualization_ggplot.html" class="quarto-xref">Chapter&nbsp;<span>7</span></a>. What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.</p></li>
 <li><p>Examine the association between <code>CCI_BIN</code> and <code>MEDICAID_BIN</code>. Are these variable significantly related to each other? How would you describe their relationship?</p></li>
-<li><p>Recreate the summary table in <a href="#fig-pain-stratified-summary" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-pain-stratified-summary</span></a>. Then, recreate the p-values for <code>PROMIS_DEPRESSION</code>, <code>PROMIS_ANXIETY</code>, and <code>MEDICAID_BIN</code> using the appropriate tests.</p></li>
+<li><p>Recreate the summary table in <a href="#fig-pain-stratified-summary" class="quarto-xref">Figure&nbsp;<span>9.2</span></a>. Then, recreate the p-values for <code>PROMIS_DEPRESSION</code>, <code>PROMIS_ANXIETY</code>, and <code>MEDICAID_BIN</code> using the appropriate tests.</p></li>
 </ol>
-<div id="fig-pain-stratified-summary" class="quarto-figure quarto-figure-center anchored" data-fig-align="center" width="100%">
+<div id="fig-pain-stratified-summary" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pain-stratified-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="images/hypothesis_tests/pain-stratified-summary.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%">
@@ -1321,7 +819,7 @@ Figure&nbsp;9.2: Stratified Summary Table.
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-R-car" class="csl-entry" role="listitem">
 Fox, John, Sanford Weisberg, and Brad Price. 2023. <em>Car: Companion to Applied Regression</em>. <a href="https://CRAN.R-project.org/package=car">https://CRAN.R-project.org/package=car</a>.
 </div>
@@ -1463,27 +961,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1498,10 +975,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1510,8 +991,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
