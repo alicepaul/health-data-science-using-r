@@ -16,7 +16,7 @@ Take a look at the class of `NHANESsample`. As we might expect, the data is stor
 class(NHANESsample)
 ```
 
-However, the tidyverse also works with another data structure called a **tibble**. A **tibble** has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()` function. In practice, there are only very slight difference between the two data structures, and you generally do not need to convert data frames to tibbles. Below we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.
+However, **tidyverse** packages also work with another data structure called a **tibble**. A **tibble** has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()` function. In practice, there are only very slight difference between the two data structures, and you generally do not need to convert data frames to tibbles. Below we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.
 
 ```{r}
 nhanes_df <- as_tibble(NHANESsample)
@@ -28,7 +28,7 @@ nhanes_df <- as.data.frame(nhanes_df)
 print(head(nhanes_df))
 ```
 
-We mention tibbles here since some functions in the **tidyverse** package convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.
+We mention tibbles here since some functions in the **tidyverse** convert data frames to tibbles in their output. In particular, when we summarize over groups below we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.
 
 ## Subsetting Data
 
@@ -119,7 +119,7 @@ ifelse(nhanes_df$SMOKE_STATUS == "NeverSmoke", "No", "Yes") %>%
   table()
 ```
 
-Another useful function from the tidyverse is the `case_when()` function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value associated with a TRUE for that condition.
+Another useful function from the **tidyverse** is the `case_when()` function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function below to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value associated with a TRUE for that condition.
 
 ```{r}
 case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
@@ -129,7 +129,7 @@ case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
   table()
 ```
 
-Above, we did not store the columns we created. To do so, we could use the `$` operator or the `cbind()` function. The tidyverse also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and it will interpret it as that column.
+Above, we did not store the columns we created. To do so, we could use the `$` operator or the `cbind()` function. The **tidyverse** also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the example below, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and it will interpret it as that column.
 
 ```{r}
 nhanes_df <- nhanes_df %>% 
@@ -168,7 +168,7 @@ count(nhanes_df)
 count(nhanes_df, RACE, YEAR)
 ```
 
-Finding the counts like we did above is a form of a summary statistic for our data. The `summarize()` function in the tidyverse is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the example below, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()` function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing these values (otherwise we could get NA as our output).
+Finding the counts like we did above is a form of a summary statistic for our data. The `summarize()` function in the **tidyverse** is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the example below, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()` function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing these values (otherwise we could get NA as our output).
 
 ```{r}
 nhanes_df %>%
