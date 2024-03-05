@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -83,7 +83,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -92,6 +98,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -101,6 +108,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating">
@@ -109,12 +143,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../book/intro_to_r.html">Introduction to R</a></li><li class="breadcrumb-item"><a href="../book/data_structures.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Structures in R</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../book/intro_to_r.html">Introduction to R</a></li><li class="breadcrumb-item"><a href="../book/data_structures.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Structures in R</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -124,13 +158,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Mastering Health Data Science Using R</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/alicepaul/health-data-science-using-r" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Mastering-Health-Data-Science-Using-R.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/alicepaul/health-data-science-using-r" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Mastering-Health-Data-Science-Using-R.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -289,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -326,7 +360,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../book/intro_to_r.html">Introduction to R</a></li><li class="breadcrumb-item"><a href="../book/data_structures.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Structures in R</span></a></li></ol></nav>
 <div class="quarto-title">
 <h1 class="title"><span id="sec-data-structures" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data Structures in R</span></span></h1>
 </div>
@@ -341,34 +375,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
 
+
 <p>In this chapter, we will demonstrate the key <strong>data structures</strong> in R. Data structures are how information is stored in R, and the data structures that we use inform R how to interpret our code. Any <strong>object</strong> is a named instance of a data structure. For example, the object <code>ex_num</code> below is a vector of numeric type.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-1_6388358552d0b61f055301313aa91313">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ex_num <span class="ot">&lt;-</span> <span class="dv">4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The main data structures in R are <strong>vectors</strong>, <strong>factors</strong>, <strong>matrices</strong>, <strong>arrays</strong>, <strong>lists</strong>, and <strong>data frames</strong>. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In <a href="#fig-data-structures">Figure&nbsp;<span>2.1</span></a>, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.</p>
-<div id="fig-data-structures" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/data-structures.png" class="img-fluid figure-img" style="width:80.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.1: Data structures.</figcaption>
+<p>The main data structures in R are <strong>vectors</strong>, <strong>factors</strong>, <strong>matrices</strong>, <strong>arrays</strong>, <strong>lists</strong>, and <strong>data frames</strong>. These structures are distinguished by their dimensions and by the type of data they store. For example, we might have a 1-dimensional vector that contains all numeric values, or we could have a 2-dimensional data frame with rows and columns where we might have one numeric column and one character column. In <a href="#fig-data-structures" class="quarto-xref">Figure&nbsp;<span>2.1</span></a>, there are two vectors with different types (character and numeric) on top and then a matrix and data frame below. In this chapter, we will cover each data structure except for arrays. Arrays are an extension of matrices that allow for data that is more than 2-dimensional and are not needed for the applications covered in this book.</p>
+<div id="fig-data-structures" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-data-structures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/data-structures.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-data-structures-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.1: Data structures.
+</figcaption>
 </figure>
 </div>
 <section id="data-types" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="data-types"><span class="header-section-number">2.1</span> Data Types</h2>
 <p>Each individual value in R has a type: <strong>logical</strong>, <strong>integer</strong>, <strong>double</strong>, or <strong>character</strong>. We can think of these as the building blocks of all data structures. Below, we can use the <code>typeof()</code> function to find the type of our vector from above, which shows that the value of <code>ex_num</code> is a <strong>double</strong>. A double is a numeric value with a stored decimal.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-2_998fd96c6119a2a1fa1820d59bf7fe02">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(ex_num)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "double"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>On the other hand, an <strong>integer</strong> is a whole number that does not contain a decimal. We now create an integer object <code>ex_int</code>. To indicate to R that we want to restrict our values to integer values, we use an <code>L</code> after the number.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-3_568768e52bd338b9a2f522b69d1a1930">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ex_int <span class="ot">&lt;-</span> 4L</span>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ex_int <span class="ot">&lt;-</span> <span class="dv">4</span>L</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">typeof</span>(ex_int)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "integer"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Both <code>ex_num</code> and <code>ex_int</code> are numeric objects, but we can also work with two other types of objects: <strong>characters</strong> (e.g.&nbsp;“php”, “stats”) and <strong>booleans</strong> (e.g.&nbsp;TRUE, FALSE), also known as <strong>logicals</strong>.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-4_81aef75133071e089aacadff11b31338">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ex_bool <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ex_char <span class="ot">&lt;-</span> <span class="st">"Alice"</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -378,57 +418,61 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "character"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>One important characteristic of logical objects is that R will also interpret them as 0/1. This means they can be added as in the example below: each <code>TRUE</code> has a value of 1 and each <code>FALSE</code> has a value of 0.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-5_ca8f08cbd425d933fc7b15077fda414b">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cn">TRUE</span><span class="sc">+</span><span class="cn">FALSE</span><span class="sc">+</span><span class="cn">TRUE</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To create all of the above objects, we used the assignment operator <code>&lt;-</code>, which we discussed in <a href="intro_to_r.html">Chapter&nbsp;<span>1</span></a>. You may see code elsewhere that uses an <code>=</code> instead. While <code>=</code> can also be used for assignment, it is more standard practice to use <code>&lt;-</code>.</p>
+<p>To create all of the above objects, we used the assignment operator <code>&lt;-</code>, which we discussed in <a href="intro_to_r.html" class="quarto-xref">Chapter&nbsp;<span>1</span></a>. You may see code elsewhere that uses an <code>=</code> instead. While <code>=</code> can also be used for assignment, it is more standard practice to use <code>&lt;-</code>.</p>
 </section>
 <section id="vectors" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="vectors"><span class="header-section-number">2.2</span> Vectors</h2>
 <p>In the examples above, we created objects with a single value. R actually uses a vector of length 1 to store this information. <strong>Vectors</strong> are 1-dimensional data structures that can store multiple data values of the same type (e.g.&nbsp;character, boolean, or numeric).</p>
-<div id="fig-vectors" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/vectors.png" class="img-fluid figure-img" style="width:60.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.2: Vector Examples.</figcaption>
+<div id="fig-vectors" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-vectors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/vectors.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:60.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-vectors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.2: Vector Examples.
+</figcaption>
 </figure>
 </div>
 <p>We can confirm this by using the <code>is.vector()</code> function, which returns whether or not the inputted argument is a vector.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-6_ebac5f00bc92564c10868c4e9d06a65e">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">is.vector</span>(ex_bool)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>One way to create a vector with multiple values is to use the combine function <code>c()</code>. Below we create two vectors: one with the days of the week and one with the amount of rain on each day. The first vector has all character values, and the second one has all numeric values.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-7_6d0d830ee3e5c6f848db9996db2491a8">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>, <span class="st">"Wednesday"</span>, <span class="st">"Thursday"</span>, <span class="st">"Friday"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>rain <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="fl">0.1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Remember, vectors cannot store objects of different types. Because of this, in the code below, R automatically converts the numeric value to be a character in order to store these values in a vector together.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-8_bfe971ed398567d4e1b5942cf0434d9c">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="dv">5</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday" "5"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>class()</code> function returns the data structure of an object. If we check the classes of these two objects using the <code>class()</code> function, we will see that R tells us that the first is a character vector and the second is a numeric vector. This matches the data type in this case.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-9_1dbb3268154a252babccdf1828e9aba1">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(days)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "character"</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(rain)</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "numeric"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>What happens when we create an empty vector? What is the class?</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-10_05e814ed5e8b45786d09c9d2906767b5">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ex_empty <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(ex_empty)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "NULL"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In this case, there is no specified type yet. If we wanted to specify the type, we could make an empty vector using the <code>vector()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-11_3bdc7b091f59ae58820b0f60063e1f3c">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ex_empty <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"numeric"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(ex_empty)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "numeric"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another way to create a vector is with the <code>rep()</code> or <code>seq()</code> functions. The first function <code>rep(x, times)</code> takes in a vector <code>x</code> and a number of times <code>times</code> and outputs <code>x</code> repeated that many times. Let’s try this with a single value below. The second function <code>seq(from, to, step)</code> takes in a numeric starting value <code>from</code>, end value <code>to</code>, and step size <code>step</code> and returns a sequence from <code>from</code> in increments of <code>step</code> until a maximum value of <code>to</code> is reached.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-12_55ea612bd74417355c1fde8dec641578">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">5</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0 0 0 0 0</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="st">"Monday"</span>, <span class="dv">4</span>)</span>
@@ -441,21 +485,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="indexing-a-vector" class="level3" data-number="2.2.1">
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="indexing-a-vector"><span class="header-section-number">2.2.1</span> Indexing a Vector</h3>
 <p>Once we have a vector, we may want to access certain values stored in that vector. To do so, we index the vector using the position of each value: the first value in the vector has index 1, the second value has index 2, etc. When we say a vector is 1-dimensional, we mean that we can define the position of each value by a single index. To index the vector, we then use square brackets <code>[]</code> after the vector name and provide the position. Below, we use these indices to find the value at index 1 and the value at index 4.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-13_0aa17536e60ef826a7fa5f8e3f0e398c">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>days[<span class="dv">1</span>]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>days[<span class="dv">4</span>]</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Thursday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can either access a single value or a subset of values using a vector of indices. Let’s see what happens when we use a vector of indices <code>c(1,4)</code> and then try using <code>-c(1,4)</code> and see what happens then. In the first case, we get the values at index 1 <em>and</em> at index 4. In the second case, we get all values <em>except</em> at those indices. The <code>-</code> indicates that we want to remove rather than select these indices.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-14_9599014223684ded1a316d5032391fdb">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>days[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"   "Thursday"</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>days[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)]</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Tuesday"   "Wednesday" "Friday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>However, always indexing by the index value can sometimes be difficult or inefficient. One extra feature of vectors is that we can associate a name with each value. Below, we update the names of the vector <code>rain</code> to be the days of the week and then find Friday’s rain count by indexing with the name.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-15_c847a3b645f05bec50f144c61d695ecd">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(rain) <span class="ot">&lt;-</span> days</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rain)</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Monday   Tuesday Wednesday  Thursday    Friday </span></span>
@@ -465,7 +509,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The last way to index a vector is to use TRUE and FALSE values. If we have a vector of booleans that is the same length as our original vector, then this will return all the values that correspond to a TRUE value. For example, indexing the <code>days</code> vector by the logical vector <code>ind_bools</code> below will return its first and fourth values. We will see more about using logic to access certain values later on.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-16_1f2de66c99c1901b2b49ee2813595578">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ind_bools <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>days[ind_bools]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"   "Thursday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -483,7 +527,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>ceiling()</code> - round up to the nearest integer value</li>
 <li><code>floor()</code> - round down to the nearest integer value</li>
 </ul>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-17_8bda5ea4b1b18c7885ebe1eee3190b59">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>) <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2 3 4</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>) <span class="sc">+</span> <span class="dv">1</span> <span class="co"># equivalent to the code above</span></span>
@@ -492,14 +536,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1 2 4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>After we create a vector, we may need to update its values. For example, we may want to change a specific value. We can do so using indexing. Below, we update the rain value for Friday using the assignment operator.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-18_24a9294ea36d533af51751e56abe601c">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>rain[<span class="st">"Friday"</span>] <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>rain</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Monday   Tuesday Wednesday  Thursday    Friday </span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       5.0       0.1       0.0       0.0       0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Further, we may need to add extra entries. We can do so using the <code>c()</code> function again but this time passing in the vector we want to add to as our first argument. This will create a single vector with all previous and new values. Below, we add two days to both vectors and then check the length of the updated vector <code>rain</code>. The <code>length()</code> function returns the length of a vector.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-19_331727423b04b7e37d3a980ace11babb">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(rain)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="fu">c</span>(days,<span class="st">"Saturday"</span>,<span class="st">"Sunday"</span>) <span class="co"># add the weekend with no rain</span></span>
@@ -512,7 +556,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="practice-question" class="level3" data-number="2.2.3">
 <h3 data-number="2.2.3" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">2.2.3</span> Practice Question</h3>
 <p>Create a vector of the odd numbers from 1 to 11 using the <code>seq()</code> function. Then, find the third value in the vector using indexing, which should have value 5.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-20_402585e83dd2eb9561f4c81514fc6c15">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -531,7 +575,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>which.min()</code> - index of the first element with the minimum value</li>
 </ul>
 <p>Try these out using the vector <code>rain</code>. Note that R is case sensitive - <code>Mean()</code> is considered different from <code>mean()</code>, so if we type <code>Mean(rain)</code> R will tell us that it cannot find this function.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-21_0e7f807c8c3b44aee76f754db47e64e0">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(rain)  </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.8</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="fu">min</span>(rain) </span>
@@ -541,7 +585,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We may also be interested in the order of the values. The <code>sort()</code> function sorts the values of a vector, whereas the <code>order()</code> function returns the permutation of the elements to be in sorted order. The last line of code below sorts the days of the week from smallest to largest rain value.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-22_dd0a2db05a6519040df4a7746a608850">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>rain</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Monday   Tuesday Wednesday  Thursday    Friday                     </span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       5.0       0.1       0.0       0.0       0.5       0.0       0.0</span></span>
@@ -552,7 +596,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6] "Friday"    "Monday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Both of these functions have an extra possible argument <code>decreasing</code>, which has a default value of FALSE. We can specify this to be TRUE to find the days of the week sorted from largest to smallest rainfall.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-23_b35fd2d1de4820fe5f78cad4a7573193">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>days[<span class="fu">order</span>(rain, <span class="at">decreasing=</span><span class="cn">TRUE</span>)]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"    "Friday"    "Tuesday"   "Wednesday" "Thursday" </span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6] "Saturday"  "Sunday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -562,7 +606,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="factors" class="level2" data-number="2.3">
 <h2 data-number="2.3" class="anchored" data-anchor-id="factors"><span class="header-section-number">2.3</span> Factors</h2>
 <p>A <strong>factor</strong> is a special kind of vector that behaves exactly like a regular vector except that it represents values from a category. In particular, a factor keeps track of all possible values of that category, which are called the <strong>levels</strong> of the factor. Factors will be especially helpful when we start getting into data analysis and have categorical columns. The <code>as.factor()</code> function will convert a vector to a factor.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-24_249842009ac67445e12dbc09326f5ebc">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>, <span class="st">"Wednesday"</span>, <span class="st">"Monday"</span>, </span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Thursday"</span>, <span class="st">"Wednesday"</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>days_fct <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(days)</span>
@@ -573,11 +617,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"    "Thursday"  "Tuesday"   "Wednesday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Above, we did not specify the possible levels for our column. Instead, R found all values in the vector <code>days</code> and set these equal to the levels of the factor. Because of this, if we try to change one of the levels to ‘Friday’, we will get an error. Uncomment the line below to see the error message.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-25_dac433823bb5bef582c57836bb8dc627">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#days_fct[2] &lt;- "Friday"   </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can avoid this error by specifying the levels using the <code>factor()</code> function instead of the <code>as.factor()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-26_e9205a96cf90ca5cc26d83e349727ab9">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>days <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>, <span class="st">"Wednesday"</span>, <span class="st">"Monday"</span>, <span class="st">"Thursday"</span>, </span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Wednesday"</span>)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>days_fct <span class="ot">&lt;-</span> <span class="fu">factor</span>(days, </span>
@@ -592,7 +636,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>days_fct[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"Friday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Factors can also be used for numeric vectors. For example, we might have a vector that is 0/1 that represents whether or not a day is a weekend. This can also only take on certain values (0 or 1).</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-27_0f300c86cdf514acaf120b509d70fa69">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>weekend <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(weekend)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0" "1"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -601,14 +645,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="matrices" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="matrices"><span class="header-section-number">2.4</span> Matrices</h2>
 <p>Matrices are similar to vectors in that they store data of the same type, but matrices are two-dimensional (as opposed to one-dimensional vectors), and consist of both rows and columns.</p>
-<div id="fig-matrix" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/matrix.png" class="img-fluid figure-img" style="width:40.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.3: Matrix Example.</figcaption>
+<div id="fig-matrix" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-matrix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/matrix.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-matrix-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.3: Matrix Example.
+</figcaption>
 </figure>
 </div>
 <p>Below, we create a matrix reporting the daily rainfall over multiple weeks. We can create a matrix using the <code>matrix(data, nrow, ncol, byrow)</code> function. This creates a <code>nrow</code> by <code>ncol</code> matrix from the vector <code>data</code> values filling in by row if <code>byrow</code> is TRUE and by column otherwise. Run the code below. Then, change the last argument to <code>byrow=FALSE</code> and see what happens to the values.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-28_ee77400080d53cb6108e3bd565633e1b">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rainfall <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="fl">0.1</span>,<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="fl">0.5</span>,<span class="fl">0.3</span>,<span class="dv">0</span>,<span class="dv">0</span>), </span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">ncol=</span><span class="dv">7</span>, <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>rainfall</span>
@@ -617,7 +665,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    1  0.4  0.2  0.5  0.3    0    0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can find the dimensions of a matrix using the <code>nrow()</code>, <code>ncol()</code>, or <code>dim()</code> functions, which return the number of rows, the number of columns, and both the number of rows and columns, respectively.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-29_0daafa13fea0c448fe323d7a14d3091e">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(rainfall)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(rainfall)</span>
@@ -628,29 +676,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="indexing-a-matrix" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="indexing-a-matrix"><span class="header-section-number">2.4.1</span> Indexing a Matrix</h3>
 <p>Since matrices are two-dimensional, a single value is indexed by both its row number and its column number. This means that to access a subset of values in a matrix, we need to provide row and column indices. Below, we access a single value in the 1st row and the 4th column. The first value is always the row index and the second value is always the column index.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-30_504e65b76b751107a23c0c04b5aa408b">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>rainfall[<span class="dv">1</span>,<span class="dv">4</span>]</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As before, we can also provide multiple indices to get multiple values. Below, we choose multiple columns but we can also choose multiple rows (or multiple rows and multiple columns!).</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-31_153cb7d33e64145ff2e62475824cd94c">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>rainfall[<span class="dv">1</span>,<span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">7</span>)]</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3 0 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As with vectors, we can also use booleans to index a matrix by providing boolean values for the rows and/or columns. Note that below we give a vector for the row indices and no values for the columns. Since we did not specify any column indices, this will select all of them.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-32_033fb752a7751cef49b1232ed68e8a9b">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>rainfall[<span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>), ]</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1.0 0.4 0.2 0.5 0.3 0.0 0.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s do the opposite and select some columns and all rows.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-33_8cfc9364035c23c0072971016c79454f">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>rainfall[ ,<span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span>)]</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    5  6.0</span></span>
 <span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    1  0.4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As with vectors, we can specify row names and column names to access entries instead of using indices. The <code>colnames()</code> and <code>rownames()</code> functions allow us to specify the column and row names, respectively.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-34_bfef342d1b280b579772ae698414e234">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(rainfall) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>, <span class="st">"Wednesday"</span>, <span class="st">"Thursday"</span>, </span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"Friday"</span>, <span class="st">"Saturday"</span>, <span class="st">"Sunday"</span>)</span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(rainfall) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Week1"</span>, <span class="st">"Week2"</span>)</span>
@@ -662,10 +710,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="editing-a-matrix" class="level3" data-number="2.4.2">
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="editing-a-matrix"><span class="header-section-number">2.4.2</span> Editing a Matrix</h3>
 <p>If we want to change the values in a matrix, we need to first index those values and then assign them the new value(s). Below, we change a single entry to be 3 and then update several values to all be 0. Note that we do not provide multiple 0’s on the right-hand side, as R will infer that all values should be set to 0.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-35_fd6daa5fd3c1f6fbab64132b3dcc7c10">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>rainfall[<span class="st">"Week1"</span>, <span class="st">"Friday"</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-36_c5b1b01ce4550af4590e3582d6ed7496">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>rainfall[<span class="st">"Week1"</span>, <span class="fu">c</span>(<span class="st">"Monday"</span>, <span class="st">"Tuesday"</span>)] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(rainfall)</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Monday Tuesday Wednesday Thursday Friday Saturday Sunday</span></span>
@@ -673,7 +721,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Week2      1     0.4       0.2      0.5    0.3        0      0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Further, we can append values to our matrix by adding rows or columns through the <code>rbind()</code> and <code>cbind()</code> functions. The first function appends a row (or multiple rows) to a matrix and the second appends a column (or multiple columns). Note that below I provide a row and column name when passing in the additional data. If I hadn’t specified these names, then those rows and columns would not be named.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-37_336e7ea3589c1ebfd6663eb41ca8c610">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>rainfall <span class="ot">&lt;-</span> <span class="fu">rbind</span>(rainfall, <span class="st">"Week3"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.4</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">1.2</span>, <span class="fl">2.2</span>, </span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>                                        <span class="fl">0.0</span>))</span>
 <span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>rainfall <span class="ot">&lt;-</span> <span class="fu">cbind</span>(rainfall, <span class="st">"Total"</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">7.1</span>, <span class="fl">2.4</span>, <span class="fl">3.8</span>))</span>
@@ -684,7 +732,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Week3    0.4     0.0       0.0      0.0    1.2      2.2      0   3.8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here is an example where we bind two matrices by column. Note that whenever we bind two matrices together, we have to be sure that their dimensions are compatible and that they are of the same type.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-38_1762176ca440bc983fdf4e0ee0895c71">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>), <span class="at">nrow=</span><span class="dv">2</span>)</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">cbind</span>(A, B)</span>
@@ -694,13 +742,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    2    4    6    8</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As with vectors, most mathematical operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code> etc.) are applied element-wise in R.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-39_3918f37cee0cc7f499d81753bab60f74">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>A<span class="sc">+</span>B</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2]</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,]    6   10</span></span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]    8   12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-40_9178f00eff4b44bbd161508340fab4a4">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(C)</span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      [,1] [,2] [,3] [,4]</span></span>
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,] 2.72 20.1  148 1097</span></span>
@@ -710,7 +758,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="practice-question-1" class="level3" data-number="2.4.3">
 <h3 data-number="2.4.3" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">2.4.3</span> Practice Question</h3>
 <p>Create a 3x4 matrix of all 1’s using the <code>rep()</code> and <code>matrix()</code> functions. Then select the first and third columns using indexing which will return a 3x2 matrix of all ones.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-41_81a5874ce6c99c83a550274b597fa8bc">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -718,15 +766,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="data-frames" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="data-frames"><span class="header-section-number">2.5</span> Data Frames</h2>
 <p>Matrices can store data like the rainfall data, where everything is of the same type. However, if we want to capture more complex data records, we also want to allow for different measurement types: this is where data frames come in. A data frame is like a matrix in that data frames are two-dimensional, but unlike matrices, data frames allow for each column to be a different type. In this case, each row corresponds to a single data entry (or observation) and each column corresponds to a different variable.</p>
-<div id="fig-dataframe" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/dataframe.png" class="img-fluid figure-img" style="width:40.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.4: Data Frame Example.</figcaption>
+<div id="fig-dataframe" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-dataframe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/dataframe.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:40.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dataframe-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.4: Data Frame Example.
+</figcaption>
 </figure>
 </div>
 <p>For example, suppose that, for every day in a study, we want to record the temperature, rainfall, and day of the week. Temperature and rainfall can be numeric values, but day of the week will be character type. We create a data frame using the <code>data.frame()</code> function. Note that I am providing column names for each vector (column).</p>
 <p>The <code>head()</code> function prints the first six rows of a data frame (to avoid printing very large datasets). In our case, all the data is shown because we only created four rows. The column names are displayed as well as their type. By contrast, the <code>tail()</code> function prints the last six rows of a data frame.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-42_d41e4f2003dff3e01225266e6b0ece95">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">day_of_week =</span> <span class="fu">c</span>(<span class="st">"Monday"</span>,<span class="st">"Tuesday"</span>,</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"Wednesday"</span>, <span class="st">"Monday"</span>), </span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">temp =</span> <span class="fu">c</span>(<span class="dv">70</span>,<span class="dv">62</span>,<span class="dv">75</span>,<span class="dv">50</span>), </span>
@@ -739,7 +791,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4      Monday   50  0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>dim()</code>, <code>nrow()</code>, and <code>ncol()</code> functions return the dimensions, number of rows, and number of columns of a data frame, respectively.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-43_f6488834cefc13a69881ecff8168757e">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(weather_data)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 4 3</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(weather_data)</span>
@@ -748,7 +800,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The column names can be found (or assigned) using the <code>colnames()</code> or <code>names()</code> function. These were specified when I created the data. On the other hand, the row names are currently the indices.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-44_9a5948cb8a2c41acc7b33b5d1067f76a">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(weather_data)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "day_of_week" "temp"        "rain"</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(weather_data)</span>
@@ -757,7 +809,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "day_of_week" "temp"        "rain"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We update the row names to be more informative as with a matrix using the <code>rownames()</code> function.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-45_10f1a6042371caacd885f85f108529f7">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(weather_data) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"6/1"</span>, <span class="st">"6/2"</span>, <span class="st">"6/3"</span>, <span class="st">"6/8"</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(weather_data)</span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     day_of_week temp rain</span></span>
@@ -769,7 +821,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="indexing-a-data-frame" class="level3" data-number="2.5.1">
 <h3 data-number="2.5.1" class="anchored" data-anchor-id="indexing-a-data-frame"><span class="header-section-number">2.5.1</span> Indexing a Data Frame</h3>
 <p>We can select elements of the data frame using its indices in the same way as we did with matrices. Below, we access a single value and then a subset of our data frame. The subset returned is itself a data frame. Note that the second line below returns a data frame.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-46_ec6cd8624b65e0c1e2196f9b895494bf">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>weather_data[<span class="dv">1</span>,<span class="dv">2</span>]</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 70</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>weather_data[<span class="dv">1</span>,<span class="fu">c</span>(<span class="st">"day_of_week"</span>,<span class="st">"temp"</span>)]</span>
@@ -777,14 +829,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6/1      Monday   70</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another useful way to access the columns of a data frame is by using the $ accessor and the column name.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-47_658c2a7f7ff051f1d59daa671de80433">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>weather_data<span class="sc">$</span>day_of_week</span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"    "Tuesday"   "Wednesday" "Monday"</span></span>
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>weather_data<span class="sc">$</span>temp</span>
 <span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 70 62 75 50</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The column <code>day_of_week</code> is a categorical column, but it can only take on a limited number of values. For this kind of column, it is often useful to convert that column to a factor as we did before.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-48_e6a93b67ab09aadda8b6c2e2528df646">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>weather_data<span class="sc">$</span>day_of_week <span class="ot">&lt;-</span> <span class="fu">factor</span>(weather_data<span class="sc">$</span>day_of_week)</span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(weather_data<span class="sc">$</span>day_of_week)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Monday"    "Tuesday"   "Wednesday"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -793,7 +845,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="editing-a-data-frame" class="level3" data-number="2.5.2">
 <h3 data-number="2.5.2" class="anchored" data-anchor-id="editing-a-data-frame"><span class="header-section-number">2.5.2</span> Editing a Data Frame</h3>
 <p>As with matrices, we can change values in a data frame by indexing those entries.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-49_5390163246052237174f405f316bcdaf">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>weather_data[<span class="dv">1</span>, <span class="st">"rain"</span>] <span class="ot">&lt;-</span> <span class="fl">2.2</span></span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>weather_data</span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     day_of_week temp rain</span></span>
@@ -803,7 +855,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6/8      Monday   50  0.5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>rbind()</code> functions and <code>cbind()</code> functions also work for data frames in the same way as for matrices. However, another way to add a column is to directly use the $ accessor. Below, we add a categorical column called <code>aq_warning</code>, indicating whether there was an air quality warning that day.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-50_c2973569b88de0d20c179321cb9af6ad">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>weather_data<span class="sc">$</span>aq_warning <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>weather_data</span>
 <span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     day_of_week temp rain aq_warning</span></span>
@@ -815,14 +867,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="practice-question-2" class="level3" data-number="2.5.3">
 <h3 data-number="2.5.3" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">2.5.3</span> Practice Question</h3>
-<p>Add a column to <code>weather_data</code> called <code>air_quality_index</code> using the <code>rep()</code> function so that all values are <code>NA</code> (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like <a href="#fig-daily-air-quality">Figure&nbsp;<span>2.5</span></a>.</p>
-<div id="fig-daily-air-quality" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/daily-air-quality.png" class="img-fluid figure-img" style="width:70.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.5: Air Quality Data.</figcaption>
+<p>Add a column to <code>weather_data</code> called <code>air_quality_index</code> using the <code>rep()</code> function so that all values are <code>NA</code> (the missing value in R). Then, index the second value of this column and set the value to be 57. The result should look like <a href="#fig-daily-air-quality" class="quarto-xref">Figure&nbsp;<span>2.5</span></a>.</p>
+<div id="fig-daily-air-quality" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-daily-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/daily-air-quality.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-daily-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.5: Air Quality Data.
+</figcaption>
 </figure>
 </div>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-51_ba31a17732e25bde47b21ea8c38aa306">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -830,7 +886,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="lists" class="level2" data-number="2.6">
 <h2 data-number="2.6" class="anchored" data-anchor-id="lists"><span class="header-section-number">2.6</span> Lists</h2>
 <p>A data frame is actually a special kind of another data structure called a <strong>list</strong>, which is a collection of objects under the same name. These objects can be vectors, matrices, data frames, or even other lists! There does not have to be any relation in size, type, or other attribute between different members of the list. Below, we create an example list using the <code>list()</code> function, which takes in a series of objects. What are the types of each element of the list? We can access each element using the index, but here we need to use double brackets.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-52_c79beb8dd98ef28b69713382ec0c039a">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>ex_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">"John"</span>, <span class="fu">c</span>(<span class="st">"ibuprofen"</span>, <span class="st">"metformin"</span>), <span class="fu">c</span>(<span class="dv">136</span>, <span class="dv">142</span>, <span class="dv">159</span>))</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(ex_list)</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [[1]]</span></span>
@@ -845,7 +901,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "ibuprofen" "metformin"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>More often, however, it is useful to name the elements of the list for easier access. Let’s create this list again but this time give names to each object.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-53_be4dc75e46f70967d7a94da23b7bbd34">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>ex_list <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">name=</span><span class="st">"John"</span>, </span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">medications =</span> <span class="fu">c</span>(<span class="st">"ibuprofen"</span>, <span class="st">"metformin"</span>), </span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">past_weights =</span> <span class="fu">c</span>(<span class="dv">136</span>, <span class="dv">142</span>, <span class="dv">159</span>))</span>
@@ -862,7 +918,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "ibuprofen" "metformin"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To edit a list, we can use indexing to access different objects in the list and then assign them to new values. Additionally, we can add objects to the list using the $ accessor.</p>
-<div class="cell" data-layout-align="center" data-hash="data_structures_cache/html/unnamed-chunk-54_b0941e56e3fb3854735b964d50f51f6b">
+<div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>ex_list<span class="sc">$</span>supplements <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"vitamin D"</span>, <span class="st">"biotin"</span>)</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>ex_list<span class="sc">$</span>supplements[<span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="st">"collagen"</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>ex_list</span>
@@ -886,22 +942,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="exercises" class="level2" data-number="2.8">
 <h2 data-number="2.8" class="anchored" data-anchor-id="exercises"><span class="header-section-number">2.8</span> Exercises</h2>
 <ol type="1">
-<li>Recreate the data frame in <a href="#fig-city-air-quality">Figure&nbsp;<span>2.6</span></a> in R, where <code>temperature</code> and <code>co2</code> represent the average temperature in Fahrenheit and the average <span class="math inline">\(\text{CO}_2\)</span> concentrations in <span class="math inline">\(\text{mg}/\text{m}^3\)</span> for the month of January 2008, and name it <code>city_air_quality</code>.</li>
+<li>Recreate the data frame in <a href="#fig-city-air-quality" class="quarto-xref">Figure&nbsp;<span>2.6</span></a> in R, where <code>temperature</code> and <code>co2</code> represent the average temperature in Fahrenheit and the average <span class="math inline">\(\text{CO}_2\)</span> concentrations in <span class="math inline">\(\text{mg}/\text{m}^3\)</span> for the month of January 2008, and name it <code>city_air_quality</code>.</li>
 </ol>
-<div id="fig-city-air-quality" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/city-air-quality.png" class="img-fluid figure-img" style="width:70.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.6: City Air Quality Data.</figcaption>
+<div id="fig-city-air-quality" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-city-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/city-air-quality.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-city-air-quality-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.6: City Air Quality Data.
+</figcaption>
 </figure>
 </div>
 <ol start="2" type="1">
 <li><p>Create a character vector named <code>precipitation</code> with entries <code>Yes</code> or <code>No</code> indicating whether or not there was more precipitation than average in January 2008 in these cities (you can make this information up yourself). Then, append this vector to the <code>city_air_quality</code> data frame as a new column.</p></li>
-<li><p>Convert the categorical column <code>precipitation</code> to a factor. Then, add a row to the data frame <code>city_air_quality</code> using the <code>rbind()</code> function to match <a href="#fig-city-air-quality-2">Figure&nbsp;<span>2.7</span></a>.</p></li>
+<li><p>Convert the categorical column <code>precipitation</code> to a factor. Then, add a row to the data frame <code>city_air_quality</code> using the <code>rbind()</code> function to match <a href="#fig-city-air-quality-2" class="quarto-xref">Figure&nbsp;<span>2.7</span></a>.</p></li>
 </ol>
-<div id="fig-city-air-quality-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="images/data_structures/city-air-quality-newrow.png" class="img-fluid figure-img" style="width:70.0%"></p>
-<figcaption class="figure-caption">Figure&nbsp;2.7: Updated City Air Quality Data.</figcaption>
+<div id="fig-city-air-quality-2" class="quarto-figure quarto-figure-center quarto-float anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-city-air-quality-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="images/data_structures/city-air-quality-newrow.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-city-air-quality-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2.7: Updated City Air Quality Data.
+</figcaption>
 </figure>
 </div>
 <ol start="4" type="1">
@@ -991,10 +1055,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1004,8 +1067,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1018,6 +1090,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1061,6 +1252,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1086,6 +1278,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1147,17 +1365,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../book/intro_to_r.html" class="pagination-link">
+      <a href="../book/intro_to_r.html" class="pagination-link  aria-label=" &lt;span="" started="" with="" r&lt;="" span&gt;"="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Getting Started with R</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../book/working_data_files.html" class="pagination-link">
+      <a href="../book/working_data_files.html" class="pagination-link" aria-label="<span class='chapter-number'>3</span>&nbsp; <span class='chapter-title'>Working with Data Files in R</span>">
         <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Working with Data Files in R</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
