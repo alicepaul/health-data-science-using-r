@@ -1,0 +1,125 @@
+# Case Study: Data Pre-Processing {#sec-cs-preprocessing}
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
+library(datasets)
+library(gt)
+library(gtsummary)
+library(usmap)
+
+```
+# Preprocessing
+```{r}
+# Read in data
+data(covidcases)
+data(mobility)
+
+# Convert to date format
+mobility$date <- as.Date(mobility$date, formula="%Y-%M-%D")
+covidcases$date <- as.Date("2019-12-29")+weeks(covidcases$week-1)
+
+# Join cases and mobility data
+covid <- inner_join(covidcases, mobility, 
+                              by = c("state", "date")) %>%
+  select(-c(samples, m50_index))
+
+
+# Set negative counts to NA
+covid$weekly_cases <- replace(covid$weekly_cases, 
+                                   which(covid$weekly_cases < 0),
+                                   NA)
+
+covid$weekly_deaths <- replace(covid$weekly_deaths, 
+                                   which(covid$weekly_deaths < 0),
+                                   NA)
+
+```
+
+```{r, message = FALSE}
+# Add region and remove county
+region_key <- data.frame(state = state.name, region = state.region)
+
+covid <- covid %>%
+  left_join(region_key, by = join_by(state)) %>%
+  group_by(state, region, week, date, m50) %>%
+  summarize(weekly_cases = sum(weekly_cases),
+            weekly_deaths = sum(weekly_deaths))
+
+```
+
+# Mobility
+
+```{r, message = FALSE}
+# Average mobility in the US over time - overall 
+covid %>%
+  group_by(date) %>%
+  summarize(avg_m50 = mean(m50)) %>%
+  ggplot() + 
+  geom_line(aes(x = date, y = avg_m50)) +
+  labs(x = "Month in 2020", y = "Average Mobility", 
+       title = "Average Mobility in the US") + 
+  theme_bw()
+
+# Average mobility in the US over time - by region
+covid %>%
+  group_by(region, date) %>%
+  summarize(avg_m50 = mean(m50)) %>%
+  ggplot() + 
+  geom_line(aes(x = date, y = avg_m50, color = region)) +
+  labs(x = "Month in 2020", y = "Average Mobility", 
+       title = "Average Mobility by Region in the US") + 
+  theme_bw() +
+  theme(legend.position = "bottom") 
+
+```
+# Covid Cases
+
+```{r}
+# Range in values for cases/deaths by region
+tbl_summary(covid, include = c("weekly_cases", "weekly_deaths"),
+            by = "region", missing = "no")
+```
+
+```{r}
+# Change in number cases over time, per region
+covid %>%
+  filter(!is.na(region)) %>% 
+  group_by(region, date) %>%
+  summarize(weekly_cases = sum(weekly_cases, na.rm = TRUE)) %>%
+ggplot() +
+  geom_line(aes(x = date, y = weekly_cases, color = region)) + 
+  labs(x = "Month in 2020", y = "Average Weekly Cases", 
+       color = "Region", title = "Weekly Cases Over Time by Region") +
+  theme_bw()
+
+```
+
+```{r}
+# Calculate and plot correlation between cases and deaths, per state
+covid_cor <- covid %>%
+  group_by(state) %>%
+  summarize(correlation = cor(weekly_cases, weekly_deaths,
+                              use = "complete.obs"))
+
+plot_usmap(regions = "states", data = covid_cor, values = "correlation") +
+  scale_fill_continuous(low = "white", high = "darkred",
+                        name = "Correlation") + 
+  labs(title = "Correlation Between Cases and Deaths") +
+  theme(legend.position = "right")
+
+```
+# Cases and Mobility
+
+```{r, warning = FALSE}
+# Relationship between mobility and number of cases
+covid %>%
+ggplot() + 
+  geom_point(aes(x = m50, y = weekly_cases, color = region)) + 
+  facet_wrap(vars(region)) +
+  labs(x = "Mobility", y = "Weekly Cases", color = "Region", 
+       title = "Mobility vs Weekly Cases by Region")
+  theme_bw()
+
+```
+
