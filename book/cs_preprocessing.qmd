@@ -1,0 +1,111 @@
+# Case Study: Data Pre-Processing {#sec-cs-preprocessing}
+
+```{r, include = FALSE}
+# Don't need once package is updated on CRAN:
+#install_github("https://github.com/alicepaul/HDSinRdata")
+```
+
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
+
+```
+
+```{r, eval = FALSE}
+# Read in data
+data("tb_diagnosis_raw")
+
+# Inspect variable descriptions
+?tb_diagnosis_raw
+
+```
+
+```{r}
+# Select variables and rename
+tb_df <- tb_diagnosis_raw %>% 
+  
+  select(c(xpert_status_fac, age_group, sex, hiv_status_fac, 
+           other_conditions_fac___3, symp_fac___1, symp_fac___2, 
+           symp_fac___3, symp_fac___4, length_symp_wk_fac, 
+           length_symp_days_fac, length_symp_unit_fac, smk_fac, 
+           dx_tb_past_fac, educ_fac)) %>%
+  
+    rename(tb = xpert_status_fac, hiv_pos = hiv_status_fac,
+           diabetes = other_conditions_fac___3, cough = symp_fac___1,
+           fever = symp_fac___2, weight_loss = symp_fac___3,
+           night_sweats = symp_fac___4, ever_smoke = smk_fac, 
+           past_tb = dx_tb_past_fac, education = educ_fac)
+
+```
+
+```{r}
+# Recode binary variables to 0/1
+tb_df$tb <- case_when(tb_df$tb == 1 ~ 1, tb_df$tb == 2 ~ 0)
+
+tb_df$male <- case_when(tb_df$sex == 1 ~ 1, tb_df$sex == 2 ~ 0)
+
+tb_df$hiv_pos <- case_when(tb_df$hiv_pos == 1 ~ 1, 
+                           tb_df$hiv_pos %in% c(2,77) ~ 0)
+
+tb_df$ever_smoke <- case_when(tb_df$ever_smoke %in% c(1,2) ~ 1,
+                              tb_df$ever_smoke == 3 ~ 0)
+
+tb_df$past_tb <- case_when(tb_df$past_tb == 1 ~ 1, tb_df$past_tb == 2 ~ 0)
+
+```
+
+```{r}
+# Categorize education to HS and above
+tb_df$hs_less <- case_when(tb_df$education <= 12 ~ 1,
+                           tb_df$education %in% c(13, 14) ~ 0,
+                           TRUE ~ NA)
+
+tb_df <- tb_df %>% select(-c(education))
+
+```
+
+```{r}
+# Categorize number of weeks experiencing symptoms
+tb_df$two_weeks_symp <- case_when(tb_df$length_symp_days_fac <= 14 |
+                                    tb_df$length_symp_wk_fac < 2 ~ 0,
+                                  
+                                  tb_df$length_symp_unit_fac == 77 |
+                                    tb_df$length_symp_wk_fac == 999 ~ 
+                                    NA,
+                                  
+                                  TRUE ~ 1)
+
+tb_df <- tb_df %>% 
+  select(-c(length_symp_wk_fac, length_symp_days_fac, 
+            length_symp_unit_fac, sex))
+
+```
+
+```{r}
+# Count total number of symptoms
+tb_df$num_symptoms <- tb_df$fever + tb_df$weight_loss + tb_df$cough + 
+  tb_df$night_sweats
+
+tb_df <- tb_df %>% select(-c(night_sweats, weight_loss, cough, fever))
+
+```
+
+```{r}
+# Exclude participants with no TB symptoms (to replicate paper)
+tb_df <- tb_df %>%
+  filter(num_symptoms != 0)
+
+```
+
+```{r}
+# Convert all variables to factors 
+tb_df[] <- lapply(tb_df, function(x){return(as.factor(x))})
+
+```
+
+```{r}
+# Relevel age group to match paper's reference level 
+tb_df$age_group <- relevel(tb_df$age_group, ref="[55,99)")
+
+```
