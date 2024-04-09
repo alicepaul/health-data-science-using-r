@@ -1,0 +1,262 @@
+# Case Study: Simulation {#sec-simulation}
+
+```{r results='hide', message=FALSE, warning=FALSE}
+library(tidyverse)
+library(HDSinRdata)
+library(MASS)
+library(gridExtra)
+
+
+```
+
+Lasso vs. ridge simulation
+
+```{r}
+simulate_data <- function(n, p, s, rho, snr) {
+  
+  # Generate covariance matrix
+  cov_mat = matrix(0,nrow = p,ncol = p)
+  for (row in 1:p) {
+    for (col in 1:p) {
+      cov_mat[row, col] = rho ** abs(row-col)
+    }
+  }
+  
+  # Generate X 
+  x <- mvrnorm(n=n, mu=rep(0,p), Sigma = cov_mat)
+  
+  # Generate beta values (type 2)
+  b <- rep(0, p)
+  b[1:s] <- 1
+ 
+  # find vals
+  mu <- x %*% b
+  intercept <- -mean(mu)
+  
+  # Calculate var_xb
+  var <- as.numeric((t(b) %*% cov_mat %*% b)/snr)
+
+  # Generate y values
+  y <- mvrnorm(mu = mu, Sigma = var*diag(n))
+  
+  return(list(X = x, y = y, beta0 = b, Sigma = cov_mat, var_y = var))
+}
+```
+
+
+```{r}
+
+#Relative test error
+RTE <- function(coef_pred, coef_true, Sigma, var){
+  (t(coef_pred-coef_true) %*% Sigma %*% (coef_pred - coef_true) + var) / var
+    
+}
+
+# Proportion of variance explained
+PVE <- function(coef_pred, coef_true, Sigma, var){
+  1 - (t(coef_pred-coef_true) %*% Sigma %*% (coef_pred - coef_true) + var) / 
+    (var + t(coef_true %*% Sigma %*% coef_true))
+}
+
+# Number of nonzeros 
+n_nonZero <- function(coefs){
+  as.integer(sum(coefs!=0))
+}
+
+# F classification of nonzeros 
+f_score <- function(coef_pred, test) {
+  coef_nonZero_class <- as.factor(ifelse(coef_pred==0, 0, 1))
+  levels(coef_nonZero_class) <- levels(as.factor(test$beta0))
+  c <- confusionMatrix(coef_nonZero_class, as.factor(test$beta0))
+  Recall <- c$byClass['Recall']
+  Precision <- c$byClass['Precision']
+  f <- ((Recall^(-1) + Precision^(-1)) / 2) ^ (-1)
+  return(f)
+}
+
+# Return row with results
+get_result_row <- function(params, method, start_time, end_time, coef_model, test_df) {
+  
+  # Calculate computation time
+  seconds <- as.numeric(difftime(end_time, start_time, units = "secs"))
+  
+
+  # Calculate relative test error
+  RTE_result <- RTE(coef_model, test_df$beta0, Sigma = test_df$Sigma, var = test_df$var_y)
+  
+  # Calculate PVE
+  PVE_result <- PVE(coef_model, test_df$beta0, Sigma = test_df$Sigma, var = test_df$var_y)
+
+  # Calculate F score
+  f_result <- f_score(coef_model, test_df)
+  
+  return(c(params, method = method, seconds = seconds, RTE = RTE_result, PVE = PVE_result, F_score = f_result))
+
+}
+
+generate_plot <- function(results, n_input, p_input, s_input) {
+ 
+  setting <- results %>%
+    filter(n == n_input, p == p_input, s == s_input) %>%
+    group_by(method, snr) %>%
+    summarize(mean_RTE = mean(RTE, na.rm = TRUE), sd_RTE = sd(RTE, na.rm = TRUE),
+              mean_PVE = mean(PVE, na.rm = TRUE), sd_PVE = sd(PVE, na.rm = TRUE),
+              mean_f = mean(F_score, na.rm = TRUE), sd_f = sd(F_score, na.rm = TRUE))
+
+  rte_plot <- ggplot(setting) + 
+    geom_point(aes(x = snr, y = mean_RTE, color = method)) + 
+    geom_errorbar(aes(x = snr, ymin = mean_RTE - sd_RTE, 
+                      ymax = mean_RTE + sd_RTE, color = method),
+                  alpha = 0.8, width = 0.2) + 
+    geom_line(aes(x = snr, y = mean_RTE, color = method)) + 
+    theme_bw() + 
+    theme(legend.position = "bottom") + 
+    labs(x = "SNR", y = "RTE", color = "")
+  
+  
+  pve_plot <- ggplot(setting) + 
+    geom_point(aes(x = snr, y = mean_PVE, color = method)) + 
+    geom_errorbar(aes(x = snr, ymin = mean_PVE - sd_PVE, 
+                      ymax = mean_PVE + sd_PVE, color = method),
+                  alpha = 0.8, width = 0.2) + 
+    geom_line(aes(x = snr, y = mean_PVE, color = method)) + 
+    theme_bw() + 
+    theme(legend.position = "bottom") + 
+    labs(x = "SNR", y = "PVE", color = "")
+  
+  # f_plot <- ggplot(setting) + 
+  #   geom_point(aes(x = snr, y = mean_f, color = method)) + 
+  #   geom_errorbar(aes(x = snr, ymin = mean_f - sd_f, 
+  #                     ymax = mean_f + sd_f, color = method),
+  #                 alpha = 0.8, width = 0.2) + 
+  #   geom_line(aes(x = snr, y = mean_f, color = method)) + 
+  #   theme_bw() + 
+  #   theme(legend.position = "bottom") + 
+  #   labs(x = "SNR", y = "F score", color = "")
+  
+  
+  return(grid.arrange(rte_plot, pve_plot, 
+                            ncol = 2))
+  
+}
+
+
+```
+
+
+```{r}
+
+
+rho_grid <- c(0.35)
+snr_grid <- exp(seq(log(0.05), log(6), length.out = 10)) %>%
+  round(2)
+iter_grid <- 1:5
+param_grid <- expand.grid(rho = rho_grid, snr = snr_grid, iter = iter_grid)
+num_rows <- nrow(param_grid)
+
+full_grid <-  bind_rows(replicate(4, param_grid, simplify = FALSE)) %>%
+  mutate(n = c(rep(100, num_rows), rep(500, num_rows), rep(50, num_rows), rep(100, num_rows)),
+         p = c(rep(10, num_rows), rep(100, num_rows), rep(1000, num_rows*2)),
+         s = c(rep(5, num_rows*3), rep(10, num_rows)))
+
+# Initialize results df
+results <- data.frame(rho = NA, snr = NA, iter = NA, n = NA, p = NA, 
+                      s = NA, method = NA, seconds = NA, 
+                      RTE = NA, PVE = NA, F_score = NA)
+
+
+
+
+for (i in 1:nrow(full_grid)) {
+  
+  # Generate data
+  train <- simulate_data(n = full_grid$n[i],
+                         p = full_grid$p[i],
+                         s = full_grid$s[i],
+                         rho = full_grid$rho[i],
+                         snr = full_grid$snr[i])
+  
+  test <- simulate_data(n = full_grid$n[i],
+                         p = full_grid$p[i],
+                         s = full_grid$s[i],
+                         rho = full_grid$rho[i],
+                         snr = full_grid$snr[i])
+  
+  
+  
+  # Set folds
+  set.seed(1)
+  k <- 5
+  folds <- sample(1:k, nrow(train$X), replace=TRUE)
+  
+  # Run models 
+  # Lasso
+  start_lasso <- Sys.time()
+  lasso_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
+                           alpha = 1, family = "gaussian") 
+  end_lasso <- Sys.time()
+  coef_lasso <- coef(lasso_cv, lambda = lasso_cv$lambda.min)[-1] %>% as.vector
+  
+  lasso_results <- get_result_row(params = full_grid[i,], 
+                                  method = "Lasso",
+                                  start_lasso, end_lasso,
+                                  coef_lasso, test)
+  
+  
+  # Ridge 
+  start_ridge <- Sys.time()
+  ridge_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
+                           alpha = 0, family = "gaussian")
+  end_ridge <- Sys.time()
+  coef_ridge <- coef(ridge_cv, lambda = ridge_cv$lambda.min)[-1] %>% as.vector
+  
+  ridge_results <- get_result_row(params = full_grid[i,], 
+                                  method = "Ridge",
+                                  start_ridge, end_ridge,
+                                  coef_ridge, test)
+  
+
+  
+  
+  results <- bind_rows(results, lasso_results, ridge_results)
+    
+}
+
+
+```
+
+
+```{r, message = FALSE}
+# Summarize results
+
+# TABLE 1: Time (by setting) 
+results[-1,] %>%
+  group_by(method, n, p, s) %>%
+  summarize(avg_seconds = round(mean(seconds),3)) %>%
+  pivot_wider(names_from = method, values_from = avg_seconds)
+
+
+
+# FIGURE 5: n = 100, p = 10, s = 5
+# RTE
+generate_plot(results[-1,], 100, 10, 5)
+
+# FIGURE 6: RTE, PVE, nonzeros, F-score as function of SNR 
+# n = 500, p = 100, s = 5
+generate_plot(results[-1,], 500, 100, 5)
+
+
+# FIGURE 7: RTE, PVE, nonzeros, F-score as function of SNR 
+# n = 50, p = 1000, s = 5
+generate_plot(results[-1,], 50, 1000, 5)
+
+
+# FIGURE 8: RTE, PVE, nonzeros, F-score as function of SNR 
+# n = 100, p = 1000, s = 10
+generate_plot(results[-1,], 100, 1000, 10)
+
+
+
+```
+
+
