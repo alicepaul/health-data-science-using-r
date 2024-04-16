@@ -4,18 +4,28 @@
 library(tidyverse)
 library(HDSinRdata)
 library(MASS)
+library(grid)
 library(gridExtra)
+library(glmnet)
 
 
 ```
 
-Lasso vs. ridge simulation
 
 ```{r}
+#' Simulate data
+#'
+#' @param n Number of observations
+#' @param p Number of variables
+#' @param s Sparsity level (number of nonzero coefficients)
+#' @param rho Predictor correlation level
+#' @param snr Signal-to-noise ratio
+#' @return List containing simulated covariate matrix `X`, outcome vector `y`, 
+#'  true coefficient vector `beta0`, covariate matrix `Sigma`, and variance `var_y`
 simulate_data <- function(n, p, s, rho, snr) {
   
   # Generate covariance matrix
-  cov_mat = matrix(0,nrow = p,ncol = p)
+  cov_mat = matrix(0, nrow = p,ncol = p)
   for (row in 1:p) {
     for (col in 1:p) {
       cov_mat[row, col] = rho ** abs(row-col)
@@ -46,62 +56,115 @@ simulate_data <- function(n, p, s, rho, snr) {
 
 ```{r}
 
-#Relative test error
-RTE <- function(coef_pred, coef_true, Sigma, var){
-  (t(coef_pred-coef_true) %*% Sigma %*% (coef_pred - coef_true) + var) / var
-    
-}
-
-# Proportion of variance explained
-PVE <- function(coef_pred, coef_true, Sigma, var){
-  1 - (t(coef_pred-coef_true) %*% Sigma %*% (coef_pred - coef_true) + var) / 
-    (var + t(coef_true %*% Sigma %*% coef_true))
-}
-
-# Number of nonzeros 
-n_nonZero <- function(coefs){
-  as.integer(sum(coefs!=0))
-}
-
-# F classification of nonzeros 
-f_score <- function(coef_pred, test) {
-  coef_nonZero_class <- as.factor(ifelse(coef_pred==0, 0, 1))
-  levels(coef_nonZero_class) <- levels(as.factor(test$beta0))
-  c <- confusionMatrix(coef_nonZero_class, as.factor(test$beta0))
-  Recall <- c$byClass['Recall']
-  Precision <- c$byClass['Precision']
-  f <- ((Recall^(-1) + Precision^(-1)) / 2) ^ (-1)
-  return(f)
-}
-
-# Return row with results
-get_result_row <- function(params, method, start_time, end_time, coef_model, test_df) {
+#' Return model metrics
+#'
+#' @param start_time Model start time
+#' @param end_time Model end time
+#' @param coef_est Vector with estimated coefficients 
+#' @param test_data Withheld test set (`simulate_data()` output)
+#' @return List with computation time in seconds, relative test error (RTE),
+#'  and proportion of variance explained (PVE). 
+get_metrics <- function(start_time, end_time, coef_est, test_data) {
+  
+  coef_true <- test_data$beta0
+  sigma <- test_data$Sigma
+  var <- test_data$var_y
   
   # Calculate computation time
   seconds <- as.numeric(difftime(end_time, start_time, units = "secs"))
-  
 
   # Calculate relative test error
-  RTE_result <- RTE(coef_model, test_df$beta0, Sigma = test_df$Sigma, var = test_df$var_y)
-  
+  RTE <- (t(coef_est - coef_true) %*% sigma %*% 
+            (coef_est - coef_true) + var) / 
+            var
+    
   # Calculate PVE
-  PVE_result <- PVE(coef_model, test_df$beta0, Sigma = test_df$Sigma, var = test_df$var_y)
+  # Proportion of variance explained
+  PVE <- 1 - (t(coef_est - coef_true) %*% sigma %*% (coef_est - coef_true) + var) / 
+    (var + t(coef_true %*% sigma %*% coef_true))
 
-  # Calculate F score
-  f_result <- f_score(coef_model, test_df)
   
-  return(c(params, method = method, seconds = seconds, RTE = RTE_result, PVE = PVE_result, F_score = f_result))
+  return(list(seconds = seconds, RTE = RTE, PVE = PVE))
 
 }
 
-generate_plot <- function(results, n_input, p_input, s_input) {
+
+
+```
+
+
+```{r}
+
+#' Run simulations and regression experiments
+#'
+#' @param grid Matrix containing all combinations of the parameters of interest 
+#'  (rho, snr, iter, n, p, s)
+#' @return Vector with results
+regression_simulation <- function(grid) {
+  
+  grid <- as.numeric(grid)
+  
+   # Generate data
+  train <- simulate_data(rho = grid[1], snr = grid[2], n = grid[4], p = grid[5], s = grid[6])
+  test <- simulate_data(rho = grid[1], snr = grid[2], n = grid[4], p = grid[5], s = grid[6])
+  
+  # Set folds
+  set.seed(1)
+  k <- 5
+  folds <- sample(1:k, nrow(train$X), replace=TRUE)
+  
+  # Run models 
+  # Lasso
+  start_lasso <- Sys.time()
+  lasso_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
+                           alpha = 1, family = "gaussian") 
+  end_lasso <- Sys.time()
+  coef_lasso <- coef(lasso_cv, lambda = lasso_cv$lambda.min)[-1] %>% as.vector
+  
+  lasso_results <- get_metrics(start_lasso, end_lasso, coef_lasso, test)
+  
+  
+  # Ridge 
+  start_ridge <- Sys.time()
+  ridge_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
+                           alpha = 0, family = "gaussian")
+  end_ridge <- Sys.time()
+  coef_ridge <- coef(ridge_cv, lambda = ridge_cv$lambda.min)[-1] %>% as.vector
+  
+  ridge_results <- get_metrics(start_ridge, end_ridge,
+                                  coef_ridge, test)
+  
+  metrics <- c(rho = grid[1], snr = grid[2], n = grid[4], p = grid[5], s = grid[6],
+               lasso_seconds = lasso_results$seconds, 
+               lasso_RTE = lasso_results$RTE, lasso_PVE = lasso_results$PVE,
+               ridge_seconds = ridge_results$seconds,
+               ridge_RTE = ridge_results$RTE, ridge_PVE = ridge_results$PVE)
+  
+  return(metrics)
+  
+  
+}
+
+
+```
+
+
+```{r}
+#' Generate RTE and PVE plots for a given set of parameters
+#'
+#' @param results Dataframe with simulation results  
+#' @param n_input Number of observations
+#' @param p_input Number of variables
+#' @param s_input Sparsity level
+#' @param title Plot title
+#' @return grid.arrange object
+generate_plot <- function(results, n_input, p_input, s_input, title = "") {
  
   setting <- results %>%
     filter(n == n_input, p == p_input, s == s_input) %>%
     group_by(method, snr) %>%
     summarize(mean_RTE = mean(RTE, na.rm = TRUE), sd_RTE = sd(RTE, na.rm = TRUE),
-              mean_PVE = mean(PVE, na.rm = TRUE), sd_PVE = sd(PVE, na.rm = TRUE),
-              mean_f = mean(F_score, na.rm = TRUE), sd_f = sd(F_score, na.rm = TRUE))
+              mean_PVE = mean(PVE, na.rm = TRUE), sd_PVE = sd(PVE, na.rm = TRUE))
 
   rte_plot <- ggplot(setting) + 
     geom_point(aes(x = snr, y = mean_RTE, color = method)) + 
@@ -123,30 +186,18 @@ generate_plot <- function(results, n_input, p_input, s_input) {
     theme_bw() + 
     theme(legend.position = "bottom") + 
     labs(x = "SNR", y = "PVE", color = "")
+
   
-  # f_plot <- ggplot(setting) + 
-  #   geom_point(aes(x = snr, y = mean_f, color = method)) + 
-  #   geom_errorbar(aes(x = snr, ymin = mean_f - sd_f, 
-  #                     ymax = mean_f + sd_f, color = method),
-  #                 alpha = 0.8, width = 0.2) + 
-  #   geom_line(aes(x = snr, y = mean_f, color = method)) + 
-  #   theme_bw() + 
-  #   theme(legend.position = "bottom") + 
-  #   labs(x = "SNR", y = "F score", color = "")
-  
-  
-  return(grid.arrange(rte_plot, pve_plot, 
-                            ncol = 2))
+  return(grid.arrange(rte_plot, pve_plot, ncol = 2, 
+         top = textGrob(title)))
   
 }
-
 
 ```
 
 
 ```{r}
-
-
+# Set up parameter grid
 rho_grid <- c(0.35)
 snr_grid <- exp(seq(log(0.05), log(6), length.out = 10)) %>%
   round(2)
@@ -159,78 +210,32 @@ full_grid <-  bind_rows(replicate(4, param_grid, simplify = FALSE)) %>%
          p = c(rep(10, num_rows), rep(100, num_rows), rep(1000, num_rows*2)),
          s = c(rep(5, num_rows*3), rep(10, num_rows)))
 
-# Initialize results df
-results <- data.frame(rho = NA, snr = NA, iter = NA, n = NA, p = NA, 
-                      s = NA, method = NA, seconds = NA, 
-                      RTE = NA, PVE = NA, F_score = NA)
-
-
-
-
-for (i in 1:nrow(full_grid)) {
-  
-  # Generate data
-  train <- simulate_data(n = full_grid$n[i],
-                         p = full_grid$p[i],
-                         s = full_grid$s[i],
-                         rho = full_grid$rho[i],
-                         snr = full_grid$snr[i])
-  
-  test <- simulate_data(n = full_grid$n[i],
-                         p = full_grid$p[i],
-                         s = full_grid$s[i],
-                         rho = full_grid$rho[i],
-                         snr = full_grid$snr[i])
-  
-  
-  
-  # Set folds
-  set.seed(1)
-  k <- 5
-  folds <- sample(1:k, nrow(train$X), replace=TRUE)
-  
-  # Run models 
-  # Lasso
-  start_lasso <- Sys.time()
-  lasso_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
-                           alpha = 1, family = "gaussian") 
-  end_lasso <- Sys.time()
-  coef_lasso <- coef(lasso_cv, lambda = lasso_cv$lambda.min)[-1] %>% as.vector
-  
-  lasso_results <- get_result_row(params = full_grid[i,], 
-                                  method = "Lasso",
-                                  start_lasso, end_lasso,
-                                  coef_lasso, test)
-  
-  
-  # Ridge 
-  start_ridge <- Sys.time()
-  ridge_cv <- cv.glmnet(train$X, train$y, nfolds = 5, foldid = folds, 
-                           alpha = 0, family = "gaussian")
-  end_ridge <- Sys.time()
-  coef_ridge <- coef(ridge_cv, lambda = ridge_cv$lambda.min)[-1] %>% as.vector
-  
-  ridge_results <- get_result_row(params = full_grid[i,], 
-                                  method = "Ridge",
-                                  start_ridge, end_ridge,
-                                  coef_ridge, test)
-  
-
-  
-  
-  results <- bind_rows(results, lasso_results, ridge_results)
-    
-}
+# Run experiments
+results <- apply(full_grid, 1, regression_simulation) %>% t() 
 
 
 ```
 
 
 ```{r, message = FALSE}
-# Summarize results
+# Format results
+results_lasso <- results %>%
+  as.data.frame() %>%
+  dplyr::select(rho, snr, n, p, s, lasso_seconds, lasso_RTE, lasso_PVE) %>%
+  rename(seconds = lasso_seconds, RTE = lasso_RTE, PVE = lasso_PVE) %>%
+  mutate(method = "Lasso")
+
+results_ridge <- results %>%
+  as.data.frame() %>%
+  dplyr::select(rho, snr, n, p, s, ridge_seconds, ridge_RTE, ridge_PVE) %>%
+  rename(seconds = ridge_seconds, RTE = ridge_RTE, PVE = ridge_PVE) %>%
+  mutate(method = "Ridge")
+
+results_long <- bind_rows(results_lasso, results_ridge)
+
 
 # TABLE 1: Time (by setting) 
-results[-1,] %>%
+results_long %>%
   group_by(method, n, p, s) %>%
   summarize(avg_seconds = round(mean(seconds),3)) %>%
   pivot_wider(names_from = method, values_from = avg_seconds)
@@ -239,21 +244,21 @@ results[-1,] %>%
 
 # FIGURE 5: n = 100, p = 10, s = 5
 # RTE
-generate_plot(results[-1,], 100, 10, 5)
+generate_plot(results_long, 100, 10, 5, title = "Low Setting") 
 
-# FIGURE 6: RTE, PVE, nonzeros, F-score as function of SNR 
+# FIGURE 6: RTE, PVE as function of SNR 
 # n = 500, p = 100, s = 5
-generate_plot(results[-1,], 500, 100, 5)
+generate_plot(results_long, 500, 100, 5, title = "Medium Setting")
 
 
-# FIGURE 7: RTE, PVE, nonzeros, F-score as function of SNR 
+# FIGURE 7: RTE, PVE as function of SNR 
 # n = 50, p = 1000, s = 5
-generate_plot(results[-1,], 50, 1000, 5)
+generate_plot(results_long, 50, 1000, 5, title = "High-5 Setting")
 
 
-# FIGURE 8: RTE, PVE, nonzeros, F-score as function of SNR 
+# FIGURE 8: RTE, PVE as function of SNR 
 # n = 100, p = 1000, s = 10
-generate_plot(results[-1,], 100, 1000, 10)
+generate_plot(results_long, 100, 1000, 10, title = "High-10 Setting")
 
 
 
