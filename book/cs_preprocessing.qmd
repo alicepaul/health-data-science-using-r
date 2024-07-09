@@ -1,111 +1,186 @@
-# Case Study: Data Pre-Processing {#sec-cs-preprocessing}
+# Case Study: Pre-Processing Data {#sec-cs-preprocessing}
 
-```{r, include = FALSE}
-# Don't need once package is updated on CRAN:
-#install_github("https://github.com/alicepaul/HDSinRdata")
-```
+In this chapter, we will put some of our R skills together in a case study. This case study will focus on data cleaning and pre-processing. We will use the `tb_diagnosis_raw` data from the **HDSinRdata** package. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal will be to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We will use the **tidyverse** packages as well as the summary tables from **gtsummary**.
 
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
 
-```{r results='hide', message=FALSE, warning=FALSE}
-library(tidyverse)
 library(HDSinRdata)
-
+library(tidyverse)
+library(gt)
+library(gtsummary)
 ```
+
+To start, read in the data and read the description of the original columns. Some things to note in the data documentation are the ways unknown, missing, or refused values are coded as well as how some of the columns are related to each other.
 
 ```{r, eval = FALSE}
+#| eval: false
 # Read in data
 data("tb_diagnosis_raw")
 
 # Inspect variable descriptions
 ?tb_diagnosis_raw
-
 ```
+
+To start, we will select variables needed for our analysis. In particular, we drop columns related to the participation in the survey and about seeking care. Since some of these variables contain long or vague names, we also rename most of the variables.
 
 ```{r}
 # Select variables and rename
 tb_df <- tb_diagnosis_raw %>% 
-  
-  select(c(xpert_status_fac, age_group, sex, hiv_status_fac, 
-           other_conditions_fac___3, symp_fac___1, symp_fac___2, 
-           symp_fac___3, symp_fac___4, length_symp_wk_fac, 
-           length_symp_days_fac, length_symp_unit_fac, smk_fac, 
-           dx_tb_past_fac, educ_fac)) %>%
-  
+  select(c(xpert_status_fac, age_group, sex, hiv_status_fac,
+           other_conditions_fac___1, other_conditions_fac___3,
+           other_conditions_fac___88, other_conditions_fac___99,
+           symp_fac___1, symp_fac___2, symp_fac___3, symp_fac___4, 
+           symp_fac___99, length_symp_unit_fac, length_symp_days_fac,
+           length_symp_wk_fac, length_symp_mnt_fac, length_symp_yr_fac,
+           smk_fac, dx_tb_past_fac, educ_fac)) %>%
     rename(tb = xpert_status_fac, hiv_pos = hiv_status_fac,
-           diabetes = other_conditions_fac___3, cough = symp_fac___1,
-           fever = symp_fac___2, weight_loss = symp_fac___3,
-           night_sweats = symp_fac___4, ever_smoke = smk_fac, 
+           cough = symp_fac___1, fever = symp_fac___2, 
+           weight_loss = symp_fac___3, night_sweats = symp_fac___4, 
+           symptoms_missing = symp_fac___99,
+           ever_smoke = smk_fac, 
            past_tb = dx_tb_past_fac, education = educ_fac)
-
 ```
+
+We then use a summary table to understand the initial distributions of the variables observed. This also highlights where we have missing or unknown data. 
 
 ```{r}
-# Recode binary variables to 0/1
-tb_df$tb <- case_when(tb_df$tb == 1 ~ 1, tb_df$tb == 2 ~ 0)
+tbl_summary(tb_df) %>%
+  as_gt()
+```
 
-tb_df$male <- case_when(tb_df$sex == 1 ~ 1, tb_df$sex == 2 ~ 0)
+One thing we notice in the table is that some variables are coded 0/1 and others are coded 1/2. We want to standardize how these variables are represented. To start, we update our `tb` column. Additionally, we create a column `male` from the previous column `sex` to make the reference level clear. We can then drop the `sex` column.
 
-tb_df$hiv_pos <- case_when(tb_df$hiv_pos == 1 ~ 1, 
-                           tb_df$hiv_pos %in% c(2,77) ~ 0)
+```{r}
+# Re-code binary variables to 0/1 instead of 1/2
+tb_df$tb <- case_when(tb_df$tb == 1 ~ 1, 
+                      tb_df$tb == 2 ~ 0)
+
+tb_df$male <- case_when(tb_df$sex == 1 ~ 1, 
+                        tb_df$sex == 2 ~ 0)
+tb_df <- tb_df %>% select(-c(sex))
+```
+
+Diabetes is another variable that should be coded this way. In the raw data, several columns correspond to this question about other medical conditions. Therefore, we need to use the columns `other_conditions_fac___88` and `other_conditions_fac___99` to check whether the participant did not answer the question when interpreting the 0/1 value for diabetes.
+
+```{r}
+# Re-code diabetes to check if missing
+tb_df$diabetes <- case_when(tb_df$other_conditions_fac___3 == 1 ~ 1,
+                            tb_df$other_conditions_fac___1 == 1 ~ 0,
+                            tb_df$other_conditions_fac___88 == 1 ~ NA,
+                            tb_df$other_conditions_fac___99 == 1 ~ NA,
+                            TRUE ~ 0)
+tb_df <- tb_df %>% select(-c(other_conditions_fac___1,
+                             other_conditions_fac___3,
+                             other_conditions_fac___88,
+                             other_conditions_fac___99))
+table(tb_df$diabetes)
+```
+
+Next, we similarly code our variables about HIV status, smoking, and whether the patient has ever been diagnoses with tuberculosis before. For these variables, if the patient answered that they did not know if their HIV status or had tested positive for TB, we code these as 0 to be consistent with the paper. 
+
+```{r}
+# Re-code variables with missing or refused values
+tb_df$hiv_pos <- case_when((tb_df$hiv_pos == 1) ~ 1, 
+                           tb_df$hiv_pos %in% c(2,77) ~ 0,
+                           tb_df$hiv_pos == 88 ~ NA)
 
 tb_df$ever_smoke <- case_when(tb_df$ever_smoke %in% c(1,2) ~ 1,
-                              tb_df$ever_smoke == 3 ~ 0)
+                              tb_df$ever_smoke == 3 ~ 0,
+                              tb_df$ever_smoke == 99 ~ NA)
 
-tb_df$past_tb <- case_when(tb_df$past_tb == 1 ~ 1, tb_df$past_tb == 2 ~ 0)
+tb_df$past_tb <- case_when(tb_df$past_tb == 1 ~ 1, 
+                           tb_df$past_tb %in% c(2,77) ~ 0)
 
 ```
+
+The next variable we will clean is `education`. First, we need to code NA values correctly. We can then observe the distribution of years of education.
+
+```{r}
+# Code NA values and look at education distribution
+tb_df$education[tb_df$education == 99] <- NA
+hist(tb_df$education, xlab="Years of Education", 
+     main = "Histogram of Education Years")
+```
+
+For our purposes, we want to represent education as whether a person has a high school education or less. 
 
 ```{r}
 # Categorize education to HS and above
 tb_df$hs_less <- case_when(tb_df$education <= 12 ~ 1,
-                           tb_df$education %in% c(13, 14) ~ 0,
+                           tb_df$education > 12 ~ 0,
                            TRUE ~ NA)
-
 tb_df <- tb_df %>% select(-c(education))
-
 ```
+
+There are several variables in the data related to how long a person has experienced symptoms. Below, we can see that unit of the symptoms, recorded in `length_symp_unit_fac`, determines which other column is entered. For example, if `length_symp_unit_fac == 1`, then the only column without an NA value will be `length_symp_days_fc`. 
+
+```{r}
+tb_df %>%
+  group_by(length_symp_unit_fac) %>%
+  summarize(missing_days = sum(is.na(length_symp_days_fac))/n(),
+            missing_wks = sum(is.na(length_symp_wk_fac))/n(),
+            missing_mnt = sum(is.na(length_symp_mnt_fac))/n(),
+            missing_yr = sum(is.na(length_symp_yr_fac))/n())
+```
+Additionally, these measurements are positive integer values.
+
+```{r}
+min(tb_df$length_symp_days_fac, na.rm=TRUE)
+is.integer(tb_df$length_symp_days_fac)
+```
+
+This allows us to create a new variable that represents whether or not someone has had symptoms for more than two weeks. In our `case_when()` function call, we first check whether the duration is missing before checking for the cases when symptoms would be less than two weeks. 
 
 ```{r}
 # Categorize number of weeks experiencing symptoms
-tb_df$two_weeks_symp <- case_when(tb_df$length_symp_days_fac <= 14 |
-                                    tb_df$length_symp_wk_fac < 2 ~ 0,
-                                  
-                                  tb_df$length_symp_unit_fac == 77 |
-                                    tb_df$length_symp_wk_fac == 999 ~ 
-                                    NA,
-                                  
-                                  TRUE ~ 1)
+tb_df <- tb_df %>%
+  mutate(case_when((length_symp_unit_fac == 77 |
+                      is.na(length_symp_unit_fac)) ~ NA,
+                   (length_symp_unit_fac == 1 & 
+                      length_symp_days_fac <= 14) ~ 0,
+                   (length_symp_unit_fac == 2 &
+                      length_symp_wk_fac <= 2) ~ 0,
+                   TRUE ~ 1))
 
 tb_df <- tb_df %>% 
   select(-c(length_symp_wk_fac, length_symp_days_fac, 
-            length_symp_unit_fac, sex))
+            length_symp_mnt_fac, length_symp_yr_fac, 
+            length_symp_unit_fac))
 
 ```
+
+Last, we update our symptom variables to have a summary column `num_symptoms` that represents the total number of classic TB symptoms rather than keeping track of individual symptoms. We also exclude anyone who does not have any TB symptoms. 
 
 ```{r}
 # Count total number of symptoms
 tb_df$num_symptoms <- tb_df$fever + tb_df$weight_loss + tb_df$cough + 
   tb_df$night_sweats
+tb_df$num_symptoms[tb_df$symptoms_missing == 1] <- NA
+tb_df <- tb_df %>% select(-c(night_sweats, weight_loss, cough, fever,
+                             symptoms_missing))
 
-tb_df <- tb_df %>% select(-c(night_sweats, weight_loss, cough, fever))
-
-```
-
-```{r}
-# Exclude participants with no TB symptoms (to replicate paper)
+# Exclude observations with no TB symptoms 
 tb_df <- tb_df %>%
   filter(num_symptoms != 0)
 
+table(tb_df$num_symptoms)
 ```
+
+Last, we convert all variables to factors.
 
 ```{r}
 # Convert all variables to factors 
 tb_df[] <- lapply(tb_df, function(x){return(as.factor(x))})
-
 ```
 
-```{r}
-# Relevel age group to match paper's reference level 
-tb_df$age_group <- relevel(tb_df$age_group, ref="[55,99)")
+Our final data is shown below. The `add_overall()` function includes the overall summary statistics in addition to our stratified summaries. Our summary table looks similar to the one in the paper. However, it looks like we have a few more observations included. Additionally, our education variable shows a lower percentage of observations with post-high school education and the HIV status . 
 
+
+```{r}
+tbl_summary(tb_df, by = "tb") %>%
+  add_overall() %>%
+  as_gt()
 ```

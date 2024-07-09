@@ -4,7 +4,11 @@ In this chapter, we will be working with data in R. To start, we need to load ou
 
 In this chapter and all future chapters, we will load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single package **HDSinRdata** that contains the sample data sets used in this book.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
 library(HDSinRdata)
 ```
 
@@ -261,7 +265,8 @@ hist(pain$PAIN_CHANGE)
 ```
 
 ```{r}
-pain$PERC_PAIN_CHANGE <- pain$PAIN_CHANGE/pain$PAIN_INTENSITY_AVERAGE
+pain$PERC_PAIN_CHANGE <- pain$PAIN_CHANGE / 
+  pain$PAIN_INTENSITY_AVERAGE
 summary(pain$PERC_PAIN_CHANGE)
 ```
 
@@ -285,6 +290,59 @@ pain_sub2 <- pain[complete.cases(pain),]
 dim(pain_sub1)
 dim(pain_sub2)
 ```
+
+### Dates in R
+
+The columns in the `pain` data contain character and numeric values. One special type of character column that is not present is a column that corresponds to a date or date-time. By default, `read.csv()` will read these columns in as character columns whereas the `read_csv()` function from the **readr** package in the **tidyverse** family will recognize common date formats. If we have a character column, we can convert to a date object using `as.Date()` for date columns and `as.POSIXct()` for date-time columns. For columns with only a time but no date, you can add a date or use the **hms** package [@R-hms], which is not demonstrated here. These functions will automatically try to detect the format of the inputted string, but it is often helpful to provide the format `format` and time zone `tz`. To input our format we use the following key.
+
+| Symbol  | Description  |
+|---|---|
+| %Y  |  Four digit year.  |
+| %y |   Two digit year. |
+| %m  |  Numeric month. |
+| %b% | Abbreviated name of month. |
+| %B | Full name of month. |
+| %d  |  Numeric day of the month. |
+| %H  |  Military time hour (24 hour). |
+| %I  |  Imperial time hour (12 hour).  |
+| %M  |  Minute. |
+| %S | Seconds. |
+| %p | AM/PM |
+
+```{r}
+date_example <- data.frame(x = c("2020-01-15", "2021-11-16", 
+                                 "2019-08-01"),
+                           y = c("2020-01-15 3:14 PM", 
+                                 "2021-11-16 5:00 AM",
+                                 "2019-08-01 3:00 PM"),
+                           z = c("04:10:00", "11:35:11", "18:00:45"))
+
+# Convert date and date times using formats
+date_example$x <- as.Date(date_example$x, format = "%Y-%m-%d", 
+                          tz = "EST")
+date_example$y <- as.POSIXct(date_example$y, 
+                             format = "%Y-%m-%d %I:%M %p")
+
+# Add date to z and convert
+date_example$z <- paste("2024-06-24", date_example$z)
+date_example$z <- as.POSIXct(date_example$z, 
+                             format = "%Y-%m-%d %H:%M:%S")
+date_example
+```
+
+By recognizing these columns as dates, we can find the time between two dates using the `difftime()` function. This function takes in two times `time1` and `time2` and finds the difference `time1 - time2` in the given `units`. 
+
+```{r}
+difftime(date_example$x[2], date_example$x[1], units = "days")
+```
+
+Additionally, we can use the `seq()` function to add or subtract time by specifying a unit for `by`.
+
+```{r}
+seq(date_example$x[1], by = "month", length = 3)
+```
+
+For those interested in doing more manipulations with dates, the **lubridate** package [@R-lubridate] in the **tidyverse** expands upon the base functionality of R for working with dates. This package uses its own date-time class and includes functions to easily extract out information from and manipulate dates. 
 
 ## Using Logic to Subset, Summarize, and Transform
 
@@ -398,7 +456,7 @@ table(pain$PAT_RACE)
 
 ### Other Selection Functions
 
-Above, we selected rows using TRUE/FALSE boolean values. Instead, we could have also used the `which()` function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
+Above, we selected rows using TRUE/FALSE Boolean values. Instead, we could have also used the `which()` function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
 
 ```{r}
 pain$PAT_RACE[which(pain$PAT_RACE == "DECLINED")] <- "NOT SPECIFIED"

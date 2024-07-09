@@ -7,12 +7,17 @@ The data used in this chapter is from the 2021 National Youth Tobacco Survey (NY
 
 We will use the **broom** package again to present the estimated coefficients, the **tidyverse** package to create a calibration plots, the **lmtest** [@R-lmtest] package to perform likelihood ratio tests, and the **pROC** package [@R-pROC] to create receiver operating characteristic curves.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
 library(broom)
 library(tidyverse)
 library(pROC)
 library(lmtest)
 library(HDSinRdata)
+
 data(nyts)
 ```
 
@@ -243,7 +248,7 @@ hist(nyts$num_e_cigs, main="Observed", xlab="Number E-Cigs")
 
 ## Exercises
 
-1.  Create a new variable `tobacco_use` representing any tobacco use in the past 30 days (including e-cigs, cigarettes, and/or cigars) as well as a new variable `perceived_tobacco_use` equal to the maximum of the perceived cigarette and e-cig use. Then, create a new data frame `nyts_sub` that contains these two new columns as well as columns for sex, grades in the past year, psych distress, and family affluence. Finally, fit a logistic regression model with this new tobacco use variable as the outcome and all other selected variables as independent variables.
+1.  Create a new variable `tobacco_use` representing any tobacco use in the past 30 days (including e-cigarettes, cigarettes, and/or cigars) as well as a new variable `perceived_tobacco_use` equal to the maximum of the perceived cigarette and e-cig use. Then, create a new data frame `nyts_sub` that contains these two new columns as well as columns for sex, grades in the past year, psych distress, and family affluence. Finally, fit a logistic regression model with this new tobacco use variable as the outcome and all other selected variables as independent variables.
 
 2.  Perform stepwise selection on your model from Question 1 with `direction = "both"`, setting the upper scope of the model selection procedure to be a model including all two-way interactions and the lower scope to be a model including only an intercept. To specify all possible interactions you can use the formula `"tobacco_use ~ .^2"`. Use the `tidy()` function to display the exponentiated estimated coefficients for the resulting model along with a confidence interval.
 

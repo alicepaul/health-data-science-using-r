@@ -5,12 +5,17 @@ In this chapter, we will look at hypothesis testing in R. We will start with sin
 
 We will use the **tidyverse**, **gt**, and **gtsummary** packages to help manipulate and summarize the data. The **car** package [@R-car] contains the function `leveneTest()` to implement a Levene's test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
 library(tidyverse)
 library(car)
 library(HDSinRdata)
 library(gt)
 library(gtsummary)
+
 data(tex_itop)
 ```
 
@@ -263,16 +268,16 @@ Repeat the Chi-Squared test, but this time use the RUCC codes instead of the `ur
 
 In [Chapter -@sec-exploratory], we used the **gt** and **gtsummary** packages to create summary tables of variables. When creating a stratified table (done by adding the `by` argument), we can automatically add p-values for hypothesis tests comparing across populations using the `add_p()` function. By default, the `add_p()` function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the `by` variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher's Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.
 
-```{r, message = FALSE}
+```{r}
+#| eval: false
+
 tbl_summary(tex_itop, include = c(total_rate, white_rate, asian_rate, 
                                   hispanic_rate, black_rate, 
                                   native_american_rate),
            by = "year", 
            statistic = list(all_continuous() ~ "{mean} ({sd})")) %>% 
   add_p() %>%
-  as_gt() #%>% 
-  #gtsave(filename = "gt-summary-table.png", path = "images/hypothesis_tests/")
-
+  as_gt() 
 ```
 
 ![Summary Table Stratified by Year.](images/hypothesis_tests/gt-summary-table.png){#fig-gt-summary-table fig-align="center" width="100%"}

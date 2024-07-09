@@ -4,9 +4,14 @@ In this chapter, we continue to look at some of the ways to manipulate data usin
 
 For this chapter, we will use three data sets. The first data set is `covidcases`, which contains the weekly case and death counts by county in the United States for 2020 [@covid_data; @covid_article]; the second data set is `mobility`, which contains daily mobility estimates by state in 2020 [@warren2020mobility]; and the third data set is `lockdowndates`, which contains the start and end dates for statewide stay at home orders [@covid_policy]. Take a look at the first few rows of each data frame below and read the documentation for the column descriptions.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
 library(tidyverse)
 library(HDSinRdata)
+
 data(covidcases)
 data(lockdowndates)
 data(mobility)
@@ -113,7 +118,8 @@ head(lockdown_long)
 In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form) using the function `pivot_wider()`. This function again first takes in a data table but now we specify the arguments `names_from` and `values_from`. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form below, we specify that `names_from` is the lockdown event and `values_from` is the date itself. Now we are back to the same form as before!
 
 ```{r}
-lockdown_wide <- pivot_wider(lockdown_long, names_from=Lockdown_Event, 
+lockdown_wide <- pivot_wider(lockdown_long, 
+                             names_from=Lockdown_Event, 
                              values_from=Date)
 head(lockdown_wide)
 ```
@@ -245,7 +251,8 @@ df_B
     visit_info <- data.frame(
       name.f = c("Phillip", "Phillip", "Phillip", "Jessica", 
                  "Jessica"),
-      name.l = c("Johnson", "Johnson", "Richards", "Smith", "Abrams"),
+      name.l = c("Johnson", "Johnson", "Richards", "Smith", 
+                 "Abrams"),
       measure = c("height", "age", "age", "age", "height"),
       measurement = c(45, 186, 50, 37, 156)
     )

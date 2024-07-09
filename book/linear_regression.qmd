@@ -7,11 +7,16 @@ For this chapter, we will use the `NHANESsample` dataset seen in [Chapter -@sec-
 
 We will use the **broom** package [@R-broom] to present the estimated coefficients for our regression models and the **car** package to compute variance inflation factors.
 
-```{r results='hide', message=FALSE, warning=FALSE}
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
 library(HDSinRdata)
 library(tidyverse)
 library(broom)
 library(car)
+
 data(NHANESsample)
 ```
 
@@ -317,7 +322,9 @@ mse
 
 ## Stepwise Selection
 
-So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We will end this chapter by demonstrating how to implement one such method, **stepwise selection**, in R. The `step()` function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper model formulas to consider. Below, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.
+So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We will end this chapter by demonstrating how to implement one such method, **stepwise selection**, in R. [Chapter -@sec-model-selection] will expand upon this model selection technique by showing how to implement regularized models in R.
+
+The `step()` function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper model formulas to consider. Below, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.
 
 By default, the `step()` function prints each step in the process and uses AIC to guide its decisions. We can set `trace=0` to avoid the print behavior and update the argument `k` to `log(n)` to use BIC, where `n` is the number of observations. Below we see that the algorithm first adds in race, then BMI, then income, then education, and then smoking status. In fact, all variables were added to the model! The final output is an `lm` object that we can use just like the ones earlier in this chapter. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.
 

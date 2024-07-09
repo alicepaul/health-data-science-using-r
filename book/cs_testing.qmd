@@ -1,0 +1,80 @@
+# Case Study: Hypothesis Testing
+
+For this chapter, we will use the `NHANESsample` dataset seen in [Chapter -@sec-exploratory]. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted to replicate the preprocessing conducted by @huang2022association. We further replicate the regression analysis by @huang2022association in [Chapter -@sec-linear-regression]. Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis.
+
+```{r}
+#| results: 'hide'
+#| message: false
+#| warning: false
+
+library(HDSinRdata)
+library(tidyverse)
+library(gt)
+library(gtsummary)
+
+data("NHANESsample")
+```
+
+Our analysis will focus on using hypothesis testing to look at the association between hypertension and blood lead levels by sex. We first select some demographic and clinical variables that may be relevant, including age, sex, race, body mass index, and smoking status. We do a complete case analysis and drop any observations with missing data. 
+
+```{r}
+NHANESsample <- NHANESsample %>%
+  select("AGE", "SEX", "RACE", "SMOKE", "LEAD", "BMI_CAT", 
+         "HYP", "ALC") %>%
+  na.omit()
+```
+
+We start with a summary table stratified by hypertension status. As expected, we see statistically significant differences between the two groups across all included variables. We also observe higher blood lead levels and a higher proportion of male participants for those with hypertension.
+
+```{r}
+tbl_summary(NHANESsample, by = c("HYP"),
+            label = list(SMOKE ~ "SMOKING STATUS",
+                         BMI_CAT ~ "BMI",
+                         ALC ~ "ALCOHOL USE")) %>%
+  add_p() %>%
+  add_overall() %>%
+  modify_spanning_header(c("stat_1", "stat_2") ~ 
+                           "**Hypertension Status**") %>%
+  as_gt()
+```
+We also visually show the distribution of blood lead levels (on a log scale) by sex and hypertension status. We can visually see that male observations tend to have higher blood lead levels and that having hypertension is associated with higher blood lead levels. 
+
+```{r}
+ggplot(NHANESsample) +
+  geom_boxplot(aes(x=LEAD,
+                   y = interaction(HYP,SEX),
+                   color = interaction(HYP,SEX))) +
+  scale_x_continuous(trans = "log", breaks = c(0.1, 1, 10, 50)) +
+  scale_y_discrete(labels = c("Male : 0", "Male : 1",
+                              "Female : 0", "Female : 1")) +
+  guides(color = "none") +
+  labs(x="Blood Lead Level",
+       y = "Sex : Hypertension Status")
+```
+In [Chapter -@sec-probability-distributions], we explored that log blood lead levels could be approximated by a normal distribution. To test our hypothesis that there is a difference in mean log blood lead level between those with and without hypertension, we will use a two sample unpaired t-test. This shows a statistically significant difference between the two groups at the 0.05 level.  
+
+```{r}
+t.test(log(LEAD) ~ HYP, data = NHANESsample)
+```
+
+Last, we do repeat this test for a stratified analysis and put the results into a small table. For both groups, we find a statistically significant difference at the 0.05 level. 
+
+```{r}
+# stratify the data
+nhanes_male <- NHANESsample[NHANESsample$SEX == "Male",]
+nhanes_female <- NHANESsample[NHANESsample$SEX == "Female",]
+
+# t-test for each
+test_male <- t.test(log(LEAD) ~ HYP, data = nhanes_male)
+test_female <- t.test(log(LEAD) ~ HYP, data = nhanes_female)
+
+# create data frame
+res_df <- data.frame(group = c("Male", "Female"),
+                     statistic = signif(c(test_male$statistic,
+                                          test_female$statistic), 3),
+                     p.value = signif(c(test_male$p.value,
+                                          test_female$p.value), 3))
+res_df
+```
+
+In [Chapter -@sec-linear-regression], we will use linear regression to further explore the association between blood lead level and hypertension adjusting for other potential confounders. 
