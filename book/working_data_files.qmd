@@ -21,7 +21,7 @@ data(pain)
 dim(pain)
 ```
 
-In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the **readr** package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We will cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
+In general, the data you will be using will not be available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the **readr** package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is a slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We will cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
 
 ```{r}
 read.csv("data/fake_names.csv")
@@ -50,7 +50,7 @@ If your data is not in a .csv file, you may need to use another package to read 
 
 ## Summarizing and Creating Data Columns
 
-We will now look at the data we have loaded into the data frame called `pain`. We use the `head()` function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this column to a factor or a character representation later on. We can use the `names()` function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
+We will now look at the data we have loaded into the data frame called `pain`. We use the `head()` function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patient identification numbers are technically nominal in nature, we might consider whether we should convert this column to a factor or a character representation later on. We can use the `names()` function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
 
 ```{r}
 head(pain)
@@ -99,7 +99,7 @@ However, we can pass in a list of probabilities to use instead. For example, bel
 quantile(pain$PAIN_INTENSITY_AVERAGE, probs = c(0.1, 0.9), na.rm=TRUE)
 ```
 
-We can also plot a histogram of the sample distribution using the `hist()` function. We will look more in depth at how to change aspects of this histogram in [Chapter -@sec-exploratory].
+We can also plot a histogram of the sample distribution using the `hist()` function. We will look more in-depth at how to change aspects of this histogram in [Chapter -@sec-exploratory].
 
 ```{r}
 hist(pain$PAIN_INTENSITY_AVERAGE)
@@ -172,7 +172,7 @@ We use the `which.max()` function to see that the 55th region `X219` is selected
 which.max(perc_patients)
 ```
 
-Another pair of useful functions are `pmin()` and `pmax()`. These functions take at least two vectors and find the pairwise minimum of maximum across those vectors, as shown below. For example, suppose you had two vectors,
+Another pair of useful functions are `pmin()` and `pmax()`. These functions take at least two vectors and find the pairwise minimum or maximum across those vectors, as shown below. For example, suppose you had two vectors,
 
 ```{r}
 v1 = c(5, 9, 12)
@@ -226,7 +226,7 @@ As we saw above, this data contains some missing values, which are represented a
 NA+1
 ```
 
-We can determine whether a value is missing using the function `is.na()`. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column, since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. Below we can see that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
+We can determine whether a value is missing using the function `is.na()`. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. Below we can see that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
 
 ```{r}
 sum(is.na(pain$PATIENT_NUM))
@@ -342,7 +342,7 @@ Additionally, we can use the `seq()` function to add or subtract time by specify
 seq(date_example$x[1], by = "month", length = 3)
 ```
 
-For those interested in doing more manipulations with dates, the **lubridate** package [@R-lubridate] in the **tidyverse** expands upon the base functionality of R for working with dates. This package uses its own date-time class and includes functions to easily extract out information from and manipulate dates. 
+For those interested in doing more manipulations with dates, the **lubridate** package [@R-lubridate] in the **tidyverse** expands upon the base functionality of R for working with dates. This package uses its own date-time class and includes functions to easily extract information from and manipulate dates. 
 
 ## Using Logic to Subset, Summarize, and Transform
 
@@ -497,4 +497,4 @@ For these exercises, we will again be using the `pain` data from the **HDSinRdat
 
 6.  Look at the distribution of average pain intensity between patients with only one pain region selected vs. those with more than one region selected. What do you notice?
 
-7.  Create a histogram to plot the distribution of the `PAIN_INTENSITY_AVERAGE.FOLLOW_UP` column. Then, create a table summarizing how many patients had missing values in this column. Finally, choose two columns to compare the distribution between those with and without missing follow up. What do you notice?
+7.  Create a histogram to plot the distribution of the `PAIN_INTENSITY_AVERAGE.FOLLOW_UP` column. Then, create a table summarizing how many patients had missing values in this column. Finally, choose two columns to compare the distribution between those with and without missing follow-up. What do you notice?
