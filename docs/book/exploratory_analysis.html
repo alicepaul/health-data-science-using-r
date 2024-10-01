@@ -445,7 +445,7 @@ div.csl-indent {
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] "DBP4"          "SBP1"          "SBP2"          "SBP3"         </span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To start our exploration, we will look at whether there are any missing values. We use the <code>complete.cases()</code> function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic an diastolic blood pressure measurements and do a complete case analysis using the <code>na.omit()</code> function to define our complete data frame <code>nhanes_df</code>.</p>
+<p>To start our exploration, we will look at whether there are any missing values. We use the <code>complete.cases()</code> function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic and diastolic blood pressure measurements and do a complete case analysis using the <code>na.omit()</code> function to define our complete data frame <code>nhanes_df</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">complete.cases</span>(NHANESsample))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
@@ -569,7 +569,7 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   QuitSmoke   390    241</span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   StillSmoke  324    218</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To look at the sample distribution of a continuous column stratified by a cateogrical column, we could call the <code>summary()</code> function for each subset of the data. Below we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.</p>
+<p>To look at the sample distribution of a continuous column stratified by a categorical column, we could call the <code>summary()</code> function for each subset of the data. Below we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nhanes_df<span class="sc">$</span>LEAD[nhanes_df<span class="sc">$</span>SEX<span class="sc">==</span><span class="st">"Female"</span>])</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
@@ -578,7 +578,7 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.05    0.70    1.09    1.46    1.66   22.01</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We could also observe this visually through a box plot. When given one categorical column and one continuous column, the <code>plot()</code> function creates a box plot. By default, the first argument is the x-axis and second argument is the y-axis.</p>
+<p>We could also observe this visually through a box plot. When given one categorical column and one continuous column, the <code>plot()</code> function creates a box plot. By default, the first argument is the x-axis and the second argument is the y-axis.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SEX, <span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD), <span class="at">ylab=</span><span class="st">"Log Blood Lead Level"</span>, </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Sex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -590,7 +590,7 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 </div>
 </div>
 </div>
-<p>Alternatively, we could use the <code>boxplot()</code> function, which can be passed a formula. A formula is a string representation of how to group the data, where the left hand side is the continuous column and the right hand side is one or more categorical columns to group by. In the case below, we group by multiple columns, <code>SEX</code> and <code>EVER_SMOKE</code>, so our formula is <code>log(LEAD)~SEX+EVER_SMOKE</code>. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.</p>
+<p>Alternatively, we could use the <code>boxplot()</code> function, which can be passed a formula. A formula is a string representation of how to group the data, where the left-hand side is the continuous column and the right-hand side is one or more categorical columns to group by. In the case below, we group by multiple columns, <code>SEX</code> and <code>EVER_SMOKE</code>, so our formula is <code>log(LEAD)~SEX+EVER_SMOKE</code>. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">log</span>(LEAD)<span class="sc">~</span>SEX<span class="sc">+</span>EVER_SMOKE, <span class="at">data=</span>nhanes_df, </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"blue"</span>),</span>
@@ -715,23 +715,23 @@ Figure&nbsp;4.2: Box Plot Example.
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(nhanes_df[, <span class="fu">c</span>(<span class="st">"ID"</span>, <span class="st">"AGE"</span>, <span class="st">"SEX"</span>, <span class="st">"RACE"</span>)])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="ljgpotzkfq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ljgpotzkfq table {
+<div id="kslfblguas" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kslfblguas table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ljgpotzkfq thead, #ljgpotzkfq tbody, #ljgpotzkfq tfoot, #ljgpotzkfq tr, #ljgpotzkfq td, #ljgpotzkfq th {
+#kslfblguas thead, #kslfblguas tbody, #kslfblguas tfoot, #kslfblguas tr, #kslfblguas td, #kslfblguas th {
   border-style: none;
 }
 
-#ljgpotzkfq p {
+#kslfblguas p {
   margin: 0;
   padding: 0;
 }
 
-#ljgpotzkfq .gt_table {
+#kslfblguas .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -757,12 +757,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_caption {
+#kslfblguas .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ljgpotzkfq .gt_title {
+#kslfblguas .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -774,7 +774,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#ljgpotzkfq .gt_subtitle {
+#kslfblguas .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -786,7 +786,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#ljgpotzkfq .gt_heading {
+#kslfblguas .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -798,13 +798,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_bottom_border {
+#kslfblguas .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_col_headings {
+#kslfblguas .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -819,7 +819,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_col_heading {
+#kslfblguas .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -839,7 +839,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#ljgpotzkfq .gt_column_spanner_outer {
+#kslfblguas .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -851,15 +851,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#ljgpotzkfq .gt_column_spanner_outer:first-child {
+#kslfblguas .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ljgpotzkfq .gt_column_spanner_outer:last-child {
+#kslfblguas .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ljgpotzkfq .gt_column_spanner {
+#kslfblguas .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -871,11 +871,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#ljgpotzkfq .gt_spanner_row {
+#kslfblguas .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ljgpotzkfq .gt_group_heading {
+#kslfblguas .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -901,7 +901,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#ljgpotzkfq .gt_empty_group_heading {
+#kslfblguas .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -916,15 +916,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#ljgpotzkfq .gt_from_md > :first-child {
+#kslfblguas .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ljgpotzkfq .gt_from_md > :last-child {
+#kslfblguas .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ljgpotzkfq .gt_row {
+#kslfblguas .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -943,7 +943,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#ljgpotzkfq .gt_stub {
+#kslfblguas .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -956,7 +956,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#ljgpotzkfq .gt_stub_row_group {
+#kslfblguas .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -970,15 +970,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#ljgpotzkfq .gt_row_group_first td {
+#kslfblguas .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ljgpotzkfq .gt_row_group_first th {
+#kslfblguas .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ljgpotzkfq .gt_summary_row {
+#kslfblguas .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -988,16 +988,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#ljgpotzkfq .gt_first_summary_row {
+#kslfblguas .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_first_summary_row.thick {
+#kslfblguas .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ljgpotzkfq .gt_last_summary_row {
+#kslfblguas .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1007,7 +1007,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_grand_summary_row {
+#kslfblguas .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1017,7 +1017,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#ljgpotzkfq .gt_first_grand_summary_row {
+#kslfblguas .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1027,7 +1027,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_last_grand_summary_row_top {
+#kslfblguas .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1037,11 +1037,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_striped {
+#kslfblguas .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ljgpotzkfq .gt_table_body {
+#kslfblguas .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1050,7 +1050,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_footnotes {
+#kslfblguas .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1064,7 +1064,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_footnote {
+#kslfblguas .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1073,7 +1073,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#ljgpotzkfq .gt_sourcenotes {
+#kslfblguas .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1087,7 +1087,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#ljgpotzkfq .gt_sourcenote {
+#kslfblguas .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1095,63 +1095,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#ljgpotzkfq .gt_left {
+#kslfblguas .gt_left {
   text-align: left;
 }
 
-#ljgpotzkfq .gt_center {
+#kslfblguas .gt_center {
   text-align: center;
 }
 
-#ljgpotzkfq .gt_right {
+#kslfblguas .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ljgpotzkfq .gt_font_normal {
+#kslfblguas .gt_font_normal {
   font-weight: normal;
 }
 
-#ljgpotzkfq .gt_font_bold {
+#kslfblguas .gt_font_bold {
   font-weight: bold;
 }
 
-#ljgpotzkfq .gt_font_italic {
+#kslfblguas .gt_font_italic {
   font-style: italic;
 }
 
-#ljgpotzkfq .gt_super {
+#kslfblguas .gt_super {
   font-size: 65%;
 }
 
-#ljgpotzkfq .gt_footnote_marks {
+#kslfblguas .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ljgpotzkfq .gt_asterisk {
+#kslfblguas .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ljgpotzkfq .gt_indent_1 {
+#kslfblguas .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ljgpotzkfq .gt_indent_2 {
+#kslfblguas .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ljgpotzkfq .gt_indent_3 {
+#kslfblguas .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ljgpotzkfq .gt_indent_4 {
+#kslfblguas .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ljgpotzkfq .gt_indent_5 {
+#kslfblguas .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1215,23 +1215,23 @@ Figure&nbsp;4.2: Box Plot Example.
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"DBP1"</span>, <span class="st">"HYP"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="jgmolpchvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jgmolpchvb table {
+<div id="impsxhhllz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#impsxhhllz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#jgmolpchvb thead, #jgmolpchvb tbody, #jgmolpchvb tfoot, #jgmolpchvb tr, #jgmolpchvb td, #jgmolpchvb th {
+#impsxhhllz thead, #impsxhhllz tbody, #impsxhhllz tfoot, #impsxhhllz tr, #impsxhhllz td, #impsxhhllz th {
   border-style: none;
 }
 
-#jgmolpchvb p {
+#impsxhhllz p {
   margin: 0;
   padding: 0;
 }
 
-#jgmolpchvb .gt_table {
+#impsxhhllz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1257,12 +1257,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_caption {
+#impsxhhllz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#jgmolpchvb .gt_title {
+#impsxhhllz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1274,7 +1274,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#jgmolpchvb .gt_subtitle {
+#impsxhhllz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1286,7 +1286,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#jgmolpchvb .gt_heading {
+#impsxhhllz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1298,13 +1298,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_bottom_border {
+#impsxhhllz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_col_headings {
+#impsxhhllz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1319,7 +1319,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_col_heading {
+#impsxhhllz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1339,7 +1339,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#jgmolpchvb .gt_column_spanner_outer {
+#impsxhhllz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1351,15 +1351,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#jgmolpchvb .gt_column_spanner_outer:first-child {
+#impsxhhllz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#jgmolpchvb .gt_column_spanner_outer:last-child {
+#impsxhhllz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#jgmolpchvb .gt_column_spanner {
+#impsxhhllz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1371,11 +1371,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#jgmolpchvb .gt_spanner_row {
+#impsxhhllz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#jgmolpchvb .gt_group_heading {
+#impsxhhllz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1401,7 +1401,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#jgmolpchvb .gt_empty_group_heading {
+#impsxhhllz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1416,15 +1416,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#jgmolpchvb .gt_from_md > :first-child {
+#impsxhhllz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#jgmolpchvb .gt_from_md > :last-child {
+#impsxhhllz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#jgmolpchvb .gt_row {
+#impsxhhllz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1443,7 +1443,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#jgmolpchvb .gt_stub {
+#impsxhhllz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1456,7 +1456,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#jgmolpchvb .gt_stub_row_group {
+#impsxhhllz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1470,15 +1470,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#jgmolpchvb .gt_row_group_first td {
+#impsxhhllz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#jgmolpchvb .gt_row_group_first th {
+#impsxhhllz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#jgmolpchvb .gt_summary_row {
+#impsxhhllz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1488,16 +1488,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#jgmolpchvb .gt_first_summary_row {
+#impsxhhllz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_first_summary_row.thick {
+#impsxhhllz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#jgmolpchvb .gt_last_summary_row {
+#impsxhhllz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1507,7 +1507,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_grand_summary_row {
+#impsxhhllz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1517,7 +1517,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#jgmolpchvb .gt_first_grand_summary_row {
+#impsxhhllz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1527,7 +1527,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_last_grand_summary_row_top {
+#impsxhhllz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1537,11 +1537,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_striped {
+#impsxhhllz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#jgmolpchvb .gt_table_body {
+#impsxhhllz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1550,7 +1550,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_footnotes {
+#impsxhhllz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1564,7 +1564,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_footnote {
+#impsxhhllz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1573,7 +1573,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#jgmolpchvb .gt_sourcenotes {
+#impsxhhllz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1587,7 +1587,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#jgmolpchvb .gt_sourcenote {
+#impsxhhllz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1595,63 +1595,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#jgmolpchvb .gt_left {
+#impsxhhllz .gt_left {
   text-align: left;
 }
 
-#jgmolpchvb .gt_center {
+#impsxhhllz .gt_center {
   text-align: center;
 }
 
-#jgmolpchvb .gt_right {
+#impsxhhllz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#jgmolpchvb .gt_font_normal {
+#impsxhhllz .gt_font_normal {
   font-weight: normal;
 }
 
-#jgmolpchvb .gt_font_bold {
+#impsxhhllz .gt_font_bold {
   font-weight: bold;
 }
 
-#jgmolpchvb .gt_font_italic {
+#impsxhhllz .gt_font_italic {
   font-style: italic;
 }
 
-#jgmolpchvb .gt_super {
+#impsxhhllz .gt_super {
   font-size: 65%;
 }
 
-#jgmolpchvb .gt_footnote_marks {
+#impsxhhllz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#jgmolpchvb .gt_asterisk {
+#impsxhhllz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#jgmolpchvb .gt_indent_1 {
+#impsxhhllz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#jgmolpchvb .gt_indent_2 {
+#impsxhhllz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#jgmolpchvb .gt_indent_3 {
+#impsxhhllz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#jgmolpchvb .gt_indent_4 {
+#impsxhhllz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#jgmolpchvb .gt_indent_5 {
+#impsxhhllz .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1797,23 +1797,23 @@ Figure&nbsp;4.2: Box Plot Example.
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">%&gt;%</span> </span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="tasgmbzotu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#tasgmbzotu table {
+<div id="bduriiehdz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bduriiehdz table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#tasgmbzotu thead, #tasgmbzotu tbody, #tasgmbzotu tfoot, #tasgmbzotu tr, #tasgmbzotu td, #tasgmbzotu th {
+#bduriiehdz thead, #bduriiehdz tbody, #bduriiehdz tfoot, #bduriiehdz tr, #bduriiehdz td, #bduriiehdz th {
   border-style: none;
 }
 
-#tasgmbzotu p {
+#bduriiehdz p {
   margin: 0;
   padding: 0;
 }
 
-#tasgmbzotu .gt_table {
+#bduriiehdz .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1839,12 +1839,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_caption {
+#bduriiehdz .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#tasgmbzotu .gt_title {
+#bduriiehdz .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1856,7 +1856,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#tasgmbzotu .gt_subtitle {
+#bduriiehdz .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1868,7 +1868,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#tasgmbzotu .gt_heading {
+#bduriiehdz .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1880,13 +1880,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_bottom_border {
+#bduriiehdz .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_col_headings {
+#bduriiehdz .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1901,7 +1901,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_col_heading {
+#bduriiehdz .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1921,7 +1921,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#tasgmbzotu .gt_column_spanner_outer {
+#bduriiehdz .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1933,15 +1933,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#tasgmbzotu .gt_column_spanner_outer:first-child {
+#bduriiehdz .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#tasgmbzotu .gt_column_spanner_outer:last-child {
+#bduriiehdz .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#tasgmbzotu .gt_column_spanner {
+#bduriiehdz .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1953,11 +1953,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#tasgmbzotu .gt_spanner_row {
+#bduriiehdz .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#tasgmbzotu .gt_group_heading {
+#bduriiehdz .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1983,7 +1983,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#tasgmbzotu .gt_empty_group_heading {
+#bduriiehdz .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1998,15 +1998,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#tasgmbzotu .gt_from_md > :first-child {
+#bduriiehdz .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#tasgmbzotu .gt_from_md > :last-child {
+#bduriiehdz .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#tasgmbzotu .gt_row {
+#bduriiehdz .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2025,7 +2025,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#tasgmbzotu .gt_stub {
+#bduriiehdz .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2038,7 +2038,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#tasgmbzotu .gt_stub_row_group {
+#bduriiehdz .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2052,15 +2052,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#tasgmbzotu .gt_row_group_first td {
+#bduriiehdz .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#tasgmbzotu .gt_row_group_first th {
+#bduriiehdz .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#tasgmbzotu .gt_summary_row {
+#bduriiehdz .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2070,16 +2070,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#tasgmbzotu .gt_first_summary_row {
+#bduriiehdz .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_first_summary_row.thick {
+#bduriiehdz .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#tasgmbzotu .gt_last_summary_row {
+#bduriiehdz .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2089,7 +2089,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_grand_summary_row {
+#bduriiehdz .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2099,7 +2099,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#tasgmbzotu .gt_first_grand_summary_row {
+#bduriiehdz .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2109,7 +2109,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_last_grand_summary_row_top {
+#bduriiehdz .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2119,11 +2119,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_striped {
+#bduriiehdz .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#tasgmbzotu .gt_table_body {
+#bduriiehdz .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2132,7 +2132,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_footnotes {
+#bduriiehdz .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2146,7 +2146,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_footnote {
+#bduriiehdz .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2155,7 +2155,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#tasgmbzotu .gt_sourcenotes {
+#bduriiehdz .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2169,7 +2169,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#tasgmbzotu .gt_sourcenote {
+#bduriiehdz .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2177,63 +2177,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#tasgmbzotu .gt_left {
+#bduriiehdz .gt_left {
   text-align: left;
 }
 
-#tasgmbzotu .gt_center {
+#bduriiehdz .gt_center {
   text-align: center;
 }
 
-#tasgmbzotu .gt_right {
+#bduriiehdz .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#tasgmbzotu .gt_font_normal {
+#bduriiehdz .gt_font_normal {
   font-weight: normal;
 }
 
-#tasgmbzotu .gt_font_bold {
+#bduriiehdz .gt_font_bold {
   font-weight: bold;
 }
 
-#tasgmbzotu .gt_font_italic {
+#bduriiehdz .gt_font_italic {
   font-style: italic;
 }
 
-#tasgmbzotu .gt_super {
+#bduriiehdz .gt_super {
   font-size: 65%;
 }
 
-#tasgmbzotu .gt_footnote_marks {
+#bduriiehdz .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#tasgmbzotu .gt_asterisk {
+#bduriiehdz .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#tasgmbzotu .gt_indent_1 {
+#bduriiehdz .gt_indent_1 {
   text-indent: 5px;
 }
 
-#tasgmbzotu .gt_indent_2 {
+#bduriiehdz .gt_indent_2 {
   text-indent: 10px;
 }
 
-#tasgmbzotu .gt_indent_3 {
+#bduriiehdz .gt_indent_3 {
   text-indent: 15px;
 }
 
-#tasgmbzotu .gt_indent_4 {
+#bduriiehdz .gt_indent_4 {
   text-indent: 20px;
 }
 
-#tasgmbzotu .gt_indent_5 {
+#bduriiehdz .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2410,8 +2410,8 @@ Figure&nbsp;4.2: Box Plot Example.
 <ol type="1">
 <li><p>Using both numerical and graphical summaries, describe the distribution of the first diastolic blood pressure reading <code>DBP1</code>among study participants. Then, create a column called <code>INCOME_CAT</code> with two categories: “low” for those whose income is at most 2 and “not low” otherwise and examine the bivariate distribution of <code>DBP1</code> and <code>INCOME_CAT</code>. Arrange the two plots next to each other. What do you notice?</p></li>
 <li><p>Subset the data to adults between the ages of 20 and 55. Then, explore how blood pressure varies by age and gender among this age group. Is there a visible trend in blood pressure with increasing age among either sex?</p></li>
-<li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum and maximum values for all continuous columns.</p></li>
-<li><p>Recreate the the plots in <a href="#fig-education-over-time" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> and <a href="#fig-bll-by-education" class="quarto-xref">Figure&nbsp;<span>4.4</span></a>. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.</p></li>
+<li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum, and maximum values for all continuous columns.</p></li>
+<li><p>Recreate the plots in <a href="#fig-education-over-time" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> and <a href="#fig-bll-by-education" class="quarto-xref">Figure&nbsp;<span>4.4</span></a>. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.</p></li>
 </ol>
 <div id="fig-education-over-time" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
