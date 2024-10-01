@@ -1,13 +1,22 @@
-quarto convert book/1_intro_to_r.qmd --output jupyter/1_intro_to_r.ipynb
-quarto convert book/2_data_structures.qmd --output jupyter/2_data_structures.ipynb
-quarto convert book/3_data_files.qmd --output jupyter/3_data_files.ipynb
-quarto convert book/4_exploratory_analysis.qmd --output jupyter/4_exploratory_analysis.ipynb
-quarto convert book/5_data_transformations_summaries.qmd --output jupyter/5_data_transformations_summaries.ipynb
-quarto convert book/6_merging_data.qmd --output jupyter/6_merging_data.ipynb
-quarto convert book/7_visualization_ggplot.qmd --output jupyter/7_visualization_ggplot.ipynb
-quarto convert book/8_distributions.qmd --output jupyter/8_distributions.ipynb
-quarto convert book/4_exploratory_analysis.qmd --output jupyter/4_exploratory_analysis.ipynb
-quarto convert book/9_hypothesis_tests.qmd --output jupyter/9_hypothesis_tests.ipynb
-quarto convert book/10_linear_regression.qmd --output jupyter/10_linear_regression.ipynb
-quarto convert book/11_logistic_regression.qmd --output jupyter/11_logistic_regression.ipynb
-quarto convert book/13_expanding_r_skills.qmd --output jupyter/13_expanding_r_skills.ipynb
+# Remove existing files
+rm *.ipynb
+rm -r images
+rm -r data
+
+# Copy over notebooks, images, and data
+cp -R ../book/images .
+cp -R ../book/data .
+cp -r ../book/*qmd .
+
+# Convert to jupyter notebook
+for filename in *.qmd; 
+do 
+    echo "${filename}"
+    jupyter_name=$(basename -- "$filename" .qmd)
+    cat jupyter_header.txt >> $filename; 
+    quarto convert $filename 
+    sed -i '_temp.ipynb' '/:::/,/:::/d' $jupyter_name.ipynb
+done
+
+rm *_temp.ipynb
+rm *.qmd
