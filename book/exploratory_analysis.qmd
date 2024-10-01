@@ -23,7 +23,7 @@ dim(NHANESsample)
 names(NHANESsample)
 ```
 
-To start our exploration, we will look at whether there are any missing values. We use the `complete.cases()` function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic an diastolic blood pressure measurements and do a complete case analysis using the `na.omit()` function to define our complete data frame `nhanes_df`.
+To start our exploration, we will look at whether there are any missing values. We use the `complete.cases()` function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic and diastolic blood pressure measurements and do a complete case analysis using the `na.omit()` function to define our complete data frame `nhanes_df`.
 
 ```{r}
 sum(complete.cases(NHANESsample))
@@ -106,21 +106,21 @@ We now turn our attention to relationships among multiple columns. When we have 
 table(nhanes_df$SMOKE, nhanes_df$SEX)
 ```
 
-To look at the sample distribution of a continuous column stratified by a cateogrical column, we could call the `summary()` function for each subset of the data. Below we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.
+To look at the sample distribution of a continuous column stratified by a categorical column, we could call the `summary()` function for each subset of the data. Below we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.
 
 ```{r}
 summary(nhanes_df$LEAD[nhanes_df$SEX=="Female"])
 summary(nhanes_df$LEAD[nhanes_df$SEX=="Male"])
 ```
 
-We could also observe this visually through a box plot. When given one categorical column and one continuous column, the `plot()` function creates a box plot. By default, the first argument is the x-axis and second argument is the y-axis.
+We could also observe this visually through a box plot. When given one categorical column and one continuous column, the `plot()` function creates a box plot. By default, the first argument is the x-axis and the second argument is the y-axis.
 
 ```{r}
 plot(nhanes_df$SEX, log(nhanes_df$LEAD), ylab="Log Blood Lead Level", 
      xlab="Sex")
 ```
 
-Alternatively, we could use the `boxplot()` function, which can be passed a formula. A formula is a string representation of how to group the data, where the left hand side is the continuous column and the right hand side is one or more categorical columns to group by. In the case below, we group by multiple columns, `SEX` and `EVER_SMOKE`, so our formula is `log(LEAD)~SEX+EVER_SMOKE`. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.
+Alternatively, we could use the `boxplot()` function, which can be passed a formula. A formula is a string representation of how to group the data, where the left-hand side is the continuous column and the right-hand side is one or more categorical columns to group by. In the case below, we group by multiple columns, `SEX` and `EVER_SMOKE`, so our formula is `log(LEAD)~SEX+EVER_SMOKE`. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.
 
 ```{r}
 boxplot(log(LEAD)~SEX+EVER_SMOKE, data=nhanes_df, 
@@ -247,9 +247,9 @@ For these exercises, we will continue using the `nhanes_df` data.
 
 2.  Subset the data to adults between the ages of 20 and 55. Then, explore how blood pressure varies by age and gender among this age group. Is there a visible trend in blood pressure with increasing age among either sex?
 
-3.  For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum and maximum values for all continuous columns.
+3.  For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum, and maximum values for all continuous columns.
 
-4.  Recreate the the plots in @fig-education-over-time and @fig-bll-by-education. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.
+4.  Recreate the plots in @fig-education-over-time and @fig-bll-by-education. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.
 
 ![Education Levels Over Time.](images/exploratory_analysis/education-over-time.png){#fig-education-over-time fig-align="center" width="80%"}
 
