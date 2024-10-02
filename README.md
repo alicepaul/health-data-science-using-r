@@ -8,7 +8,7 @@ This work is licensed under the Creative Commons Attribution 4.0 [CC BY 4.0](htt
 
 ## Contributors
 
-This book is written by [Alice Paul](alicepaul.github.io) with the support of Hannah Eglinton, Jialin Liu, Joanna Walsh, and Xinbei Yu. Please contact Alice Paul (alice_paul@brown.edu) with questions.
+This book is written by [Alice Paul](alicepaul.github.io) with the support of Tom Arnold, Hannah Eglinton, Jialin Liu, Joanna Walsh, and Xinbei Yu. Please contact Alice Paul (alice_paul@brown.edu) with questions.
 
 ## Credits
 
