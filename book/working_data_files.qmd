@@ -21,7 +21,7 @@ data(pain)
 dim(pain)
 ```
 
-In general, the data you will be using is not available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the **readr** package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset below using both of these functions: looking at the print output below, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
+In general, the data you will be using is not available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the **readr** package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset using both of these functions. Looking at the print output, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
 
 ```{r}
 read.csv("data/fake_names.csv")
@@ -60,7 +60,7 @@ head(pain)
 names(pain)
 ```
 
-Recall that the `$` operator can be used to access a single column. Alternatively, we can use double brackets `[[]]` to select a column. Below, we demonstrate both ways to print the first five values in the column with the patient's average pain intensity.
+Recall that the `$` operator can be used to access a single column. Alternatively, we can use double brackets `[[]]` to select a column. We demonstrate both ways to print the first five values in the column with the patient's average pain intensity.
 
 ```{r}
 pain$PAIN_INTENSITY_AVERAGE[1:5]
@@ -69,7 +69,7 @@ pain[["PAIN_INTENSITY_AVERAGE"]][1:5]
 
 ### Column Summaries
 
-To explore the range and distribution of a column's values, we can use some of the base R functions. For example, the `summary()` function is a useful way to summarize a numeric column's values. Below, we can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.
+To explore the range and distribution of a column's values, we can use some of the base R functions. For example, the `summary()` function is a useful way to summarize a numeric column's values. We can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.
 
 ```{r}
 summary(pain$PAIN_INTENSITY_AVERAGE)
@@ -84,7 +84,7 @@ mean(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 median(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 ```
 
-Additionally, the functions below are helpful for summarizing quantitative columns.
+Additionally, the following functions are helpful for summarizing quantitative columns.
 
 -   `range()` - returns the minimum and maximum values for a numeric vector x
 -   `quantile()` - returns the sample quantiles for a numeric vector
@@ -96,7 +96,7 @@ By default, the `quantile()` function returns the sample quantiles.
 quantile(pain$PAIN_INTENSITY_AVERAGE, na.rm = TRUE)
 ```
 
-However, we can pass in a list of probabilities to use instead. For example, below we find the 0.1 and 0.9 quantiles. Again, we add the `na.rm=TRUE` argument.
+However, we can pass in a list of probabilities to use instead. For example, in the following code we find the 0.1 and 0.9 quantiles. Again, we add the `na.rm=TRUE` argument.
 
 ```{r}
 quantile(pain$PAIN_INTENSITY_AVERAGE, probs = c(0.1, 0.9), na.rm=TRUE)
@@ -125,7 +125,7 @@ We can also use the `summary()` function for categorical variables. In this case
 summary(pain$PAT_SEX)
 ```
 
-For categorical columns, it is also useful to use the `table()` function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()` function to convert the counts to proportions. Below, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
+For categorical columns, it is also useful to use the `table()` function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()` function to convert the counts to proportions. Using these functions, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
 
 ```{r}
 table(pain$PAT_SEX, useNA="always")
@@ -156,13 +156,13 @@ pain_body_map <- pain[, body_map_cols]
 head(pain_body_map)
 ```
 
-I now compute the row sums and column sums on this subset of data. The row sum for each patient is the total number of body parts in which they experience pain, whereas the column sum for each pain region is the total number of patients who experience pain in that area. The histogram below shows that most people select a low number of total regions.
+I now compute the row sums and column sums on this subset of data. The row sum for each patient is the total number of body parts in which they experience pain, whereas the column sum for each pain region is the total number of patients who experience pain in that area. The following histogram shows that most people select a low number of total regions.
 
 ```{r}
 hist(rowSums(pain_body_map))
 ```
 
-We can also see that some body parts are more often selected than others. We create a vector called `perc_patients` below by finding the number of patients who selected each region divided by the total number of patients. The histogram shows that some body regions are selected by over 50% of patients!
+We can also see that some body parts are more often selected than others. We create a vector called `perc_patients` by finding the number of patients who selected each region divided by the total number of patients. The histogram shows that some body regions are selected by over 50% of patients!
 
 ```{r}
 perc_patients <- colSums(pain_body_map, na.rm=TRUE) /
@@ -176,7 +176,7 @@ We use the `which.max()` function to see that the 55th region `X219` is selected
 which.max(perc_patients)
 ```
 
-Another pair of useful functions are `pmin()` and `pmax()`. These functions take at least two vectors and find the pairwise minimum or maximum across those vectors, as shown below. For example, suppose you had two vectors,
+Another pair of useful functions are `pmin()` and `pmax()`. These functions take at least two vectors and find the pairwise minimum or maximum across those vectors, as shown in the subsequent code. 
 
 ```{r}
 v1 = c(5, 9, 12)
@@ -191,7 +191,7 @@ lower_back <- pmax(pain_body_map$X218, pain_body_map$X219)
 prop.table(table(lower_back))
 ```
 
-We might want to store the total number of pain regions and our indicator of whether or not a patient has lower back pain as new columns. We use our code above to create new columns in the pain data using the `$` operator. To be consistent with the column naming in the data, we use all upper case for our column names. The `dim()` function shows that our data has grown by two columns, as expected.
+We might want to store the total number of pain regions and our indicator of whether or not a patient has lower back pain as new columns. We create new columns in the pain data using the `$` operator in the previous code chunk. To be consistent with the column naming in the data, we use all upper case for our column names. The `dim()` function shows that our data has grown by two columns, as expected.
 
 ```{r}
 pain$NUM_REGIONS <- rowSums(pain_body_map)
@@ -199,12 +199,14 @@ pain$LOWER_BACK <- lower_back
 dim(pain)
 ```
 
-Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function, which takes in three arguments. The first argument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The first example below finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. In the second example, we find the sum of the body pain regions over the columns, which is equivalent to the example using `colSums()` above. In this case, we added the `na.rm=TRUE` argument. The `apply()` function passes any additional arguments to the function `FUN`.
+Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function, which takes in three arguments. The first argument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The subsequent code finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. 
 
 ```{r}
 any_selected <- apply(pain_body_map, 1, max)
 min(any_selected, na.rm=TRUE)
 ```
+
+In a second example, we find the sum of the body pain regions over the columns, which is equivalent to the previous example using `colSums()`. In this case, we added the `na.rm=TRUE` argument. The `apply()` function passes any additional arguments to the function `FUN`.
 
 ```{r}
 perc_patients <- apply(pain_body_map, 2, sum, na.rm=TRUE) /
@@ -224,13 +226,13 @@ Find the sum of each of the PROMIS measures across all patients using `apply()` 
 
 ### Missing, Infinite, and NaN Values
 
-As we saw above, this data contains some missing values, which are represented as `NA` in R. R treats these values as if they were unknown, which is why we have to add the `na.rm=TRUE` argument to functions like `sum()` and `max()`. In the example below, we can see that R figures out that 1 plus an unknown number is also unknown!
+As we have seen, this data contains some missing values, which are represented as `NA` in R. R treats these values as if they were unknown, which is why we have to add the `na.rm=TRUE` argument to functions like `sum()` and `max()`. In the following example, we can see that R figures out that 1 plus an unknown number is also unknown!
 
 ```{r}
 NA+1
 ```
 
-We can determine whether a value is missing using the function `is.na()`. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. Below we can see that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
+We can determine whether a value is missing using the function `is.na()`. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. We observe that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
 
 ```{r}
 sum(is.na(pain$PATIENT_NUM))
@@ -286,7 +288,7 @@ Another special value in R is `NaN`, which stands for "Not a Number". For exampl
 0/0
 ```
 
-Looking back at the missing values, there are two useful functions for selecting the complete cases in a data frame. The `na.omit()` function returns the data frame with incomplete cases removed, whereas `complete.cases()` returns TRUE/FALSE values for each row indicating whether each row is complete, which we can then use to select the rows with TRUE values. Below, we see both approaches select the same number of rows.
+Looking back at the missing values, there are two useful functions for selecting the complete cases in a data frame. The `na.omit()` function returns the data frame with incomplete cases removed, whereas `complete.cases()` returns TRUE/FALSE values for each row indicating whether each row is complete, which we can then use to select the rows with TRUE values. In the following code, we see both approaches select the same number of rows.
 
 ```{r}
 pain_sub1 <- na.omit(pain)
@@ -350,7 +352,7 @@ For those interested in doing more manipulations with dates, the **lubridate** p
 
 ## Using Logic to Subset, Summarize, and Transform
 
-Above, we used TRUE/FALSE values to select rows in a data frame. The logic operators in R allow us to expand on this capability to write more complex logic. The operators are given below.
+We have already seen how to use TRUE/FALSE values to select rows in a data frame. The following logic operators in R allow us to expand on this capability to write more complex logic. 
 
 -   `<` less than
 -   `<=` less than or equal to
@@ -360,7 +362,7 @@ Above, we used TRUE/FALSE values to select rows in a data frame. The logic opera
 -   `!=` not equal to
 -   `a %in% b` a's value is in a vector of values b
 
-The first six operators are a direct comparison between two values and are demonstrated below.
+The first six operators are a direct comparison between two values.
 
 ```{r}
 2 < 2
@@ -378,7 +380,7 @@ The operators assume there is a natural ordering or comparison between values. F
 TRUE < FALSE
 ```
 
-The `%in%` operator is slightly different. This operator checks whether a value is in a set of possible values. Below, we can check whether values are in the set `c(4,1,2)`.
+The `%in%` operator is slightly different. This operator checks whether a value is in a set of possible values. For example, we can check whether values are in the set `c(4,1,2)`.
 
 ```{r}
 1 %in% c(4, 1, 2)
@@ -394,7 +396,7 @@ Additionally, we can use the following operators, which allow us to negate or co
 -   `any(x)` - the **any** function checks whether any value in x is TRUE (equivalent to using an OR operator `|` between all values)
 -   `all(x)` - the **all** function checks whether all values in x are TRUE (equivalent to using an AND operator `&` between all values)
 
-Some simple examples for each are given below.
+Some simple examples for each are given in the following code chunk.
 
 ```{r}
 !(2 < 3)
@@ -460,7 +462,7 @@ table(pain$PAT_RACE)
 
 ### Other Selection Functions
 
-Above, we selected rows using TRUE/FALSE Boolean values. Instead, we could have also used the `which()` function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
+In the previous code, we selected rows using TRUE/FALSE Boolean values. Instead, we could have also used the `which()` function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
 
 ```{r}
 pain$PAT_RACE[which(pain$PAT_RACE == "DECLINED")] <- "NOT SPECIFIED"
@@ -480,7 +482,7 @@ table(pain$PAT_RACE)
 ::: {.content-visible when-format="html"}
 ## Recap Video
 
-In the video below, we reference the population mean and standard deviations for the instrument variables in the data. Use the help operator (`?pain`) to refresh your memory about these variables.
+In this video, we reference the population mean and standard deviations for the instrument variables in the data. Use the help operator (`?pain`) to refresh your memory about these variables.
 
 {{< video https://www.youtube.com/embed/EU0UJN68OWQ width="700" height="500" >}}
 :::

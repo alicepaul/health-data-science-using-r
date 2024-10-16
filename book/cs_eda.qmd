@@ -1,6 +1,6 @@
 # Case Study: Exploratory Data Analysis {#sec-cs-eda}
 
-In this chapter, we will demonstrate a short exploratory analysis as a case study. This case study will focus on Covid-19 cases and deaths during 2020 using the `covidcases` and `mobility` datasets from the **HDSinRdata** package. A new package that will be used in this case study is **usmap** package [@R-usmap], which allows us to easily create spatial plots of the United States. 
+In this chapter, we demonstrate a short exploratory analysis as a case study. This case study focuses on COVID-19 cases and deaths during 2020 using the `covidcases` and `mobility` datasets from the **HDSinRdata** package. A new package that is used in this case study is **usmap** package [@R-usmap], which allows us to easily create spatial plots of the United States. 
 
 ```{r}
 #| results: 'hide'
@@ -17,7 +17,7 @@ library(usmap)
 
 ## Preprocessing
 
-We start by cleaning and merging our data. The `covidcases` data contains weekly confirmed Covid-19 cases and deaths at the state and county level in 2020. As the data description notes, some of these values may be negative due to data discrepancies in the cumulative counts data. The `mobility` data contains daily mobility statistics by state. 
+We start by cleaning and merging our data. The `covidcases` data contains weekly confirmed COVID-19 cases and deaths at the state and county level in 2020. As the data description notes, some of these values may be negative due to data discrepancies in the cumulative counts data. The `mobility` data contains daily mobility statistics by state. 
 
 ```{r}
 # Read in data
@@ -25,11 +25,11 @@ data(covidcases)
 data(mobility)
 ```
 
-First, we look at the columns in our data. We convert the date columns in the mobility data to be recognized as a date using the `as.Date()` function. The `covidcases` data has the week number of 2020. We will create a similar column for the mobility data.
+First, we look at the columns in our data. We convert the date columns in the mobility data to be recognized as a date using the `as.Date()` function. The `covidcases` data has the week number of 2020. We create a similar column for the mobility data.
 
 ```{r}
 # Convert to date format and find week
-mobility$date <- as.Date(mobility$date, formula="%Y-%M-%D")
+mobility$date <- as.Date(mobility$date, formula = "%Y-%M-%D")
 mobility$week <- week(mobility$date)
 ```
 
@@ -39,7 +39,7 @@ This allows us to summarize the mobility for a state across each week.
 # Find average mobility for week
 mobility_week <- mobility %>%
   group_by(state, week) %>%
-  summarize(m50 = mean(m50, na.rm=TRUE), .groups="drop") 
+  summarize(m50 = mean(m50, na.rm=TRUE), .groups = "drop") 
 head(mobility_week)
 ```
  
@@ -49,37 +49,37 @@ For both of our datasets, we want to check whether each state was observed acros
 # Find number of dates recorded for each state
 table(mobility_week$state)
 ```
-For the `covidcases` data, our data is at the county level. We will need to summarize the data instead. In this case, some states were observed for fewer weeks than others. 
+For the `covidcases` data, our data is at the county level. We need to summarize the data instead. In this case, some states were observed for fewer weeks than others. 
 
 ```{r}
 # Find state names and number of weeks recorded for each state
 unique(covidcases$state)
 num_wks <- covidcases %>%
   group_by(state) %>%
-  summarize(num_weeks = n_distinct(week), .groups="drop")
+  summarize(num_weeks = n_distinct(week), .groups = "drop")
 summary(num_wks)
 ```
 
-Note that D.C. has been written differently for each data source. We will update this name in the mobility data.
+Note that D.C. is written differently for each data source. We update this name in the mobility data.
 
 ```{r}
 mobility_week$state[mobility_week$state == "Washington, D.C."] <- 
   "District of Columbia"
 ```
 
-After checking the formatting of the `state` and `week` columns, we can now merge our data together. In this case, we want to add the mobility data to the case data and will use a `left_join()`. 
+After checking the formatting of the `state` and `week` columns, we can now merge our data together. In this case, we want to add the mobility data to the case data and use a `left_join()`. 
 
 ```{r}
 # Join cases and mobility data
 covid <- left_join(covidcases, mobility_week, by = c("state", "week"))
 ```
 
-Next, we want to get some simple information about the continuous variables in our data. We observe two things. First, we can see the negative values the data description warned us about, and second, there is no missing data.
+Next, we want to get some simple information about the continuous variables in our data. We observe two key points. First, we can see the negative values the data description warned us about, and second, there is no missing data.
 
 ```{r}
-summary(covid[,c("weekly_cases", "weekly_deaths", "m50")])
+summary(covid[, c("weekly_cases", "weekly_deaths", "m50")])
 ```
-These negative numbers are clear data discrepancies. When showing the distribution of cases in our exploratory analysis we may choose to either code these as 0 or NA. We decide to code them as NA.
+These negative numbers are clear data discrepancies. When showing the distribution of cases in our exploratory analysis we may choose to either code these as 0 or NA. We decide to recode these negative values as NA.
 
 ```{r}
 # Set negative counts to NA
@@ -93,7 +93,7 @@ covid$weekly_deaths <- replace(covid$weekly_deaths,
 
 ```
 
-As the last step in our pre-processing, we will add in the state abbreviation and region for each state using the `state.name` and `state.region` vectors available in R. We code D.C. to be in the same region as Maryland and Virginia.
+As the last step in our pre-processing, we add in the state abbreviation and region for each state using the `state.name` and `state.region` vectors available in R. We code D.C. to be in the same region as Maryland and Virginia.
 
 ```{r, message = FALSE}
 # Add region and abbreviation and remove county
@@ -111,7 +111,7 @@ head(covid)
 
 ## Mobility and Cases Over Time
 
-Now that our data is merged and cleaned, we start exploring mobility and cases by region. The summary table below shows that these measures did differ by region overall.
+Now that our data are merged and cleaned, we start exploring mobility and cases by region. The following summary table shows that these measures did differ by region overall.
 
 ```{r}
 covid %>%
@@ -152,7 +152,7 @@ pmob2 <- covid %>%
 pmob1+pmob2
 ```
 
-We then look at cases and deaths by region. A limitation of this data is that we do not have population counts which would allow us to standardize these numbers. However, we do use a secondary y-axis using the `sec_axis()` function within `scale_y_continuous()` to allow us to plot deaths and cases together. In this case, the secondary axis is scaled by 1/10th of the primary axis. 
+We then look at cases and deaths by region. A limitation of these data are that we do not have population counts which would allow us to standardize these numbers. However, we do use a secondary y-axis using the `sec_axis()` function within `scale_y_continuous()` to allow us to plot deaths and cases together. In this case, the secondary axis is scaled by 1/10th of the primary axis. 
 
 ```{r}
 # Change in number cases over time, per region
@@ -161,7 +161,7 @@ covid %>%
   group_by(region, week) %>%
   summarize(weekly_cases = sum(weekly_cases, na.rm = TRUE),
             weekly_deaths = sum(weekly_deaths, na.rm = TRUE),
-            .groups="drop") %>%
+            .groups = "drop") %>%
 ggplot() +
   geom_line(aes(x = week, y = weekly_cases, color = region, 
                 linetype = "Cases")) + 
@@ -170,7 +170,7 @@ ggplot() +
   scale_y_continuous(name = "Average Weekly Cases",
                      sec.axis = sec_axis(~./10, 
                           name = "Average Weekly Deaths"))+
-  scale_linetype(name="Measure") +
+  scale_linetype(name = "Measure") +
   labs(x = "Week in 2020", color = "Region", 
        title = "Weekly Cases Over Time by Region") +
   theme_bw()
@@ -182,11 +182,11 @@ To look at how mobility and cases are related, we look at a scatter plot of mobi
 ```{r}
 covid_ca <- covid %>% filter(state == "California")
 ggplot(covid_ca)+
-  geom_point(aes(x=weekly_cases, y = m50), na.rm=TRUE) +
+  geom_point(aes(x = weekly_cases, y = m50), na.rm = TRUE) +
   labs(x = "Weekly Cases", y = "Average Mobility")
 ```
 
-This motivates us to look at the correlation between these two columns by state. We plot this using the `plot_usmap()` function from the **usmap** package. Interestingly, we observe different relationships throughout the country but none of the correlations are that strong.
+This motivates us to look at the correlation between these two columns by state. We plot this using the `plot_usmap()` function from the **usmap** package. Interestingly, we observe different relationships throughout the country, but none of the correlations are particularly strong.
 
 ```{r}
 # Calculate and plot correlation between cases and mobility, y state
@@ -204,7 +204,7 @@ plot_usmap(regions = "states", data = covid_cor,
 
 ```
 
-Last, we look at how the total cases and deaths are related to each other. This shows how the Northeast suffered more deaths per cases overall, which may be related to the lower mobility and negative correlation between mobility and cases observed earlier. 
+Last, we look at how the total cases and deaths are related to each other. This shows that the Northeast suffered more deaths per case overall, which may be related to the lower mobility and negative correlation between mobility and cases observed earlier. 
 
 ```{r, warning = FALSE}
 # Relationship between cases and deaths summarized
@@ -215,7 +215,7 @@ covid %>%
             .groups = "drop") %>%
 ggplot() + 
   geom_label(aes(x = total_cases, y = total_deaths, color = region,
-                 label = state_abb), size=1.5) + 
+                 label = state_abb), size = 1.5) + 
   labs(x = "Total Cases", y = "Total Deaths", color = "Region") +
   theme_bw()
 

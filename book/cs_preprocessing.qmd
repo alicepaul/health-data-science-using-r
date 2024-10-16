@@ -1,6 +1,6 @@
 # Case Study: Pre-Processing Data {#sec-cs-preprocessing}
 
-In this chapter, we will put some of our R skills together in a case study. This case study will focus on data cleaning and pre-processing. We will use the `tb_diagnosis_raw` data from the **HDSinRdata** package. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal will be to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We will use the **tidyverse** packages as well as the summary tables from **gtsummary**.
+In this chapter, we put some of our R skills together in a case study. This case study focuses on data cleaning and pre-processing. We use the `tb_diagnosis_raw` data from the **HDSinRdata** package. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse** packages as well as the summary tables from **gtsummary**.
 
 ```{r}
 #| results: 'hide'
@@ -13,7 +13,7 @@ library(gt)
 library(gtsummary)
 ```
 
-To start, read in the data and read the description of the original columns. Some things to note in the data documentation are the ways unknown, missing, or refused values are coded as well as how some of the columns are related to each other.
+To begin, read in the data and review the description of the original columns. Some things to note in the data documentation are the ways unknown, missing, or refused values are coded as well as how some of the columns are related to each other.
 
 ```{r, eval = FALSE}
 #| eval: false
@@ -21,10 +21,10 @@ To start, read in the data and read the description of the original columns. Som
 data("tb_diagnosis_raw")
 
 # Inspect variable descriptions
-?tb_diagnosis_raw
+# ?tb_diagnosis_raw
 ```
 
-To start, we will select variables needed for our analysis. In particular, we drop columns related to the participation in the survey and about seeking care. Since some of these variables contain long or vague names, we also rename most of the variables.
+To start, we select variables needed for our analysis. In particular, we drop columns related to the participation in the survey and about seeking care. Since some of these variables contain long or vague names, we also rename most of the variables.
 
 ```{r}
 # Select variables and rename
@@ -51,7 +51,7 @@ tbl_summary(tb_df) %>%
   as_gt()
 ```
 
-One thing we notice in the table is that some variables are coded 0/1 and others are coded 1/2. We want to standardize how these variables are represented. To start, we update our `tb` column. Additionally, we create a column `male` from the previous column `sex` to make the reference level clear. We can then drop the `sex` column.
+One observation from the table is that the coding of variables is inconsistent, with some using 0/1 and others using 1/2. We want to standardize how these variables are represented. To start, we update our `tb` column. Additionally, we create a column `male` from the previous column `sex` to make the reference level clear. We can then drop the `sex` column.
 
 ```{r}
 # Re-code binary variables to 0/1 instead of 1/2
@@ -96,12 +96,12 @@ tb_df$past_tb <- case_when(tb_df$past_tb == 1 ~ 1,
 
 ```
 
-The next variable we will clean is `education`. First, we need to code NA values correctly. We can then observe the distribution of years of education.
+The next variable we clean is `education`. First, we need to code NA values correctly. We can then observe the distribution of years of education.
 
 ```{r}
 # Code NA values and look at education distribution
 tb_df$education[tb_df$education == 99] <- NA
-hist(tb_df$education, xlab="Years of Education", 
+hist(tb_df$education, xlab = "Years of Education", 
      main = "Histogram of Education Years")
 ```
 
@@ -115,7 +115,7 @@ tb_df$hs_less <- case_when(tb_df$education <= 12 ~ 1,
 tb_df <- tb_df %>% select(-c(education))
 ```
 
-There are several variables in the data related to how long a person has experienced symptoms. Below, we can see that the unit of the symptoms, recorded in `length_symp_unit_fac`, determines which other column is entered. For example, if `length_symp_unit_fac == 1`, then the only column without an NA value will be `length_symp_days_fc`. 
+There are several variables in the data related to how long a person has experienced symptoms. In the following code, we can see that the unit of the symptoms, recorded in `length_symp_unit_fac`, determines which other column is entered. For example, if `length_symp_unit_fac == 1`, then the only column without an NA value is `length_symp_days_fc`. 
 
 ```{r}
 tb_df %>%
@@ -128,7 +128,7 @@ tb_df %>%
 Additionally, these measurements are positive integer values.
 
 ```{r}
-min(tb_df$length_symp_days_fac, na.rm=TRUE)
+min(tb_df$length_symp_days_fac, na.rm = TRUE)
 is.integer(tb_df$length_symp_days_fac)
 ```
 
@@ -176,7 +176,7 @@ Last, we convert all variables to factors.
 tb_df[] <- lapply(tb_df, function(x){return(as.factor(x))})
 ```
 
-Our final data is shown below. The `add_overall()` function includes the overall summary statistics in addition to our stratified summaries. Our summary table looks similar to the one in the paper. However, it looks like we have a few more observations included. Additionally, our education variable shows a lower percentage of observations with post-high school education and positive HIV status. 
+Our final data is summarized in the following table. The `add_overall()` function includes the overall summary statistics in addition to our stratified summaries. Our summary table looks similar to the one in the paper. However, it looks like we have a few more observations included. Additionally, our education variable shows a lower percentage of observations with post-high school education and positive HIV status. 
 
 
 ```{r}
