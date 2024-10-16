@@ -5,7 +5,7 @@ This chapter will build on the last and continue with regression analysis in R. 
 
 The data used in this chapter is from the 2021 National Youth Tobacco Survey (NYTS) [@nyts]. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. We will use logistic regression to examine whether survey setting was associated with youth reporting of current tobacco use similar to the analysis presented in @park2023impact. Note that we ignore survey weights for this analysis.
 
-We will use the **broom** package again to present the estimated coefficients, the **tidyverse** package to create a calibration plots, the **lmtest** [@R-lmtest] package to perform likelihood ratio tests, and the **pROC** package [@R-pROC] to create receiver operating characteristic curves.
+We will use the **broom** package again to present the estimated coefficients, the **tidyverse** package to create a calibration plot, the **lmtest** [@R-lmtest] package to perform likelihood ratio tests, and the **pROC** package [@R-pROC] to create receiver operating characteristic curves.
 
 ```{r}
 #| results: 'hide'
@@ -48,7 +48,7 @@ nyts$location <- ifelse(nyts$location ==
 nyts$location <- as.factor(nyts$location)
 ```
 
-To start, we will create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, and race and ethnicity. Note that we specify our formula and data as with the `lm()` function. We then use the `summary()` function again to print a summary of this fitted model. The output is slightly different from an `lm` object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the `lm()` function and is not demonstrated in this chapter.
+To start, we will create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, race, and ethnicity. Note that we specify our formula and data as with the `lm()` function. We then use the `summary()` function again to print a summary of this fitted model. The output is slightly different from an `lm` object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the `lm()` function and is not demonstrated in this chapter.
 
 ```{r}
 mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + 
@@ -80,14 +80,14 @@ hist(resid(mod_start, type="pearson"), main = "Pearson Residuals")
 hist(resid(mod_start, type="deviance"), main = "Deviance Residuals")
 ```
 
-To further evaluate the fit of our model, we may want to observe the predicted probabilities. The `predict()` function by default will return the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If want to find the predicted probabilities, we can update the argument by specifying `type="response"`. Additionally, we can predict on data not used to train the model by using the argument `newdata`. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the `glm()` function (and `lm()` function) drop any observations with NA values when training. In the last chapter, we omitted incomplete cases prior to analysis so that the predicted probabilities corresponded directly to the rows in our data.
+To further evaluate the fit of our model, we may want to observe the predicted probabilities. The `predict()` function by default will return the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If we want to find the predicted probabilities, we can update the argument by specifying `type="response"`. Additionally, we can predict on data not used to train the model by using the argument `newdata`. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the `glm()` function (and `lm()` function) drop any observations with NA values when training. In the last chapter, we omitted incomplete cases prior to analysis so that the predicted probabilities corresponded directly to the rows in our data.
 
 ```{r}
 pred_probs <- predict(mod_start, type="response")
 length(pred_probs)
 ```
 
-If want to find the class for each observation used in fitting the model, we can use the model's output, which stores the model matrix `x` and the outcome vector `y`. We plot the distribution of estimated probabilities for each class. Note that all the predicted probabilities are below 0.5, the typical cut-off for prediction. This is in part due to the fact that we have such an imbalanced outcome.
+If we want to find the class for each observation used in fitting the model, we can use the model's output, which stores the model matrix `x` and the outcome vector `y`. We plot the distribution of estimated probabilities for each class. Note that all the predicted probabilities are below 0.5, the typical cut-off for prediction. This is in part due to the fact that we have such an imbalanced outcome.
 
 ```{r}
 ggplot() + 
@@ -99,7 +99,7 @@ ggplot() +
 
 ### Receiver Operating Characteristic (ROC) Curve
 
-We now plot the receiver operating characteristic (ROC) curve and compute the area under the curve (AUC). The `roc()` function from the **pROC** package builds an ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector `response` and predictor vector `predictor`. By default, with a 0/1 outcome, the `roc()` function will assume class 0 is controls and class 1 is cases. We can also specify this in the `levels` argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument `direction = ">"` if the opposite is true. We can plot the ROC curve by calling the `plot()` function. We can add some extra information by adding the AUC (`print.auc = TRUE`) and the threshold that maximizes sensitivity + specificity (`print.thres = TRUE`).
+We now plot the receiver operating characteristic (ROC) curve and compute the area under the curve (AUC). The `roc()` function from the **pROC** package builds a ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector `response` and predictor vector `predictor`. By default, with a 0/1 outcome, the `roc()` function will assume class 0 is controls and class 1 is cases. We can also specify this in the `levels` argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument `direction = ">"` if the opposite is true. We can plot the ROC curve by calling the `plot()` function. We can add some extra information by adding the AUC (`print.auc = TRUE`) and the threshold that maximizes sensitivity + specificity (`print.thres = TRUE`).
 
 ```{r}
 roc_mod <- roc(predictor=pred_probs, 
@@ -254,5 +254,5 @@ hist(nyts$num_e_cigs, main="Observed", xlab="Number E-Cigs")
 
 3.  According to your model from Question 2, what is the estimated probability of tobacco use for a girl with mostly C's, moderate psych distress, and a perceived tobacco use of 0.5? Use the `predict()` function to answer this question.
 
-4.  Construct an ROC curve for the model from Question 2 and find the AUC as well as the threshold that maximizes sensitivity and specificity.
+4.  Construct a ROC curve for the model from Question 2 and find the AUC as well as the threshold that maximizes sensitivity and specificity.
 

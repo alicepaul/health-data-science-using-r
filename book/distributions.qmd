@@ -26,7 +26,7 @@ sample(1:10, 1)
 
 ## Probability Distributions in R
 
-All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:
+All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, Poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:
 
 -   `r[dist]()`: generates random samples from the given distribution (e.g. `rnorm()`, `runif()`)\
 -   `d[dist]()`: density function for the distribution (e.g. `dnorm()`, `dunif()`)\
@@ -44,14 +44,14 @@ x <- rnorm(n = 100, mean = 5, sd = 1)
 hist(x)
 ```
 
-We can also input a vector instead of a single value for the `mean` or `sd` arguments if we want each sample to come from its own normal distribution. As an example, we generate 100 random numbers with the default standard deviation of 1 where half of the samples have mean 0 and the other half have mean 5.
+We can also input a vector instead of a single value for the `mean` or `sd` arguments if we want each sample to come from its own normal distribution. As an example, we generate 100 random numbers with the default standard deviation of 1 where half of the samples have a mean of 0 and the other half have a mean of 5.
 
 ```{r}
 x <- rnorm(n = 100, mean = rep(c(0,5), 50))
 hist(x)
 ```
 
-For the binomial distribution, the difference is that we need to specify a probability `p` and number of trials `size` (rather than `mean` and `sd` in the normal case) to specify the distribution. In the following code, we generate 100 random numbers following a binomial distribution with 10 trials and probability 0.5.
+For the binomial distribution, the difference is that we need to specify a probability `p` and number of trials `size` (rather than `mean` and `sd` in the normal case) to specify the distribution. In the following code, we generate 100 random numbers following a binomial distribution with 10 trials and a probability 0.5.
 
 ```{r}
 x <- rbinom(n = 100, p = 0.5, size = 10)
@@ -109,7 +109,8 @@ dbinom(4, size = 10, p = c(0.25, 0.5))
 
 ### Cumulative Distribution
 
-Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by `pnorm()`, which takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this is a fifty percent probability because the normal distribution is symmetric with mean equal to the median. In the following code, we verify this for two different values of the mean.
+Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by `pnorm()`, which takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this returns a 50% probability because the normal distribution is symmetric with mean equal to the median. In the following code, we verify this for two different values of the mean.
+
 
 ```{r}
 pnorm(0)
@@ -122,7 +123,8 @@ Since the binomial distribution is discrete, it can only take on integer values 
 pbinom(c(3, 3.5, 3.6, 4), size = 10, p = 0.5)
 ```
 
-We can also vary the parameters for the distribution by passing a vector for `size` and/or `p` to the cumulative distribution function. In the subsequent code chunk, we find the probability that $X \leq 3$ and the probability that $X \leq 4$ with 12 trials and probability 0.25 and with 10 trials and probability 0.5.
+We can also vary the parameters for the distribution by passing a vector for `size` and/or `p` to the cumulative distribution function. In the subsequent code chunk, we find the probability that $X \leq 3$ and the probability that $X \leq 4$ with 12 trials and a probability 0.25 and with 10 trials and a probability 0.5.
+
 
 ```{r}
 pbinom(c(3, 3, 4, 4), size = c(12, 10, 12, 10), 
