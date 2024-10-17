@@ -406,7 +406,7 @@ div.csl-indent {
 </header>
 
 
-<p>For this chapter, we will use the <code>NHANESsample</code> dataset seen in <a href="exploratory_analysis.html" class="quarto-xref">Chapter&nbsp;<span>4</span></a>. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted to replicate the preprocessing conducted by <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. We further replicate the regression analysis by <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span> in <a href="linear_regression.html" class="quarto-xref">Chapter&nbsp;<span>13</span></a>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
+<p>For this chapter, we use the <code>NHANESsample</code> dataset seen in <a href="exploratory_analysis.html" class="quarto-xref">Chapter&nbsp;<span>4</span></a>. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted to replicate the preprocessing conducted by <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. We further replicate the regression analysis by <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span> in <a href="linear_regression.html" class="quarto-xref">Chapter&nbsp;<span>13</span></a>. Use the help operator <code>?NHANESsample</code> to read the variable descriptions. Note that we ignore survey weights for this analysis.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -415,14 +415,14 @@ div.csl-indent {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"NHANESsample"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Our analysis will focus on using hypothesis testing to look at the association between hypertension and blood lead levels by sex. We first select some demographic and clinical variables that may be relevant, including age, sex, race, body mass index, and smoking status. We do a complete case analysis and drop any observations with missing data.</p>
+<p>Our analysis focuses on using hypothesis testing to look at the association between hypertension and blood lead levels by sex. We first select some demographic and clinical variables that we believe may be relevant, including age, sex, race, body mass index, and smoking status. We do a complete case analysis and drop any observations with missing data.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>NHANESsample <span class="ot">&lt;-</span> NHANESsample <span class="sc">%&gt;%</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"AGE"</span>, <span class="st">"SEX"</span>, <span class="st">"RACE"</span>, <span class="st">"SMOKE"</span>, <span class="st">"LEAD"</span>, <span class="st">"BMI_CAT"</span>, </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">"HYP"</span>, <span class="st">"ALC"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We start with a summary table stratified by hypertension status. As expected, we see statistically significant differences between the two groups across all included variables. We also observe higher blood lead levels and a higher proportion of male participants for those with hypertension.</p>
+<p>We begin with a summary table stratified by hypertension status. As expected, we see statistically significant differences between the two groups across all included variables. We also observe higher blood lead levels and a higher proportion of male participants for those with hypertension.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(NHANESsample, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"HYP"</span>),</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="fu">list</span>(SMOKE <span class="sc">~</span> <span class="st">"SMOKING STATUS"</span>,</span>
@@ -434,23 +434,23 @@ div.csl-indent {
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                           <span class="st">"**Hypertension Status**"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="mwzlhskkfg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mwzlhskkfg table {
+<div id="dasxqatcpx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dasxqatcpx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mwzlhskkfg thead, #mwzlhskkfg tbody, #mwzlhskkfg tfoot, #mwzlhskkfg tr, #mwzlhskkfg td, #mwzlhskkfg th {
+#dasxqatcpx thead, #dasxqatcpx tbody, #dasxqatcpx tfoot, #dasxqatcpx tr, #dasxqatcpx td, #dasxqatcpx th {
   border-style: none;
 }
 
-#mwzlhskkfg p {
+#dasxqatcpx p {
   margin: 0;
   padding: 0;
 }
 
-#mwzlhskkfg .gt_table {
+#dasxqatcpx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -476,12 +476,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_caption {
+#dasxqatcpx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mwzlhskkfg .gt_title {
+#dasxqatcpx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -493,7 +493,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#mwzlhskkfg .gt_subtitle {
+#dasxqatcpx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -505,7 +505,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#mwzlhskkfg .gt_heading {
+#dasxqatcpx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -517,13 +517,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_bottom_border {
+#dasxqatcpx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_col_headings {
+#dasxqatcpx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -538,7 +538,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_col_heading {
+#dasxqatcpx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -558,7 +558,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#mwzlhskkfg .gt_column_spanner_outer {
+#dasxqatcpx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -570,15 +570,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#mwzlhskkfg .gt_column_spanner_outer:first-child {
+#dasxqatcpx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mwzlhskkfg .gt_column_spanner_outer:last-child {
+#dasxqatcpx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mwzlhskkfg .gt_column_spanner {
+#dasxqatcpx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -590,11 +590,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#mwzlhskkfg .gt_spanner_row {
+#dasxqatcpx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mwzlhskkfg .gt_group_heading {
+#dasxqatcpx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -620,7 +620,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#mwzlhskkfg .gt_empty_group_heading {
+#dasxqatcpx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -635,15 +635,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#mwzlhskkfg .gt_from_md > :first-child {
+#dasxqatcpx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mwzlhskkfg .gt_from_md > :last-child {
+#dasxqatcpx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mwzlhskkfg .gt_row {
+#dasxqatcpx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -662,7 +662,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#mwzlhskkfg .gt_stub {
+#dasxqatcpx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -675,7 +675,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mwzlhskkfg .gt_stub_row_group {
+#dasxqatcpx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -689,15 +689,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#mwzlhskkfg .gt_row_group_first td {
+#dasxqatcpx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mwzlhskkfg .gt_row_group_first th {
+#dasxqatcpx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mwzlhskkfg .gt_summary_row {
+#dasxqatcpx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -707,16 +707,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mwzlhskkfg .gt_first_summary_row {
+#dasxqatcpx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_first_summary_row.thick {
+#dasxqatcpx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mwzlhskkfg .gt_last_summary_row {
+#dasxqatcpx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -726,7 +726,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_grand_summary_row {
+#dasxqatcpx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -736,7 +736,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mwzlhskkfg .gt_first_grand_summary_row {
+#dasxqatcpx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -746,7 +746,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_last_grand_summary_row_top {
+#dasxqatcpx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -756,11 +756,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_striped {
+#dasxqatcpx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mwzlhskkfg .gt_table_body {
+#dasxqatcpx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -769,7 +769,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_footnotes {
+#dasxqatcpx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -783,7 +783,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_footnote {
+#dasxqatcpx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -792,7 +792,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mwzlhskkfg .gt_sourcenotes {
+#dasxqatcpx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -806,7 +806,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mwzlhskkfg .gt_sourcenote {
+#dasxqatcpx .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -814,63 +814,63 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mwzlhskkfg .gt_left {
+#dasxqatcpx .gt_left {
   text-align: left;
 }
 
-#mwzlhskkfg .gt_center {
+#dasxqatcpx .gt_center {
   text-align: center;
 }
 
-#mwzlhskkfg .gt_right {
+#dasxqatcpx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mwzlhskkfg .gt_font_normal {
+#dasxqatcpx .gt_font_normal {
   font-weight: normal;
 }
 
-#mwzlhskkfg .gt_font_bold {
+#dasxqatcpx .gt_font_bold {
   font-weight: bold;
 }
 
-#mwzlhskkfg .gt_font_italic {
+#dasxqatcpx .gt_font_italic {
   font-style: italic;
 }
 
-#mwzlhskkfg .gt_super {
+#dasxqatcpx .gt_super {
   font-size: 65%;
 }
 
-#mwzlhskkfg .gt_footnote_marks {
+#dasxqatcpx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mwzlhskkfg .gt_asterisk {
+#dasxqatcpx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mwzlhskkfg .gt_indent_1 {
+#dasxqatcpx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mwzlhskkfg .gt_indent_2 {
+#dasxqatcpx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mwzlhskkfg .gt_indent_3 {
+#dasxqatcpx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mwzlhskkfg .gt_indent_4 {
+#dasxqatcpx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mwzlhskkfg .gt_indent_5 {
+#dasxqatcpx .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1075,7 +1075,7 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>We also visually show the distribution of blood lead levels (on a log scale) by sex and hypertension status. We can visually see that male observations tend to have higher blood lead levels and that having hypertension is associated with higher blood lead levels.</p>
+<p>We also plot the distribution of blood lead levels (on a log scale) by sex and hypertension status. We can visually see that male observations tend to have higher blood lead levels and that having hypertension is associated with higher blood lead levels.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(NHANESsample) <span class="sc">+</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>LEAD,</span>
@@ -1095,7 +1095,7 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>In <a href="distributions.html" class="quarto-xref">Chapter&nbsp;<span>10</span></a>, we explored that log blood lead levels could be approximated by a normal distribution. To test our hypothesis that there is a difference in mean log blood lead level between those with and without hypertension, we will use a two sample unpaired t-test. This shows a statistically significant difference between the two groups at the 0.05 level.</p>
+<p>In <a href="distributions.html" class="quarto-xref">Chapter&nbsp;<span>10</span></a>, we explored that log blood lead levels could be approximated by a normal distribution. To test our hypothesis that there is a difference in mean log blood lead level between those with and without hypertension, we use a two-sample unpaired t-test. This shows a statistically significant difference between the two groups at the 0.05 level.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(<span class="fu">log</span>(LEAD) <span class="sc">~</span> HYP, <span class="at">data =</span> NHANESsample)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
@@ -1110,7 +1110,7 @@ div.csl-indent {
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mean in group 0 mean in group 1 </span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;           0.161           0.459</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Last, we do repeat this test for a stratified analysis and put the results into a small table. For both groups, we find a statistically significant difference at the 0.05 level.</p>
+<p>Finally, we repeat this test for a stratified analysis and present the results in a concise table. For both groups, we find a statistically significant difference at the 0.05 level.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stratify the data</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>nhanes_male <span class="ot">&lt;-</span> NHANESsample[NHANESsample<span class="sc">$</span>SEX <span class="sc">==</span> <span class="st">"Male"</span>,]</span>
@@ -1131,7 +1131,7 @@ div.csl-indent {
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   Male     -14.7  1.84e-48</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Female     -32.3 4.35e-221</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>In <a href="linear_regression.html" class="quarto-xref">Chapter&nbsp;<span>13</span></a>, we will use linear regression to further explore the association between blood lead level and hypertension adjusting for other potential confounders.</p>
+<p>In <a href="linear_regression.html" class="quarto-xref">Chapter&nbsp;<span>13</span></a>, we use linear regression to further explore the association between blood lead level and hypertension adjusting for other potential confounders.</p>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">

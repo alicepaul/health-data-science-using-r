@@ -473,7 +473,7 @@ window.Quarto = {
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>end_time <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>end_time <span class="sc">-</span> start_time</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time difference of 0.0365 secs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Time difference of 0.0353 secs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using <code>Sys.time()</code> is a simple approach to time our code. The function <code>microbenchmark()</code> from the <strong>microbenchmark</strong> package allows us to replicate an expression multiple times to get an average execution time. We can pass multiple expressions to this function and specify a unit of measurement and number of times to replicate each expression.</p>
 <pre><code>microbenchmark(first expression, second expression, units ="ms", 
@@ -491,7 +491,7 @@ window.Quarto = {
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}, <span class="at">unit =</span> <span class="st">"ms"</span>)</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      expr  min   lq mean median   uq  max neval</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  pain_inc 27.8 29.4 30.5   30.2 31.3 38.9   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  pain_inc 27.2 28.7 29.7   29.6 30.5 36.8   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="use-fast-and-vectorized-functions" class="level2" data-number="20.1">
 <h2 data-number="20.1" class="anchored" data-anchor-id="use-fast-and-vectorized-functions"><span class="header-section-number">20.1</span> Use Fast and Vectorized Functions</h2>
@@ -510,9 +510,12 @@ window.Quarto = {
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>               <span class="at">builtin_sum =</span> <span class="fu">sum</span>(x),</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>               <span class="at">unit =</span> <span class="st">"ms"</span>)</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          expr      min     lq   mean   median      uq     max neval</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  sum_function 4.043371 4.1055 4.1787 4.137971 4.19404 7.01789   100</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   builtin_sum 0.000181 0.0002 0.0015 0.000509 0.00248 0.00875   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          expr      min       lq     mean   median       uq     max</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  sum_function 3.983809 4.067022 4.142133 4.109779 4.153998 6.99961</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   builtin_sum 0.000178 0.000196 0.000706 0.000282 0.000875 0.00436</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  neval</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    100</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This also simplifies our code to a single line. Looking back at our first example, we can also simplify our code. We did not need to loop through our data. Instead, we should use a vectorized approach that checks for pain improvement across all observations and the sum up the TRUE/FALSE values.</p>
 <div class="cell" data-layout-align="center">
@@ -523,8 +526,8 @@ window.Quarto = {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                                                                             expr</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  {     vector_pain = sum(pain$PAIN_INTENSITY_AVERAGE &lt;= pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP) }</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     min     lq   mean median     uq    max neval</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.0207 0.0222 0.0252 0.0228 0.0257 0.0614   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     min     lq  mean median     uq    max neval</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.0213 0.0217 0.028 0.0301 0.0306 0.0454   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This is much faster! Loops are notoriously slow in R so you will often hear the advice to avoid loops. Using apply functions like <code>apply()</code> and <code>sapply()</code> are loop-hiding functions. Using these functions instead of an explicit loop doesn’t improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code.</p>
 <p>The true functions that can improve efficiency over loops are <em>vectorized</em> functions, which can be evaluated on a vector of values. Vectorizing our code means that we are thinking about a vector approach rather than computing something for each element of the vector and looping through these values. A vectorized function return output that is the same dimensions as the input and operates on these elements in an efficient manner.</p>
@@ -536,9 +539,9 @@ window.Quarto = {
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  }, <span class="at">sqrt =</span> <span class="fu">sqrt</span>(x), <span class="at">unit =</span> <span class="st">"ms"</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       expr   min    lq  mean median    uq    max neval</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  loop_sqrt 8.658 8.833 9.128  8.960 9.152 12.992   100</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       sqrt 0.136 0.201 0.366  0.427 0.462  0.795   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       expr   min   lq  mean median    uq    max neval</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  loop_sqrt 8.559 8.72 8.897   8.78 8.927 12.056   100</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       sqrt 0.135 0.17 0.328   0.39 0.409  0.731   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="practice-question" class="level3" data-number="20.1.1">
 <h3 data-number="20.1.1" class="anchored" data-anchor-id="practice-question"><span class="header-section-number">20.1.1</span> Practice Question</h3>
@@ -596,11 +599,11 @@ window.Quarto = {
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>               <span class="at">unit =</span> <span class="st">"ms"</span>)</span>
 <span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                                         expr  min   lq mean median   uq</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                           code_promis1(pain) 1.39 1.52 1.72   1.58 1.76</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  code_promis2(pain$PROMIS_PHYSICAL_FUNCTION) 1.28 1.43 1.74   1.51 1.63</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                           code_promis1(pain) 1.35 1.43 1.58   1.45 1.50</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  code_promis2(pain$PROMIS_PHYSICAL_FUNCTION) 1.22 1.36 1.56   1.37 1.45</span></span>
 <span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   max neval</span></span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6.06   100</span></span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7.57   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6.55   100</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5.99   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another time when we create copies of objects is when we modify their size. Functions like <code>cbind()</code>, <code>rbind()</code>, and <code>c()</code> create a new object that needs to copy over information to create one vector, matrix, or data frame. If we know the size of the final vector, matrix, or data frame, we can pre-allocate that space and fill in values. This means that the computer won’t have to repeatedly find more space. For example, take a look at the two ways to simulate a random walk in one dimension below. In the first method, the length of the vector <code>v</code> changes on each iteration of the loop whereas in the second <code>v</code> always has length <code>n</code>.</p>
 <div class="cell" data-layout-align="center">
@@ -621,9 +624,9 @@ window.Quarto = {
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(<span class="fu">rw1</span>(<span class="dv">10000</span>), <span class="fu">rw2</span>(<span class="dv">10000</span>), <span class="at">unit=</span><span class="st">"ms"</span>)</span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        expr  min   lq  mean median    uq  max neval</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  rw1(10000) 9.15 9.80 10.31   10.0 10.34 13.9   100</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  rw2(10000) 7.38 7.63  8.24    7.8  7.98 17.0   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        expr  min   lq  mean median   uq  max neval</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  rw1(10000) 9.27 9.85 10.30  10.02 10.2 13.4   100</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  rw2(10000) 7.45 7.53  8.06   7.74  7.8 19.2   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This also works for data frames or matrices. Below, we generate a random matrix in three ways. The first creates the matrix with a single line, the second initializes an empty matrix and then fills in each row, and the last dynamically updates the size of the matrix on each iteration.</p>
 <div class="cell" data-layout-align="center">
@@ -653,9 +656,9 @@ window.Quarto = {
 <span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>               <span class="at">unit =</span> <span class="st">"ms"</span>)</span>
 <span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Unit: milliseconds</span></span>
 <span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              expr   min    lq  mean median    uq  max neval</span></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat1(100) 0.369 0.373 0.408  0.379 0.385 2.89   100</span></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat2(100) 0.922 0.954 1.015  0.985 0.998 4.44   100</span></span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat3(100) 1.758 1.829 2.326  1.902 2.182 9.65   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat1(100) 0.359 0.371 0.403  0.375 0.378 3.14   100</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat2(100) 0.935 0.945 1.011  0.973 1.002 4.37   100</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat3(100) 1.750 1.796 2.238  1.861 2.048 8.22   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This demonstrates that if you need to update the values of a vector, matrix, or data frame, try to do as much reassignment at once. For example, changing the a whole column at a time is better than changing the individual values. This avoids additional copies.</p>
 <section id="practice-question-1" class="level3" data-number="20.2.1">
@@ -715,8 +718,8 @@ random_walk <- function(nsteps = 10000){
 }
 microbenchmark(random_walk())
 #> Unit: milliseconds
-#>           expr  min   lq mean median  uq max neval
-#>  random_walk() 97.4 98.9  102    100 102 153   100
+#>           expr  min   lq mean median   uq max neval
+#>  random_walk() 92.9 95.5 98.2   96.8 98.7 150   100
 ```
 :::
 

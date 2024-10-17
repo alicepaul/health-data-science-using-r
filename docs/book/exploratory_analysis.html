@@ -423,7 +423,7 @@ div.csl-indent {
 </header>
 
 
-<p>In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we will learn how to conduct more exploratory analysis, focusing on the univariate and bivariate sample distributions of the data. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to create summary plots using the <strong>GGally</strong> package <span class="citation" data-cites="R-GGally">(<a href="references.html#ref-R-GGally" role="doc-biblioref">Schloerke et al. 2021</a>)</span> and tables using the <strong>gt</strong> <span class="citation" data-cites="R-gt">(<a href="references.html#ref-R-gt" role="doc-biblioref">Iannone et al. 2023</a>)</span> and <strong>gtsummary</strong> <span class="citation" data-cites="R-gtsummary">(<a href="references.html#ref-R-gtsummary" role="doc-biblioref">Sjoberg et al. 2023</a>)</span> packages.</p>
+<p>In the last chapter, we learned about loading data into R and practiced selecting and summarizing columns and rows of the data. In this chapter, we learn how to conduct more exploratory analysis, focusing on the univariate and bivariate sample distributions of the data. The first half focuses on using base R to create basic plots and summaries. In the second half, we show how to create summary plots using the <strong>GGally</strong> package <span class="citation" data-cites="R-GGally">(<a href="references.html#ref-R-GGally" role="doc-biblioref">Schloerke et al. 2021</a>)</span> and tables using the <strong>gt</strong> <span class="citation" data-cites="R-gt">(<a href="references.html#ref-R-gt" role="doc-biblioref">Iannone et al. 2023</a>)</span> and <strong>gtsummary</strong> <span class="citation" data-cites="R-gtsummary">(<a href="references.html#ref-R-gtsummary" role="doc-biblioref">Sjoberg et al. 2023</a>)</span> packages.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally) </span>
@@ -432,7 +432,7 @@ div.csl-indent {
 </div>
 <section id="univariate-distributions" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="univariate-distributions"><span class="header-section-number">4.1</span> Univariate Distributions</h2>
-<p>In this chapter, we will use a sample of the National Health and Nutrition Examination Survey <span class="citation" data-cites="nhanes">(<a href="references.html#ref-nhanes" role="doc-biblioref">Centers for Disease Control and Prevention (CDC) 1999-2018</a>)</span> containing lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering followed the analysis in <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. There are 31,625 observations in this sample. Use the help operator <code>?NHANESsample</code> to read the column descriptions.</p>
+<p>In this chapter, we use a sample of the National Health and Nutrition Examination Survey <span class="citation" data-cites="nhanes">(<a href="references.html#ref-nhanes" role="doc-biblioref">Centers for Disease Control and Prevention (CDC) 1999-2018</a>)</span> containing lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering followed the analysis in <span class="citation" data-cites="huang2022association">Huang (<a href="references.html#ref-huang2022association" role="doc-biblioref">2022</a>)</span>. There are 31,625 observations in this sample. Use the help operator <code>?NHANESsample</code> to read the column descriptions.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(NHANESsample)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(NHANESsample)</span>
@@ -445,7 +445,7 @@ div.csl-indent {
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] "DBP4"          "SBP1"          "SBP2"          "SBP3"         </span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] "SBP4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To start our exploration, we will look at whether there are any missing values. We use the <code>complete.cases()</code> function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic and diastolic blood pressure measurements and do a complete case analysis using the <code>na.omit()</code> function to define our complete data frame <code>nhanes_df</code>.</p>
+<p>To start our exploration, we look at whether there are any missing values. We use the <code>complete.cases()</code> function to observe that there are no complete cases. We also see that the subsequent blood pressure measurements and alcohol use have the highest percentage of missing values. For demonstration, we choose to only keep the first systolic and diastolic blood pressure measurements and do a complete case analysis using the <code>na.omit()</code> function to define our complete data frame <code>nhanes_df</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">complete.cases</span>(NHANESsample))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span>
@@ -463,7 +463,7 @@ div.csl-indent {
 </div>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(<span class="fu">subset</span>(NHANESsample, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">select=</span> <span class="sc">-</span><span class="fu">c</span>(SBP2, SBP3, SBP4, DBP2, DBP3, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">select =</span> <span class="sc">-</span><span class="fu">c</span>(SBP2, SBP3, SBP4, DBP2, DBP3, </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                                       DBP4)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In the last chapter, we introduced the <code>table()</code> and <code>summary()</code> functions to quickly summarize categorical and quantitative vectors. We can observe that over half of the observations never smoked and that the most recent NHANES cycle in the data is 2017-2018.</p>
@@ -478,9 +478,9 @@ div.csl-indent {
 </div>
 <p>We decide to select the most recent observations from NHANES 2017-2018 for our analysis in this chapter. We use the <code>subset()</code> function to select these rows.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">subset</span>(nhanes_df, nhanes_df<span class="sc">$</span>YEAR<span class="sc">==</span><span class="dv">2017</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> <span class="fu">subset</span>(nhanes_df, nhanes_df<span class="sc">$</span>YEAR <span class="sc">==</span> <span class="dv">2017</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>As shown above, smoking status has been coded into three categories: “NeverSmoke”, “QuitSmoke”, and “StillSmoke”. We want to create a new column to represent whether someone has ever smoked. To do so, we use the <code>ifelse()</code> function, which allows us to create a new vector using logic. The logic captured by this function is that we will take one value if we meet some condition(s) and we will take a second value otherwise. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value to use if we meet the condition(s), and the last argument is the value to use otherwise. We use this function to create a new vector <code>EVER_SMOKE</code> that is equal to “Yes” for those who are either still smoking or quit smoking and equal to “No” otherwise.</p>
+<p>As shown, smoking status has been coded into three categories: “NeverSmoke”, “QuitSmoke”, and “StillSmoke”. We want to create a new column to represent whether someone has ever smoked. To do so, we use the <code>ifelse()</code> function, which allows us to create a new vector using logic. The logic captured by this function is that we want to use one value if we meet some condition and we want to use a second value if the condition is not met. The first argument is a vector of TRUE/FALSE values representing the conditions, the next argument is the value or vector to use if we meet the condition(s), and the last argument is the value or vector to use otherwise. We use this function to create a new vector <code>EVER_SMOKE</code> that is equal to “Yes” for those who are either still smoking or quit smoking and equal to “No” otherwise.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nhanes_df<span class="sc">$</span>EVER_SMOKE <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(nhanes_df<span class="sc">$</span>SMOKE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"QuitSmoke"</span>, </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                                                      <span class="st">"StillSmoke"</span>), </span>
@@ -490,22 +490,18 @@ div.csl-indent {
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   No  Yes </span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1411 1173</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>summary()</code> and <code>table()</code> functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in <a href="working_data_files.html" class="quarto-xref">Chapter&nbsp;<span>3</span></a> that the <code>hist()</code> function creates a histogram plot. Below we use this function to plot a histogram of the log transformation of the lead column.</p>
+<p>If we did not want to store this new column, we could use the pipe operator <code>|&gt;</code> to send the output directly to the <code>table()</code> function. The pipe operator takes the result on the left hand side and passes it as the first argument to the function on the right hand side.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
-</figure>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ifelse</span>(nhanes_df<span class="sc">$</span>SMOKE <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"QuitSmoke"</span>, <span class="st">"StillSmoke"</span>), </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>       <span class="st">"Yes"</span>, <span class="st">"No"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   No  Yes </span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1411 1173</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-</div>
-<p>If we want to polish this figure, we can use some of the other optional arguments to the <code>hist()</code> function. For example, we may want to update the text <code>log(nhanes_df$lead)</code> in the title and x-axis. Below, we update the color, labels, and number of bins for the plot. The function <code>colors()</code> returns all recognized colors in R. The argument <code>breaks</code> specifies the number of bins to use to create the histogram, <code>col</code> specifies the color, <code>main</code> specifies the title of the plot, and <code>xlab</code> specifies the x-axis label (using <code>ylab</code> would specify the y-axis label). Read the documentation <code>?hist</code> for the full list of arguments available.</p>
+<p>The <code>summary()</code> and <code>table()</code> functions allow us to summarize the univariate sample distributions of columns. We may also want to plot these distributions. We saw in <a href="working_data_files.html" class="quarto-xref">Chapter&nbsp;<span>3</span></a> that the <code>hist()</code> function creates a histogram plot. We use this function to plot a histogram of the log transformation of the lead column.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD), <span class="at">breaks =</span> <span class="dv">30</span>, <span class="at">col=</span><span class="st">"blue"</span>, </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">"Histogram of Log Blood Lead Level"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Log Blood Lead Level"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -514,11 +510,11 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>For categorical columns, we may want to plot the counts in each category using a bar plot. The function <code>barplot()</code> asks us to specify the <code>names</code> and <code>heights</code> of the bars. To do so, we will need to store the counts for each category. Again, we update the color and labels.</p>
+<p>If we want to polish this figure, we can use some of the other optional arguments to the <code>hist()</code> function. For example, we may want to update the text <code>log(nhanes_df$lead)</code> in the title and x-axis. In the following code, we update the color, labels, and number of bins for the plot. The function <code>colors()</code> returns all recognized colors in R. The argument <code>breaks</code> specifies the number of bins to use to create the histogram, <code>col</code> specifies the color, <code>main</code> specifies the title of the plot, and <code>xlab</code> specifies the x-axis label (using <code>ylab</code> would specify the y-axis label). Read the documentation <code>?hist</code> for the full list of arguments available.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>smoke_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(nhanes_df<span class="sc">$</span>SMOKE)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="at">height=</span>smoke_counts, <span class="at">names=</span><span class="fu">names</span>(smoke_counts), </span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="st">"violetred"</span>, <span class="at">xlab=</span><span class="st">"Smoking Status"</span>, <span class="at">ylab=</span><span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD), <span class="at">breaks =</span> <span class="dv">30</span>, <span class="at">col =</span> <span class="st">"blue"</span>, </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histogram of Log Blood Lead Level"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Log Blood Lead Level"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -527,15 +523,28 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>With a bar plot, we can even specify a different color for each bar. To do so, <code>col</code> must be a vector of specified colors with the same length as the number of categories.</p>
+<p>For categorical columns, we may want to plot the counts in each category using a bar plot. The function <code>barplot()</code> asks us to specify the <code>names</code> and <code>heights</code> of the bars. To do so, we need to store the counts for each category. Again, we update the color and labels.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="at">height=</span>smoke_counts, <span class="at">names=</span><span class="fu">names</span>(smoke_counts), </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="fu">c</span>(<span class="st">"orange"</span>,<span class="st">"violetred"</span>,<span class="st">"blue"</span>),</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab=</span><span class="st">"Smoking Status"</span>, <span class="at">ylab=</span><span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>smoke_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(nhanes_df<span class="sc">$</span>SMOKE)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="at">height =</span> smoke_counts, <span class="at">names =</span> <span class="fu">names</span>(smoke_counts), </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="st">"violetred"</span>, <span class="at">xlab=</span><span class="st">"Smoking Status"</span>, <span class="at">ylab=</span><span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>With a bar plot, we can even specify a different color for each bar. To do so, <code>col</code> must be a vector of specified colors with the same length as the number of categories.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="at">height =</span> smoke_counts, <span class="at">names =</span> <span class="fu">names</span>(smoke_counts), </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"violetred"</span>, <span class="st">"blue"</span>),</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Smoking Status"</span>, <span class="at">ylab =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
@@ -554,47 +563,34 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 </figure>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="bivariate-distributions" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="bivariate-distributions"><span class="header-section-number">4.2</span> Bivariate Distributions</h2>
-<p>We now turn our attention to relationships among multiple columns. When we have two categorical columns, we can use the <code>table()</code> function to find the counts across all combinations. For example, below we look at the distribution of smoking status levels by sex. We observe that a higher percentage of female participants have never smoked.</p>
+<p>We now turn our attention to relationships among multiple columns. When we have two categorical columns, we can use the <code>table()</code> function to find the counts across all combinations. For example, we look at the distribution of smoking status levels by sex. We observe that a higher percentage of female participants have never smoked.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(nhanes_df<span class="sc">$</span>SMOKE, nhanes_df<span class="sc">$</span>SEX)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             </span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Male Female</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   NeverSmoke  596    815</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   QuitSmoke   390    241</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   StillSmoke  324    218</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(nhanes_df<span class="sc">$</span>SMOKE, nhanes_df<span class="sc">$</span>SEX)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;             </span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;              Male Female</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   NeverSmoke  596    815</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   QuitSmoke   390    241</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   StillSmoke  324    218</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To look at the sample distribution of a continuous column stratified by a categorical column, we could call the <code>summary()</code> function for each subset of the data. Below we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.</p>
+<p>To look at the sample distribution of a continuous column stratified by a categorical column, we can call the <code>summary()</code> function for each subset of the data. In the subsequent code, we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nhanes_df<span class="sc">$</span>LEAD[nhanes_df<span class="sc">$</span>SEX<span class="sc">==</span><span class="st">"Female"</span>])</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.10    0.47    0.77    0.98    1.21    8.67</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nhanes_df<span class="sc">$</span>LEAD[nhanes_df<span class="sc">$</span>SEX<span class="sc">==</span><span class="st">"Male"</span>])</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.05    0.70    1.09    1.46    1.66   22.01</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nhanes_df<span class="sc">$</span>LEAD[nhanes_df<span class="sc">$</span>SEX <span class="sc">==</span> <span class="st">"Female"</span>])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.10    0.47    0.77    0.98    1.21    8.67</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nhanes_df<span class="sc">$</span>LEAD[nhanes_df<span class="sc">$</span>SEX <span class="sc">==</span> <span class="st">"Male"</span>])</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    0.05    0.70    1.09    1.46    1.66   22.01</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We could also observe this visually through a box plot. When given one categorical column and one continuous column, the <code>plot()</code> function creates a box plot. By default, the first argument is the x-axis and the second argument is the y-axis.</p>
+<p>We can also observe this visually through a box plot. When given one categorical column and one continuous column, the <code>plot()</code> function creates a box plot. By default, the first argument is the x-axis and the second argument is the y-axis.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SEX, <span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD), <span class="at">ylab=</span><span class="st">"Log Blood Lead Level"</span>, </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Sex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Alternatively, we could use the <code>boxplot()</code> function, which can be passed a formula. A formula is a string representation of how to group the data, where the left-hand side is the continuous column and the right-hand side is one or more categorical columns to group by. In the case below, we group by multiple columns, <code>SEX</code> and <code>EVER_SMOKE</code>, so our formula is <code>log(LEAD)~SEX+EVER_SMOKE</code>. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">log</span>(LEAD)<span class="sc">~</span>SEX<span class="sc">+</span>EVER_SMOKE, <span class="at">data=</span>nhanes_df, </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"blue"</span>),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab=</span><span class="st">"Sex : Ever Smoked"</span>, <span class="at">ylab =</span> <span class="st">"Log Blood Lead Level"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SEX, <span class="fu">log</span>(nhanes_df<span class="sc">$</span>LEAD), <span class="at">ylab =</span> <span class="st">"Log Blood Lead Level"</span>, </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Sex"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -603,11 +599,11 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 </div>
 </div>
 </div>
-<p>To visualize the bivariate distributions between two continuous columns, we can use scatter plots. To create a scatter plot, we use the <code>plot()</code> function again. Below, we use this function to show the relationship between systolic and diastolic blood pressure.</p>
+<p>Alternatively, we can use the <code>boxplot()</code> function, which can be passed a formula. A formula is a string representation of how to group the data, where the left-hand side is the continuous column and the right-hand side is one or more categorical columns to group by. In the following case, we group by multiple columns, <code>SEX</code> and <code>EVER_SMOKE</code>, so our formula is <code>log(LEAD) ~ SEX + EVER_SMOKE</code>. The second argument to the function specifies the data. We specify the column colors to show the link between the box plots shown.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col=</span><span class="st">"blue"</span>, </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Systolic Blood Pressure"</span>,</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab=</span><span class="st">"Diastolic Blood Pressure"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">log</span>(LEAD) <span class="sc">~</span> SEX <span class="sc">+</span> EVER_SMOKE, <span class="at">data =</span> nhanes_df, </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">col=</span><span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"blue"</span>, <span class="st">"orange"</span>, <span class="st">"blue"</span>),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Sex : Ever Smoked"</span>, <span class="at">ylab =</span> <span class="st">"Log Blood Lead Level"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -616,42 +612,33 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 </div>
 </div>
 </div>
-<p>The two measures of blood pressure look highly correlated. We can calculate their Pearson and Spearman correlation using the <code>cor()</code> function. The default method is the Pearson correlation, but we can also calculate the Kendall or Spearman correlation by specifying the method.</p>
+<p>To visualize the bivariate distributions between two continuous columns, we can use scatter plots. To create a scatter plot, we use the <code>plot()</code> function again. We use this function to show the relationship between systolic and diastolic blood pressure.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.417</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">method=</span><span class="st">"spearman"</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.471</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>We may also want to add some extra information to our plot above. This time, instead of specifying the color manually, we use the column <code>hyp</code>, an indicator for hypertension, to specify the color. We have to make sure this vector is a factor for R to color by group. Additionally, we add a blue vertical and horizontal line using the <code>abline()</code> function to mark cutoffs for hypertension. Even though this function is called after <code>plot()</code>, the lines are automatically added to the current plot. We can see that most of those with hypertension have systolic or diastolic blood pressure measurements above this threshold.</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col=</span><span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>HYP), </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Systolic Blood Pressure"</span>,</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Diastolic Blood Pressure"</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">130</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">80</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col =</span> <span class="st">"blue"</span>, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">xlab =</span> <span class="st">"Systolic Blood Pressure"</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">ylab =</span> <span class="st">"Diastolic Blood Pressure"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The plots above are all displayed as a single figure. If we want to display multiple plots next to each other, we can specify the graphical parameters using the <code>par()</code> function by updating the argument <code>mfrow=c(nrow, ncol)</code> with the number of columns and rows we would like to use for our figures. Below, we use this to display the distribution of log blood lead level between those with and without hypertension next to the plot from above.</p>
+<p>The two measures of blood pressure look highly correlated. We can calculate their Pearson and Spearman correlation using the <code>cor()</code> function. The default method is the Pearson correlation, but we can also calculate the Kendall or Spearman correlation by specifying the method.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># boxplot</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">log</span>(LEAD)<span class="sc">~</span>HYP, <span class="at">data=</span>nhanes_df, <span class="at">xlab=</span><span class="st">"Hypertension"</span>, </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab=</span><span class="st">"Log Blood Lead Level"</span>)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co"># scatterplot</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col=</span><span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>HYP), </span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab=</span><span class="st">"Systolic Blood Pressure"</span>,</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Diastolic Blood Pressure"</span>)</span>
-<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v=</span><span class="dv">130</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span>
-<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h=</span><span class="dv">80</span>, <span class="at">col=</span><span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.417</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">method =</span> <span class="st">"spearman"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0.471</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We may also want to add some extra information to our plot. This time, instead of specifying the color manually, we use the column <code>hyp</code>, an indicator for hypertension, to specify the color. We have to make sure this vector is a factor for R to color by group. Additionally, we add a blue vertical and horizontal line using the <code>abline()</code> function to mark cutoffs for hypertension. Even though this function is called after <code>plot()</code>, the lines are automatically added to the current plot. We can see that most of those with hypertension have systolic or diastolic blood pressure measurements above this threshold.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col =</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>HYP), </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Systolic Blood Pressure"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Diastolic Blood Pressure"</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">130</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">80</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -660,9 +647,31 @@ Figure&nbsp;4.1: Lead Quantile Bar Plot.
 </div>
 </div>
 </div>
+<p>The previous plots are all displayed as a single figure. If we want to display multiple plots next to each other, we can specify the graphical parameters using the <code>par()</code> function by updating the argument <code>mfrow = c(nrow, ncol)</code> with the number of columns and rows we would like to use for our figures. We use this to display the distribution of log blood lead level between those with and without hypertension next to the previous plot.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># box plot</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(<span class="fu">log</span>(LEAD) <span class="sc">~</span> HYP, <span class="at">data =</span> nhanes_df, <span class="at">xlab =</span> <span class="st">"Hypertension"</span>, </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Log Blood Lead Level"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># scatter plot</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nhanes_df<span class="sc">$</span>SBP1, nhanes_df<span class="sc">$</span>DBP1, <span class="at">col =</span> <span class="fu">as.factor</span>(nhanes_df<span class="sc">$</span>HYP), </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Systolic Blood Pressure"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Diastolic Blood Pressure"</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">130</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">80</span>, <span class="at">col =</span> <span class="st">"blue"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>We then reset to only display a single plot for future images using the <code>par()</code> function again.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="practice-question-1" class="level3" data-number="4.2.1">
 <h3 data-number="4.2.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">4.2.1</span> Practice Question</h3>
@@ -678,27 +687,15 @@ Figure&nbsp;4.2: Box Plot Example.
 </figure>
 </div>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 <section id="autogenerated-plots" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="autogenerated-plots"><span class="header-section-number">4.3</span> Autogenerated Plots</h2>
-<p>Above, we learned some new functions for visualizing the relationship between columns. The <strong>GGally</strong> package contains some useful functions for looking at multiple univariate and bivariate relationships at the same time, such as the <code>ggpairs()</code> function. <code>ggpairs()</code> takes the data as its first argument. By default, it will plot the pairwise distributions for all columns, but we can also specify to only select a subset of columns using the <code>columns</code> argument. You can see below that it plots bar plots and density plots for each univariate sample distribution. It then plots the bivariate distributions and calculates the Pearson correlation for all pairs of continuous columns. That’s a lot of information!</p>
+<p>In the previous sections, we learned some new functions for visualizing the relationship between columns. The <strong>GGally</strong> package contains some useful functions for looking at multiple univariate and bivariate relationships at the same time, such as the <code>ggpairs()</code> function. <code>ggpairs()</code> takes the data as its first argument. By default, it plots the pairwise distributions for all columns, but we can also specify to only select a subset of columns using the <code>columns</code> argument. You can see in the following example that it plots bar plots and density plots for each univariate sample distribution. It then plots the bivariate distributions and calculates the Pearson correlation for all pairs of continuous columns. That’s a lot of information!</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(nhanes_df, <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"AGE"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Another useful function in this package is the <code>ggcorr()</code> function: this function takes in a data frame with only numeric columns and displays the correlation between all pairs of columns, where the color of each grid cell indicates the strength of the correlation. The additional argument <code>label=TRUE</code> prints the actual correlation value on each grid cell. This is a useful way to identify pairs of strongly correlated columns.</p>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nhanes_cont <span class="ot">&lt;-</span> nhanes_df[,<span class="fu">c</span>(<span class="st">"AGE"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>)]</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggcorr</span>(nhanes_cont, <span class="at">label=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(nhanes_df, <span class="at">columns =</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"AGE"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -707,31 +704,43 @@ Figure&nbsp;4.2: Box Plot Example.
 </div>
 </div>
 </div>
+<p>Another useful function in this package is the <code>ggcorr()</code> function: this function takes in a data frame with only numeric columns and displays the correlation between all pairs of columns, where the color of each grid cell indicates the strength of the correlation. The additional argument <code>label=TRUE</code> prints the actual correlation value on each grid cell. This is a useful way to identify pairs of strongly correlated columns. Note that we used the pipe operator again to find the correlation on the continuous columns without saving this subset of data.</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>nhanes_df[, <span class="fu">c</span>(<span class="st">"AGE"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>)] <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggcorr</span>(<span class="at">label =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="exploratory_analysis_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="tables" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="tables"><span class="header-section-number">4.4</span> Tables</h2>
-<p>Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The <strong>gt</strong> package is designed to create polished tables that can include footnotes, titles, column labels, etc. The <strong>gtsummary</strong> package is an extension of this package that can create summary tables. We will focus on the latter but come back to creating nice tables in <a href="quarto_reports.html" class="quarto-xref">Chapter&nbsp;<span>22</span></a>.</p>
+<p>Another useful way to display information about your data is through tables. For example, it is standard practice in articles to have the first table in the paper give information about the study sample, such as the mean and standard deviation for all continuous columns and the proportions for categorical columns. The <strong>gt</strong> package is designed to create polished tables that can include footnotes, titles, column labels, etc. The <strong>gtsummary</strong> package is an extension of this package that can create summary tables. We focus on the latter but come back to creating nice tables in <a href="quarto_reports.html" class="quarto-xref">Chapter&nbsp;<span>22</span></a>.</p>
 <p>To start, we create a gt object (a special type of table) of the first six rows of our data using the <code>gt()</code> function. You can see the difference in the formatting as opposed to printing the data.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(nhanes_df[, <span class="fu">c</span>(<span class="st">"ID"</span>, <span class="st">"AGE"</span>, <span class="st">"SEX"</span>, <span class="st">"RACE"</span>)])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gt</span>(<span class="fu">head</span>(nhanes_df[, <span class="fu">c</span>(<span class="st">"ID"</span>, <span class="st">"AGE"</span>, <span class="st">"SEX"</span>, <span class="st">"RACE"</span>)])) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="kslfblguas" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#kslfblguas table {
+<div id="uujlgaszva" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uujlgaszva table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#kslfblguas thead, #kslfblguas tbody, #kslfblguas tfoot, #kslfblguas tr, #kslfblguas td, #kslfblguas th {
+#uujlgaszva thead, #uujlgaszva tbody, #uujlgaszva tfoot, #uujlgaszva tr, #uujlgaszva td, #uujlgaszva th {
   border-style: none;
 }
 
-#kslfblguas p {
+#uujlgaszva p {
   margin: 0;
   padding: 0;
 }
 
-#kslfblguas .gt_table {
+#uujlgaszva .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -757,12 +766,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#kslfblguas .gt_caption {
+#uujlgaszva .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#kslfblguas .gt_title {
+#uujlgaszva .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -774,7 +783,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#kslfblguas .gt_subtitle {
+#uujlgaszva .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -786,7 +795,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#kslfblguas .gt_heading {
+#uujlgaszva .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -798,13 +807,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#kslfblguas .gt_bottom_border {
+#uujlgaszva .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#kslfblguas .gt_col_headings {
+#uujlgaszva .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -819,7 +828,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#kslfblguas .gt_col_heading {
+#uujlgaszva .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -839,7 +848,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#kslfblguas .gt_column_spanner_outer {
+#uujlgaszva .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -851,15 +860,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#kslfblguas .gt_column_spanner_outer:first-child {
+#uujlgaszva .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#kslfblguas .gt_column_spanner_outer:last-child {
+#uujlgaszva .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#kslfblguas .gt_column_spanner {
+#uujlgaszva .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -871,11 +880,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#kslfblguas .gt_spanner_row {
+#uujlgaszva .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#kslfblguas .gt_group_heading {
+#uujlgaszva .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -901,7 +910,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#kslfblguas .gt_empty_group_heading {
+#uujlgaszva .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -916,15 +925,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#kslfblguas .gt_from_md > :first-child {
+#uujlgaszva .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#kslfblguas .gt_from_md > :last-child {
+#uujlgaszva .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#kslfblguas .gt_row {
+#uujlgaszva .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -943,7 +952,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#kslfblguas .gt_stub {
+#uujlgaszva .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -956,7 +965,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#kslfblguas .gt_stub_row_group {
+#uujlgaszva .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -970,15 +979,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#kslfblguas .gt_row_group_first td {
+#uujlgaszva .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#kslfblguas .gt_row_group_first th {
+#uujlgaszva .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#kslfblguas .gt_summary_row {
+#uujlgaszva .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -988,16 +997,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#kslfblguas .gt_first_summary_row {
+#uujlgaszva .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#kslfblguas .gt_first_summary_row.thick {
+#uujlgaszva .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#kslfblguas .gt_last_summary_row {
+#uujlgaszva .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1007,7 +1016,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#kslfblguas .gt_grand_summary_row {
+#uujlgaszva .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1017,7 +1026,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#kslfblguas .gt_first_grand_summary_row {
+#uujlgaszva .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1027,7 +1036,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#kslfblguas .gt_last_grand_summary_row_top {
+#uujlgaszva .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1037,11 +1046,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#kslfblguas .gt_striped {
+#uujlgaszva .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#kslfblguas .gt_table_body {
+#uujlgaszva .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1050,7 +1059,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#kslfblguas .gt_footnotes {
+#uujlgaszva .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1064,7 +1073,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#kslfblguas .gt_footnote {
+#uujlgaszva .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1073,7 +1082,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#kslfblguas .gt_sourcenotes {
+#uujlgaszva .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1087,7 +1096,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#kslfblguas .gt_sourcenote {
+#uujlgaszva .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1095,63 +1104,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#kslfblguas .gt_left {
+#uujlgaszva .gt_left {
   text-align: left;
 }
 
-#kslfblguas .gt_center {
+#uujlgaszva .gt_center {
   text-align: center;
 }
 
-#kslfblguas .gt_right {
+#uujlgaszva .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#kslfblguas .gt_font_normal {
+#uujlgaszva .gt_font_normal {
   font-weight: normal;
 }
 
-#kslfblguas .gt_font_bold {
+#uujlgaszva .gt_font_bold {
   font-weight: bold;
 }
 
-#kslfblguas .gt_font_italic {
+#uujlgaszva .gt_font_italic {
   font-style: italic;
 }
 
-#kslfblguas .gt_super {
+#uujlgaszva .gt_super {
   font-size: 65%;
 }
 
-#kslfblguas .gt_footnote_marks {
+#uujlgaszva .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#kslfblguas .gt_asterisk {
+#uujlgaszva .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#kslfblguas .gt_indent_1 {
+#uujlgaszva .gt_indent_1 {
   text-indent: 5px;
 }
 
-#kslfblguas .gt_indent_2 {
+#uujlgaszva .gt_indent_2 {
   text-indent: 10px;
 }
 
-#kslfblguas .gt_indent_3 {
+#uujlgaszva .gt_indent_3 {
   text-indent: 15px;
 }
 
-#kslfblguas .gt_indent_4 {
+#uujlgaszva .gt_indent_4 {
   text-indent: 20px;
 }
 
-#kslfblguas .gt_indent_5 {
+#uujlgaszva .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1208,30 +1217,30 @@ Figure&nbsp;4.2: Box Plot Example.
 </div>
 </div>
 </div>
-<p>We will now show you how to use the <code>tbl_summary()</code> function in the <strong>gtsummary</strong> package. The first argument to this function is again the data frame. By default, this function will summarize all the columns in the data. Instead, we use the <code>include</code> argument to specify a list of columns to include. We then pipe this result to <code>as_gt()</code> which creates a gt table from the summary output. Again, we then need to pass this to <code>gt:::as.tags.gt_tbl()</code> to display this table as HTML within a Jupyter notebook. Note that the table computes the total number of observations and the proportions for categorical columns and the median and interquartile range for continuous columns.</p>
+<p>We now show you how to use the <code>tbl_summary()</code> function in the <strong>gtsummary</strong> package. The first argument to this function is again the data frame. By default, this function summarizes all the columns in the data. Instead, we use the <code>include</code> argument to specify a list of columns to include. We then pipe this output to the function <code>as_gt()</code>, which creates a gt table from the summary output. Note that the table computes the total number of observations and the proportions for categorical columns and the median and interquartile range for continuous columns.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(nhanes_df, <span class="at">include=</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"RACE"</span>, <span class="st">"AGE"</span>, <span class="st">"EDUCATION"</span>, </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"SMOKE"</span>, <span class="st">"BMI_CAT"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, </span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"DBP1"</span>, <span class="st">"HYP"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(nhanes_df, </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">include =</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"RACE"</span>, <span class="st">"AGE"</span>, <span class="st">"EDUCATION"</span>, <span class="st">"SMOKE"</span>, </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"BMI_CAT"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>, <span class="st">"HYP"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="impsxhhllz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#impsxhhllz table {
+<div id="tesakzzzwx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tesakzzzwx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#impsxhhllz thead, #impsxhhllz tbody, #impsxhhllz tfoot, #impsxhhllz tr, #impsxhhllz td, #impsxhhllz th {
+#tesakzzzwx thead, #tesakzzzwx tbody, #tesakzzzwx tfoot, #tesakzzzwx tr, #tesakzzzwx td, #tesakzzzwx th {
   border-style: none;
 }
 
-#impsxhhllz p {
+#tesakzzzwx p {
   margin: 0;
   padding: 0;
 }
 
-#impsxhhllz .gt_table {
+#tesakzzzwx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1257,12 +1266,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_caption {
+#tesakzzzwx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#impsxhhllz .gt_title {
+#tesakzzzwx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1274,7 +1283,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#impsxhhllz .gt_subtitle {
+#tesakzzzwx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1286,7 +1295,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#impsxhhllz .gt_heading {
+#tesakzzzwx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1298,13 +1307,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_bottom_border {
+#tesakzzzwx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_col_headings {
+#tesakzzzwx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1319,7 +1328,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_col_heading {
+#tesakzzzwx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1339,7 +1348,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#impsxhhllz .gt_column_spanner_outer {
+#tesakzzzwx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1351,15 +1360,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#impsxhhllz .gt_column_spanner_outer:first-child {
+#tesakzzzwx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#impsxhhllz .gt_column_spanner_outer:last-child {
+#tesakzzzwx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#impsxhhllz .gt_column_spanner {
+#tesakzzzwx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1371,11 +1380,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#impsxhhllz .gt_spanner_row {
+#tesakzzzwx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#impsxhhllz .gt_group_heading {
+#tesakzzzwx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1401,7 +1410,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#impsxhhllz .gt_empty_group_heading {
+#tesakzzzwx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1416,15 +1425,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#impsxhhllz .gt_from_md > :first-child {
+#tesakzzzwx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#impsxhhllz .gt_from_md > :last-child {
+#tesakzzzwx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#impsxhhllz .gt_row {
+#tesakzzzwx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1443,7 +1452,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#impsxhhllz .gt_stub {
+#tesakzzzwx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1456,7 +1465,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#impsxhhllz .gt_stub_row_group {
+#tesakzzzwx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1470,15 +1479,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#impsxhhllz .gt_row_group_first td {
+#tesakzzzwx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#impsxhhllz .gt_row_group_first th {
+#tesakzzzwx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#impsxhhllz .gt_summary_row {
+#tesakzzzwx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1488,16 +1497,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#impsxhhllz .gt_first_summary_row {
+#tesakzzzwx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_first_summary_row.thick {
+#tesakzzzwx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#impsxhhllz .gt_last_summary_row {
+#tesakzzzwx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1507,7 +1516,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_grand_summary_row {
+#tesakzzzwx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1517,7 +1526,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#impsxhhllz .gt_first_grand_summary_row {
+#tesakzzzwx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1527,7 +1536,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_last_grand_summary_row_top {
+#tesakzzzwx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1537,11 +1546,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_striped {
+#tesakzzzwx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#impsxhhllz .gt_table_body {
+#tesakzzzwx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1550,7 +1559,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_footnotes {
+#tesakzzzwx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1564,7 +1573,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_footnote {
+#tesakzzzwx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1573,7 +1582,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#impsxhhllz .gt_sourcenotes {
+#tesakzzzwx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1587,7 +1596,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#impsxhhllz .gt_sourcenote {
+#tesakzzzwx .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1595,63 +1604,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#impsxhhllz .gt_left {
+#tesakzzzwx .gt_left {
   text-align: left;
 }
 
-#impsxhhllz .gt_center {
+#tesakzzzwx .gt_center {
   text-align: center;
 }
 
-#impsxhhllz .gt_right {
+#tesakzzzwx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#impsxhhllz .gt_font_normal {
+#tesakzzzwx .gt_font_normal {
   font-weight: normal;
 }
 
-#impsxhhllz .gt_font_bold {
+#tesakzzzwx .gt_font_bold {
   font-weight: bold;
 }
 
-#impsxhhllz .gt_font_italic {
+#tesakzzzwx .gt_font_italic {
   font-style: italic;
 }
 
-#impsxhhllz .gt_super {
+#tesakzzzwx .gt_super {
   font-size: 65%;
 }
 
-#impsxhhllz .gt_footnote_marks {
+#tesakzzzwx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#impsxhhllz .gt_asterisk {
+#tesakzzzwx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#impsxhhllz .gt_indent_1 {
+#tesakzzzwx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#impsxhhllz .gt_indent_2 {
+#tesakzzzwx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#impsxhhllz .gt_indent_3 {
+#tesakzzzwx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#impsxhhllz .gt_indent_4 {
+#tesakzzzwx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#impsxhhllz .gt_indent_5 {
+#tesakzzzwx .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1790,30 +1799,30 @@ Figure&nbsp;4.2: Box Plot Example.
 </div>
 <p>We can update our table by changing some of its arguments. This time, we specify that we want to stratify our table by hypertension status so that the table summarizes the data by this grouping. Additionally, we change how continuous columns are summarized by specifying that we want to report the mean and standard deviation instead of the median and interquartile range. We do this using the <code>statistic</code> argument. The documentation for the <code>tbl_summary()</code> function can help you format this argument depending on which statistics you would like to display.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(nhanes_df, <span class="at">include=</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"RACE"</span>, <span class="st">"AGE"</span>, <span class="st">"EDUCATION"</span>, </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"SMOKE"</span>, <span class="st">"BMI_CAT"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                  <span class="st">"DBP1"</span>, <span class="st">"HYP"</span>),</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">by =</span> <span class="st">"HYP"</span>, </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_gt</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(nhanes_df, </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">include =</span> <span class="fu">c</span>(<span class="st">"SEX"</span>, <span class="st">"RACE"</span>, <span class="st">"AGE"</span>, <span class="st">"EDUCATION"</span>, <span class="st">"SMOKE"</span>, </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>                        <span class="st">"BMI_CAT"</span>, <span class="st">"LEAD"</span>, <span class="st">"SBP1"</span>, <span class="st">"DBP1"</span>, <span class="st">"HYP"</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">by =</span> <span class="st">"HYP"</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">statistic =</span> <span class="fu">list</span>(<span class="fu">all_continuous</span>() <span class="sc">~</span> <span class="st">"{mean} ({sd})"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">as_gt</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="bduriiehdz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#bduriiehdz table {
+<div id="gyvwdsevts" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gyvwdsevts table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#bduriiehdz thead, #bduriiehdz tbody, #bduriiehdz tfoot, #bduriiehdz tr, #bduriiehdz td, #bduriiehdz th {
+#gyvwdsevts thead, #gyvwdsevts tbody, #gyvwdsevts tfoot, #gyvwdsevts tr, #gyvwdsevts td, #gyvwdsevts th {
   border-style: none;
 }
 
-#bduriiehdz p {
+#gyvwdsevts p {
   margin: 0;
   padding: 0;
 }
 
-#bduriiehdz .gt_table {
+#gyvwdsevts .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1839,12 +1848,12 @@ Figure&nbsp;4.2: Box Plot Example.
   border-left-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_caption {
+#gyvwdsevts .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#bduriiehdz .gt_title {
+#gyvwdsevts .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1856,7 +1865,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-width: 0;
 }
 
-#bduriiehdz .gt_subtitle {
+#gyvwdsevts .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1868,7 +1877,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-width: 0;
 }
 
-#bduriiehdz .gt_heading {
+#gyvwdsevts .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1880,13 +1889,13 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_bottom_border {
+#gyvwdsevts .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_col_headings {
+#gyvwdsevts .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1901,7 +1910,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_col_heading {
+#gyvwdsevts .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1921,7 +1930,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#bduriiehdz .gt_column_spanner_outer {
+#gyvwdsevts .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1933,15 +1942,15 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 4px;
 }
 
-#bduriiehdz .gt_column_spanner_outer:first-child {
+#gyvwdsevts .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bduriiehdz .gt_column_spanner_outer:last-child {
+#gyvwdsevts .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bduriiehdz .gt_column_spanner {
+#gyvwdsevts .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1953,11 +1962,11 @@ Figure&nbsp;4.2: Box Plot Example.
   width: 100%;
 }
 
-#bduriiehdz .gt_spanner_row {
+#gyvwdsevts .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#bduriiehdz .gt_group_heading {
+#gyvwdsevts .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1983,7 +1992,7 @@ Figure&nbsp;4.2: Box Plot Example.
   text-align: left;
 }
 
-#bduriiehdz .gt_empty_group_heading {
+#gyvwdsevts .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1998,15 +2007,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: middle;
 }
 
-#bduriiehdz .gt_from_md > :first-child {
+#gyvwdsevts .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bduriiehdz .gt_from_md > :last-child {
+#gyvwdsevts .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bduriiehdz .gt_row {
+#gyvwdsevts .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2025,7 +2034,7 @@ Figure&nbsp;4.2: Box Plot Example.
   overflow-x: hidden;
 }
 
-#bduriiehdz .gt_stub {
+#gyvwdsevts .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2038,7 +2047,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#bduriiehdz .gt_stub_row_group {
+#gyvwdsevts .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2052,15 +2061,15 @@ Figure&nbsp;4.2: Box Plot Example.
   vertical-align: top;
 }
 
-#bduriiehdz .gt_row_group_first td {
+#gyvwdsevts .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bduriiehdz .gt_row_group_first th {
+#gyvwdsevts .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#bduriiehdz .gt_summary_row {
+#gyvwdsevts .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2070,16 +2079,16 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#bduriiehdz .gt_first_summary_row {
+#gyvwdsevts .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_first_summary_row.thick {
+#gyvwdsevts .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bduriiehdz .gt_last_summary_row {
+#gyvwdsevts .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2089,7 +2098,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_grand_summary_row {
+#gyvwdsevts .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2099,7 +2108,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#bduriiehdz .gt_first_grand_summary_row {
+#gyvwdsevts .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2109,7 +2118,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-top-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_last_grand_summary_row_top {
+#gyvwdsevts .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2119,11 +2128,11 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_striped {
+#gyvwdsevts .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bduriiehdz .gt_table_body {
+#gyvwdsevts .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2132,7 +2141,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-bottom-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_footnotes {
+#gyvwdsevts .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2146,7 +2155,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_footnote {
+#gyvwdsevts .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2155,7 +2164,7 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#bduriiehdz .gt_sourcenotes {
+#gyvwdsevts .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2169,7 +2178,7 @@ Figure&nbsp;4.2: Box Plot Example.
   border-right-color: #D3D3D3;
 }
 
-#bduriiehdz .gt_sourcenote {
+#gyvwdsevts .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2177,63 +2186,63 @@ Figure&nbsp;4.2: Box Plot Example.
   padding-right: 5px;
 }
 
-#bduriiehdz .gt_left {
+#gyvwdsevts .gt_left {
   text-align: left;
 }
 
-#bduriiehdz .gt_center {
+#gyvwdsevts .gt_center {
   text-align: center;
 }
 
-#bduriiehdz .gt_right {
+#gyvwdsevts .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bduriiehdz .gt_font_normal {
+#gyvwdsevts .gt_font_normal {
   font-weight: normal;
 }
 
-#bduriiehdz .gt_font_bold {
+#gyvwdsevts .gt_font_bold {
   font-weight: bold;
 }
 
-#bduriiehdz .gt_font_italic {
+#gyvwdsevts .gt_font_italic {
   font-style: italic;
 }
 
-#bduriiehdz .gt_super {
+#gyvwdsevts .gt_super {
   font-size: 65%;
 }
 
-#bduriiehdz .gt_footnote_marks {
+#gyvwdsevts .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#bduriiehdz .gt_asterisk {
+#gyvwdsevts .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bduriiehdz .gt_indent_1 {
+#gyvwdsevts .gt_indent_1 {
   text-indent: 5px;
 }
 
-#bduriiehdz .gt_indent_2 {
+#gyvwdsevts .gt_indent_2 {
   text-indent: 10px;
 }
 
-#bduriiehdz .gt_indent_3 {
+#gyvwdsevts .gt_indent_3 {
   text-indent: 15px;
 }
 
-#bduriiehdz .gt_indent_4 {
+#gyvwdsevts .gt_indent_4 {
   text-indent: 20px;
 }
 
-#bduriiehdz .gt_indent_5 {
+#gyvwdsevts .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -2406,12 +2415,12 @@ Figure&nbsp;4.2: Box Plot Example.
 </section>
 <section id="exercises" class="level2" data-number="4.6">
 <h2 data-number="4.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">4.6</span> Exercises</h2>
-<p>For these exercises, we will continue using the <code>nhanes_df</code> data.</p>
+<p>For these exercises, we continue using the <code>nhanes_df</code> data.</p>
 <ol type="1">
 <li><p>Using both numerical and graphical summaries, describe the distribution of the first diastolic blood pressure reading <code>DBP1</code>among study participants. Then, create a column called <code>INCOME_CAT</code> with two categories: “low” for those whose income is at most 2 and “not low” otherwise and examine the bivariate distribution of <code>DBP1</code> and <code>INCOME_CAT</code>. Arrange the two plots next to each other. What do you notice?</p></li>
-<li><p>Subset the data to adults between the ages of 20 and 55. Then, explore how blood pressure varies by age and gender among this age group. Is there a visible trend in blood pressure with increasing age among either sex?</p></li>
+<li><p>Create a subset of the data containing only adults between the ages of 20 and 55, inclusive. Then, explore how blood pressure varies by age and gender among this age group. Is there a visible trend in blood pressure with increasing age among either sex?</p></li>
 <li><p>For males between the ages of 50-59, compare blood pressure across race as reported in the race column. Then, create a summary table stratified by the race column and report the mean, standard deviation, minimum, and maximum values for all continuous columns.</p></li>
-<li><p>Recreate the plots in <a href="#fig-education-over-time" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> and <a href="#fig-bll-by-education" class="quarto-xref">Figure&nbsp;<span>4.4</span></a>. Based on what you see, how do you expect blood lead levels to change by year? Check your answer to the previous question by plotting these two columns against each other.</p></li>
+<li><p>Recreate the plots in <a href="#fig-education-over-time" class="quarto-xref">Figure&nbsp;<span>4.3</span></a> and <a href="#fig-bll-by-education" class="quarto-xref">Figure&nbsp;<span>4.4</span></a>. Based on these plots, what trend do you expect to see in blood lead levels over time? Check your answer to the previous question by plotting these two columns against each other.</p></li>
 </ol>
 <div id="fig-education-over-time" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
 <figure class="quarto-float quarto-float-fig figure">
