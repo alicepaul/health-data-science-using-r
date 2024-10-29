@@ -49,7 +49,7 @@ $$ {#eq-reguarlization}
 
 The function $l(y_i, \beta_0 + \beta^T x_i)$ represents the loss function. For linear regression, this corresponds to the squared error $(y_i - \beta_0 - \beta^T x_i)^2$. For logistic regression, this loss corresponds to the logistic loss function.
 
-The penalty terms we will implement include terms related to the following terms
+The penalty terms we will implement include terms related to the following terms:
 
 -   L0 Norm: $||\beta ||_0 = \sum_{j=1}^p 1(\beta_j \neq 0)$, the number of non-zero coefficients,
 
@@ -67,7 +67,7 @@ $$
 
 where $\lambda$ is a complexity parameter and $\alpha$ controls the balance between the two norms. A model with only L1 regularization ($\alpha = 1$) corresponds to lasso regression while a model with only L2 regularization ($\alpha=0$) corresponds to ridge regression. Note that the penalty depends on the scale of $X$ and we typically assume each column has been standardized.
 
-The **glmnet** package implements elastic net regularization. It assumes our data is in the form described above. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we will need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
+The **glmnet** package implements elastic net regularization. It assumes our data are in the form described above. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we will need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
 
 ```{r}
 x <- model.matrix(log(SBP) ~ ., nhanes)[,-1]
@@ -87,7 +87,7 @@ mod_lasso <- glmnet(x, y, family = "gaussian", alpha = 1,
                     nlambda = 25)
 ```
 
-If we plot the resulting object, we can see the model coefficients for each resulting model by plotting how the coefficient for each variable changes with the value of $\lambda$. The `plot()` function by default plots these against the penalty term but we can also specify to plot against the $\lambda$ values on the log scale. The `label` argument adds a label to each line, those these are often hard to read. The numbers at the top of the plot indicate how many non-zero coefficients were included in the model for different $\lambda$ values. Read the documentation `?glmnet` to see the other possible inputs including `penalty.factor` and `weights` arguments.
+If we plot the resulting object, we can see the model coefficients for each resulting model by plotting how the coefficient for each variable changes with the value of $\lambda$. The `plot()` function by default plots these against the penalty term but we can also specify to plot against the $\lambda$ values on the log scale. The `label` argument adds a label to each line, though these are often hard to read. The numbers at the top of the plot indicate how many non-zero coefficients were included in the model for different $\lambda$ values. Read the documentation `?glmnet` to see the other possible inputs including `penalty.factor` and `weights` arguments.
 
 ```{r}
 plot(mod_lasso, xvar = "lambda", label = TRUE)
@@ -127,7 +127,7 @@ cv_lasso <- cv.glmnet(x, y, foldid = foldid, alpha = 1,
 plot(cv_lasso)
 ```
 
-There are two vertical dashed lines included in the plot. These correspond to two values of $\lambda$ that are stored in our object. The first is `lambda.min`. This corresponds to the $\lambda$ value with the lowest estimated mean squared error. The other is `lambda.1se`. This corresponds to the largest $\lambda$ value whose estimated mean squared error is within one standard error of the lowest value. As indicated on the plot, this will correspond to a model with fewer included coefficients and higher regularization.
+There are two vertical dashed lines included in the plot. These correspond to two values of $\lambda$ that are stored in our object. The first is `lambda.min`. This corresponds to the $\lambda$ value with the lowest estimated mean squared error. The other is `lambda.1se`. This corresponds to the largest $\lambda$ value whose estimated mean squared error is within one standard error of the lowest value. As indicated in the plot, this will correspond to a model with fewer included coefficients and higher regularization.
 
 We will use the `lambda.min` value as our chosen $\lambda$ value. To extract the coefficients corresponding to this $\lambda$ value we again use the `coef()` function. However, this $\lambda$ might not be one of the initial 25 used for our `mod_lasso` object. In this case, the `coef()` function will use linear interpolation to get the estimated coefficients. If we want to refit our model for this particular value of $\lambda$ we can instead specify the argument `exact = TRUE` and provide `x` and `y`.
 
