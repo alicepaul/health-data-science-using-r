@@ -79,7 +79,7 @@ hyp <- ifelse(sbp_measurements > 140 | dbp_measurements > 90, 1, 0)
 hyp
 ```
 
-Note that above we ignored NA values. In this case, changing `sbp` or `dbp` to NA will cause in an error in the if-else statement. This is because it will not understand which code block to run. The `ifelse()` can handle NA values and will return NA for observations with no TRUE/FALSE value. To accomplish this with the if-else statement, we can add in multiple conditions. In particular, we can add in more statements as below. In this case, the first time we reach a true conditional statement, we run the code in that block. If no statements are true, then we run the last block of code. So we always run exactly one block of code.
+Note that above we ignored NA values. In this case, changing `sbp` or `dbp` to NA will cause an error in the if-else statement. This is because it will not understand which code block to run. The `ifelse()` can handle NA values and will return NA for observations with no TRUE/FALSE value. To accomplish this with the if-else statement, we can add in multiple conditions. In particular, we can add in more statements as below. In this case, the first time we reach a true conditional statement, we run the code in that block. If no statements are true, then we run the last block of code. So we always run exactly one block of code.
 
 ```         
 if (conditional statement A){
@@ -138,7 +138,7 @@ if(is.na(sbp) & is.na(dbp)){
 hyp
 ```
 
-This can still seem like a lot of conditions to replicate what we did in a single line with an `ifelse()` function. In general, we prefer a simpler format. Consider the code below. In this case, we have two vectors `x` and `y` that we want to plot. First, we check whether these vectors are numeric. If not, we convert them to factors. Rather than returning a value as we do with an `ifelse()` function, we are changing our data depending on the type of `x` and `y`. Note that these statements do not contain an else statement. That is because we don't want to run any code when the condition is false! In the video at the end of the chapter, we will show another example of when we could not replicate the logic of an if-else statement with a function!
+This can still seem like a lot of conditions to replicate what we did in a single line with an `ifelse()` function. In general, we prefer a simpler format. Consider the code below. In this case, we have two vectors `x` and `y` that we want to plot. First, we check whether these vectors are numeric. If not, we convert them to factors. Rather than returning a value as we do with an `ifelse()` function, we are changing our data depending on the type of `x` and `y`. Note that these statements do not contain an else statement. That is because we don't want to run any code when the condition is false. In the video at the end of the chapter, we will show another example of when we could not replicate the logic of an if-else statement with a function.
 
 ```{r}
 # example x and y vectors
@@ -183,7 +183,7 @@ nhanes <- NHANESsample %>%
   na.omit()
 ```
 
-In the code below, we are fitting a simple linear regression model for systolic blood pressure with the single covariate of blood lead level for each race group and storing the associated coefficients and p-values. This code is repetitive since we repeating the same steps for each group and the only that is changing is the race group. This makes our code cluttered but also means we are prone to introducing errors. In fact, you can see that we have the wrong coefficient and p-value for the fourth model.
+In the code below, we are fitting a simple linear regression model for systolic blood pressure with the single covariate of blood lead level for each race group and storing the associated coefficients and p-values. This code is repetitive since we repeat the same steps for each group and the only element that is changing is the race group. This makes our code cluttered but also means we are prone to introducing errors. In fact, you can see that we have the wrong coefficient and p-value for the fourth model.
 
 ```{r}
 dat1 <- nhanes[nhanes$RACE == "Mexican American", ]
@@ -218,7 +218,7 @@ data.frame(
   pvals = c(pval1, pval2, pval3, pval4, pval5))
 ```
 
-We can rewrite this code slightly. In this case, we create an object `i` which will represent the index of the group. This change means that the only thing that changes for each group is that we update the value of i. This is much less prone to errors but still long!
+We can rewrite this code slightly. In this case, we create an object `i` which will represent the index of the group. This change means that the only thing that changes for each group is that we update the value of i. This is much less prone to errors, but still long.
 
 ```{r}
 # Initialize results data frame
@@ -270,7 +270,7 @@ code to run for each value of the iterator
 }
 ```
 
-Two simple for loops are given below. In the first loop, our iterator goes through the vector `1:5` whereas in the second one our iterator iterates through the vector of names. In the first loop, we will traverse the numbers 1 to 5 and for each number we will run the code that squares the number. In each iteration, we name the current number we are on to be `i`. That means that first time through the loop `i` is equal to 1, the second time `i` has value 2, etc. In the second loop, our iterator is also a vector but this time it is names. In this case, in each iteration the object `name` represents the current name we are on as we traverse the vector of names. In particular, the first time through the loop `name` is equal to "Alice", the second time `name` has value "Bob", etc.
+Two simple for loops are given below. In the first loop, our iterator goes through the vector `1:5` whereas in the second one our iterator iterates through the vector of names. In the first loop, we will traverse the numbers 1 to 5 and for each number we will run the code that squares the number. In each iteration, we name the current number we are on to be `i`. That means that the first time through the loop `i` is equal to 1, the second time `i` has value 2, etc. In the second loop, our iterator is also a vector but this time it is `names`. In this case, in each iteration the object `name` represents the current name we are on as we traverse the vector of `names`. In particular, the first time through the loop `name` is equal to "Alice", the second time `name` has value "Bob", and so forth.
 
 ```{r}
 for (i in 1:5){
@@ -285,7 +285,7 @@ for (name in names){
 }
 ```
 
-Let's apply this to our example. First, we use a numeric iterator `i` that will take on values 1 to 5. This will directly replicate our code above in which the value of `i` changed for each race group. Our result matches that above!
+Let's apply this to our example. First, we use a numeric iterator `i` that will take on values 1 to 5. This will directly replicate our code above in which the value of `i` changed for each race group. Our result matches that above.
 
 ```{r}
 df <- data.frame(group = race_values, coefs = 0, pvals = 0)
@@ -323,7 +323,7 @@ code to run each iteration
 }
 ```
 
-The code below gives an example of a simple while loop. In this case, the loop keeps dividing `x` by 2 until it is below a certain value of 3. In this case, `x` starts above 3 so the condition starts off being true and we would divide `x` by 2 to get 50. Since 50 is still greater than 3, the code block is run again, etc. Once `x` reaches a value of 1.5625 the condition no longer holds and the code stops. Note that if the condition was `x > -1` it would hold indefinitely, creating what is called an infinite loop!
+The code below gives an example of a simple while loop. In this case, the loop keeps dividing `x` by 2 until it is below a certain value of 3. In this case, `x` starts above 3 so the condition starts off being true and we would divide `x` by 2 to get 50. Since 50 is still greater than 3, the code block is run again, etc. Once `x` reaches a value of 1.5625 the condition no longer holds and the code stops. Note that if the condition was `x > -1` it would hold indefinitely, creating what is called an infinite loop.
 
 ```{r}
 x <- 100
@@ -384,7 +384,7 @@ any(sbp_measurements > 140 | dbp_measurements > 90)
 
 Another example we saw above was using an `ifelse()` or `case_when()` function instead of an if-else statement. These two functions are *vectorized functions*. That means that the function is evaluated on a vector of values rather than having to loop through each value separately. Vectorized functions return a vector or results of the same size as your input. That means that if you needed to do a computation on every element of a vector you could either loop through all the elements and call that function *or* you can take advantage of the vectorized structure and call the function on the whole vector. This is generally cleaner and more efficient. The `any()` function up not a vectorized function since it returns a single TRUE/FALSE value but it also helps to make our code cleaner.
 
-Another tool that can help with brevity in this manner is the family of *apply functions*. These are loop-hiding functions. In [Chapter -@sec-data-files], we saw the `apply(X, MARGIN, FUN)` function. This function called the function `FUN` on either the rows (`MARGIN = 1`) or columns (`MARGIN = 2`) of `X`, which is data frame or matrix `X`. Below, we generate a random matrix `X` and compute the column means using a loop and using the `apply()` function. We can see that the version with the `apply()` function is simpler!
+Another tool that can help with brevity in this manner is the family of *apply functions*. These are loop-hiding functions. In [Chapter -@sec-data-files], we saw the `apply(X, MARGIN, FUN)` function. This function called the function `FUN` on either the rows (`MARGIN = 1`) or columns (`MARGIN = 2`) of `X`, which is data frame or matrix `X`. Below, we generate a random matrix `X` and compute the column means using a loop and using the `apply()` function. We can see that the version with the `apply()` function is simpler.
 
 ```{r}
 X <- matrix(rnorm(100), nrow = 20, ncol = 5)
@@ -435,7 +435,7 @@ replicate(6, colMeans(matrix(rnorm(100), ncol=5)))
 
 ## Exercises
 
-For these exercises, we will use the `pain` data from the **HDSinRdata** package. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions.
+For these exercises, we will use the `pain` data from the **HDSinRdata** package. You can use the help operator `?pain` to learn more about the source of these data and to read its column descriptions.
 
 1.  Create a new column `PAT_RACE_SIMP` that represents a patient's race using three categories: White, Black, or Other. First, do this using the `case_when()` function. Then, use a loop and if-else statement to accomplish the same thing.
 
