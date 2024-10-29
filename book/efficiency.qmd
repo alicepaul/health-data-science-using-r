@@ -1,6 +1,6 @@
 # Writing Efficient Code {#sec-efficiency}
 
-When we talk about efficient code, we mean are talking about computational efficiency or writing code that is fast to execute. For this topic, we will need to peek under the hood to consider how R is implementing our code in order to understand what can slow down our code. We will use the **microbenchmark** package [@R-microbenchmark] to time our code execution. For demonstration, we will use a subset of the `pain` dataset from the **HDSinRdata** package. 
+When we talk about efficient code, we are talking about computational efficiency or writing code that is fast to execute. For this topic, we will need to peek under the hood to consider how R is implementing our code in order to understand what can slow down our code. We will use the **microbenchmark** package [@R-microbenchmark] to time our code execution. For demonstration, we will use a subset of the `pain` dataset from the **HDSinRdata** package. 
 
 ```{r}
 #| results: 'hide'
@@ -17,7 +17,7 @@ pain <- pain %>% select(-c(BMI, GH_MENTAL_SCORE, GH_PHYSICAL_SCORE,
   na.omit()
 ```
 
-The function `Sys.time()` returns the current system time. This allows us to find the time executing a chunk of code. For example, the code below finds how long it takes to loop through the data to find the number of people who had an improvement in pain. 
+The function `Sys.time()` returns the current system time. This allows us to find the net time required to execute a chunk of code. For example, the code below finds how long it takes to loop through the data to find the number of people who had an improvement in pain. 
 
 ```{r}
 start_time <- Sys.time()
@@ -55,7 +55,7 @@ microbenchmark( pain_inc = {
 
 ## Use Fast and Vectorized Functions
 
-R is known as a slower programming language. In part, R sacrifices computation time to make it more welcoming to new programmers. However, not all of R is actually written in R. A lot of functions that are in base R are actually written in C or Fortran. These functions are a lot faster than if we wrote them ourselves. When possible, we should use base R functions rather than writing our own. Let's take a look at the difference in time when we write our own summation function compared to using the `sum()` function.
+R is known as a slower programming language. In part, R sacrifices computation time to make it more welcoming to new programmers. However, not all of R is actually written in R. Many functions that are in base R are actually written in C or Fortran. These functions are significantly faster than if we wrote them ourselves. When possible, we should use base R functions rather than writing our own. Let's take a look at the difference in time when we write our own summation function compared to using the `sum()` function.
 
 ```{r}
 my_sum <- function(x){
@@ -72,7 +72,7 @@ microbenchmark(sum_function = my_sum(x),
                unit = "ms")
 ```
 
-This also simplifies our code to a single line. Looking back at our first example, we can also simplify our code. We did not need to loop through our data. Instead, we should use a vectorized approach that checks for pain improvement across all observations and the sum up the TRUE/FALSE values.
+This also simplifies our code to a single line. Looking back at our first example, we can also simplify our code. We did not need to loop through our data. Instead, we should use a vectorized approach that checks for pain improvement across all observations and then sum up the TRUE/FALSE values.
 
 ```{r}
 microbenchmark({
@@ -81,11 +81,11 @@ microbenchmark({
 }, unit = "ms")
 ```
 
-This is much faster! Loops are notoriously slow in R so you will often hear the advice to avoid loops. Using apply functions like `apply()` and `sapply()` are loop-hiding functions. Using these functions instead of an explicit loop doesn't improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code. 
+This is much faster. Loops are notoriously slow in R so you will often hear the advice to avoid loops. Using apply functions like `apply()` and `sapply()` are loop-hiding functions. Using these functions instead of an explicit loop doesn't improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code. 
 
-The true functions that can improve efficiency over loops are *vectorized* functions, which can be evaluated on a vector of values. Vectorizing our code means that we are thinking about a vector approach rather than computing something for each element of the vector and looping through these values. A vectorized function return output that is the same dimensions as the input and operates on these elements in an efficient manner. 
+The true functions that can improve efficiency over loops are *vectorized* functions, which can be evaluated on a vector of values. Vectorizing our code means that we are thinking about a vector approach rather than computing something for each element of the vector and looping through these values. A vectorized function will return output that is the same dimensions as the input and operates on these elements in an efficient manner. 
 
-A simple example is below where we either take the square root of each individual element or we call the `sqrt()` function, which is a vectorized function. Vectorized functions still have to operate on each element but that loop is often written in C or Fortran rather than R making it significantly faster so this is a special case where we can utilize the speed of some functions. 
+A simple example is below where we either take the square root of each individual element or we call the `sqrt()` function, which is a vectorized function. Vectorized functions still have to operate on each element, but that loop is often written in C or Fortran rather than R making it significantly faster so this is a special case where we can utilize the speed of some functions. 
 
 ```{r}
 microbenchmark(loop_sqrt = {
@@ -110,7 +110,7 @@ for (r in pat_races){
 
 ## Avoid Copies and Duplicates
 
-Another aspect of our programs that can slow down our operations is anytime we need to create a large object. Look at the code below. First, we create a matrix `m`. We then create a matrix `n` that is equal to `m`. Last, we update `n` by taking the logarithm of all elements plus one, differentiating it from `m`. R creates copies upon modification. That means, that when we initialize `n` we have not actually created a second matrix in memory. Instead, we have two names for the same matrix. On the third line, we want to update `n` so we need to actually create a second matrix that will be different from `m`. 
+Another aspect of our programs that can slow down our operations is any time we need to create a large object. Look at the code below. First, we create a matrix `m`. We then create a matrix `n` that is equal to `m`. Last, we update `n` by taking the logarithm of all elements plus one, differentiating it from `m`. R creates copies upon modification. That means, that when we initialize `n` we have not actually created a second matrix in memory. Instead, we have two names for the same matrix. On the third line, we want to update `n` so we need to actually create a second matrix that will be different from `m`. 
 
 ```{r}
 m <- matrix(rpois(100000, 6), ncol=1000)
@@ -118,13 +118,13 @@ n <- m
 n <- log(n+1)
 ```
 
-This is different from the code below which updates `m` itself. In this case, R can modify the matrix in place by going through each element and updating its value rather than creating a new matrix. As the size of our data grows, creating copies can be expensive. Imagine, `m` being a large genetic data set with RNA sequencing data. First, this object may take up a lot of memory so creating a copy may mean we could run out of memory. Second, copying over all this information will be expensive! 
+This is different from the code below which updates `m` itself. In this case, R can modify the matrix in place by going through each element and updating its value rather than creating a new matrix. As the size of our data grows, creating copies can be expensive. Imagine, `m` being a large genetic data set with RNA sequencing data. First, this object may take up a lot of memory so creating a copy may mean we could run out of memory. Second, copying over all this information will be expensive. 
 
 ```{r}
 m <- log(m+1)
 ```
 
-Let's consider another case. Below, I have two functions that both find the proportion of people within 1, 2, and $>2$ standard deviations from the mean for one of the PROMIS instrument variables. When we input `pain` as an argument to the first function, we do not create a copy of it since we haven't modified the data frame. However, once we create a new column, this means that we have to copy the full data frame. The second function instead takes in a single column, requiring us to only copy this information. The difference in execution time shows an edge to the second method, but the difference is small. This indicates that actually computing this new column and finding the proportions takes more time than the duplication.
+Let's consider another case. Below, we have two functions that both find the proportion of people within 1, 2, and $>2$ standard deviations from the mean for one of the PROMIS instrument variables. When we input `pain` as an argument to the first function, we do not create a copy of it since we haven't modified the data frame. However, once we create a new column, this means that we have to copy the full data frame. The second function instead takes in a single column, requiring us to copy only this information. The difference in execution time shows an edge to the second method, but the difference is small. This indicates that actually computing this new column and finding the proportions takes more time than the duplication.
 
 ```{r}
 code_promis1 <- function(df){
@@ -209,7 +209,7 @@ This demonstrates that if you need to update the values of a vector, matrix, or 
 
 ### Practice Question
 
-The code below fits a linear model for each racial groups and records the coefficient. Rewrite this code so that we pre-allocate the results vector and use the **microbenchmark** to compare the efficiency between the two approaches.
+The code below fits a linear model for each racial group and records the coefficient. Rewrite this code so that we pre-allocate the results vector and use the **microbenchmark** to compare the efficiency between the two approaches.
 
 ```{r}
 coefs <- c()
