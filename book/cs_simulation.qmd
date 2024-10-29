@@ -2,7 +2,7 @@
 
 Simulation studies are an ideal setting for utilizing functions. When conducting a simulation study, we often need to generate data, run statistical methods, and collect results and we replicate this for a large number of simulations. Functions will ensure that we can write cleaner and reproducible code. In this case study, we will write the code for a simulation study that is based on the analysis by @hastie2020best, which compared different methods for sparse regression. For our purposes, we will focus on the comparison between lasso and ridge regression, introduced in [Chapter -@sec-model-selection]. 
 
-Our goal is to understand how the two predictive power of the two models for different data settings. We will generate our training and test data using the following data generating mechanism which relies on the number of observations $n$, the number of predictors $p$, the sparsity $s \leq p$, predictor correlation level $\rho$, and $\nu$ signal-to-noise ratio. 
+Our goal is to understand the predictive power of the two models for different data settings. We will generate our training and test data using the following data generating mechanism which relies on the number of observations $n$, the number of predictors $p$, the sparsity $s \leq p$, predictor correlation level $\rho$, and $\nu$ signal-to-noise ratio. 
 
 1.  We define a vector of coefficients $\beta \in \mathbb{R}^p$ which has its first $s$ components equal to 1 and the rest equal to 0. Note that our model will not have an intercept.
 
@@ -11,8 +11,7 @@ Our goal is to understand how the two predictive power of the two models for dif
 3.  We draw the outcome $y \in \mathbb{R}^n$ from a normal distribution $N(X \beta, \sigma^2 I)$, where $\sigma^2 = \frac{\beta \Sigma \beta}{\nu}$. This ensures that the data has signal-to-noise ratio, defined as $\text{Var}(x^T \beta)/\text{Var}(\sigma^2)$, equal to $\nu$. 
 
 After generating our data, we will use 5-fold cross-validation to fit a lasso or ridge regression model on the training data to get estimated coefficients $\hat{\beta}$. Last, we will predict on the withheld test set. The evaluation metrics we are interested in are the time to fit the model (in seconds), the relative test error 
-$$\text{RTE} = \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\sigma^2}, $$ and
-and the proportion of variance explained 
+$$\text{RTE} = \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\sigma^2}, $$ and the proportion of variance explained 
 $$\text{PVE} = 1 - \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\beta^T \Sigma \beta + \sigma^2}.$$ 
 In @hastie2020best, they vary all five parameters $n$, $p$, $s$, $\rho$, and $\nu$ to observe how the data generation impacts these metrics.  
 
@@ -22,7 +21,7 @@ Before coding our method, let's recap the steps we will need to perform for a si
 
 ![Example Approaches to Sketching out Functions.](images/cs-simulation/sketches.png){#fig-sketch fig-align="center" width="50%"}
 
-Let's take a closer look at the second approach. For my metrics function, we have missed some inputs we will need. In particular, in order to calculate our end metrics, we will need to know the true coefficients $\beta$, the covariance matrix $\Sigma$, and the level of noise $\sigma$. Therefore, rather than returning a data frame, we will return a list that will contain $X$, $y$, and these values. For the first approach, this would require saving this information in a text file. Comparing between our two options, we will implement the second approach that does not store data. Another thing we can notice in our current sketch is that we likely want to store the results as a csv file, so rather than returning a list, we should return a vector that will correspond to a row in this file.  Our final sketch is in @fig-final-approach.
+Let's take a closer look at the second approach. For our metrics function, we have missed some inputs we will need. In particular, in order to calculate our end metrics, we will need to know the true coefficients $\beta$, the covariance matrix $\Sigma$, and the level of noise $\sigma$. Therefore, rather than returning a data frame, we will return a list that will contain $X$, $y$, and these values. For the first approach, this would require saving this information in a text file. Comparing between our two options, we will implement the second approach that does not store data. Another thing we can notice in our current sketch is that we likely want to store the results as a csv file, so rather than returning a list, we should return a vector that will correspond to a row in this file.  Our final sketch is in @fig-final-approach.
 
 ![Updated Function Sketch.](images/cs-simulation/final_approach.png){#fig-final-approach fig-align="center" width="40%"}
 
@@ -85,7 +84,7 @@ simulate_data <- function(n, p, s, snr, rho) {
 }
 ```
 
-Next, we will write a function for our model metrics. The only input we need from our model is the estimated coefficients. Otherwise, all the information comes from the data we generate with the function we just wrote. We will utilize this list format to extract out the values needed for our formulas. 
+Next, we will write a function for our model metrics. The only input we need from our model is the estimated coefficients. Otherwise, all of the information comes from the data we generate with the function we just wrote. We will utilize this list format to extract out the values needed for our formulas. 
 
 ```{r}
 #' Return model metrics
