@@ -21,7 +21,7 @@ data(NHANESsample)
 
 # transform SBP and lead
 NHANESsample$SBP <- 
-  rowMeans(NHANESsample[c("SBP1","SBP2","SBP3","SBP4")], 
+  rowMeans(NHANESsample[c("SBP1", "SBP2", "SBP3", "SBP4")], 
                              na.rm=TRUE)
 NHANESsample$LEAD <- log(NHANESsample$LEAD)
 
@@ -67,39 +67,39 @@ $$
 
 where $\lambda$ is a complexity parameter and $\alpha$ controls the balance between the two norms. A model with only L1 regularization ($\alpha = 1$) corresponds to lasso regression while a model with only L2 regularization ($\alpha=0$) corresponds to ridge regression. Note that the penalty depends on the scale of $X$ and we typically assume each column has been standardized.
 
-The **glmnet** package implements elastic net regularization. It assumes our data are in the form described above. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
+The **glmnet** package implements elastic net regularization. It assumes our data are in the form described previously. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
 
 ```{r}
-x <- model.matrix(log(SBP) ~ ., nhanes)[,-1]
+x <- model.matrix(log(SBP) ~ ., nhanes)[, -1]
 head(x)
 ```
 
-Our outcome vector will correspond to log transformed systolic blood pressure.
+Our outcome vector corresponds to log transformed systolic blood pressure.
 
 ```{r}
 y <- log(nhanes$SBP)
 ```
 
-The `glmnet()` function will fit an elastic net regression model. This requires us to specify our input matrix `x` and response variable `y`. Additionally, we can specify the assumed distribution for `y` using the `family` argument. In our example below we fit this model with $\alpha = 1$ and 25 different values of $\lambda$. By default, `glmnet()` sets $\alpha$ to 1 and creates a grid of 100 different values of `lambda`. It is also the default to standardize `x`, which we can turn off by specifying `standardize = FALSE` in our function call.
+The `glmnet()` function fits an elastic net regression model. This requires us to specify our input matrix `x` and response variable `y`. Additionally, we can specify the assumed distribution for `y` using the `family` argument. In our subsequent example, we fit this model with $\alpha = 1$ and 25 different values of $\lambda$. By default, `glmnet()` sets $\alpha$ to 1 and creates a grid of 100 different values of `lambda`. It is also the default to standardize `x`, which we can turn off by specifying `standardize = FALSE` in our function call.
 
 ```{r}
 mod_lasso <- glmnet(x, y, family = "gaussian", alpha = 1,
                     nlambda = 25)
 ```
 
-If we plot the resulting object, we can see the model coefficients for each resulting model by plotting how the coefficient for each variable changes with the value of $\lambda$. The `plot()` function by default plots these against the penalty term but we can also specify to plot against the $\lambda$ values on the log scale. The `label` argument adds a label to each line, though these are often hard to read. The numbers at the top of the plot indicate how many non-zero coefficients were included in the model for different $\lambda$ values. Read the documentation `?glmnet` to see the other possible inputs including `penalty.factor` and `weights` arguments.
+If we plot the resulting object, we can see the model coefficients for each resulting model by plotting how the coefficient for each variable changes with the value of $\lambda$. The `plot()` function by default plots these against the penalty term but we can also specify to plot against the $\lambda$ values on the log scale. The `label` argument adds a label to each line, though these are often hard to read. The numbers at the top of the plot indicate how many non-zero coefficients were included in the model for different $\lambda$ values. Read the documentation `?glmnet` to see the other possible inputs including the `penalty.factor` and `weights` arguments.
 
 ```{r}
 plot(mod_lasso, xvar = "lambda", label = TRUE)
 ```
 
-We can also print our results. This prints a matrix with the values of $\lambda$ used. For each value we can also see the number of nonzero coefficients (`Df`) and the percent deviance explained (`%dev`).
+We can also print our results. This prints a matrix with the values of $\lambda$ used. For each $\lambda$ value we can also see the number of nonzero coefficients (`Df`) and the percent deviance explained (`%dev`).
 
 ```{r}
 print(mod_lasso)
 ```
 
-We can extract the model for a particular value of $\lambda$ using the `coef()` function. The argument `s` specifies the value of $\lambda$. For the particular value of $\lambda$ chosen below, only age has a non-zero coefficient. Note that the `coef()` function returns the coefficients on the original scale.
+We can extract the model for a particular value of $\lambda$ using the `coef()` function. The argument `s` specifies the value of $\lambda$. For the particular value of $\lambda$ chosen in the following code, only age has a non-zero coefficient. Note that the `coef()` function returns the coefficients on the original scale.
 
 ```{r}
 coef(mod_lasso, s = 0.045920)
@@ -111,7 +111,7 @@ We can also use the `predict()` function to predict blood pressure for this part
 pred_lasso <- predict(mod_lasso, s = 0.045920, newx = x)
 ```
 
-This shows our observed model fit for a fairly high penalty term. In order to choose the best value of $\lambda$, we will use 5-fold cross-validation. First, we randomly assign each observation to one of five folds using the `sample()` function. We can see that this splits the data into roughly equal size folds.
+This shows our observed model fit for a fairly high penalty term. In order to choose the best value of $\lambda$, we use 5-fold cross-validation. First, we randomly assign each observation to one of five folds using the `sample()` function. We can see that this splits the data into folds of roughly equal size.
 
 ```{r}
 set.seed(1)
@@ -119,17 +119,17 @@ foldid <- sample(1:5, size = nrow(x), replace = TRUE)
 table(foldid)
 ```
 
-Next, we call the `cv.glmnet()` function which will implement k-fold cross-validation across a grid of $\lambda$ values. Similar to before, we specified `x`, `y`, and `alpha = 1`. This time, we also include the measure to use for cross-validation (`mse` indicates mean squared error) and provide the fold vector `foldid`. If you do not want to provide folds, you can instead use the `nfolds` argument to specify the number of folds and the function will create them. Plotting the returned object shows us the estimated mean squared error for different values of $\lambda$ as well as error bars for each estimate. Similar to before it also shows the number of non-zero coefficients at the top.
+Next, we call the `cv.glmnet()` function which implements k-fold cross-validation across a grid of $\lambda$ values. Similar to before, we specified `x`, `y`, and `alpha = 1`. This time, we also include the measure to use for cross-validation (`mse` indicates mean squared error) and provide the fold vector `foldid`. If you do not want to provide folds, you can instead use the `nfolds` argument to specify the number of folds and the function creates them. Plotting the returned object shows us the estimated mean squared error for different values of $\lambda$ as well as error bars for each estimate. Similar to before it also shows the number of non-zero coefficients at the top.
 
 ```{r}
 cv_lasso <- cv.glmnet(x, y, foldid = foldid, alpha = 1,
-                      type.measure="mse")
+                      type.measure = "mse")
 plot(cv_lasso)
 ```
 
-There are two vertical dashed lines included in the plot. These correspond to two values of $\lambda$ that are stored in our object. The first is `lambda.min`. This corresponds to the $\lambda$ value with the lowest estimated mean squared error. The other is `lambda.1se`. This corresponds to the largest $\lambda$ value whose estimated mean squared error is within one standard error of the lowest value. As indicated in the plot, this will correspond to a model with fewer included coefficients and higher regularization.
+There are two vertical dashed lines included in the plot. These correspond to two values of $\lambda$ that are stored in our object. The first is `lambda.min`. This corresponds to the $\lambda$ value with the lowest estimated mean squared error. The other is `lambda.1se`. This corresponds to the largest $\lambda$ value whose estimated mean squared error is within one standard error of the lowest value. As indicated in the plot, this corresponds to a model with fewer included coefficients and higher regularization.
 
-We will use the `lambda.min` value as our chosen $\lambda$ value. To extract the coefficients corresponding to this $\lambda$ value we again use the `coef()` function. However, this $\lambda$ might not be one of the initial 25 used for our `mod_lasso` object. In this case, the `coef()` function will use linear interpolation to get the estimated coefficients. If we want to refit our model for this particular value of $\lambda$ we can instead specify the argument `exact = TRUE` and provide `x` and `y`.
+We use the `lambda.min` value as our chosen $\lambda$ value. To extract the coefficients corresponding to this $\lambda$ value we again use the `coef()` function. However, this $\lambda$ might not be one of the initial 25 used for our `mod_lasso` object. In this case, the `coef()` function uses linear interpolation to get the estimated coefficients. If we want to refit our model for this particular value of $\lambda$ we can instead specify the argument `exact = TRUE` and provide `x` and `y`.
 
 ```{r}
 lasso_coef <- coef(mod_lasso, s = cv_lasso$lambda.min,
@@ -137,14 +137,14 @@ lasso_coef <- coef(mod_lasso, s = cv_lasso$lambda.min,
 lasso_coef
 ```
 
-We now repeat the same process for a model with $\alpha = 0$ and $\alpha = 0.5$. In this case, we call the `glmnet()` function with our chosen $\lambda$ value to find the coefficients. This is equivalent to what we did above for our lasso model. Last, we create a data frame with the estimated coefficients for each model. The `coef()` function returns a matrix so this requires converting these to numeric vectors.
+We now repeat the same process for a model with $\alpha = 0$ and $\alpha = 0.5$. In this case, we call the `glmnet()` function with our chosen $\lambda$ value to find the coefficients. This is equivalent to what we did for our lasso model. Last, we create a data frame with the estimated coefficients for each model. The `coef()` function returns a matrix so this requires converting these to numeric vectors.
 
 ```{r}
 # cross validation using same folds
 cv_ridge <- cv.glmnet(x, y, foldid = foldid, alpha = 0,
-                      type.measure="mse")
+                      type.measure = "mse")
 cv_elastic <- cv.glmnet(x, y, foldid = foldid, alpha = 0.5,
-                      type.measure="mse")
+                      type.measure = "mse")
 
 # Refit model on full data with chosen lambda
 mod_ridge <- glmnet(x, y, alpha = 0, lambda = cv_ridge$lambda.min)
@@ -170,7 +170,7 @@ mean((nhanes$SBP - exp(predict(mod_elastic, newx = x)))^2)
 
 ## Best Subset
 
-The second package we will introduce in this chapter is one that allows us to fit models with an L0 penalty term. The package **L0Learn** considers penalties of the following forms.
+The second package we introduce in this chapter is one that allows us to fit models with an L0 penalty term. The package **L0Learn** considers penalties of the following forms.
 
 -   L0 only: $\lambda ||\beta||_0$
 
@@ -181,7 +181,7 @@ The second package we will introduce in this chapter is one that allows us to fi
 To fit a model with an L0 penalty term, we use the `L0Learn.fit()` function. Similar to `glmnet()`, we need to specify our input matrix `x` and response vector `y` as well as our penalty using the `penalty` argument. We can also specify a number of $\lambda$ values to consider `nLambda` and specify the family through the loss function `loss`. 
 
 ```{r}
-mod_l0 <- L0Learn.fit(x, y, penalty="L0", loss = "SquaredError",
+mod_l0 <- L0Learn.fit(x, y, penalty = "L0", loss = "SquaredError",
                       nLambda = 20)
 ```
 
@@ -202,7 +202,7 @@ To extract the model for a particular value, we can use the `coef()` function an
 coef_l0 <- coef(mod_l0, lambda = 1.75475e-03, gamma = 0)
 ```
 
-Unfortunately, this output doesn't include the variable names so we add those in.
+Unfortunately, this output doesn't include variable names so we add them manually.
 
 ```{r}
 rownames(coef_l0) <- c("Intercept", colnames(x))
@@ -217,11 +217,11 @@ mod_l0l2 <- L0Learn.fit(x, y, penalty = "L0L2",
                         nLambda = 20, nGamma = 10)
 ```
 
-The **L0Learn** package also includes a function to use cross-validation to choose these parameters. Unfortunately, it does not include an option to specify your own folds. Instead, we use the `nFolds` argument to specify to run 5-fold cross-validation. This function also allows us to specify a number of $\lambda$ and $\gamma$ values or we can stick to the default number. Plotting the result shows the estimated mean squared error with error bars for each model and the corresponding support size. 
+The **L0Learn** package also includes a function to use cross-validation to choose these parameters. Unfortunately, it does not include an option to specify your own folds. Instead, we use the `nFolds` argument to specify to run 5-fold cross-validation. This function also allows us to specify a number of $\lambda$ and $\gamma$ values, or we can use the default number. Plotting the result shows the estimated mean squared error with error bars for each model and the corresponding support size. 
 
 ```{r}
 cv_l0l2 = L0Learn.cvfit(x, y, loss = "SquaredError",
-                        nFolds = 5, penalty="L0L2")
+                        nFolds = 5, penalty = "L0L2")
 plot(cv_l0l2)
 ```
 
@@ -258,7 +258,7 @@ mean((nhanes$SBP - exp(pred_l0l2))^2)
 
 ## Exercises
 
-For these exercises, we will use the `nyts` data from [Chapter -@sec-logistic-regression]. Our outcome will be any tobacco use.
+For these exercises, we use the `nyts` data from [Chapter -@sec-logistic-regression]. Our outcome of interest is whether or not someone uses any tobacco product.
 
 1.  Create a new variable `tobacco_use` representing any tobacco use in the past 30 days (including e-cigarettes, cigarettes, and/or cigars). Then, create a new data frame `nyts_sub` that contains this new column as well as columns for location, age, sex, race, whether someone identifies with the LGBT community, grades in the past year, perceived_cigarette use, perceived e-cigarette use, psych distress, and family affluence.
 

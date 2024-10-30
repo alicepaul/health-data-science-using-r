@@ -458,34 +458,34 @@ window.Quarto = {
 </header>
 
 
-<p>Functions are an important part of creating reproducible research and clean code. So far we have been using many useful functions from base R and available packages by learning how to specify the inputs and use the output. We will now shift to writing our own functions. To start, we need to understand the arguments and return values of functions as well as the scope of objects used or created within functions. We will also talk about how to document, test, and debug your functions so that we can ensure they are correct and easy to use. We will use the <strong>testthat</strong> package to create simple tests for our functions.</p>
+<p>Functions are an important part of creating reproducible research and clean code. So far we have been using many useful functions from base R and available packages by learning how to specify the inputs and use the output. We now shift to writing our own functions. To start, we need to understand the arguments and return values of functions as well as the scope of objects used or created within functions. We also talk about how to document, test, and debug your functions so that we can ensure they are correct and easy to use. We use the <strong>testthat</strong> package to create simple tests for our functions.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(testthat)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>One type of function we have already written is an <em>anonymous functions</em>. These are functions that are not saved or given a name. These functions typically exist if we want to input a function argument to another function but we don’t want to save that function for future use. For example, in the code below, I use the <code>apply()</code> function on a data frame to find the proportion of observations that are NA for each column. Note that since the function is so short it is easy enough to define within the <code>apply()</code> function call by just including the code for what is returned. For functions with more than one line, you would not want use an anonymous function and would need to define it.</p>
+<p>One type of function we have already written is an <em>anonymous function</em>. These are functions that are not saved or given a name. These functions typically exist if we want to input a function argument to another function but we don’t want to save that function for future use. For example, in the following code, we use the <code>apply()</code> function on a data frame to find the proportion of observations that are NA for each column. Note that since the function is so short it is easy enough to define within the <code>apply()</code> function call by just including the code for what is returned. For functions with more than one line, you would not want use an anonymous function and would need to define the function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x1 =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x2 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>),</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x3 =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="cn">NA</span>, <span class="cn">NA</span>))</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x))<span class="sc">/</span><span class="fu">length</span>(x)) </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sum</span>(<span class="fu">is.na</span>(x)) <span class="sc">/</span> <span class="fu">length</span>(x)) </span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   x1   x2   x3 </span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 0.25 0.00 0.50</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="components-of-a-function" class="level2" data-number="18.1">
 <h2 data-number="18.1" class="anchored" data-anchor-id="components-of-a-function"><span class="header-section-number">18.1</span> Components of a Function</h2>
-<p>To start storing functions we need to give them a name and define their input (arguments) and output (return values). To do so we assign a function name to a function object as shown below. The argument below has two arguments <code>arg1</code> and <code>arg2</code> and returns <code>output</code>.</p>
+<p>To start storing functions we need to give them a name and define their input (arguments) and output (return values). To do so we assign a function name to a function object as shown in the following code. This example function has two arguments <code>arg1</code> and <code>arg2</code> and returns <code>output</code>.</p>
 <pre><code>function_name &lt;- function(arg1, arg2){
   code to compute output from arguments
   return(output)
 }</code></pre>
-<p>Take a look at the simple function below. The name of this function is <code>say_hello</code> and there is no input (arguments) or output (return values) associated with this function. Instead it just prints out a hello statement.</p>
+<p>Take a look at the following simple function. The name of this function is <code>say_hello</code> and there is no input (arguments) or output (return values) associated with this function. Instead, it just prints out a hello statement.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>say_hello <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Hello!"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Running the code above creates an object called <code>say_hello</code> of the class <code>function</code>. We can run this function by calling it using empty parenthesis (since there are no input arguments).</p>
+<p>Running the previous code creates an object called <code>say_hello</code> of the class <code>function</code>. We can run this function by calling it using empty parenthesis (since there are no input arguments).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(say_hello)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "function"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -494,7 +494,7 @@ window.Quarto = {
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">say_hello</span>()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Hello!"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can add to this function by instead adding our first argument called <code>name</code> which is a string and then printing “Hello, [name]!”. Below, I use the <code>paste0()</code> function which concatenates the string arguments into a single string.</p>
+<p>We can add to this function by instead adding our first argument called <code>name</code> which is a string and then printing “Hello, [name]!”. In the next code chunk, we use the <code>paste0()</code> function which concatenates the string arguments into a single string.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>say_hello <span class="ot">&lt;-</span> <span class="cf">function</span>(name){</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"Hello, "</span>, name, <span class="st">"!"</span>))</span>
@@ -504,40 +504,40 @@ window.Quarto = {
 </div>
 <section id="arguments" class="level3" data-number="18.1.1">
 <h3 data-number="18.1.1" class="anchored" data-anchor-id="arguments"><span class="header-section-number">18.1.1</span> Arguments</h3>
-<p>Arguments are inputs passed to functions so that they can complete the desired computation. We can also have default values for these arguments. In this case, those arguments do not have to be specified when calling the function. For example, <code>rnorm(10)</code> uses the default value for the mean to understand which distribution we want to use. Below, we find the Euclidean distance from a given (x,y,z) coordinate and the origin (0,0,0) with a default value of zero for all values.</p>
+<p>Arguments are inputs passed to functions so that they can complete the desired computation. We can also have default values for these arguments. In this case, those arguments do not have to be specified when calling the function. For example, <code>rnorm(10)</code> uses the default value for the mean to understand which distribution we want to use. In the following function, we find the Euclidean distance from a given (x,y,z) coordinate and the origin (0,0,0) with a default value of zero for all values.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dist_to_origin <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x=</span><span class="dv">0</span>,<span class="at">y=</span><span class="dv">0</span>,<span class="at">z=</span><span class="dv">0</span>){</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(((x<span class="dv">-0</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (y<span class="dv">-0</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (z<span class="dv">-0</span>)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">^</span>(<span class="fl">0.5</span>))</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dist_to_origin <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">x =</span> <span class="dv">0</span>,<span class="at">y =</span> <span class="dv">0</span>,<span class="at">z =</span> <span class="dv">0</span>){</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(((x <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (y <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> (z <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">^</span><span class="dv">2</span>)<span class="sc">^</span>(<span class="fl">0.5</span>))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>If I call this function with no arguments, it will use all the default values.</p>
+<p>If we call this function with no arguments, it uses all the default values.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>()</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>However, if I call the function with one argument, it will assume this first argument is <code>x</code>. Similarly, it will assume the second value is <code>y</code> and the third value is <code>z</code>. If I want to give the arguments without worrying about the order, I can specify them using their names (see the last line below).</p>
+<p>However, if we call the function with one argument, the function assumes this first argument is <code>x</code>. Similarly, it assumes the second value is <code>y</code> and the third value is <code>z</code>. If we want to give the arguments without worrying about the order, we can specify them using their names (see the last line in the following code chunk).</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="dv">1</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 1</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="dv">1</span>,<span class="dv">2</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2.24</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3.74</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="at">y=</span><span class="dv">2</span>,<span class="at">z=</span><span class="dv">3</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="at">y =</span> <span class="dv">2</span>, <span class="at">z =</span> <span class="dv">3</span>)</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 3.61</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Besides passing in numeric values, strings, data frames, lists, or vectors, we can also pass other types of objects in as arguments to a function. For example, we can take another function in as an argument. In the example below, I create two functions. The first function calculates the euclidean distance between two points. The second one computes the distance from a given point to the origin. Note that this updated function to find the distance to the origin is more flexible and written in a cleaner manner. First, it allows us to input a point of any length. Second, it allows us to specify the distance function used. This also demonstrates calling a function within another function.</p>
-<p>Try out calling <code>euclidean_dist()</code> and <code>dist_to_origin()</code> on different values below.</p>
+<p>Besides passing in numeric values, strings, data frames, lists, or vectors, we can also pass other types of objects in as arguments to a function. For example, we can take another function in as an argument. In the next example, we create two functions. The first function calculates the euclidean distance between two points. The second one computes the distance from a given point to the origin. Note that this updated function to find the distance to the origin is more flexible and written in a cleaner manner. First, it allows us to input a point of any length. Second, it allows us to specify the distance function used. This also demonstrates calling a function within another function.</p>
+<p>Try out calling <code>euclidean_dist()</code> and <code>dist_to_origin()</code> on different values.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>euclidean_dist <span class="ot">&lt;-</span> <span class="cf">function</span>(pt1, pt2){</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Finds the Euclidean distance from pt1 to pt2</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sqrt</span>(<span class="fu">sum</span>((pt1<span class="sc">-</span>pt2)<span class="sc">^</span><span class="dv">2</span>)))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sqrt</span>(<span class="fu">sum</span>((pt1<span class="sc">-</span> pt2)<span class="sc">^</span><span class="dv">2</span>)))</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>dist_to_origin <span class="ot">&lt;-</span> <span class="cf">function</span>(pt1, <span class="at">dist_func =</span> euclidean_dist){</span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Finds the distance from pt1 to the origin</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  origin <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">length</span>(pt1))</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">dist_func</span>(pt1,origin))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  origin <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(pt1))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">dist_func</span>(pt1, origin))</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dist_to_origin</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>))</span>
@@ -550,31 +550,31 @@ window.Quarto = {
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Insert your solution here:</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Another type of argument to a function can be a formula. If you have used linear regression in R, you have seen this in practice. Below, we fit a simple linear model where we specify a model formula <code>y~x</code> as the first argument. We are also using default arguments for <code>rnorm()</code> on the first two lines.</p>
+<p>Another type of argument to a function can be a formula. If you have used linear regression in R, you have seen this in practice. In the following code, we fit a simple linear model where we specify a model formula <code>y~x</code> as the first argument. We are also using default arguments for <code>rnorm()</code> on the first two lines.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">mean=</span><span class="dv">3</span>, <span class="at">n=</span><span class="dv">100</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">sd =</span> <span class="fl">0.2</span>, <span class="at">n=</span><span class="dv">100</span>)</span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="at">mean =</span> <span class="dv">3</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="at">sd =</span> <span class="fl">0.2</span>, <span class="at">n =</span> <span class="dv">100</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y<span class="sc">~</span>x)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Call:</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; lm(formula = y ~ x)</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Coefficients:</span></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)            x  </span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      -0.132        1.042</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.00387      1.00615</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="return-values" class="level3" data-number="18.1.3">
 <h3 data-number="18.1.3" class="anchored" data-anchor-id="return-values"><span class="header-section-number">18.1.3</span> Return Values</h3>
 <p>If you read the documentation for <code>lm()</code> by calling <code>?lm</code> we can see that there are a lot of arguments that have default values. The other thing to note about the <code>lm</code> documentation is that there are multiple values returned. In fact, the type of object returned is a list containing all the different things we want to know about the results such as the coefficients.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>simp_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y<span class="sc">~</span>x)</span>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>simp_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> x)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>simp_model<span class="sc">$</span>coefficients</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)           x </span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;      -0.132       1.042</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     0.00387     1.00615</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Since R only allows you to return one object, packaging the return values into a list is a useful way to return multiple outputs from a function. In the example below, we create a function <code>coin_flips()</code> that takes in a probability <code>prob</code> and a number of iterations <code>n</code> (with default value 10) and simulates <code>n</code> coin flips where the coin has a probability of <code>prob</code> of landing on heads. The function returns the percentage of trials that were heads and the results of the coin flips. We can access each of these returned values by using the names <code>percent_heads</code> and <code>results</code>.</p>
+<p>Since R only allows you to return one object, packaging the return values into a list is a useful way to return multiple outputs from a function. In the following example, we create a function <code>coin_flips()</code> that takes in a probability <code>prob</code> and a number of iterations <code>n</code> (with default value 10) and simulates <code>n</code> coin flips where the coin has a probability of <code>prob</code> of landing on heads. The function returns the percentage of trials that were heads and the results of the coin flips. We can access each of these returned values by using the names <code>percent_heads</code> and <code>results</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>coin_flips <span class="ot">&lt;-</span> <span class="cf">function</span>(prob, <span class="at">n =</span> <span class="dv">10</span>){</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Flips a coin with probability prob of heads for n trials</span></span>
@@ -588,7 +588,7 @@ window.Quarto = {
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>trial<span class="sc">$</span>results</span>
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] 0 1 1 0 0 0 0 1 1 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>One important thing to know about R and return values is that if you don’t specify a return statement, it will by default return the last computed object. In the example below, the value returned is 3. Avoid unexpected behavior by always using the <code>return()</code> function.</p>
+<p>One important thing to know about R and return values: if you don’t specify a return statement, it returns the last computed object by default. In the following code, the value returned is 3. Avoid unexpected behavior by always using the <code>return()</code> function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ex_return <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">2</span></span>
@@ -601,7 +601,7 @@ window.Quarto = {
 </section>
 <section id="scope-of-objects" class="level3" data-number="18.1.4">
 <h3 data-number="18.1.4" class="anchored" data-anchor-id="scope-of-objects"><span class="header-section-number">18.1.4</span> Scope of Objects</h3>
-<p>When working within functions and calling functions, we want to remember the scope of our objects. <em>global objects</em> are objects defined outside of functions. These values can also be accessed outside or inside functions. For example, the object <code>y</code> is defined outside of a function and so is a global object meaning we can use its value inside the function.</p>
+<p>When working within functions and calling functions, we want to remember the scope of our objects. <em>Global objects</em> are objects defined outside of functions. These values can also be accessed outside or inside functions. For example, the object <code>y</code> is defined outside of a function and so is a global object meaning we can use its value inside the function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="st">"Cassandra"</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -612,15 +612,15 @@ window.Quarto = {
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ex_scope</span>()</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "Hey, Cassandra"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>If we change the value of a global object within a function however, it does not update the value outside of the function. Below, we add 1 to <code>y</code> inside the function but it does not change the value of <code>y</code> after the function is done. Every time we run a function, it creates a new sub-environment inside that can access the values of global objects but also creates its own <em>local objects</em>. In this case, the function creates its own object <code>y</code>, which is a local object that is a copy of the original object.</p>
+<p>If we change the value of a global object within a function however, it does not update the value outside of the function. In the subsequent code chunk, we add 1 to <code>y</code> inside the function but it does not change the value of <code>y</code> after the function is done. Every time we run a function, R creates a new sub-environment inside, which can access the values of global objects but also creates its own <em>local objects</em>. In this case, the function creates its own object <code>y</code>, which is a local object that is a copy of the original object.</p>
 <p>As another example, the function also creates a local object called <code>z</code> which ceases to exist after we run the function. If we try to print <code>z</code> on the last line we would get an error that <code>z</code> is not found. All objects created inside functions only exist in that sub-environment and are erased when we are no longer in the function. Therefore, we want to make sure we return any values we want to store.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ex_local <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> x<span class="sc">*</span>y</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y<span class="sc">+</span>z)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> x <span class="sc">*</span> y</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y <span class="sc">+</span> z)</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ex_local</span>(<span class="dv">2</span>)</span>
@@ -628,13 +628,13 @@ window.Quarto = {
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>y</span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To update global objects within a function, you can use the <code>&lt;&lt;-</code> operator (global assignment operator). This looks for an object in the global environment and updates its value (or creates an object with this value if none is found). For example, the function below will update the value of the global objects <code>y</code>. As a general practice, we should be careful using global objects within a function and it often is safer to use input arguments and return values instead.</p>
+<p>To update global objects within a function, you can use the <code>&lt;&lt;-</code> operator (global assignment operator). This looks for an object in the global environment and updates its value (or creates an object with this value if none is found). For example, the following function updates the value of the global objects <code>y</code>. As a general practice, we should be careful using global objects within a function and it often is safer to use input arguments and return values instead.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">5</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>ex_update_global <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;&lt;-</span> y<span class="sc">+</span><span class="dv">1</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y<span class="sc">+</span>x)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;&lt;-</span> y <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(y <span class="sc">+</span> x)</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ex_update_global</span>(<span class="dv">2</span>)</span>
@@ -645,12 +645,12 @@ window.Quarto = {
 </section>
 <section id="functions-within-functions-and-returning-functions" class="level3" data-number="18.1.5">
 <h3 data-number="18.1.5" class="anchored" data-anchor-id="functions-within-functions-and-returning-functions"><span class="header-section-number">18.1.5</span> Functions within Functions and Returning Functions</h3>
-<p>Sometimes we will see functions written inside other functions. Writing functions within functions can be useful to separate out some part of the code or to give that function access to the local environment objects. In the example below, the inner function has access to the value of <code>x</code> even though we have not passed it as an argument. The downside of this structure is the function <code>add_x()</code> does not exist outside the function so we cannot call it in other code.</p>
+<p>Sometimes we see functions written inside other functions. Writing functions within functions can be useful to separate out some part of the code or to give that function access to the local environment objects. In the following example, the inner function has access to the value of <code>x</code> even though we have not passed it as an argument. The downside of this structure is the function <code>add_x()</code> does not exist outside the function so we cannot call it in other code.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>add_x_seq <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adds x to 1:10 and returns</span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  add_x <span class="ot">&lt;-</span> <span class="cf">function</span>(y){</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(y<span class="sc">+</span>x)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span>(y <span class="sc">+</span> x)</span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">add_x</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
@@ -660,11 +660,11 @@ window.Quarto = {
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1]  4  5  6  7  8  9 10 11 12 13</span></span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#add_x(3) # would return an error</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>If we wanted to use the created function, we can return it. In the updated example below we return an anonymous function. By doing so, we create a unique function for each <code>x</code> value.</p>
+<p>If we want to use the created function, we can return it. In the updated example, we return an anonymous function. By doing so, we create a unique function for each <code>x</code> value.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>add_x <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Returns a function to add x to any value</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="cf">function</span>(y) y<span class="sc">+</span>x)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="cf">function</span>(y) y <span class="sc">+</span> x)</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>add2 <span class="ot">&lt;-</span> <span class="fu">add_x</span>(<span class="dv">2</span>)</span>
@@ -679,7 +679,7 @@ window.Quarto = {
 </section>
 <section id="documenting-functions" class="level2" data-number="18.2">
 <h2 data-number="18.2" class="anchored" data-anchor-id="documenting-functions"><span class="header-section-number">18.2</span> Documenting Functions</h2>
-<p>The functions we wrote had minimal comments or documentation. When creating functions, we should document them including any information about the format of the input and output. We do so using comments that precede the function and start with <code>#'</code>. This style of function documentation is called <em>roxygen</em>. An example is given below for our Euclidean distance function. You can see we provided information about the two arguments and the return value. The roxygen style is the style used for published R packages.</p>
+<p>The functions we wrote had minimal comments or documentation. When creating functions, we should document them including any information about the format of the input and output. We do so using comments that precede the function and start with <code>#'</code>. This style of function documentation is called <em>roxygen</em>. The following code chunk shows an example for our Euclidean distance function. You can see we provided information about the two arguments and the return value. The roxygen style is the style used for published R packages.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Euclidean distance</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
@@ -689,10 +689,10 @@ window.Quarto = {
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param pt2 numeric vector </span></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' @return the Euclidean distance from pt1 to pt2</span></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>euclidean_dist <span class="ot">&lt;-</span> <span class="cf">function</span>(pt1, pt2){</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>((<span class="fu">sum</span>((pt1<span class="sc">-</span>pt2)<span class="sc">^</span><span class="dv">2</span>))<span class="sc">^</span><span class="fl">0.5</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>((<span class="fu">sum</span>((pt1 <span class="sc">-</span> pt2)<span class="sc">^</span><span class="dv">2</span>))<span class="sc">^</span><span class="fl">0.5</span>)</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Each comment should start with a pound sign and back-tick. The first block of lines is the introduction and the first line of the comment block is reserved for the title. This the first information we want the user to know about the function and should be a single line. For all other information besides the title, we will use certain tags.</p>
+<p>Each comment should start with a pound sign and back-tick. The first block of lines is the introduction and the first line of the comment block is reserved for the title. This is the first information we want the user to know about the function and should be a single line. For all other information besides the title, we use certain tags.</p>
 <ul>
 <li><p><code>@description</code> This tag should be placed first and is a place where you can briefly put more information about the function beyond the title. You can also add more details with the <code>@details</code> tag.</p></li>
 <li><p><code>@param</code> This tag comes before each input argument’s description. For each argument, we want to include the name and type, but we might also include information on how that argument is used.</p></li>
@@ -700,7 +700,7 @@ window.Quarto = {
 </ul>
 <section id="practice-question-1" class="level3" data-number="18.2.1">
 <h3 data-number="18.2.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">18.2.1</span> Practice Question</h3>
-<p>Write the documentation for our coin flip function below.</p>
+<p>Write the documentation for the following coin flip function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Insert your solution here:</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>coin_flips <span class="ot">&lt;-</span> <span class="cf">function</span>(prob, <span class="at">n =</span> <span class="dv">10</span>){</span>
@@ -712,7 +712,7 @@ window.Quarto = {
 </section>
 <section id="debugging-and-testing" class="level2" data-number="18.3">
 <h2 data-number="18.3" class="anchored" data-anchor-id="debugging-and-testing"><span class="header-section-number">18.3</span> Debugging and Testing</h2>
-<p>As we write more complex code and functions, we want to learn how to test our code. When it comes to testing code, a good mantra is test early and test often. So avoid writing too much code before running and checking that the results match what you expect. Below are some simple principles that are applicable to debugging in any setting.</p>
+<p>As we write more complex code and functions, we want to learn how to test our code. When it comes to testing code, a good mantra is “test early and test often.” So avoid writing too much code before running and checking that the results match what you expect. Here are some simple principles that are applicable to debugging in any setting.</p>
 <ul>
 <li>Start simple and build up in steps.</li>
 <li>Check your syntax by checking that all parentheses (), brackets [], and curly braces {} match where you expect.</li>
@@ -722,8 +722,8 @@ window.Quarto = {
 <li>Localize your error by printing out the values of objects at each stage or use break points in R.</li>
 <li>Modify your code one piece at a time and check all test values again to avoid introducing new errors.</li>
 </ul>
-<p>For example, suppose I want to write a function that finds any pairs of numeric columns with a Pearson correlation with absolute value above a certain threshold. We want our code to be structured so that it makes sense, is flexible to our needs, and avoids unnecessary work. To start building up this function, I need to first think about the inputs and outputs I want. This is called a <em>top-down approach</em>. Sketching out the overall steps you your code needs to complete before writing any of them can help to improve your structure and avoid having to rewrite large pieces.</p>
-<p>In this case, my input to this function will be a data frame which could contain a mixture of numeric and categorical columns and a threshold correlation value with a default value of 0.6. I want to return a data frame with the pairs and their correlation. This gives me a template for my documentation.</p>
+<p>For example, suppose we want to write a function that finds any pairs of numeric columns with a Pearson correlation with absolute value above a certain threshold. We want our code to be structured so that it makes sense, is flexible to our needs, and avoids unnecessary work. To start building up this function, we need to first think about the inputs and outputs we want. This is called a <em>top-down approach</em>. Sketching out the overall steps your code needs to complete before writing any of them can help to improve your structure and avoid having to rewrite large pieces.</p>
+<p>In this case, our input to this function is a data frame which could contain a mixture of numeric and categorical columns and a threshold correlation value with a default value of 0.6. We want to return a data frame with the pairs and their correlation. This gives us a template for our documentation.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Find pairs of columns with strong correlation</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
@@ -740,14 +740,14 @@ window.Quarto = {
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>()</span>
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, to start simple I want to create some artificial data I can use to test my data on. I use the <code>mvnrorm()</code> function from the **MASS* package <span class="citation" data-cites="R-MASS">(<a href="references.html#ref-R-MASS" role="doc-biblioref">Venables and Ripley 2002</a>)</span> to control the correlation between my columns and add in a categorical column that should be ignored by my function.</p>
+<p>Next, to start simple we want to create some artificial data we can use to test our function. We use the <code>mvnrorm()</code> function from the **MASS* package <span class="citation" data-cites="R-MASS">(<a href="references.html#ref-R-MASS" role="doc-biblioref">Venables and Ripley 2002</a>)</span> to control the correlation between our columns and add in a categorical column that should be ignored by our function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">4</span>)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>cor_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.9</span>, <span class="fl">0.4</span>, <span class="dv">0</span>,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fl">0.9</span>, <span class="dv">1</span>, <span class="fl">0.3</span>, <span class="dv">0</span>,</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                    <span class="fl">0.4</span>, <span class="fl">0.3</span>, <span class="fl">1.0</span>, <span class="dv">0</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.0</span>), <span class="at">nrow=</span><span class="dv">4</span>)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">round</span>(MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">100</span>, <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> cor_mat),<span class="dv">3</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                    <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">1.0</span>), <span class="at">nrow =</span> <span class="dv">4</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">round</span>(MASS<span class="sc">::</span><span class="fu">mvrnorm</span>(<span class="dv">100</span>, <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="at">Sigma =</span> cor_mat), <span class="dv">3</span>)</span>
 <span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>test_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(m)</span>
 <span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>test_df<span class="sc">$</span>V5 <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>), <span class="dv">100</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">high_cor</span>(test_df)</span>
@@ -762,14 +762,14 @@ window.Quarto = {
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; V3 0.318 0.307  1.0000 -0.0784</span></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; V4 0.174 0.177 -0.0784  1.0000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Great, now let’s roughly sketch out the steps we will need to complete.</p>
+<p>Great, now let’s roughly sketch out the steps we need to complete.</p>
 <ol type="1">
 <li>Subset the data to only numeric columns.</li>
 <li>Find the correlation of all pairs of columns.</li>
 <li>Check if a pair has a strong correlation.</li>
 <li>If so, add it to our results.</li>
 </ol>
-<p>Let’s start with step 1. Before putting code into our function, I am going to test my steps on my example data. To do so, I will use the <code>select_if()</code> function from the <strong>dplyr</strong> package.</p>
+<p>Let’s start with step 1. Before putting code into our function, we are going to test our steps on our example data. To do so, we use the <code>select_if()</code> function from the <strong>dplyr</strong> package.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df_numeric <span class="ot">&lt;-</span> <span class="fu">select_if</span>(test_df, is.numeric)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(df_numeric)</span>
@@ -781,12 +781,12 @@ window.Quarto = {
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 -1.580 -1.116 -1.563  0.045</span></span>
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 -0.901 -1.167  0.817 -1.726</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Great, this worked! Next we need to find the strong correlations. Now, we can use the correlation function to find the correlations. I then want to iterate through all pairs to check if the absolute value of the correlation is above our threshold. I will use a loop for this. In my first attempt, I create a nested for loop where <code>i</code> will be one column and <code>j</code> will be my second column in the pair. I can see I must have some mistakes because I am getting pairs where <code>i</code> and <code>j</code> are equal to each other and I also am getting zeros. Note how we are using print statements. This helps me to identify that I need to add parentheses for the first for loop and I need to update <code>j</code> to start at <code>i+1</code>.</p>
+<p>This worked. Next we need to find the strong correlations. Now, we can use the correlation function to find the correlations. We then want to iterate through all pairs to check if the absolute value of the correlation is above our threshold. We use a loop for this. In our first attempt, we create a nested for loop where <code>i</code> is the index of one column and <code>j</code> is the index of the second column in the pair. We can see we must have some mistakes because we are getting pairs where <code>i</code> and <code>j</code> are equal to each other and we are also getting zeros. Note how we are using print statements. This helps us to identify that we need to add parentheses for the first for loop and we need to update <code>j</code> to start at <code>i+1</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cor_mat <span class="ot">&lt;-</span> <span class="fu">cor</span>(df_numeric)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cor_mat)<span class="sc">-</span><span class="dv">1</span>){</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(cor_mat) <span class="sc">-</span> <span class="dv">1</span>){</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> (i<span class="sc">:</span><span class="fu">nrow</span>(cor_mat))){</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(i,j))</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(i, j))</span>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "0 0"</span></span>
@@ -804,13 +804,13 @@ window.Quarto = {
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "3 3"</span></span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "3 4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s try again. This time I will create a variable <code>n</code> which will be the number of columns. Much better!</p>
+<p>Let’s try again. This time we create a variable <code>n</code> which is the number of columns.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>cor_mat <span class="ot">&lt;-</span> <span class="fu">cor</span>(df_numeric)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cor_mat)</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(n<span class="dv">-1</span>)){</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> ((i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>n)){</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(i,j))</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">paste</span>(i, j))</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "1 2"</span></span>
@@ -820,19 +820,19 @@ window.Quarto = {
 <span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "2 4"</span></span>
 <span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "3 4"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, I need to add an if statement to check if there is a correlation above the given threshold. In this case to check if my code is working correctly, I will use a print statement for only those that meet the condition.</p>
+<p>Next, we need to add an if statement to check whether there is a correlation above the given threshold. In this case to check if our code is working correctly, we use a print statement for only those that meet the condition.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(cor_mat)</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>(n<span class="dv">-1</span>)){</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> ((i<span class="sc">+</span><span class="dv">1</span>)<span class="sc">:</span>n)){</span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(<span class="fu">abs</span>(cor_mat[i,j]) <span class="sc">&gt;</span> <span class="fl">0.6</span>){</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste</span>(i,j))</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">paste</span>(i, j))</span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] "1 2"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>I’ve sketched out my code more thoroughly so I have a good idea of how I want to compute my result. I will move to writing my function. Importantly, I need to make sure that I use my input arguments now rather than my test values! In the version below I also add in a results data frame that I use to keep track of my result and I add an additional argument for how to deal with NA values in calculating the correlations. The output matches what I expect for my test data frame.</p>
+<p>We have sketched out our code more thoroughly so we have a good idea of how we want to compute our result. We now move to writing our function. Importantly, we need to make sure that we use our input arguments now rather than our test values. In the subsequent version, we also add in a results data frame that we use to keep track of our results and we add an additional argument for how to deal with NA values in calculating the correlations. The output matches what we expect for our test data frame.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Find pairs of columns with strong correlation</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
@@ -881,7 +881,7 @@ window.Quarto = {
 <span id="cb31-45"><a href="#cb31-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   name1 name2   cor</span></span>
 <span id="cb31-46"><a href="#cb31-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    V1    V2 0.901</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can prevent unexpected behavior of our functions by using <code>stop()</code> functions to limit a function to be run on certain types of arguments. This is helpful if other people will be using your function or if you might forget any assumptions you built into the function. The <code>stop()</code> function stops the execution of the current expression and returns a message. In the example below, we check to make sure that the point given is a numeric vector. Further, we check to see if the vector has length zero and return 0 if it does.</p>
+<p>We can prevent unexpected behavior of our functions by using <code>stop()</code> functions to limit a function to be run on certain types of arguments. This is helpful if other people will use your function or if you might forget any assumptions you built into the function. The <code>stop()</code> function stops the execution of the current expression and returns a message. In the following example, we check to make sure that the point given is a numeric vector. Further, we check to see whether the vector has length zero and return 0 if it does.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Distance to the origin</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
@@ -903,19 +903,19 @@ window.Quarto = {
 <span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># calculate the distance</span></span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  origin <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">length</span>(pt1))</span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">dist_func</span>(pt1,origin))</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  origin <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">length</span>(pt1))</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">dist_func</span>(pt1, origin))</span>
 <span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="unit-tests" class="level3" data-number="18.3.1">
 <h3 data-number="18.3.1" class="anchored" data-anchor-id="unit-tests"><span class="header-section-number">18.3.1</span> Unit tests</h3>
 <p>We know our function <code>high_cor()</code> works on a single example. To thoroughly test our functions, we want to run them on several different input values. These types of tests are called <em>unit tests</em>. We try to vary these test values to cover a wide range of possibilities. For example, for a numeric argument, test positive and negative input values. For a vector input, test an empty vector, a vector of length one, and a vector with multiple values. If you discover an error, we need to go back to debugging mode to resolve it.</p>
-<p>To test our function, we will use the <strong>testthat</strong> package <span class="citation" data-cites="R-testthat">(<a href="references.html#ref-R-testthat" role="doc-biblioref">Wickham 2011</a>)</span>. This includes several functions that can check our expectations. For example, there is the <code>expect_equal(object, expected)</code> function which checks whether <code>object</code> matches <code>expected</code> up to a given numeric tolerance. If we want to only check the values of our objects but not the attributes, we can set the argument <code>ignore_attr = FALSE</code>. Other functions from this package are <code>expect_error(object)</code> which can be used to test that an error message was returned and <code>expect_true(object)</code> which can be used to test whether a condition is met.</p>
+<p>To test our function, we use the <strong>testthat</strong> package <span class="citation" data-cites="R-testthat">(<a href="references.html#ref-R-testthat" role="doc-biblioref">Wickham 2011</a>)</span>. This includes several functions that can check our expectations. For example, there is the <code>expect_equal(object, expected)</code> function which checks whether <code>object</code> matches <code>expected</code> up to a given numeric tolerance. If we want to only check the values of our objects but not the attributes, we can set the argument <code>ignore_attr = FALSE</code>. Other functions from this package are <code>expect_error(object)</code> which can be used to test that an error message was returned and <code>expect_true(object)</code> which can be used to test whether a condition is met.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>testthat<span class="sc">::</span><span class="fu">expect_equal</span>(<span class="fu">paste0</span>(<span class="st">"A"</span>,<span class="st">"B"</span>), <span class="st">"AB"</span>)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>testthat<span class="sc">::</span><span class="fu">expect_true</span>(<span class="fu">mean</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)) <span class="sc">&gt;</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Below I demonstrate some tests for the <code>dist_to_origin()</code> function. My tests here focus on the format of the vector. We should test each function separately so I would write a separate batch of tests for the Euclidean distance function.</p>
+<p>In the following code chunk, we demonstrate some tests for the <code>dist_to_origin()</code> function. Our tests here focus on the format of the vector. We should test each function separately so we would write a separate batch of tests for the Euclidean distance function.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check error message for character vector</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_error</span>(<span class="fu">dist_to_origin</span>(<span class="fu">c</span>(<span class="st">"A"</span>)), </span>
@@ -938,7 +938,7 @@ window.Quarto = {
 </section>
 <section id="practice-question-2" class="level3" data-number="18.3.2">
 <h3 data-number="18.3.2" class="anchored" data-anchor-id="practice-question-2"><span class="header-section-number">18.3.2</span> Practice Question</h3>
-<p>Below I have written a series of tests for the function <code>high_cor()</code> with different data frame sizes and types of columns. Unfortunately, not all the tests are working. Use your debugging skills to fix the function to pass the tests and write at least one additional test.</p>
+<p>Following are a series of tests for the function <code>high_cor()</code> with different data frame sizes and types of columns. Unfortunately, not all the tests are working. Use your debugging skills to fix the function to pass the tests and write at least one additional test.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mixed data frame - should return a data frame with three columns</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(<span class="fu">high_cor</span>(test_df), </span>
@@ -960,55 +960,20 @@ window.Quarto = {
 <span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="co"># single row - should return an empty data frame</span></span>
 <span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a><span class="fu">expect_equal</span>(<span class="fu">high_cor</span>(test_df[<span class="dv">1</span>,])<span class="sc">$</span>cor, <span class="fu">numeric</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<!--
-::: {.content-visible when-format="html"}
-## Recap Video
-
-
-Suppose that we are given two paired samples `x` and `y`. Our goal is to create a function that will return an estimated $(1-\alpha)$-level confidence interval of the ratio of means $\mu_y/\mu_x$, using the Taylor expansion method with the equations below. 
-
--   Estimated ratio: $\hat{R} = \frac{\bar{y}}{ \bar{x}}$
--   Covariance: $\mathrm{Cov}_{x,y} = \frac{1}{(n-1)} \sum_{i=1}^n (x_i - \bar{x})(y_i -\bar{y})$
--   Coefficient of Variation: $C_{x,y} = \frac{\mathrm{Cov}_{x,y}}{n \bar{x} \bar{y}}$
--   Upper CI Limit: $\hat{R} + t_{1-\alpha/2, n-1} \hat{R} \sqrt{C_{y,y} + C_{x,x} - 2 C_{x,y}}$
--   Lower CI Limit: $\hat{R} - t_{1-\alpha/2, n-1} \hat{R} \sqrt{C_{y,y} + C_{x,x} - 2 C_{x,y}}$
-
-In the video below, I demonstrate writing a function to calculate this confidence interval using a top-down approach. I also show more debugging examples.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-:::
--->
 </section>
 </section>
 <section id="exercises" class="level2" data-number="18.4">
 <h2 data-number="18.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">18.4</span> Exercises</h2>
-<p>For each question below, be sure to document your function(s) using roxygen style documentation.</p>
+<p>For each question, be sure to document your function(s) using roxygen style documentation.</p>
 <ol type="1">
 <li><p>Standardizing a variable means subtracting the mean and then dividing through by the standard deviation. Create a function called <code>standardize_me()</code> that takes a numeric vector as an argument, and returns the standardized version of the vector. Write at least three unit tests to check that the result is correct.</p></li>
 <li><p>Suppose we have two binary vectors <code>x</code> and <code>y</code> each of length <span class="math inline">\(n\)</span>. Let <span class="math inline">\(m_{1}\)</span> be the number of indices where <code>x</code> or <code>y</code> has a 1 and <span class="math inline">\(m_2\)</span> be the number of indices where both <code>x</code> and <code>y</code> equal 1. For example, if <code>x &lt;- (1,1,0)</code> and <code>y &lt;- c(0,1,0)</code> then <span class="math inline">\(m_1 = 2\)</span> and <span class="math inline">\(m_2 =1\)</span>. The Jaccard distance is defined as <span class="math inline">\(1-m_2/m_1\)</span> and measures the dissimilarity between two binary vectors. Write a function <code>jaccard_dist()</code> that takes in two binary vectors and returns the Jaccard distance between the two.</p></li>
-<li><p>For this question we will use a subset of the <code>pain</code> data from the <strong>HDSinRdata</strong> package. Recall, that this data contains binary variables representing where people experienced pain. Write a function that takes in a data frame with all binary columns and returns a matrix with the Jaccard distance between all observations. That is, if <code>D</code> is the returned matrix, then <code>D[i,j]</code> is the Jaccard distance between observation <code>i</code> and observation <code>j</code>. Apply your function to the pain data and plot the distribution of these distances.</p>
+<li><p>For this question we use a subset of the <code>pain</code> data from the <strong>HDSinRdata</strong> package. Recall, that this data contains binary variables representing where people experienced pain. Write a function that takes in a data frame with all binary columns and returns a matrix with the Jaccard distance between all observations. That is, if <code>D</code> is the returned matrix, then <code>D[i,j]</code> is the Jaccard distance between observation <code>i</code> and observation <code>j</code>. Apply your function to the pain data and plot the distribution of these distances.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>pain_sub <span class="ot">&lt;-</span> pain[<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></li>
-<li><p>The function below is supposed to take in a positive integer and calculate how many positive integer divisors it has (other than 1 and itself). However, the function is not getting the right results. Debug the function. Then, think about ways you could improve this function by changing the structure, documentation, and adding argument checks.</p>
+<li><p>The function in the following code chunk is supposed to take in a positive integer and calculate how many positive integer divisors it has (other than 1 and itself). However, the function is not getting the right results. Debug the function. Then, think about ways you could improve this function by changing the structure, documentation, and adding argument checks.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>total <span class="ot">&lt;-</span> <span class="dv">0</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>divisors <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
@@ -1026,7 +991,7 @@ In the video below, I demonstrate writing a function to calculate this confidenc
 <span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a><span class="fu">divisors</span>(<span class="dv">6</span>)</span>
 <span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></li>
-<li><p>In this problem, you will create our own summary table. To start, create a function that takes in a data frame and returns a summary table that reports the mean and standard deviation for all continuous variables and the count and percentage for all categorical variables. An example is given in <a href="#fig-summary-table" class="quarto-xref">Figure&nbsp;<span>18.1</span></a>. Call your function on the NHANES dataset with the columns selected below to match what is shown in the figure.&nbsp;</p>
+<li><p>In this problem, you create our own summary table. To start, create a function that takes in a data frame and returns a summary table that reports the mean and standard deviation for all continuous variables and the count and percentage for all categorical variables. An example is given in <a href="#fig-summary-table" class="quarto-xref">Figure&nbsp;<span>18.1</span></a>. Call your function on the NHANES dataset with the columns selected in the subsequent code to match what is shown in the figure.&nbsp;</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nhanes_df <span class="ot">&lt;-</span> NHANESsample <span class="sc">%&gt;%</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(AGE, SEX, LEAD, HYP, SMOKE))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

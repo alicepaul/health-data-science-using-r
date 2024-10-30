@@ -1,6 +1,6 @@
 # Case Study: Regression {#sec-cs-regression}
 
-For this chapter, we will use the `tb_diagnosis` dataset seen in [Chapter -@sec-cs-preprocessing] from the **HDSinRdata** package. These data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF [@baik2020clinical]. Our goal will be to conduct a similar regression analysis to @baik2020clinical and use these data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike @baik2020clinical, we will not restrict ourselves to simple integer risk score models. 
+For this chapter, we use the `tb_diagnosis` dataset seen in [Chapter -@sec-cs-preprocessing] from the **HDSinRdata** package. These data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF [@baik2020clinical]. Our goal is to conduct a similar regression analysis to @baik2020clinical and use these data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike @baik2020clinical, we do not restrict our analysis to simple integer risk score models. 
 
 ```{r}
 #| results: 'hide'
@@ -14,7 +14,7 @@ library(gtsummary)
 library(glmnet)
 library(pROC)
 ```
-Similar to @baik2020clinical, we use the data from rural South Africa to derive our risk model and will use the data from urban Uganda as a withheld validation set. Further, we divide the data from South Africa into a training and test set using a 70/30 split. 
+Similar to @baik2020clinical, we use the data from rural South Africa to derive our risk model and use the data from urban Uganda as a withheld validation set. Further, we divide the data from South Africa into a training and test set using a 70/30 split. 
 
 ```{r}
 # data from package
@@ -34,13 +34,14 @@ tb_uganda <- tb_diagnosis %>%
 
 # train/test split
 train_index <- sample(1:nrow(tb_southafrica), 
-                      0.70*nrow(tb_southafrica), replace = FALSE)
+                      0.70*nrow(tb_southafrica), 
+                      replace = FALSE)
 
 tb_train <- tb_southafrica[train_index,]
 tb_test <- tb_southafrica[-train_index,]
 ```
 
-The table below shows our data stratified by TB diagnosis. We observe that our data are well balanced between the two groups and that we see key differences in the distributions of our observed clinical and demographic variables. For example, those whose blood results confirmed TB generally had more observed symptoms and were more likely to have had symptoms for over two weeks. 
+The following table shows our data stratified by TB diagnosis. We observe that our data are well balanced between the two groups and that we see key differences in the distributions of our observed clinical and demographic variables. For example, those whose blood results confirmed TB generally had more observed symptoms and were more likely to have had symptoms for over two weeks. 
 
 ```{r}
 tbl_summary(tb_southafrica, by = c(tb),
@@ -61,14 +62,14 @@ tbl_summary(tb_southafrica, by = c(tb),
 
 ## Model Selection
 
-Our goal is to predict TB diagnosis. We will compare two risk models: a logistic regression model and a lasso logistic regression model. For both of these models, we will fit our model on the training data. For the lasso model, we use 5-fold cross-validation to choose the penalty parameter. We show a table with the estimated exponentiated coefficients below. 
+Our goal is to predict TB diagnosis. We compare two risk models: a logistic regression model and a lasso logistic regression model. For both of these models, we fit our model on the training data. For the lasso model, we use 5-fold cross-validation to choose the penalty parameter. In the following code, we create a table with the estimated exponentiated coefficients. 
 
 ```{r}
 # fit logistic model 
 mod_logistic <- glm(tb ~ ., data = tb_train, family = binomial)
 
 # fit lasso model with CV
-X_train <- model.matrix(tb~., data = tb_train)[,-1]
+X_train <- model.matrix(tb~., data = tb_train)[, -1]
 y_train <- tb_train[,1]
 mod_lasso_cv <- cv.glmnet(X_train, y_train, alpha = 1, 
                        family = "binomial", nfolds = 5)
@@ -78,13 +79,13 @@ mod_lasso <- glmnet(X_train, y_train, alpha = 1, family = "binomial",
                     lambda = mod_lasso_cv$lambda.min)
 
 # create data frame
-coef_df <- data.frame(Logistic = signif(exp(coef(mod_logistic)),3),
+coef_df <- data.frame(Logistic = signif(exp(coef(mod_logistic)), 3),
                       Lasso = 
                         signif(exp(as.numeric(coef(mod_lasso))), 3))
 coef_df
 ```
 
-We then evaluate our models on the withheld test set using an ROC curve. The ROC curve shows similar discrimination for both models. Therefore, we choose the lasso model for its potential sparsity.   
+After fitting both models, we evaluate model performance on the withheld test set using an ROC curve. The ROC curve shows similar discrimination for both models. Therefore, we choose the lasso model for its potential sparsity and parsimony.   
 
 ```{r}
 par(mfrow = c(1,2))
@@ -110,11 +111,11 @@ roc_test_lasso <- roc(predictor = pred_test_lasso,
 plot(roc_test_lasso, print.auc = TRUE)
 ```
 
-We refit the lasso model on the full data from South Africa and present the updated model below.
+We refit the lasso model on the full data from South Africa and present the updated model in the subsequent code chunk.
 
 ```{r}
 # fit lasso model with CV
-X_train_full <- model.matrix(tb~., data = tb_southafrica)[,-1]
+X_train_full <- model.matrix(tb~., data = tb_southafrica)[, -1]
 y_train_full <- tb_southafrica[,1]
 mod_cv_full <- cv.glmnet(X_train_full, y_train_full, alpha = 1, 
                        family = "binomial", nfolds = 5)
@@ -127,13 +128,13 @@ mod_full <- glmnet(X_train_full, y_train_full, alpha = 1,
 # create data frame
 coef_df <- data.frame(
   Variable = c("Intercept", colnames(X_train_full)),
-  Lasso = signif(exp(as.numeric(coef(mod_full))),3))
+  Lasso = signif(exp(as.numeric(coef(mod_full))), 3))
 coef_df
 ```
 
 ## Evaluate Model on Validation Data
 
-We then evaluate the lasso model on the withheld validation data. These data comes from clinics in urban Uganda and contains only 387 observations. The table below shows that this population differs from our training population including having a lower proportion of patients diagnosed with TB. 
+We then evaluate the lasso model on the withheld validation data. These data comes from clinics in urban Uganda and contains only 387 observations. The generated table shows that this population differs from our training population including having a lower proportion of patients diagnosed with TB. 
 
 ```{r}
 tbl_summary(tb_diagnosis, by = c(country),
@@ -151,11 +152,11 @@ tbl_summary(tb_diagnosis, by = c(country),
   as_gt()
 ```
 
-The ROC curve below shows that the AUC on the validation data is lower than on the training data but still shows decent discrimination. 
+The ROC curve shows that the AUC on the validation data is lower than on the training data but still maintains meaningful discrimination. 
 
 ```{r}
 # lasso validation roc
-X_val <- model.matrix(tb~., data = tb_uganda)[,-1]
+X_val <- model.matrix(tb~., data = tb_uganda)[, -1]
 pred_val <- as.numeric(predict(mod_full, newx = X_val, 
                                       type = "response"))
 roc_val_lasso <- roc(predictor = pred_val,

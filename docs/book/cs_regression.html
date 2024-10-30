@@ -413,7 +413,7 @@ div.csl-indent {
 </header>
 
 
-<p>For this chapter, we will use the <code>tb_diagnosis</code> dataset seen in <a href="cs_preprocessing.html" class="quarto-xref">Chapter&nbsp;<span>6</span></a> from the <strong>HDSinRdata</strong> package. This data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF <span class="citation" data-cites="baik2020clinical">(<a href="references.html#ref-baik2020clinical" role="doc-biblioref">Baik et al. 2020</a>)</span>. Our goal will be to conduct a similar regression analysis to <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span> and use this data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span>, we will not restrict ourselves to simple integer risk score models.</p>
+<p>For this chapter, we use the <code>tb_diagnosis</code> dataset seen in <a href="cs_preprocessing.html" class="quarto-xref">Chapter&nbsp;<span>6</span></a> from the <strong>HDSinRdata</strong> package. These data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF <span class="citation" data-cites="baik2020clinical">(<a href="references.html#ref-baik2020clinical" role="doc-biblioref">Baik et al. 2020</a>)</span>. Our goal is to conduct a similar regression analysis to <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span> and use these data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span>, we do not restrict our analysis to simple integer risk score models.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HDSinRdata)</span>
@@ -422,7 +422,7 @@ div.csl-indent {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Similar to <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span>, we use the data from rural South Africa to derive our risk model and will use the data from urban Uganda as a withheld validation set. Further, we divide the data from South Africa into a training and test set using a 70/30 split.</p>
+<p>Similar to <span class="citation" data-cites="baik2020clinical">Baik et al. (<a href="references.html#ref-baik2020clinical" role="doc-biblioref">2020</a>)</span>, we use the data from rural South Africa to derive our risk model and use the data from urban Uganda as a withheld validation set. Further, we divide the data from South Africa into a training and test set using a 70/30 split.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data from package</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(tb_diagnosis)</span>
@@ -441,12 +441,13 @@ div.csl-indent {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># train/test split</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>train_index <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(tb_southafrica), </span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                      <span class="fl">0.70</span><span class="sc">*</span><span class="fu">nrow</span>(tb_southafrica), <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>tb_train <span class="ot">&lt;-</span> tb_southafrica[train_index,]</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>tb_test <span class="ot">&lt;-</span> tb_southafrica[<span class="sc">-</span>train_index,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                      <span class="fl">0.70</span><span class="sc">*</span><span class="fu">nrow</span>(tb_southafrica), </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                      <span class="at">replace =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>tb_train <span class="ot">&lt;-</span> tb_southafrica[train_index,]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>tb_test <span class="ot">&lt;-</span> tb_southafrica[<span class="sc">-</span>train_index,]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The table below shows our data stratified by TB diagnosis. We observe that our data is well balanced between the two groups and that we see key differences in the distributions of our observed clinical and demographic variables. For example, those whose blood results confirmed TB generally had more observed symptoms and were more likely to have had symptoms for over two weeks.</p>
+<p>The following table shows our data stratified by TB diagnosis. We observe that our data are well balanced between the two groups and that we see key differences in the distributions of our observed clinical and demographic variables. For example, those whose blood results confirmed TB generally had more observed symptoms and were more likely to have had symptoms for over two weeks.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(tb_southafrica, <span class="at">by =</span> <span class="fu">c</span>(tb),</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="fu">list</span>(age_group <span class="sc">~</span> <span class="st">"Age"</span>,</span>
@@ -1111,13 +1112,13 @@ div.csl-indent {
 </div>
 <section id="model-selection" class="level2" data-number="16.1">
 <h2 data-number="16.1" class="anchored" data-anchor-id="model-selection"><span class="header-section-number">16.1</span> Model Selection</h2>
-<p>Our goal is to predict TB diagnosis. We will compare two risk models: a logistic regression model and a lasso logistic regression model. For both of these models, we will fit our model on the training data. For the lasso model, we use 5-fold cross-validation to choose the penalty parameter. We show a table with the estimated exponentiated coefficients below.</p>
+<p>Our goal is to predict TB diagnosis. We compare two risk models: a logistic regression model and a lasso logistic regression model. For both of these models, we fit our model on the training data. For the lasso model, we use 5-fold cross-validation to choose the penalty parameter. In the following code, we create a table with the estimated exponentiated coefficients.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit logistic model </span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mod_logistic <span class="ot">&lt;-</span> <span class="fu">glm</span>(tb <span class="sc">~</span> ., <span class="at">data =</span> tb_train, <span class="at">family =</span> binomial)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># fit lasso model with CV</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X_train <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_train)[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>X_train <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_train)[, <span class="sc">-</span><span class="dv">1</span>]</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>y_train <span class="ot">&lt;-</span> tb_train[,<span class="dv">1</span>]</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>mod_lasso_cv <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X_train, y_train, <span class="at">alpha =</span> <span class="dv">1</span>, </span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">nfolds =</span> <span class="dv">5</span>)</span>
@@ -1127,28 +1128,28 @@ div.csl-indent {
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>                    <span class="at">lambda =</span> mod_lasso_cv<span class="sc">$</span>lambda.min)</span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Logistic =</span> <span class="fu">signif</span>(<span class="fu">exp</span>(<span class="fu">coef</span>(mod_logistic)),<span class="dv">3</span>),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Logistic =</span> <span class="fu">signif</span>(<span class="fu">exp</span>(<span class="fu">coef</span>(mod_logistic)), <span class="dv">3</span>),</span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                      <span class="at">Lasso =</span> </span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">signif</span>(<span class="fu">exp</span>(<span class="fu">as.numeric</span>(<span class="fu">coef</span>(mod_lasso))), <span class="dv">3</span>))</span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>coef_df</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  Logistic Lasso</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)        0.0396 0.053</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[15,25)   1.6700 1.420</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[25,35)   3.0300 2.560</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[35,45)   2.4000 2.060</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[45,55)   1.6000 1.380</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; hiv_pos1           2.3900 2.340</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; diabetes1          2.5000 2.150</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ever_smoke1        0.7640 0.818</span></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; past_tb1           1.1400 1.090</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; male1              2.3700 2.220</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; hs_less1           1.6100 1.490</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; two_weeks_symp1    2.3700 2.280</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms2      1.6800 1.600</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms3      6.5300 6.070</span></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms4     10.5000 9.520</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                  Logistic  Lasso</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; (Intercept)        0.0403 0.0458</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[15,25)   1.6100 1.5000</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[25,35)   3.1800 2.9500</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[35,45)   2.7100 2.5300</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; age_group[45,55)   1.5100 1.4100</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; hiv_pos1           2.5200 2.4900</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; diabetes1          2.1600 2.0300</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ever_smoke1        0.7610 0.7850</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; past_tb1           1.2900 1.2700</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; male1              2.4100 2.3300</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; hs_less1           1.4900 1.4400</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; two_weeks_symp1    2.4400 2.4000</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms2      1.7900 1.7600</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms3      6.2600 6.0600</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; num_symptoms4     10.4000 9.9400</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We then evaluate our models on the withheld test set using an ROC curve. The ROC curve shows similar discrimination for both models. Therefore, we choose the lasso model for its potential sparsity.</p>
+<p>After fitting both models, we evaluate model performance on the withheld test set using an ROC curve. The ROC curve shows similar discrimination for both models. Therefore, we choose the lasso model for its potential sparsity and parsimony.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1179,10 +1180,10 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>We refit the lasso model on the full data from South Africa and present the updated model below.</p>
+<p>We refit the lasso model on the full data from South Africa and present the updated model in the subsequent code chunk.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fit lasso model with CV</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X_train_full <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_southafrica)[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>X_train_full <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_southafrica)[, <span class="sc">-</span><span class="dv">1</span>]</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y_train_full <span class="ot">&lt;-</span> tb_southafrica[,<span class="dv">1</span>]</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>mod_cv_full <span class="ot">&lt;-</span> <span class="fu">cv.glmnet</span>(X_train_full, y_train_full, <span class="at">alpha =</span> <span class="dv">1</span>, </span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">nfolds =</span> <span class="dv">5</span>)</span>
@@ -1195,7 +1196,7 @@ div.csl-indent {
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># create data frame</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>coef_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Variable =</span> <span class="fu">c</span>(<span class="st">"Intercept"</span>, <span class="fu">colnames</span>(X_train_full)),</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lasso =</span> <span class="fu">signif</span>(<span class="fu">exp</span>(<span class="fu">as.numeric</span>(<span class="fu">coef</span>(mod_full))),<span class="dv">3</span>))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Lasso =</span> <span class="fu">signif</span>(<span class="fu">exp</span>(<span class="fu">as.numeric</span>(<span class="fu">coef</span>(mod_full))), <span class="dv">3</span>))</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>coef_df</span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;            Variable   Lasso</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         Intercept  0.0541</span></span>
@@ -1217,7 +1218,7 @@ div.csl-indent {
 </section>
 <section id="evaluate-model-on-validation-data" class="level2" data-number="16.2">
 <h2 data-number="16.2" class="anchored" data-anchor-id="evaluate-model-on-validation-data"><span class="header-section-number">16.2</span> Evaluate Model on Validation Data</h2>
-<p>We then evaluate the lasso model on the withheld validation data. This data comes from clinics in urban Uganda and contains only 387 observations. The table below shows that this population differs from our training population including having a lower proportion of patients diagnosed with TB.</p>
+<p>We then evaluate the lasso model on the withheld validation data. These data comes from clinics in urban Uganda and contains only 387 observations. The generated table shows that this population differs from our training population including having a lower proportion of patients diagnosed with TB.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tbl_summary</span>(tb_diagnosis, <span class="at">by =</span> <span class="fu">c</span>(country),</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">label =</span> <span class="fu">list</span>(tb <span class="sc">~</span> <span class="st">"TB Diagnosis"</span>,</span>
@@ -1897,10 +1898,10 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<p>The ROC curve below shows that the AUC on the validation data is lower than on the training data but still shows decent discrimination.</p>
+<p>The ROC curve shows that the AUC on the validation data is lower than on the training data but still maintains meaningful discrimination.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># lasso validation roc</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_val <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_uganda)[,<span class="sc">-</span><span class="dv">1</span>]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_val <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(tb<span class="sc">~</span>., <span class="at">data =</span> tb_uganda)[, <span class="sc">-</span><span class="dv">1</span>]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>pred_val <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">predict</span>(mod_full, <span class="at">newx =</span> X_val, </span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="at">type =</span> <span class="st">"response"</span>))</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>roc_val_lasso <span class="ot">&lt;-</span> <span class="fu">roc</span>(<span class="at">predictor =</span> pred_val,</span>

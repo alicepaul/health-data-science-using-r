@@ -1,10 +1,10 @@
 # Expanding your R Skills {#sec-expanding-skills}
 
-Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that are available in R. In this chapter, we will talk about how to use new packages, interpret error messages, debugging, and overall good programming practices to help you take your R programming to the next level.
+Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that are available in R. In this chapter, we talk about how to use new packages, interpret error messages, debugging, and overall good programming practices to help you take your R programming to the next level.
 
 ## Reading Documentation for New Packages
 
-As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages will help you be able to expand your R skills beyond the topics covered here. We will demonstrate these skills using the **stringr** package [@R-stringr], which is a package that is part of the **tidyverse** and has several functions for dealing with text data.
+As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages helps you expand your R skills beyond the topics covered here. We demonstrate these skills using the **stringr** package [@R-stringr], which is a package that is part of the **tidyverse** and has several functions for dealing with text data.
 
 ```{r}
 #| results: 'hide'
@@ -17,7 +17,7 @@ library(HDSinRdata)
 
 Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [**stringr**](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette ["Introduction to String R"](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
 
-We will use this **stringr** package to clean up text related to a PubMed search query for a systematic review. An example search query is given below and is taken from @GUE202131. Our first goal will be to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query will either be fully contained in parentheses or will be a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
+We use the **stringr** package to demonstrate cleaning up text related to a PubMed search query for a systematic review. An example search query is given in the following code chunk and is taken from @GUE202131. Our first goal is to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query is either fully contained in parentheses or is a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
 
 ```{r}
 sample_str <- " A systematic search will be performed in PubMed, 
@@ -36,7 +36,7 @@ sample_str
 
 ## Trying Simple Examples
 
-The premise above is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. Our next task will be to split the text into words and store this as a character vector. Read the documentation to determine why we used the `str_split_1()` function below. We then double check that the returned result is indeed a vector and print the result.
+The premise of testing a function on a single string is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. Our next task is to split the text into words and store this as a character vector. Read the documentation to determine why we use the `str_split_1()` function. We then double check that the returned result is indeed a vector and print the result.
 
 ```{r}
 sample_str_words <- str_split_1(sample_str, " ")
@@ -54,23 +54,23 @@ That didn't match what we expected. We expected to have multiple TRUE/FALSE valu
 
 ## Deciphering Error Messages and Warnings
 
-The warning message above will give us a good clue for what went wrong. It says that the inputted pattern has length \> 1. However, the pattern we gave it is a single character. In fact, we specified the arguments in the wrong order. Let's try again. This time we specify `x` and `pattern`.
+The previous warning message gives us a good clue for what went wrong. It says that the inputted pattern has length \> 1. However, the pattern we gave it is a single character. In fact, we specified the arguments in the wrong order. Let's try again. This time we specify `x` and `pattern`.
 
 ```{r}
-grepl(x=sample_str_words, pattern=")")
+grepl(x = sample_str_words, pattern = ")")
 ```
 
-That worked! However, it won't work if we change that to a starting parentheses. Try it out for yourself to see this. The error message says that it is looking for an end parentheses. In this case, the documentation does not help us. Let's try searching "stringr find start parentheses" using an online search engine. The first search result for me is a [stack overflow question](https://stackoverflow.com/questions/56174805/how-to-search-for-strings-with-parentheses-in-r) that helps us out. We read that we need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression.
+That fixed it. However, it won't work if we change that to an opening parenthesis. Try it out for yourself to see this. The error message says that it is looking for an end parentheses. In this case, the documentation does not help us. Let’s try searching “stringr find start parentheses” using an online search engine. Our search results indicate that we may need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression (a technique often referred to as “escaping” a character). Investigating the reason for an error, including using online material, is an important skill for a programmer to have.
 
 ```{r}
-grepl(x=sample_str_words, pattern="\\(")
+grepl(x = sample_str_words, pattern = "\\(")
 ```
 
 When a function doesn't return what we expect it to, it is a good idea to first test whether the arguments we gave it match what we expect, then re-read the documentation, and then look for other resources for help. For example, we could check that `sample_str_words` is indeed a character vector, then re-read the **stringr** documentation, and then search our problem.
 
 ### Debugging Code
 
-The code below is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
+The following code is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
 
 ```{r}
 sample_strA <- " A systematic search will be performed in PubMed, 
@@ -99,11 +99,11 @@ sample_str <- str_squish(sample_str)
 sample_str_words <- str_split_1(sample_str, " ")
 
 # find indices with parentheses 
-end_ps <- grepl(x=sample_str_words, pattern="\\)")
-start_ps <- grepl(x=sample_str_words, pattern="\\(")
+end_ps <- grepl(x = sample_str_words, pattern = "\\)")
+start_ps <- grepl(x = sample_str_words, pattern = "\\(")
 
 # find words between first and last parentheses 
-search_query <- sample_str_words[ which(end_ps)[1]:which(start_ps)[1]]
+search_query <- sample_str_words[which(end_ps)[1]:which(start_ps)[1]]
 search_query <- paste(search_query, collapse=" ")
 search_query
 
@@ -118,16 +118,16 @@ search_terms
 ::: {.content-visible when-format="html"}
 ### Video Solution
 
-We will show how we can test and fix the code above by using some simple debugging principles.
+We shows how we can test and fix the previous code by using some simple debugging principles.
 
 {{< video https://www.youtube.com/embed/2yfjXyAbbK8 width="700" height="500" >}}
 :::
 
 ## General Programming Tips
 
-As you write more complex code and functions, we want to focus on practicing good programming principles. This will help you when you need to share or update your code or when you inevitably run into errors or unexpected behavior. Below are some general programming tips and how they relate to communication and debugging.
+As you write more complex code and functions, we want to focus on practicing good programming principles. This helps when you need to share or update your code or when you inevitably run into errors or unexpected behavior. Following are some general programming tips and how they relate to communication and debugging.
 
-1.  **Consistent naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging, check whether you use the same name for different objects or whether you use different names for the same object. You can do this by using the `ls()` function to find all current objects or by checking your environment pane.
+1.  **Consistent naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging,  check that you haven't used the same name for different objects or different names for the same object. You can do this by using the `ls()` function to find all current objects or by checking your environment pane.
 
     ```{r}
     # Recommended
@@ -139,11 +139,11 @@ As you write more complex code and functions, we want to focus on practicing goo
     x1 <- mean(ages)
     ```
 
-2.  **Make Your Code Readable.** Readable code requires several elements of communication. Similar to writing an essay, we need to break our code into digestible and structured pieces. First, code should be broken into blocks, using white space to separate steps, and should use correct levels of indentation (one extra level of indentation for each new loop, if/else statement, or function). This means that closing curly braces should be on their own line indicating the end of the block. This will make it easy to check that all parentheses (), brackets \[\], and curly braces {} match. Additionally, you should use line breaks to avoid going over 80 characters on a single line of code. RStudio has an option to reformat or re-indent your code under the Code tab.
+2.  **Make Your Code Readable.** Readable code requires several elements of communication. As with writing an essay, we need to break our code into digestible and structured pieces. First, code should be broken into blocks, using white space to separate steps, and should use correct levels of indentation (one extra level of indentation for each new loop, if/else statement, or function). This means that closing curly braces should be on their own line indicating the end of the block. This makes it easy to check that all parentheses (), brackets \[\], and curly braces {} match. Additionally, you should use line breaks to avoid going over 80 characters on a single line of code. RStudio has an option to reformat or re-indent your code under the Code tab.
 
-    Besides the structure of your code, writing helpful comments and function documentation are key for making your code readable. A good rule of thumb is to write comments for yourself a year from now - you might remember the project goal but you won't remember what `x` represents. You likely do not need a comment for every line of code but you might need one to explain the overall goal of a block of code or to explain any lines of code that do not stand for themselves.
+    Besides the structure of your code, writing helpful comments and function documentation are key for making your code readable. A good rule of thumb is to write comments for yourself a year from now - you might remember the project goal but you won't remember what `x` represents. You likely do not need a comment for every line of code but you might need comments to explain the overall goal of a code block or to clarify lines that aren't self-explanatory.
 
-    In the code below, we have not used indentation. This makes it hard to see the structure of the code such as what lines of code are in the loop or if statement. The function does not have any roxygen documentation. However, we have added too many comments. The comments here are repetitive with the code. Last, we named the function `unique()`, which is already a function in R.
+    In the following code, we have not used indentation. This makes it hard to see the structure of the code such as what lines of code are in the loop or if statement. The function does not have any roxygen documentation. However, we have added too many comments. The comments here are repetitive with the code. Last, we named the function `unique()`, which is already a function in R.
 
     ```{r}
     # Not recommended
@@ -158,7 +158,7 @@ As you write more complex code and functions, we want to focus on practicing goo
     }
     ```
 
-    We rewrite the function below addressing these comments. The end result is much easier to read.
+    We rewrite the function addressing these comments. The end result is much easier to read.
 
     ```{r}
     #' Find unique elements of a vector 
@@ -186,7 +186,7 @@ As you write more complex code and functions, we want to focus on practicing goo
     }
     ```
 
-3.  **Don't Repeat Yourself.** Whenever we are repeating code, we are more likely to introduce errors. Additionally, it makes it hard to update our code later on. When we find ourselves repeating code, we should use a function. If you find yourself repeating constants you should define these values as an object. The code below uses a single line of code to convert categorical variables to factors and stores a vector of which columns are categorical.
+3.  **Don't Repeat Yourself.** Repeating code increases the likelihood of errors. Additionally, it makes it hard to update our code later on. When we find ourselves repeating code, we should use a function. If you find yourself repeating constants you should define these values as an object. The subsequent code uses a single line of code to convert categorical variables to factors and stores a vector of which columns are categorical.
 
     ```{r}
     dry_df <- data.frame(age = ages,
@@ -200,7 +200,7 @@ As you write more complex code and functions, we want to focus on practicing goo
     dry_df[cat_vars] <- lapply(dry_df[cat_vars], factor)
     ```
 
-4.  **Practice Reading Documentation.** Whenever we are using a new function, you should read the documentation first. When debugging, you should check that the input arguments to a function match what is expected and check the examples. Reading these examples will also help when writing your own documentation so you can better understand how to communicate to your audience.
+4.  **Practice Reading Documentation.** Whenever we are using a new function, you should read the documentation first. When debugging, you should check that the input arguments to a function match what is expected and check the examples. Reading these examples also helps when writing your own documentation so you can better understand how to communicate to your audience.
 
 5.  **Start Simple, Build Up.** If we write a large amount of code at once and then it fails to work, it's hard to understand what went wrong. Instead, we should build up our code or functions in small steps and check it after each step. When it comes to testing code, a good mantra is *test early and test often*. So, try to avoid writing too much code before running and checking that the results match what you expect. If you do end up writing a big chunk of code, you can use localize your error by checking the values of objects at different points.
 
@@ -208,9 +208,9 @@ As you write more complex code and functions, we want to focus on practicing goo
 
 ## Exercises
 
-The exercises below focus on reading function documentation and debugging.
+These exercises focus on reading function documentation and debugging.
 
-1.  Suppose we want to replace the words "Thank you" in the following string with the word "Thanks". Why does the below code fail? How can we correct it?
+1.  Suppose we want to replace the words "Thank you" in the following string with the word "Thanks". Why does the following code fail? How can we correct it?
 
     ```{r}
     string <- "Congratulations on finishing the book! 
@@ -219,7 +219,7 @@ The exercises below focus on reading function documentation and debugging.
     string
     ```
 
-2.  The code below uses the `NHANESsample` data from the **HDSinRdata** package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code below? There are four errors for you to identify and fix.
+2.  The subsequent code uses the `NHANESsample` data from the **HDSinRdata** package. The goal of the code is to plot the worst diastolic blood pressure reading against the worst systolic blood pressure reading for each patient, colored by hypertension status. However, the code currently generates an error message. What is wrong with the code? There are four errors for you to identify and fix.
 
     ```{r, eval=FALSE}
     data(NHANESsample)
@@ -229,12 +229,12 @@ The exercises below focus on reading function documentation and debugging.
          worst_SBP = max(SBP1, SBP2, SBP3, SBP4))
 
     ggplot() %>% 
-      geom_point(data = nhanes_df, aes(x = worst_SBP, 
-                                       y = worst_DBP), 
+      geom_point(data = nhanes_df, 
+                 aes(x = worst_SBP, y = worst_DBP), 
                  color = HYP)
     ```
 
-3.  The code below uses the `breastcancer` data from the **HDSinRdata** package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter -@sec-logistic-regression]. What is wrong with the code below? Debug it. Hint: there are three separate errors.
+3.  The following code uses the `breastcancer` data from the **HDSinRdata** package. The goal is to create a logistic regression model for whether or not the diagnosis is benign or malignant and then to create a calibration plot for the model, following the code from [Chapter -@sec-logistic-regression]. Debug and fix the code. Hint: there are three separate errors.
 
     ```{r, eval = FALSE}
     data(breastcancer)
@@ -254,14 +254,14 @@ The exercises below focus on reading function documentation and debugging.
              group_by(bin) %>% 
              summarize(observed = sum(class)/n(), 
                        expected = sum(prob)/n(), 
-                       se = sqrt(observed*(1-observed)/n()))
+                       se = sqrt(observed * (1 - observed) / n()))
     calib_data
 
     ggplot(calib_data) + 
-      geom_abline(intercept = 0, slope = 1, color="red") + 
-      geom_errorbar(aes(x = expected, ymin=observed-1.96*se, 
-                    ymax=observed+1.96*se), 
-                colour="black", width=.01)+
+      geom_abline(intercept = 0, slope = 1, color = "red") + 
+      geom_errorbar(aes(x = expected, ymin = observed - 1.96 * se, 
+                    ymax = observed + 1.96 * se), 
+                colour = "black", width = .01)+
       geom_point(aes(x = expected, y = observed)) +
       labs(x="Expected Proportion", y="Observed Proportion") +
       theme_minimal()
