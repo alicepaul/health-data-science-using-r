@@ -1,6 +1,6 @@
 # Model Selection {#sec-model-selection}
 
-In [Chapter -@sec-linear-regression] and [Chapter -@sec-logistic-regression], we included one simple method for model selection, stepwise selection. This chapter will expand upon our model selection tools in R by focusing on regularized regression. The two packages we will cover are **glmnet** [@R-glmnet] and **L0Learn** [@R-L0Learn]. These two packages focus on different types of model regularization.
+In [Chapter -@sec-linear-regression] and [Chapter -@sec-logistic-regression], we included one simple method for model selection, stepwise selection. This chapter expands upon our model selection tools in R by focusing on regularized regression. The two packages we cover are **glmnet** [@R-glmnet] and **L0Learn** [@R-L0Learn]. These two packages focus on different types of model regularization.
 
 ```{r}
 #| results: 'hide'
@@ -13,7 +13,7 @@ library(glmnet)
 library(L0Learn)
 ```
 
-To demonstrate these packages, we will use the same motivating example as in [Chapter -@sec-linear-regression]. Recall, that the `NHANESsample` dataset contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Our focus will be looking at the association between blood lead levels and systolic blood pressure. We first create a single systolic blood pressure by averaging across all measurements. We also transform lead with a log transformation before dropping variables we want to exclude from our analysis.
+To demonstrate these packages, we use the same motivating example as in [Chapter -@sec-linear-regression]. Recall, that the `NHANESsample` dataset contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Our focus is looking at the association between blood lead levels and systolic blood pressure. We first create a single systolic blood pressure by averaging across all measurements. We also transform lead with a log transformation before dropping variables we want to exclude from our analysis.
 
 ```{r}
 # load in data
@@ -49,7 +49,7 @@ $$ {#eq-reguarlization}
 
 The function $l(y_i, \beta_0 + \beta^T x_i)$ represents the loss function. For linear regression, this corresponds to the squared error $(y_i - \beta_0 - \beta^T x_i)^2$. For logistic regression, this loss corresponds to the logistic loss function.
 
-The penalty terms we will implement include terms related to the following terms:
+The penalty terms we implement include the following:
 
 -   L0 Norm: $||\beta ||_0 = \sum_{j=1}^p 1(\beta_j \neq 0)$, the number of non-zero coefficients,
 
@@ -67,7 +67,7 @@ $$
 
 where $\lambda$ is a complexity parameter and $\alpha$ controls the balance between the two norms. A model with only L1 regularization ($\alpha = 1$) corresponds to lasso regression while a model with only L2 regularization ($\alpha=0$) corresponds to ridge regression. Note that the penalty depends on the scale of $X$ and we typically assume each column has been standardized.
 
-The **glmnet** package implements elastic net regularization. It assumes our data are in the form described above. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we will need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
+The **glmnet** package implements elastic net regularization. It assumes our data are in the form described above. Therefore, we first create our numeric data matrix `x` and output vector `y`. Some of our variables are categorical, so in order to create a numeric matrix we need to one-hot encode them. We can do so using the `model.matrix()` function which takes in a formula and a data frame and creates the corresponding design matrix including creating dummy variables from factor variables and implementing any transformations. Note that we drop the first generated column which corresponds to the intercept. The transformation to our outcome does not impact the result.
 
 ```{r}
 x <- model.matrix(log(SBP) ~ ., nhanes)[,-1]

@@ -9,6 +9,7 @@ rm -r data
 cp -R ../book/images .
 cp -R ../book/data .
 cp -r ../book/*qmd .
+rm quarto_reports.qmd
 
 # Render .qmd files to ipynb notebooks
 for filename in *.qmd; 
@@ -31,3 +32,6 @@ do
         echo "File ${ipynb_file} not found!"
     fi
 done
+
+# rm quarto files
+rm *.qmd
