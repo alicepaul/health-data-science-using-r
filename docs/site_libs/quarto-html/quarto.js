@@ -9,7 +9,7 @@ const layoutMarginEls = () => {
   // Find any conflicting margin elements and add margins to the
   // top to prevent overlap
   const marginChildren = window.document.querySelectorAll(
-    ".column-margin.column-container > *, .margin-caption, .aside"
+    ".column-margin.column-container > * "
   );
 
   let lastBottom = 0;
@@ -19,9 +19,7 @@ const layoutMarginEls = () => {
       marginChild.style.marginTop = null;
       const top = marginChild.getBoundingClientRect().top + window.scrollY;
       if (top < lastBottom) {
-        const marginChildStyle = window.getComputedStyle(marginChild);
-        const marginBottom = parseFloat(marginChildStyle["marginBottom"]);
-        const margin = lastBottom - top + marginBottom;
+        const margin = lastBottom - top;
         marginChild.style.marginTop = `${margin}px`;
       }
       const styles = window.getComputedStyle(marginChild);
@@ -94,7 +92,7 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
       if (link.href.indexOf("#") !== -1) {
         const anchor = link.href.split("#")[1];
         const heading = window.document.querySelector(
-          `[data-anchor-id="${anchor}"]`
+          `[data-anchor-id=${anchor}]`
         );
         if (heading) {
           // Add the class
@@ -134,10 +132,8 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
       window.innerHeight + window.pageYOffset >=
       window.document.body.offsetHeight
     ) {
-      // This is the no-scroll case where last section should be the active one
       sectionIndex = 0;
     } else {
-      // This finds the last section visible on screen that should be made active
       sectionIndex = [...sections].reverse().findIndex((section) => {
         if (section) {
           return window.pageYOffset >= section.offsetTop - sectionMargin;
@@ -319,7 +315,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
           for (const child of el.children) {
             child.style.opacity = 0;
             child.style.overflow = "hidden";
-            child.style.pointerEvents = "none";
           }
 
           nexttick(() => {
@@ -361,7 +356,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
 
               const clone = child.cloneNode(true);
               clone.style.opacity = 1;
-              clone.style.pointerEvents = null;
               clone.style.display = null;
               toggleContents.append(clone);
             }
@@ -436,7 +430,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
           for (const child of el.children) {
             child.style.opacity = 1;
             child.style.overflow = null;
-            child.style.pointerEvents = null;
           }
 
           const placeholderEl = window.document.getElementById(
@@ -744,7 +737,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
     // Process the collapse state if this is an UL
     if (el.tagName === "UL") {
       if (tocOpenDepth === -1 && depth > 1) {
-        // toc-expand: false
         el.classList.add("collapse");
       } else if (
         depth <= tocOpenDepth ||
@@ -763,9 +755,10 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
   };
 
   // walk the TOC and expand / collapse any items that should be shown
+
   if (tocEl) {
-    updateActiveLink();
     walk(tocEl, 0);
+    updateActiveLink();
   }
 
   // Throttle the scroll event and walk peridiocally
@@ -784,10 +777,6 @@ window.document.addEventListener("DOMContentLoaded", function (_event) {
   window.addEventListener(
     "resize",
     throttle(() => {
-      if (tocEl) {
-        updateActiveLink();
-        walk(tocEl, 0);
-      }
       if (!isReaderMode()) {
         hideOverlappedSidebars();
       }

@@ -146,14 +146,24 @@ nhanes_df <- nhanes_df %>%
                      SMOKE_STATUS == "StillSmoke" ~ "Current Smoker")) 
 ```
 
-The last function we demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the following code filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order.
+The last function we demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the following code filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order. That is, the value of `DBP1` is used to sort rows that have the same systolic blood pressure values. 
 
 ```{r}
 nhanes_df %>% 
   select(c(YEAR, SEX, SMOKE_STATUS, SBP1, DBP1, LEAD)) %>%
   filter(SEX == "Male", SMOKE_STATUS == "Current Smoker") %>%
   arrange(desc(SBP1), desc(DBP1)) %>%
-  head(10)
+  head(8)
+```
+
+If instead we had only sorted by `SBP1` then the rows with the same value for systolic blood pressure would appear in their original order. You can see the difference in the following output. 
+
+```{r}
+nhanes_df %>% 
+  select(c(YEAR, SEX, SMOKE_STATUS, SBP1, DBP1, LEAD)) %>%
+  filter(SEX == "Male", SMOKE_STATUS == "Current Smoker") %>%
+  arrange(desc(SBP1)) %>%
+  head(8)
 ```
 
 ### Practice Question
