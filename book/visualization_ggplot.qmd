@@ -312,8 +312,9 @@ p1 <- ggplot(pain_body_map) +
   geom_hline(yintercept = mean(pain_body_map$avg_pain)) +
   annotate(geom = "text", label = "Average Pain Value", 
            x = 0.35, y = 7.0) + 
-  labs(x = "Proportion Patients Selected Region", 
+  labs(x = "Proportion of Patients Selecting Region", 
        y = "Average Pain of Patients") +
+  scale_color_discrete(name="Body Part")+
   theme_minimal()+
   theme(legend.position = "bottom", 
         panel.grid.major = element_line(colour = "lightpink"))
@@ -321,18 +322,19 @@ p1 <- ggplot(pain_body_map) +
 p2 <- ggplot(pain_body_map) +
   geom_histogram(aes(x = perc_patients), color = "violetred", 
                  fill = "lightpink") + 
-  labs(x = "Proportion of Patients Selected Region", y = "Count") +
+  labs(x = "Proportion of Patients Selecting Region", y = "Count") +
   theme_minimal()+
   theme(panel.grid.major = element_line(colour = "lightpink"))
 ```
 
 ```{r}
 #| fig-height: 10
-p1 + p2 + guide_area() + plot_layout(ncol=1, guides = "collect")
+p1 + p2 + guide_area() + plot_layout(ncol=1, guides = "collect",
+                                     axes = "collect")
 ```
 
 ```{r}
-ggsave("images/visualization_ggplot/myplot.png") 
+ggsave("images/visualization_ggplot/myplot.png", height=10) 
 ```
 
 
@@ -346,7 +348,7 @@ ggsave("images/visualization_ggplot/myplot.png")
 
 For this chapter's exercises, use the `covidcases` data set that we first introduced in [Chapter -@sec-transformations-summaries] to recreate some plots. These are complex plots, so try to build them up one step at a time and just try to get as close as possible to the given examples.
 
-1.  Replicate the plot in @fig-covid-heatmap, which shows the weekly Covid-19 cases by state in 2020 - the black vertical line signifies the week of May 28th, 2020, which is when US cases passed the 100,000 mark [@covid_timeline], and NA values are displayed as white squares). Hint: set negative weekly case counts to be NA and color the squares with a log 10 transformation using `trans` argument for the `scale_color_gradientn()` function.
+1.  Replicate the following combined plot in @fig-covid-heatmap, which shows the weekly Covid-19 cases in the U.S. as well as the weekly cases by U.S. division. Hint: use the `scale_color_gradientn()` function to replicate the color scale.
 
   ![Covid-19 Cases Over Time by State.](images/visualization_ggplot/covid-heatmap.png){#fig-covid-heatmap fig-align="center" width="300pt"}
 
