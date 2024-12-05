@@ -207,7 +207,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../book/cs_preprocessing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case Study: Pre-Processing Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Case Study: Cleaning Tuberculosis Screening Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -225,7 +225,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../book/cs_eda.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Case Study: Exploratory Data Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Case Study: Exploring Early COVID-19 Data</span></span></a>
   </div>
 </li>
       </ul>
@@ -254,7 +254,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../book/cs_testing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Case Study: Hypothesis Testing</span></span></a>
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Case Study: Analyzing Blood Lead Level and Hypertension</span></span></a>
   </div>
 </li>
       </ul>
@@ -289,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../book/cs_regression.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Case Study: Regression</span></span></a>
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Case Study: Predicting Tuberculosis Risk</span></span></a>
   </div>
 </li>
       </ul>
@@ -781,7 +781,7 @@ code to run each iteration
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply mean function  </span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="fu">apply</span>(X, <span class="dv">2</span>, mean)</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -0.159 -0.160  0.302 -0.203  0.173</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  0.1524 -0.0819 -0.0132  0.1185 -0.2723</span></span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through columns</span></span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>means <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">ncol</span>(X))</span>
@@ -789,7 +789,7 @@ code to run each iteration
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  means[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(X[, i])</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>means</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -0.159 -0.160  0.302 -0.203  0.173</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1]  0.1524 -0.0819 -0.0132  0.1185 -0.2723</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another loop-hiding function is <code>lapply(X, FUN)</code>. This function applies the function <code>X</code> to each element of <code>X</code>. In this case, <code>X</code> functions like an iterator and <code>FUN</code> is a function representing what we want to do in each iteration. The result is returned as a list of the function output for each value of <code>X</code>. We use this function in the regression context we saw earlier. Here, <code>X</code> is our vector of groups and we have written a custom function to be able to call that code on each group. We learn how to write our own functions in <a href="functions.html" class="quarto-xref">Chapter&nbsp;<span>18</span></a>.</p>
 <div class="cell" data-layout-align="center">
@@ -834,12 +834,12 @@ code to run each iteration
 <p>The last loop-hiding function we introduce is <code>replicate(n, expr)</code>. This runs the code expression <code>expr</code> <code>n</code> times and returns the results. By default, this simplifies the output similar to <code>sapply()</code>. If you set <code>simplify=FALSE</code>, it returns a list. The following code generates a random matrix and computes the column means six times.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">replicate</span>(<span class="dv">6</span>, <span class="fu">colMeans</span>(<span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">100</span>), <span class="at">ncol =</span> <span class="dv">5</span>)))</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         [,1]    [,2]    [,3]    [,4]    [,5]     [,6]</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,] -0.1083  0.0878 -0.1277 -0.0968 -0.0381  0.34094</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,]  0.1338 -0.2262 -0.1187  0.5385  0.1584 -0.00882</span></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,]  0.0163 -0.5441  0.1430  0.3296  0.2195 -0.11697</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4,] -0.1036  0.0430  0.0645 -0.0594 -0.4334 -0.31854</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5,] -0.1919  0.0831 -0.1108  0.0576 -0.1902 -0.14824</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         [,1]    [,2]    [,3]    [,4]    [,5]    [,6]</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1,] -0.0601 -0.0697 -0.0139  0.1616 -0.3734 -0.0980</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [2,] -0.0244 -0.0843 -0.1355 -0.2163 -0.2409  0.0951</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [3,]  0.1731 -0.3498 -0.1339 -0.3584 -0.1700 -0.0711</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4,]  0.1694 -0.2930  0.0239 -0.4039  0.0945  0.2596</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5,] -0.1580  0.1871 -0.0452  0.0455 -0.2537 -0.0688</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <!--
 ::: {.content-visible when-format="html"}
@@ -1289,8 +1289,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../book/cs_regression.html" class="pagination-link  aria-label=" &lt;span="" study:="" regression&lt;="" span&gt;"="">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Case Study: Regression</span></span>
+      <a href="../book/cs_regression.html" class="pagination-link  aria-label=" &lt;span="" study:="" predicting="" tuberculosis="" risk&lt;="" span&gt;"="">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Case Study: Predicting Tuberculosis Risk</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

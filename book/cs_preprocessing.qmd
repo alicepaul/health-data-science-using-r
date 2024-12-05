@@ -1,4 +1,4 @@
-# Case Study: Pre-Processing Data {#sec-cs-preprocessing}
+# Case Study: Cleaning Tuberculosis Screening Data {#sec-cs-preprocessing}
 
 In this chapter, we put some of our R skills together in a case study. This case study focuses on data cleaning and pre-processing. We use the `tb_diagnosis_raw` data from the **HDSinRdata** package. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse** packages as well as the summary tables from **gtsummary**.
 
@@ -55,8 +55,8 @@ One observation from the table is that the coding of variables is inconsistent, 
 
 ```{r}
 # Re-code binary variables to 0/1 instead of 1/2
-tb_df$tb <- case_when(tb_df$tb == 1 ~ 1, 
-                      tb_df$tb == 2 ~ 0)
+tb_df$tb <- case_when(tb_df$tb == 1 ~ "TB Positive", 
+                      tb_df$tb == 2 ~ "TB Negative")
 
 tb_df$male <- case_when(tb_df$sex == 1 ~ 1, 
                         tb_df$sex == 2 ~ 0)
@@ -137,7 +137,7 @@ This allows us to create a new variable that represents whether or not someone h
 ```{r}
 # Categorize number of weeks experiencing symptoms
 tb_df <- tb_df %>%
-  mutate(case_when((length_symp_unit_fac == 77 |
+  mutate(two_weeks = case_when((length_symp_unit_fac == 77 |
                       is.na(length_symp_unit_fac)) ~ NA,
                    (length_symp_unit_fac == 1 & 
                       length_symp_days_fac <= 14) ~ 0,
@@ -180,7 +180,19 @@ Our final data is summarized in the following table. The `add_overall()` functio
 
 
 ```{r}
-tbl_summary(tb_df, by = "tb") %>%
+tbl_summary(tb_df, by = "tb",
+            label = list(
+              tb= "Tuberculosis",
+              age_group = "Age Group",
+              hiv_pos = "HIV Positive",
+              ever_smoke = "Ever Smoked",
+              past_tb = "Past TB",
+              male = "Male",
+              hs_less = "High School or Less Educ",
+              two_weeks = "Two Weeks Symptoms",
+              diabetes = "Diabetes",
+              num_symptoms = "Number of Symptoms"
+            )) %>%
   add_overall() %>%
   as_gt()
 ```
