@@ -1,6 +1,7 @@
 # Case Study: Cleaning Tuberculosis Screening Data {#sec-cs-preprocessing}
 
-In this chapter, we put some of our R skills together in a case study. This case study focuses on data cleaning and pre-processing. We use the `tb_diagnosis_raw` data from the **HDSinRdata** package. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse** packages as well as the summary tables from **gtsummary**.
+In this chapter, we put some of our R skills together in a case study\index{Case study:data cleaning and pre-processing}. This case study focuses on data cleaning and pre-processing. We use the `tb_diagnosis_raw`\index{R packages!readr}
+\index{Data sets!tb\textunderscore diagnosis\textunderscore raw@\texttt{tb\textunderscore diagnosis\textunderscore raw}} data from the **HDSinRdata** package\index{R packages!HDSinRdata}. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse**\index{R packages!tidyverse} packages as well as the summary tables from **gtsummary**\index{R packages!gtsummary}.
 
 ```{r}
 #| results: 'hide'
@@ -24,7 +25,7 @@ data("tb_diagnosis_raw")
 # ?tb_diagnosis_raw
 ```
 
-To start, we select variables needed for our analysis. In particular, we drop columns related to the participation in the survey and about seeking care. Since some of these variables contain long or vague names, we also rename most of the variables.
+To start, we select variables needed for our analysis. In particular, we drop columns related to the participation in the survey and about seeking care. Since some of these variables contain long or vague names, we also rename most of the variables\index{renaming columns}.
 
 ```{r}
 # Select variables and rename
@@ -44,14 +45,14 @@ tb_df <- tb_diagnosis_raw %>%
            past_tb = dx_tb_past_fac, education = educ_fac)
 ```
 
-We then use a summary table to understand the initial distributions of the variables observed. This also highlights where we have missing or unknown data. 
+We then use a summary table \index{tables!summary table} to understand the initial distributions of the variables observed. This also highlights where we have missing or unknown data. 
 
 ```{r}
 tbl_summary(tb_df) %>%
   as_gt()
 ```
 
-One observation from the table is that the coding of variables is inconsistent, with some using 0/1 and others using 1/2. We want to standardize how these variables are represented. To start, we update our `tb` column. Additionally, we create a column `male` from the previous column `sex` to make the reference level clear. We can then drop the `sex` column.
+One observation from the table is that the coding of variables is inconsistent, with some using 0/1 and others using 1/2. We want to standardize how these variables are represented\index{re-coding}. To start, we update our `tb` column. Additionally, we create a column `male` from the previous column `sex` to make the reference level clear. We can then drop the `sex` column.
 
 ```{r}
 # Re-code binary variables to 0/1 instead of 1/2
@@ -132,7 +133,7 @@ min(tb_df$length_symp_days_fac, na.rm = TRUE)
 is.integer(tb_df$length_symp_days_fac)
 ```
 
-This allows us to create a new variable that represents whether or not someone has had symptoms for more than two weeks. In our `case_when()` function call, we first check whether the duration is missing before checking for the cases when symptoms would be less than two weeks. 
+This allows us to create a new variable that represents whether or not someone has had symptoms for more than two weeks. In our `case_when()`\index{R functions!case\textunderscore when()@\texttt{case\textunderscore when()}} function call, we first check whether the duration is missing before checking for the cases when symptoms would be less than two weeks. 
 
 ```{r}
 # Categorize number of weeks experiencing symptoms
@@ -176,7 +177,7 @@ Last, we convert all variables to factors.
 tb_df[] <- lapply(tb_df, function(x){return(as.factor(x))})
 ```
 
-Our final data is summarized in the following table. The `add_overall()` function includes the overall summary statistics in addition to our stratified summaries. Our summary table looks similar to the one in the paper. However, it looks like we have a few more observations included. Additionally, our education variable shows a lower percentage of observations with post-high school education and positive HIV status. 
+Our final data is summarized in the following table. The `add_overall()`\index{R functions!add\textunderscore overall()@\texttt{add\textunderscore overall()}} function includes the overall summary statistics in addition to our stratified summaries. Our summary table looks similar to the one in the paper. However, it looks like we have a few more observations included. Additionally, our education variable shows a lower percentage of observations with post-high school education and positive HIV status. 
 
 
 ```{r}

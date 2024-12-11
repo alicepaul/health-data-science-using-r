@@ -1,6 +1,6 @@
 # Logic and Loops {#sec-control-flows}
 
-Now that we have seen a lot of the functionality of R, we can start to build up more structured code using programming structures. To start, we introduce *control flows*. Control flows are code blocks that determine a sequence of code to be run. The two types of control flows we introduce are if-else blocks and loops.
+Now that we have seen a lot of the functionality of R, we can start to build up more structured code using programming structures. To start, we introduce *control flows*\index{control flows}. Control flows are code blocks that determine a sequence of code to be run. The two types of control flows we introduce are if-else blocks and loops.
 
 ```{r}
 #| results: 'hide'
@@ -11,9 +11,9 @@ library(HDSinRdata)
 library(tidyverse)
 ```
 
-## Logic and Conditional Expressions
+## Logic and Conditional Expressions \index{conditional expressions}
 
-You may recall that we introduced logical operators in [Chapter -@sec-data-files]. We used these operators through conditional expressions such as when we indexed a data frame or the `ifelse()` or `casewhen()` functions. For example, in the following code we have vectors of systolic and diastolic blood pressure measurements and we write a logical operator to check if at least one of the systolic measurements is above 140 or if at least one of the diastolic measurements is above 90.
+You may recall that we introduced logical operators in [Chapter -@sec-data-files]. We used these operators through conditional expressions such as when we indexed a data frame or the `ifelse()`\index{R functions!ifelse()@\texttt{ifelse()}} or `casewhen()`\index{R functions!case\textunderscore when()@\texttt{case\textunderscore when()}} functions. For example, in the following code we have vectors of systolic and diastolic blood pressure measurements and we write a logical operator to check if at least one of the systolic measurements is above 140 or if at least one of the diastolic measurements is above 90.
 
 ```{r}
 sbp_measurements <- c(131, 110, 125, 145, NA, 130)
@@ -31,7 +31,7 @@ ifelse(sum(!is.na(sbp_measurements)) == 1,
        mean(sbp_measurements[!is.na(sbp_measurements)][-1]))
 ```
 
-We could also accomplish the same thing using a *control flow* called an *if-else statement*. An if-else statement follows the following structure. First, we have a conditional statement. If the conditional statement is true, then the code in the if statement, the code within the first set of curly braces, is run. If not, then the code in the else statement is run. In this way, the control flow controls how our code is executed.
+We could also accomplish the same thing using a *control flow* called an *if-else statement*\index{if-else statement}. An if-else statement follows the following structure. First, we have a conditional statement. If the conditional statement is true, then the code in the if statement, the code within the first set of curly braces, is run. If not, then the code in the else statement is run. In this way, the control flow controls how our code is executed.
 
 ```         
 if (conditional statement){
@@ -173,9 +173,9 @@ Use both an if-else statement and a `case_when()` function to find y as given by
 x <- 2 # change x to different values to check your solution!
 ```
 
-## Loops
+## Loops \index{loops}
 
-Another common control flow we use are loops. Loops capture code chunks we want to run multiple times. For this example, we use the `NHANESSample` data from the **HDSinRdata** package.
+Another common control flow we use are loops. Loops capture code chunks we want to run multiple times. For this example, we use the `NHANESSample` data \index{Data sets!NHANESSample@\texttt{NHANESSample}} from the **HDSinRdata** package\index{R packages!HDSinRdata}.
 
 ```{r}
 nhanes <- NHANESsample %>% 
@@ -262,7 +262,7 @@ df$pval[i] <- mod$coefficients[2, 4]
 df
 ```
 
-We now write this code as a *for loop*. A for loop contains two pieces. First, we have an *iterator*. An iterator traverses an object that has a natural order. Most of the time we traverse over vectors but we could also have a list object. The second piece is a code block. This code is run for each value of the iterator.
+We now write this code as a *for loop*\index{loops!for loop}. A for loop contains two pieces. First, we have an *iterator*\index{loops!iterator}. An iterator traverses an object that has a natural order. Most of the time we traverse over vectors but we could also have a list object. The second piece is a code block. This code is run for each value of the iterator.
 
 ```         
 for (iterator_name in object){
@@ -315,7 +315,7 @@ for (group in race_values){
 data.frame(group = race_values, coefs = coefs, pvals = pvals)
 ```
 
-Another type of loop is a *while loop*. A while loop does not have an iterator. Instead, a while loop checks a condition. If the condition is true, the loop runs the code in the code block. If the condition is false, it stops and breaks out of the loop. That is, the code is run until the condition is no longer met.
+Another type of loop is a *while loop*\index{loops!while loop}. A while loop does not have an iterator. Instead, a while loop checks a condition. If the condition is true, the loop runs the code in the code block. If the condition is false, it stops and breaks out of the loop. That is, the code is run until the condition is no longer met.
 
 ```         
 while (condition){
@@ -351,7 +351,7 @@ while(time+next_arrival <= 10){
 }
 ```
 
-Given we have two types of loops, how do you know which to use? You should use a for loop when you know how many times you go through the loop and/or if there is a clear object to iterate through. On the other hand, while loops are useful if you don't know how many times you go through the loop and you want to iterate through the loop *until* something happens. Within a for loop, you can also break out early using the `break` operator. This stops the loop similar to a while loop but is sometimes less succinct. The following code loops through the blood pressure measurements we defined earlier to find if any of the observations meet the criteria for hypertension.
+Given we have two types of loops, how do you know which to use? You should use a for loop when you know how many times you go through the loop and/or if there is a clear object to iterate through. On the other hand, while loops are useful if you don't know how many times you go through the loop and you want to iterate through the loop *until* something happens. Within a for loop, you can also break out early using the `break` operator\index{loops!breaking}. This stops the loop similar to a while loop but is sometimes less succinct. The following code loops through the blood pressure measurements we defined earlier to find if any of the observations meet the criteria for hypertension.
 
 ```{r}
 # Start with assumption that the result is FALSE
@@ -382,9 +382,9 @@ We just introduced logic and loops and now I'm going to tell you to avoid them w
 any(sbp_measurements > 140 | dbp_measurements > 90)
 ```
 
-Another example we saw previously was using an `ifelse()` or `case_when()` function instead of an if-else statement. These two functions are *vectorized functions*. That means that the function is evaluated on a vector of values rather than having to loop through each value separately. Vectorized functions return a vector or results of the same size as your input. That means that if you needed to do a computation on every element of a vector you could either loop through all the elements and call that function *or* you can take advantage of the vectorized structure and call the function on the whole vector. This is generally cleaner and more efficient. The `any()` function up not a vectorized function since it returns a single TRUE/FALSE value but it also helps to make our code cleaner.
+Another example we saw previously was using an `ifelse()` or `case_when()` function instead of an if-else statement. These two functions are *vectorized functions*\index{vectorized functions}. That means that the function is evaluated on a vector of values rather than having to loop through each value separately. Vectorized functions return a vector or results of the same size as your input. That means that if you needed to do a computation on every element of a vector you could either loop through all the elements and call that function *or* you can take advantage of the vectorized structure and call the function on the whole vector. This is generally cleaner and more efficient. The `any()` function up not a vectorized function since it returns a single TRUE/FALSE value but it also helps to make our code cleaner.
 
-Another tool that can help with brevity in this manner is the family of *apply functions*. These are loop-hiding functions. In [Chapter -@sec-data-files], we saw the `apply(X, MARGIN, FUN)` function. This function called the function `FUN` on either the rows (`MARGIN = 1`) or columns (`MARGIN = 2`) of `X`, which is data frame or matrix `X`. In the next code chunk, we generate a random matrix `X` and compute the column means using a loop and using the `apply()` function. We can see that the version with the `apply()` function is simpler.
+Another tool that can help with brevity in this manner is the family of *apply functions*\index{apply functions}. These are loop-hiding functions. In [Chapter -@sec-data-files], we saw the `apply(X, MARGIN, FUN)`\index{R functions!apply()@\texttt{apply()}} function. This function called the function `FUN` on either the rows (`MARGIN = 1`) or columns (`MARGIN = 2`) of `X`, which is data frame or matrix `X`. In the next code chunk, we generate a random matrix `X` and compute the column means using a loop and using the `apply()` function. We can see that the version with the `apply()` function is simpler.
 
 ```{r}
 X <- matrix(rnorm(100), nrow = 20, ncol = 5)
@@ -400,7 +400,7 @@ for (i in 1:ncol(X)){
 means
 ```
 
-Another loop-hiding function is `lapply(X, FUN)`. This function applies the function `X` to each element of `X`. In this case, `X` functions like an iterator and `FUN` is a function representing what we want to do in each iteration. The result is returned as a list of the function output for each value of `X`. We use this function in the regression context we saw earlier. Here, `X` is our vector of groups and we have written a custom function to be able to call that code on each group. We learn how to write our own functions in [Chapter -@sec-functions].
+Another loop-hiding function is `lapply(X, FUN)`\index{R functions!lapply()@\texttt{lapply()}}. This function applies the function `X` to each element of `X`. In this case, `X` functions like an iterator and `FUN` is a function representing what we want to do in each iteration. The result is returned as a list of the function output for each value of `X`. We use this function in the regression context we saw earlier. Here, `X` is our vector of groups and we have written a custom function to be able to call that code on each group. We learn how to write our own functions in [Chapter -@sec-functions].
 
 ```{r}
 find_lm_results <- function(group){
@@ -413,13 +413,13 @@ find_lm_results <- function(group){
 lapply(race_values, find_lm_results)
 ```
 
-Another useful function is `sapply(X, FUN)`. This function operates similarly to `lapply()`. However, it then tries to simplify the output to be either a vector or matrix. You can remember the difference by remembering the l in `lapply()` stands for list and the s in `sapply()` stands for simplify.
+Another useful function is `sapply(X, FUN)`\index{R functions!sapply()@\texttt{sapply()}}. This function operates similarly to `lapply()`. However, it then tries to simplify the output to be either a vector or matrix. You can remember the difference by remembering the l in `lapply()` stands for list and the s in `sapply()` stands for simplify.
 
 ```{r}
 sapply(race_values, find_lm_results)
 ```
 
-The last loop-hiding function we introduce is `replicate(n, expr)`. This runs the code expression `expr` `n` times and returns the results. By default, this simplifies the output similar to `sapply()`. If you set `simplify=FALSE`, it returns a list. The following code generates a random matrix and computes the column means six times.
+The last loop-hiding function we introduce is `replicate(n, expr)`\index{R functions!replicate()@\texttt{replicate()}}. This runs the code expression `expr` `n` times and returns the results. By default, this simplifies the output similar to `sapply()`. If you set `simplify=FALSE`, it returns a list. The following code generates a random matrix and computes the column means six times.
 
 ```{r}
 replicate(6, colMeans(matrix(rnorm(100), ncol = 5)))
@@ -435,7 +435,7 @@ replicate(6, colMeans(matrix(rnorm(100), ncol = 5)))
 
 ## Exercises
 
-For these exercises, we use the `pain` data from the **HDSinRdata** package. You can use the help operator `?pain` to learn more about the source of these data and to read its column descriptions.
+For these exercises, we use the `pain`\index{Data sets!pain@\texttt{pain}} data from the **HDSinRdata** package\index{R packages!HDSinRdata}. You can use the help operator `?pain` to learn more about the source of these data and to read its column descriptions.
 
 1.  Create a new column `PAT_RACE_SIMP` that represents a patient's race using three categories: White, Black, or Other. First, do this using the `case_when()` function. Then, use a loop and if-else statement to accomplish the same thing.
 

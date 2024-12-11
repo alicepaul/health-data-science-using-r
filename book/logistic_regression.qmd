@@ -1,11 +1,11 @@
 
-# Logistic Regression {#sec-logistic-regression}
+# Logistic Regression {#sec-logistic-regression} 
  
-This chapter builds on the previous chapter and continues with regression analysis in R. Specifically, we cover binary logistic regression using the `glm()` function, which can be used to fit generalized linear models. Many of the functions learned in the last chapter can also be used with a `glm` object. For example, the `glm()` function expects a formula in the same way as the `lm()` function. We also cover diagnostic plots and model evaluation specific to a binary outcome.
+This chapter builds on the previous chapter and continues with regression analysis in R. Specifically, we cover binary logistic regression\index{logistic regression} using the `glm()` function\index{R functions!glm()@\texttt{glm()}}, which can be used to fit generalized linear models. Many of the functions learned in the last chapter can also be used with a `glm` object. For example, the `glm()` function expects a formula in the same way as the `lm()` function. We also cover diagnostic plots and model evaluation specific to a binary outcome.
 
-The data used in this chapter is from the 2021 National Youth Tobacco Survey (NYTS) [@nyts]. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. We use logistic regression to examine whether survey setting is associated with youth reporting of current tobacco use, similar to the analysis presented in @park2023impact. Note that we ignore survey weights for this analysis.
+The data used in this chapter is from the 2021 National Youth Tobacco Survey (NYTS)\index{Data sets!nyts@\texttt{nyts}} [@nyts]. This dataset contains 20,413 participants and a set of variables relating to demographic information, frequency of tobacco use, and methods of obtaining said tobacco as reported by students on the 2021 NYTS. We use logistic regression to examine whether survey setting is associated with youth reporting of current tobacco use, similar to the analysis presented in @park2023impact. Note that we ignore survey weights for this analysis.
 
-We use the **broom** package again to present the estimated coefficients, the **tidyverse** package to create a calibration plot, the **lmtest** [@R-lmtest] package to perform likelihood ratio tests, and the **pROC** package [@R-pROC] to create receiver operating characteristic curves.
+We use the **broom** package \index{R packages!broom} again to present the estimated coefficients, the **tidyverse** package\index{R packages!tidyverse} to create a calibration plot, the **lmtest** [@R-lmtest] package\index{R packages!lmtest} to perform likelihood ratio tests, and the **pROC** package\index{R packages!pROC} [@R-pROC] to create receiver operating characteristic curves.
 
 ```{r}
 #| results: 'hide'
@@ -21,9 +21,9 @@ library(HDSinRdata)
 data(nyts)
 ```
 
-## Generalized Linear Models in R
+## Generalized Linear Models in R \index{generalized linear models}
 
-The `glm(formula, data, family)` function in R is used to fit generalized linear models. The three main arguments we must specify to the function are the
+The `glm(formula, data, family)` function\index{R functions!glm()@\texttt{glm()}} in R is used to fit generalized linear models. The three main arguments we must specify to the function are the
 
 -   `formula` - specifies the relationship between the independent variables and the outcome of interest,\
 -   `data` - the dataset used to train the model, and\
@@ -48,7 +48,7 @@ nyts$location <- ifelse(nyts$location ==
 nyts$location <- as.factor(nyts$location)
 ```
 
-To start, we create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, race, and ethnicity. Note that we specify our formula and data as with the `lm()` function. We then use the `summary()` function again to print a summary of this fitted model. The output is slightly different from an `lm` object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the `lm()` function and is not demonstrated in this chapter.
+To start, we create a model to predict e-cigarette use from school setting adjusting for the covariates sex, school level, race, and ethnicity. Note that we specify our formula and data as with the `lm()` function. We then use the `summary()`\index{R functions!summary()@\texttt{summary()}} function again to print a summary of this fitted model. The output is slightly different from an `lm` object. We can see the null and residual deviances are reported along with the AIC. Adding transformations and interactions is equivalent to that in the `lm()` function and is not demonstrated in this chapter.
 
 ```{r}
 mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + 
@@ -56,7 +56,7 @@ mod_start <- glm(e_cig_use ~ grade + sex + race_and_ethnicity +
 summary(mod_start)
 ```
 
-We can use the `tidy()` function from the **broom** package to display the estimated coefficients from the previous model. This time we add the `exponentiate = TRUE` argument to exponentiate our coefficients so we can interpret them as estimated change in odds rather than log odds. For example, we can see that those who answered at school have double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity.
+We can use the `tidy()`\index{R functions!tidy()@\texttt{tidy()}} function from the **broom** package\index{R packages!broom} to display the estimated coefficients from the previous model. This time we add the `exponentiate = TRUE` argument to exponentiate our coefficients so we can interpret them as estimated change in odds rather than log odds. For example, we can see that those who answered at school have double the estimated odds of reporting e-cigarette use compared to those who took the survey at home/other, adjusting for grade, sex, and race and ethnicity.
 
 ```{r}
 tidy(mod_start, exponentiate = TRUE)
@@ -70,9 +70,9 @@ Fit a logistic regression model with cigarette use as the outcome and age, race_
 # Insert your solution here:
 ```
 
-## Residuals, Discrimination, and Calibration
+## Residuals, Discrimination, and Calibration \index{logistic regression!residuals}  \index{logistic regression!discrimination}  \index{logistic regression!calibration}
 
-Next, we look at the distribution of the residuals. The `resid()` function can be used to find the residuals again, but this time we might want to specify the Pearson and deviance residuals by specifying the `type` argument. We plot histograms for both of these residual types using the following code. In both plots, we can observe a multi-modal distribution, which reflects the binary nature of our outcome.
+Next, we look at the distribution of the residuals. The `resid()`\index{R functions!resid()@\texttt{resid()}} function can be used to find the residuals again, but this time we might want to specify the Pearson and deviance residuals by specifying the `type` argument. We plot histograms for both of these residual types using the following code. In both plots, we can observe a multi-modal distribution, which reflects the binary nature of our outcome.
 
 ```{r}
 par(mfrow=c(1,2))
@@ -80,7 +80,7 @@ hist(resid(mod_start, type = "pearson"), main = "Pearson Residuals")
 hist(resid(mod_start, type = "deviance"), main = "Deviance Residuals")
 ```
 
-To further evaluate the fit of our model, we may want to observe the predicted probabilities. The `predict()` function by default returns the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If we want to find the predicted probabilities, we can update the argument by specifying `type="response"`. Additionally, we can predict on data not used to train the model by using the argument `newdata`. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the `glm()` function (and `lm()` function) drop any observations with NA values when training. In the last chapter, we omitted incomplete cases prior to analysis so that the predicted probabilities corresponded directly to the rows in our data.
+To further evaluate the fit of our model, we may want to observe the predicted probabilities. The `predict()`\index{R functions!predict()@\texttt{predict()}} function by default returns the predicted value on the scale of the linear predictors. In this case, that is the predicted log odds. If we want to find the predicted probabilities, we can update the argument by specifying `type="response"`. Additionally, we can predict on data not used to train the model by using the argument `newdata`. Note that there are only 18,747 predicted probabilities despite our training data having more observations. This is because the `glm()` function (and `lm()` function) drop any observations with NA values when training. In the last chapter, we omitted incomplete cases prior to analysis so that the predicted probabilities corresponded directly to the rows in our data.
 
 ```{r}
 pred_probs <- predict(mod_start, type = "response")
@@ -97,9 +97,9 @@ ggplot() +
   labs(x = "Predicted Probabilities", y = "Count")
 ```
 
-### Receiver Operating Characteristic (ROC) Curve
+### Receiver Operating Characteristic (ROC) Curve  \index{logistic regression!Receiver Operating Characteristic (ROC) Curve}
 
-We now plot the receiver operating characteristic (ROC) curve and compute the area under the curve (AUC). The `roc()` function from the **pROC** package builds a ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector `response` and predictor vector `predictor`. By default, with a 0/1 outcome, the `roc()` function assumes class 0 is controls and class 1 is cases. We can also specify this in the `levels` argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument `direction = ">"` if the opposite is true. We can plot the ROC curve by calling the `plot()` function. We can add some extra information by adding the AUC (`print.auc = TRUE`) and the threshold that maximizes sensitivity + specificity (`print.thres = TRUE`).
+We now plot the receiver operating characteristic (ROC) curve and compute the area under the curve (AUC). The `roc()`\index{R functions!roc()@\texttt{roc()}} function from the **pROC** package \index{R packages!pROC} builds a ROC curve. The function has several ways to specify a response and predictor. For example, we can specify the response vector `response` and predictor vector `predictor`. By default, with a 0/1 outcome, the `roc()` function assumes class 0 is controls and class 1 is cases. We can also specify this in the `levels` argument to specify the value of the response for controls and cases, respectively. Additionally, the function assumes the predictor vector specifies predicted probabilities for the class 1. We can change the argument `direction = ">"` if the opposite is true. We can plot the ROC curve by calling the `plot()`\index{R functions!plot()@\texttt{plot()}} function. We can add some extra information by adding the AUC (`print.auc = TRUE`) and the threshold that maximizes sensitivity + specificity (`print.thres = TRUE`).
 
 ```{r}
 roc_mod <- roc(predictor = pred_probs, 
@@ -108,7 +108,7 @@ roc_mod <- roc(predictor = pred_probs,
 plot(roc_mod, print.auc = TRUE, print.thres = TRUE)
 ```
 
-If we want to understand more about the curve, we can use the `coords()` function to find the coordinates for each threshold used to create the curve. The argument `x= "all"` specifies we want to find all thresholds, but we could also specify only to return local maxima.
+If we want to understand more about the curve, we can use the `coords()`\index{R functions!coords()@\texttt{coords()}} function to find the coordinates for each threshold used to create the curve. The argument `x= "all"` specifies we want to find all thresholds, but we could also specify only to return local maxima.
 
 ```{r}
 roc_vals <- coords(roc = roc_mod, x = "all")
@@ -144,7 +144,7 @@ data.frame(Measures = c("Sens", "Spec", "PPV", "NPV", "Acc"),
 
 ### Calibration Plot
 
-Another useful plot is a calibration plot. This type of plot groups the data by the estimated probabilities and compares the mean probability with the observed proportion of observations in class 1. It visualizes how close our estimated distribution and true distribution are to each other. There are several packages that can create calibration plots, but we demonstrate how to do this using the **ggplot2** package. First, we create a data frame with the predicted probabilities and the outcome variable. Additionally, we group this data into `num_cuts` groups based on the predicted probabilities using the `cut()` function. Within each group, we find the model's predicted mean along with the observed proportion and estimated standard errors.
+Another useful plot is a calibration plot. This type of plot groups the data by the estimated probabilities and compares the mean probability with the observed proportion of observations in class 1. It visualizes how close our estimated distribution and true distribution are to each other. There are several packages that can create calibration plots, but we demonstrate how to do this using the **ggplot2** package. First, we create a data frame with the predicted probabilities and the outcome variable. Additionally, we group this data into `num_cuts` groups based on the predicted probabilities using the `cut()`\index{R functions!cut()@\texttt{cut()}} function. Within each group, we find the model's predicted mean along with the observed proportion and estimated standard errors.
 
 ```{r}
 num_cuts <- 10
@@ -182,9 +182,9 @@ Create a calibration plot with 5 cuts for your model from the previous practice 
 # Insert your solution here:
 ```
 
-## Variable Selection and Likelihood Ratio Tests
+## Variable Selection and Likelihood Ratio Tests \index{logistic regression!stepwise selection} \index{logistic regression!likelihood ratio tests}
 
-In the last chapter, we introduced the `step()` function to implement stepwise variable selection. This function also works with `glm` objects. In this case, we use this function to implement backward selection from a larger set of covariates. We first remove any observations with NA values to ensure that our training data does not change size as the formula changes.
+In the last chapter, we introduced the `step()`\index{R functions!step()@\texttt{step()}} function to implement stepwise variable selection. This function also works with `glm` objects. In this case, we use this function to implement backward selection from a larger set of covariates. We first remove any observations with NA values to ensure that our training data does not change size as the formula changes.
 
 ```{r}
 nyts_sub <- nyts %>% 
@@ -213,7 +213,7 @@ roc_mod_step <- roc(predictor = predict(mod_step, type = "response"),
 plot(roc_mod_step, print.auc = TRUE, print.thres = TRUE)
 ```
 
-If we want to compare this model to our previous one, we could use a likelihood ratio test since the two models are nested. The `lrtest()` function from the **lmtest** package allows us to input two nested `glm` models and performs a corresponding Chi-squared likelihood ratio test. First, we need to ensure that our initial model is fit on the same data used in the stepwise selection. The output indicates a statistically significant improvement in the model likelihood with the inclusion of the other variables.
+If we want to compare this model to our previous one, we could use a likelihood ratio test since the two models are nested. The `lrtest()`\index{R functions!lrtest()@\texttt{lrtest()}} function from the **lmtest** package \index{R packages!lmtest} allows us to input two nested `glm` models and performs a corresponding Chi-squared likelihood ratio test. First, we need to ensure that our initial model is fit on the same data used in the stepwise selection. The output indicates a statistically significant improvement in the model likelihood with the inclusion of the other variables.
 
 ```{r}
 mod_start2 <- glm(e_cig_use ~ grade + sex + race_and_ethnicity + 
@@ -224,9 +224,9 @@ mod_start2 <- glm(e_cig_use ~ grade + sex + race_and_ethnicity +
 print(lrtest(mod_start2, mod_step))
 ```
 
-## Extending Beyond Binary Outcomes
+## Extending Beyond Binary Outcomes \index{generalized linear models}
 
-The `glm()` function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the `family` argument. In the following code, we fit a Poisson model to model the number of e-cigarettes used in the last 30 days by setting `family = poisson`. However, despite our outcome being a count value, this model does not appear to be a good fit for our data.
+The `glm()`\index{R functions!glm()@\texttt{glm()}} function can be used to fit models for other possible families and non-binary outcomes. For example, we can fit models where the outcome might follow a Poisson distribution or negative binomial distribution by updating the `family` argument. In the following code, we fit a Poisson model to model the number of e-cigarettes used in the last 30 days by setting `family = poisson`. However, despite our outcome being a count value, this model does not appear to be a good fit for our data.
 
 ```{r}
 mod_poisson <- glm(num_e_cigs ~ grade + sex + race_and_ethnicity + 

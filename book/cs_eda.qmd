@@ -1,6 +1,6 @@
 # Case Study: Exploring Early COVID-19 Data {#sec-cs-eda}
 
-In this chapter, we demonstrate a short exploratory analysis as a case study. This case study focuses on COVID-19 cases and deaths during 2020 using the `covidcases` and `mobility` datasets from the **HDSinRdata** package. A new package that is used in this case study is **usmap** package [@R-usmap], which allows us to easily create spatial plots of the United States. 
+In this chapter, we demonstrate a short exploratory analysis as a case study\index{Case study!exploratory analysis}. This case study focuses on COVID-19 cases and deaths during 2020 using the `covidcases`\index{Data sets!covidcases@\texttt{covidcases}} and `mobility`\index{Data sets!mobility@\texttt{mobility}} datasets from the **HDSinRdata** package\index{R packages!HDSinRdata}. A new package that is used in this case study is **usmap**\index{R packages!usmap} package [@R-usmap], which allows us to easily create spatial plots of the United States. 
 
 ```{r}
 #| results: 'hide'
@@ -15,7 +15,7 @@ library(gtsummary)
 library(usmap)
 ```
 
-## Preprocessing
+## Pre-processing
 
 We start by cleaning and merging our data. The `covidcases` data contains weekly confirmed COVID-19 cases and deaths at the state and county level in 2020. As the data description notes, some of these values may be negative due to data discrepancies in the cumulative counts data. The `mobility` data contains daily mobility statistics by state. 
 
@@ -25,7 +25,7 @@ data(covidcases)
 data(mobility)
 ```
 
-First, we look at the columns in our data. We convert the date columns in the mobility data to be recognized as a date using the `as.Date()` function. The `covidcases` data has the week number of 2020. We create a similar column for the mobility data.
+First, we look at the columns in our data. We convert the date columns in the mobility data to be recognized as a date using the `as.Date()`\index{R functions!as.Date()@\texttt{as.Date()}} function. The `covidcases` data has the week number of 2020. We create a similar column for the mobility data.
 
 ```{r}
 # Convert to date format and find week
@@ -49,6 +49,7 @@ For both of our datasets, we want to check whether each state was observed acros
 # Find number of dates recorded for each state
 table(mobility_week$state)
 ```
+
 For the `covidcases` data, our data is at the county level. We need to summarize the data instead. In this case, some states were observed for fewer weeks than others. 
 
 ```{r}
@@ -79,6 +80,7 @@ Next, we want to get some simple information about the continuous variables in o
 ```{r}
 summary(covid[, c("weekly_cases", "weekly_deaths", "m50")])
 ```
+
 These negative numbers are clear data discrepancies. When showing the distribution of cases in our exploratory analysis we may choose to either code these as 0 or NA. We decide to recode these negative values as NA.
 
 ```{r}
@@ -152,7 +154,7 @@ pmob2 <- covid %>%
 pmob1+pmob2
 ```
 
-We then look at cases and deaths by region. A limitation of these data are that we do not have population counts which would allow us to standardize these numbers. However, we do use a secondary y-axis using the `sec_axis()` function within `scale_y_continuous()` to allow us to plot deaths and cases together. In this case, the secondary axis is scaled by 1/10th of the primary axis. 
+We then look at cases and deaths by region. A limitation of these data are that we do not have population counts which would allow us to standardize these numbers. However, we do use a secondary y-axis using the `sec_axis()`\index{R functions!sec\textunderscore axis()@\texttt{sec\textunderscore axis()}} function within `scale_y_continuous()` to allow us to plot deaths and cases together. In this case, the secondary axis\index{secondary axis} is scaled by 1/10th of the primary axis. 
 
 ```{r}
 # Change in number cases over time, per region
@@ -186,7 +188,7 @@ ggplot(covid_ca)+
   labs(x = "Weekly Cases", y = "Average Mobility")
 ```
 
-This motivates us to look at the correlation between these two columns by state. We plot this using the `plot_usmap()` function from the **usmap** package. Interestingly, we observe different relationships throughout the country, but none of the correlations are particularly strong.
+This motivates us to look at the correlation between these two columns by state. We plot this using the `plot_usmap()`\index{R functions!plot\textunderscore usmap()@\texttt{plot\textunderscore usmap()}} function from the **usmap** package\index{R packages!usmap}. Interestingly, we observe different relationships throughout the country, but none of the correlations are particularly strong.
 
 ```{r}
 # Calculate and plot correlation between cases and mobility, y state

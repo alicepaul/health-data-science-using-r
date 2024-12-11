@@ -1,8 +1,8 @@
 # Working with Data Files in R {#sec-data-files}
 
-In this chapter, we work with data in R. To start, we need to load our data into R: this requires identifying the type of data file we have (e.g. .csv, .xlsx, .dta, .txt) and finding the appropriate function to load in the data. This creates a data frame object containing the information from the file. After demonstrating how to load in such data, this chapter shows you how to find information about data columns, including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.
+In this chapter, we work with data in R. To start, we need to load our data into R: this requires identifying the type of data file \index{data file} we have (e.g. .csv, .xlsx, .dta, .txt) and finding the appropriate function to load in the data. This creates a data frame object containing the information from the file. After demonstrating how to load in such data, this chapter shows you how to find information about data columns, including finding missing values, summarizing columns, and subsetting the data. Additionally, we look at how to create new columns through some simple transformations.
 
-In this chapter and all future chapters, we load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single package **HDSinRdata** that contains the sample data sets used in this book.
+In this chapter and all future chapters, we load in the required libraries at the start of the chapter - for example, in this particular chapter, we need a single package **HDSinRdata** \index{R packages!HDSinRdata} that contains the sample data sets used in this book.
 
 ```{r}
 #| results: 'hide'
@@ -12,16 +12,16 @@ In this chapter and all future chapters, we load in the required libraries at th
 library(HDSinRdata)
 ```
 
-## Importing and Exporting Data
+## Importing and Exporting Data \index{importing data} \index{exporting data}
 
-The data we use in this chapter contains information about patients who visited one of the University of Pittsburgh's seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up [@alter2021hierarchical]. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions. Since this data is available in our R package, we can use the `data()` function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
+The data we use in this chapter contains information about patients who visited one of the University of Pittsburgh's seven pain management clinics. This includes patient-reported pain assessments using the Collaborative Health Outcomes Information Registry (CHOIR) at baseline and at a 3-month follow-up [@alter2021hierarchical]. You can use the help operator `?pain` to learn more about the source of this data and to read its column descriptions\index{Data sets!pain@\texttt{pain}}. Since this data is available in our R package, we can use the `data()`\index{R functions!data()@\texttt{data()}} function to load this data into our environment. Note that this data has 21,659 rows and 92 columns.
 
 ```{r}
 data(pain)
 dim(pain)
 ```
 
-In general, the data you will be using is not available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file using the `read.csv()` function in base R or using the `read_csv()` function from the **readr** package, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset using both of these functions. Looking at the print output, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble** that is used by the **tidyverse** packages. We cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
+In general, the data you will be using is not available in R packages and will instead exist in one or more data files on your personal computer. In order to load in this data to R, you need to use the function that corresponds to the file type you have. For example, you can load a .csv file \index{data files!.csv} using the `read.csv()`\index{R functions!read.csv()@\texttt{read.csv()}} function in base R or using the `read_csv()`\index{R functions!read\textunderscore csv()@\texttt{read\textunderscore csv()}} function from the **readr** package\index{R packages!readr}, both of which were shown in [Chapter -@sec-intro-to-r]. As an example, we load the `fake_names.csv` dataset using both of these functions. Looking at the print output, we can see that there is slight difference in the data structure and data types storing the data between these two functions. The function `read.csv()` loads the data as a data frame, whereas the function `read_csv()` loads the data as a `spec_tbl_df`, a special type of data frame called a **tibble**\index{tibble} that is used by the **tidyverse** packages\index{R packages!tidyverse}. We cover this data structure in more detail in [Chapter -@sec-transformations-summaries]. For now, note that you can use either function to read in a .csv file.
 
 ```{r}
 read.csv("data/fake_names.csv")
@@ -31,28 +31,28 @@ read.csv("data/fake_names.csv")
 readr::read_csv("data/fake_names.csv", show_col_types=FALSE)
 ```
 
-In addition to loading data into R, you may also want to save data from R into a data file you can access later or share with others. To write a data frame from R to a .csv file, you can use the `write.csv()` function. This function has three key arguments: the first argument is the data frame in R that you want to write to a file, the second argument is the file name or the full file path where you want to write the data, and the third argument is whether or not you want to include the row names as an extra column. In this case, we do not include row names. If you do not specify a file path, R saves the file in our current working directory.
+In addition to loading data into R, you may also want to save data from R into a data file you can access later or share with others. To write a data frame \index{exporting data} from R to a .csv file, you can use the `write.csv()` \index{R functions!write.csv()@\texttt{write.csv()}} function. This function has three key arguments: the first argument is the data frame in R that you want to write to a file, the second argument is the file name or the full file path where you want to write the data, and the third argument is whether or not you want to include the row names as an extra column. In this case, we do not include row names. If you do not specify a file path, R saves the file in our current working directory.
 
 ```{r}
 df <- data.frame(x = c( 1, 0, 1), y = c("A", "B", "C"))
 write.csv(df, "data/test.csv", row.names=FALSE)
 ```
 
-If your data is not in a .csv file, you may need to use another package to read in the file. The two most common packages are the **readxl** package [@R-readxl], which makes it easy to read in Excel files, and the **haven** package [@R-haven], which can import SAS, SPSS, and Stata files. For each function, you need to specify the file path to the data file.
+If your data is not in a .csv file, you may need to use another package to read in the file. The two most common packages are the **readxl** package\index{R packages!readxl} [@R-readxl], which makes it easy to read in Excel files, and the **haven** package\index{R packages!haven} [@R-haven], which can import SAS, SPSS, and Stata files. For each function, you need to specify the file path to the data file.
 
--   **Tab Delimited Files**: You can read in a tab-separated .txt file using the `read.delim()` function in base R.
+-   **Tab Delimited Files**: You can read in a tab-separated .txt \index{data files!.txt} file using the `read.delim()`\index{R functions!read.delim()@\texttt{read.delim()}} function in base R.
 
--   **Excel Files**: You can read in a .xls or .xlsx file using `readxl::read_excel()`, which allows you to specify a sheet and/or cell range within a file (e.g. `read_excel('test.xlsx', sheet="Sheet1")`).
+-   **Excel Files**: You can read in a .xls \index{data files!.xls} or .xlsx  file \index{data files!.xlsx} using `readxl::read_excel()`\index{R functions!read\textunderscore excel()@\texttt{read\textunderscore excel()}}, which allows you to specify a sheet and/or cell range within a file (e.g. `read_excel('test.xlsx', sheet="Sheet1")`).
 
--   **SAS**: `haven::read_sas()` reads in .sas7bdat or .sas7bcat files, `haven::read_xpt()` reads in SAS transport files.
+-   **SAS**: `haven::read_sas()`\index{R functions!read\textunderscore sas()@\texttt{read\textunderscore sas()}} reads in .sas7bdat\index{data files!.sas7bdat} or .sas7bcat files\index{data files!.sas7bcat}, `haven::read_xpt()` \index{R functions!read\textunderscore xpt()@\texttt{read\textunderscore xpt()}} reads in SAS transport files.
 
--   **Stata**: `haven::read_dta()` reads in .dta files.
+-   **Stata**: `haven::read_dta()`\index{R functions!read\textunderscore dta()@\texttt{read\textunderscore dta()}} reads in .dta\index{data files!.dta} files.
 
--   **SPSS**: `haven::read_spss()` reads in .spss files.
+-   **SPSS**: `haven::read_spss()`\index{R functions!read\textunderscore spss()@\texttt{read\textunderscore spss()}} reads in .spss\index{data files!.spss} files.
 
 ## Summarizing and Creating Data Columns
 
-We now look at the data we have loaded into the data frame called `pain`. We use the `head()` function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this column to a factor or a character representation later on. We can use the `names()` function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
+We now look at the data we have loaded into the data frame called `pain`. We use the `head()`\index{R functions!head()@\texttt{head()}} function to print the first six rows. However, note that we have so many columns that all not of the columns are displayed! For those that are displayed, we can see the data type for each column under the column name. For example, we can see that the column `PATIENT_NUM` is a numeric column of type `dbl`. Because patients identification numbers are technically nominal in nature, we might consider whether we should make convert this column to a factor or a character representation later on. We can use the `names()`\index{R functions!names()@\texttt{names()}} function to print all the column names. Note that columns `X101` to `X238` correspond to numbers on a body pain map (see the data documentation for the image of this map). Each of these columns has a 1 if the patient indicated that they have pain in that corresponding body part and a 0 otherwise.
 
 
 ```{r}
@@ -67,9 +67,9 @@ pain$PAIN_INTENSITY_AVERAGE[1:5]
 pain[["PAIN_INTENSITY_AVERAGE"]][1:5]
 ```
 
-### Column Summaries
+### Column Summaries \index{column summaries}
 
-To explore the range and distribution of a column's values, we can use some of the base R functions. For example, the `summary()` function is a useful way to summarize a numeric column's values. We can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.
+To explore the range and distribution of a column's values, we can use some of the base R functions. For example, the `summary()`\index{R functions!summary()@\texttt{summary()}} function is a useful way to summarize a numeric column's values. We can see that the pain intensity values range from 0 to 10 with a median value of 7 and that there is 1 NA value.
 
 ```{r}
 summary(pain$PAIN_INTENSITY_AVERAGE)
@@ -86,9 +86,9 @@ median(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 
 Additionally, the following functions are helpful for summarizing quantitative columns.
 
--   `range()` - returns the minimum and maximum values for a numeric vector x
--   `quantile()` - returns the sample quantiles for a numeric vector
--   `IQR()` - returns the interquartile range for a numeric vector
+-   `range()`\index{R functions!range()@\texttt{range()}} - returns the minimum and maximum values for a numeric vector x
+-   `quantile()`\index{R functions!quantile()@\texttt{quantile()}} - returns the sample quantiles for a numeric vector
+-   `IQR()`\index{R functions!IQR()@\texttt{IQR()}} - returns the interquartile range for a numeric vector
 
 By default, the `quantile()` function returns the sample quantiles.
 
@@ -102,7 +102,7 @@ However, we can pass in a list of probabilities to use instead. For example, in 
 quantile(pain$PAIN_INTENSITY_AVERAGE, probs = c(0.1, 0.9), na.rm=TRUE)
 ```
 
-We can also plot a histogram of the sample distribution using the `hist()` function. We look more in depth at how to change aspects of this histogram in [Chapter -@sec-exploratory].
+We can also plot a histogram \index{plots!histogram} of the sample distribution using the `hist()`\index{R functions!hist()@\texttt{hist()}} function. We look more in depth at how to change aspects of this histogram in [Chapter -@sec-exploratory].
 
 
 ```{r}
@@ -125,7 +125,7 @@ We can also use the `summary()` function for categorical variables. In this case
 summary(pain$PAT_SEX)
 ```
 
-For categorical columns, it is also useful to use the `table()` function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()` function to convert the counts to proportions. Using these functions, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
+For categorical columns, it is also useful to use the `table()`\index{R functions!table()@\texttt{table()}} function, which returns the counts for each possible value, instead of the `summary()` function. By default, `table()` ignores NA values. However, we can set `useNA="always"` if we also want to display the number of NA values in the table output. Additionally, we can use the `prop.table()`\index{R functions!prop.table()@\texttt{prop.table()}} function to convert the counts to proportions. Using these functions, we can see that the column `PAT_SEX` column, which corresponds to the reported patient sex, has a single missing value, and we can also see that around 60% of patients are female.
 
 ```{r}
 table(pain$PAT_SEX, useNA="always")
@@ -148,7 +148,7 @@ is.factor(pain$PAT_SEX)
 
 ### Other Summary Functions
 
-Sometimes we want to summarize information across multiple columns or rows. We can use the `rowSums()` and `colSums()` functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain map regions. In the first line of code, I select the column names pertaining to these columns. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called `pain_body_map`.
+Sometimes we want to summarize information across multiple columns or rows. We can use the `rowSums()`\index{R functions!rowSums()@\texttt{rowSums()}} and `colSums()`\index{R functions!colSums()@\texttt{colSums()}} functions to sum over the rows or columns of a matrix or data frame. We first subset the data to the body pain map regions. In the first line of code, I select the column names pertaining to these columns. This allows me to select those columns in the second line of code and store this subset of the data as a new data frame called `pain_body_map`.
 
 ```{r}
 body_map_cols <- names(pain)[2:75]
@@ -176,7 +176,7 @@ We use the `which.max()` function to see that the 55th region `X219` is selected
 which.max(perc_patients)
 ```
 
-Another pair of useful functions are `pmin()` and `pmax()`. These functions take at least two vectors and find the pairwise minimum or maximum across those vectors, as shown in the subsequent code. 
+Another pair of useful functions are `pmin()`\index{R functions!pmin()@\texttt{pmin()}} and `pmax()`\index{R functions!pmax()@\texttt{pmax()}}. These functions take at least two vectors and find the pairwise minimum or maximum across those vectors, as shown in the subsequent code. 
 
 ```{r}
 v1 = c(5, 9, 12)
@@ -199,7 +199,7 @@ pain$LOWER_BACK <- lower_back
 dim(pain)
 ```
 
-Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function, which takes in three arguments. The first argument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The subsequent code finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. 
+Another useful function that allows us to perform computations over the rows or columns of a matrix or data frame is the `apply(X, MARGIN, FUN)` function\index{R functions!apply()@\texttt{apply()}}, which takes in three arguments. The first argument is a data frame or matrix `X`, the second argument `MARGIN` indicates whether to compute over the rows (`1`) or columns (`2`), and the last argument is the function `FUN` to apply across that margin. The subsequent code finds the maximum value for each row in the data frame `pain_body_map`. Taking the minimum value of the row maximum values shows that every patient selected at least one body map region. 
 
 ```{r}
 any_selected <- apply(pain_body_map, 1, max)
@@ -224,7 +224,7 @@ Find the sum of each of the PROMIS measures across all patients using `apply()` 
 # Insert your solution here:
 ```
 
-### Missing, Infinite, and NaN Values
+### Missing, Infinite, and NaN Values \index{missing values} \index{NA values} \index{infinite values} \index{NaN values}
 
 As we have seen, this data contains some missing values, which are represented as `NA` in R. R treats these values as if they were unknown, which is why we have to add the `na.rm=TRUE` argument to functions like `sum()` and `max()`. In the following example, we can see that R figures out that 1 plus an unknown number is also unknown!
 
@@ -232,13 +232,13 @@ As we have seen, this data contains some missing values, which are represented a
 NA+1
 ```
 
-We can determine whether a value is missing using the function `is.na()`. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. We observe that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
+We can determine whether a value is missing using the function `is.na()`\index{R functions!is.na()@\texttt{is.na()}}. This function returns `TRUE` if the value is NA and `FALSE` otherwise. We can then sum up these values for a single column since each `TRUE` value corresponds to a value of 1 and each `FALSE` corresponds to a value of 0. We observe that there is a single NA value for the column `PATIENT_NUM`, which is the patient ID number.
 
 ```{r}
 sum(is.na(pain$PATIENT_NUM))
 ```
 
-If we want to calculate the sum of NA values for each column instead of just a single column, we can use the `apply()` function. Since we want to apply this computation over the columns, the second argument has value 2. Recall that the last argument is the function we want to call for each column. In this case, we want to apply the combination of the `sum()` and `is.na()` function. To do so, we have to specify this function ourselves. This is called an **anonymous function** since it doesn't have a name.
+If we want to calculate the sum of NA values for each column instead of just a single column, we can use the `apply()` function. Since we want to apply this computation over the columns, the second argument has value 2. Recall that the last argument is the function we want to call for each column. In this case, we want to apply the combination of the `sum()` and `is.na()` function. To do so, we have to specify this function ourselves. This is called an **anonymous function** \index{anonymous function} since it doesn't have a name.
 
 ```{r}
 num_missing_col <- apply(pain, 2, function(x) sum(is.na(x)))
@@ -276,7 +276,7 @@ pain$PERC_PAIN_CHANGE <- pain$PAIN_CHANGE /
 summary(pain$PERC_PAIN_CHANGE)
 ```
 
-In the summary of the percent change, we can see that the maximum value is `Inf`. This is R's representation of infinity. This occurred because some patients have an initial pain score of 0, which creates infinite values when we divide through by this value to find the percent change. We can test whether something is infinite using the `is.infinite()` or `is.finite()` functions. This shows that there were three patients with infinite values. The value `-Inf` is used to represent negative infinity.
+In the summary of the percent change, we can see that the maximum value is `Inf`. This is R's representation of infinity. This occurred because some patients have an initial pain score of 0, which creates infinite values when we divide through by this value to find the percent change. We can test whether something is infinite using the `is.infinite()`\index{R functions!is.infinite()@\texttt{is.infinite()}} or `is.finite()`\index{R functions!is.finite()@\texttt{is.finite()}} functions. This shows that there were three patients with infinite values. The value `-Inf` is used to represent negative infinity.
 
 ```{r}
 sum(is.infinite(pain$PERC_PAIN_CHANGE))
@@ -288,7 +288,7 @@ Another special value in R is `NaN`, which stands for "Not a Number". For exampl
 0/0
 ```
 
-Looking back at the missing values, there are two useful functions for selecting the complete cases in a data frame. The `na.omit()` function returns the data frame with incomplete cases removed, whereas `complete.cases()` returns TRUE/FALSE values for each row indicating whether each row is complete, which we can then use to select the rows with TRUE values. In the following code, we see both approaches select the same number of rows.
+Looking back at the missing values, there are two useful functions for selecting the complete cases in a data frame. The `na.omit()`\index{R functions!na.omit()@\texttt{na.omit()}} function returns the data frame with incomplete cases removed, whereas `complete.cases()`\index{R functions!complete.cases()@\texttt{complete.cases()}} returns TRUE/FALSE values for each row indicating whether each row is complete, which we can then use to select the rows with TRUE values. In the following code, we see both approaches select the same number of rows.
 
 ```{r}
 pain_sub1 <- na.omit(pain)
@@ -297,9 +297,9 @@ dim(pain_sub1)
 dim(pain_sub2)
 ```
 
-### Dates in R
+### Dates in R \index{dates}
 
-The columns in the `pain` data contain character and numeric values. One special type of character column that is not present is a column that corresponds to a date or date-time. By default, `read.csv()` reads these columns in as character columns whereas the `read_csv()` function from the **readr** package in the **tidyverse** family recognizes common date formats. If we have a character column, we can convert to a date object using `as.Date()` for date columns and `as.POSIXct()` for date-time columns. For columns with only a time but no date, you can add a date or use the **hms** package [@R-hms], which is not demonstrated here. These functions automatically try to detect the format of the inputted string, but it is often helpful to provide the format `format` and time zone `tz`. To input our format we use the following key.
+The columns in the `pain` data contain character and numeric values. One special type of character column that is not present is a column that corresponds to a date or date-time. By default, `read.csv()` reads these columns in as character columns whereas the `read_csv()` function from the **readr**\index{R packages!readr} package in the **tidyverse** family recognizes common date formats. If we have a character column, we can convert to a date object using `as.Date()`\index{R functions!as.Date()@\texttt{as.Date()}} for date columns and `as.POSIXct()`\index{R functions!as.POSIXct()@\texttt{as.POSIXct()}} for date-time columns. For columns with only a time but no date, you can add a date or use the **hms**\index{R packages!hms} package [@R-hms], which is not demonstrated here. These functions automatically try to detect the format of the inputted string, but it is often helpful to provide the format `format` and time zone `tz`. To input our format we use the following key\index{date format}.
 
 | Symbol  | Description  |
 |---|---|
@@ -336,7 +336,7 @@ date_example$z <- as.POSIXct(date_example$z,
 date_example
 ```
 
-By recognizing these columns as dates, we can find the time between two dates using the `difftime()` function. This function takes in two times `time1` and `time2` and finds the difference `time1 - time2` in the given `units`. 
+By recognizing these columns as dates, we can find the time between two dates using the `difftime()`\index{R functions!difftime()@\texttt{difftime()}} function. This function takes in two times `time1` and `time2` and finds the difference `time1 - time2` in the given `units`. 
 
 ```{r}
 difftime(date_example$x[2], date_example$x[1], units = "days")
@@ -348,11 +348,11 @@ Additionally, we can use the `seq()` function to add or subtract time by specify
 seq(date_example$x[1], by = "month", length = 3)
 ```
 
-For those interested in doing more manipulations with dates, the **lubridate** package [@R-lubridate] in the **tidyverse** expands upon the base functionality of R for working with dates. This package uses its own date-time class and includes functions to easily extract information from and manipulate dates. 
+For those interested in doing more manipulations with dates, the **lubridate** package\index{R packages!lubridate} [@R-lubridate] in the **tidyverse** expands upon the base functionality of R for working with dates. This package uses its own date-time class and includes functions to easily extract information from and manipulate dates. 
 
-## Using Logic to Subset, Summarize, and Transform
+## Using Logic to Subset, Summarize, and Transform \index{subset data}
 
-We have already seen how to use TRUE/FALSE values to select rows in a data frame. The following logic operators in R allow us to expand on this capability to write more complex logic. 
+We have already seen how to use TRUE/FALSE values to select rows in a data frame. The following logic operators in R allow us to expand on this capability to write more complex logic\index{logical operators}. 
 
 -   `<` less than
 -   `<=` less than or equal to
@@ -387,14 +387,14 @@ The `%in%` operator is slightly different. This operator checks whether a value 
 c(0, 1, 5) %in% c(4, 1, 2)
 ```
 
-Additionally, we can use the following operators, which allow us to negate or combine logical operators.
+Additionally, we can use the following operators, which allow us to negate or combine logical operators\index{logical operators}.
 
 -   `!x` - the **NOT** operator `!` reverses TRUE/FALSE values
 -   `x | y` - the **OR** operator `|` checks whether *either* x or y is equal to TRUE
 -   `x & y` - the **AND** operator `&` checks whether *both* x and y are equal to TRUE
--   `xor(x,y)` - the **xor** function checks whether exactly one of x or y is equal to TRUE (called exclusive or)
--   `any(x)` - the **any** function checks whether any value in x is TRUE (equivalent to using an OR operator `|` between all values)
--   `all(x)` - the **all** function checks whether all values in x are TRUE (equivalent to using an AND operator `&` between all values)
+-   `xor(x,y)` - the **xor** function checks whether exactly one of x or y is equal to TRUE (called exclusive or) \index{R functions!xor()@\texttt{xor()}}
+-   `any(x)` - the **any** function checks whether any value in x is TRUE (equivalent to using an OR operator `|` between all values) \index{R functions!any()@\texttt{any()}}
+-   `all(x)` - the **all** function checks whether all values in x are TRUE (equivalent to using an AND operator `&` between all values) \index{R functions!all()@\texttt{all()}}
 
 Some simple examples for each are given in the following code chunk.
 
@@ -442,7 +442,7 @@ Lastly, we look at the column for patient race `PAT_RACE`. The `table()` functio
 table(pain$PAT_RACE)
 ```
 
-Another way we could have found all possible values for this column is to use the `unique()` function. This function takes in a data frame or vector `x` and returns `x` with all duplicate rows or values removed.
+Another way we could have found all possible values for this column is to use the `unique()`\index{R functions!unique()@\texttt{unique()}} function. This function takes in a data frame or vector `x` and returns `x` with all duplicate rows or values removed.
 
 ```{r}
 unique(pain$PAT_RACE)
@@ -460,15 +460,15 @@ pain$PAT_RACE[pain$PAT_RACE %in%
 table(pain$PAT_RACE)
 ```
 
-### Other Selection Functions
+### Other Selection Functions \index{subsetting data}
 
-In the previous code, we selected rows using TRUE/FALSE Boolean values. Instead, we could have also used the `which()` function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
+In the previous code, we selected rows using TRUE/FALSE Boolean values. Instead, we could have also used the `which()`\index{R functions!which()@\texttt{which()}} function. This function takes TRUE/FALSE values and returns the index values for all the TRUE values. We use this to treat those with race given as `DECLINED` as not specified.
 
 ```{r}
 pain$PAT_RACE[which(pain$PAT_RACE == "DECLINED")] <- "NOT SPECIFIED"
 ```
 
-Another selection function is the `subset()` function. This function takes in two arguments. The first is the vector, matrix, or data frame to select from and the second is a vector of TRUE/FALSE values to use for row selection. We use this to find the observation with race marked as `OTHER`. We then update this race to also be marked as not specified.
+Another selection function is the `subset()`\index{R functions!subset()@\texttt{subset()}} function. This function takes in two arguments. The first is the vector, matrix, or data frame to select from and the second is a vector of TRUE/FALSE values to use for row selection. We use this to find the observation with race marked as `OTHER`. We then update this race to also be marked as not specified.
 
 ```{r}
 subset(pain, pain$PAT_RACE == "OTHER")

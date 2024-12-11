@@ -1,11 +1,11 @@
 
-# Linear Regression {#sec-linear-regression}
+# Linear Regression {#sec-linear-regression} 
   
-This chapter introduces you to linear regression analysis in R. We cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection.
+This chapter introduces you to linear regression\index{linear regression} analysis in R. We cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection.
 
-For this chapter, we use the `NHANESsample` dataset seen in [Chapter -@sec-exploratory]. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by @huang2022association. Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis.
+For this chapter, we use the `NHANESsample` dataset \index{Data sets!NHANESSample@\texttt{NHANESSample}} seen in [Chapter -@sec-exploratory]. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by @huang2022association. Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis.
 
-We use the **broom** package [@R-broom] to present the estimated coefficients for our regression models and the **car** package to compute variance inflation factors.
+We use the **broom** package\index{R package!broom} [@R-broom] to present the estimated coefficients for our regression models and the **car** package\index{R package!car} to compute variance inflation factors.
 
 ```{r}
 #| results: 'hide'
@@ -20,7 +20,7 @@ library(car)
 data(NHANESsample)
 ```
 
-## Simple Linear Regression
+## Simple Linear Regression \index{linear regression!simple linear regression}
 
 In [Chapter -@sec-exploratory], we presented some initial exploratory analysis for this data. In this chapter, we use linear regression to understand the association between blood lead levels and systolic blood pressure, adjusting for possible confounders. Replicating the analysis of @huang2022association, we create summary columns for systolic and diastolic blood pressure. If an observation has one blood pressure reading, then we use that value. If there is more than one blood pressure reading, then we drop the first observation and average the rest. We do a complete case analysis by dropping any observation with NA values. This leaves us with 30,405 observations.
 
@@ -61,16 +61,16 @@ plot(nhanes_df$LEAD, nhanes_df$SBP,
      pch = 16)
 ```
 
-Despite our observations, we continue by fitting a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)` fits a linear model in R. The first argument is the formula of the linear model: on the left hand side of the `~` we put the outcome variable, and on the right hand side we put the independent variable. When we have multiple independent variables we separate them with a `+` (e.g. `y~x1+x2`). The output of this function is an `lm` object.
+Despite our observations, we continue by fitting a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)`\index{R functions!lm()@\texttt{lm()}} fits a linear model in R. The first argument is the formula of the linear model: on the left hand side of the `~` we put the outcome variable, and on the right hand side we put the independent variable. When we have multiple independent variables we separate them with a `+` (e.g. `y~x1+x2`). The output of this function is an `lm` object.
 
-We can call the `summary()` function on this object to print a summary of the model, which includes the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. Recall, that we previously used the `summary()` function to get summary statistics about a vector. This is an example of how multiple functions can have the same name. R figues out which `summary()` function to use by identifying that the argument we passed in is a `lm` object.
+We can call the `summary()`\index{R functions!summary()@\texttt{summary()}} function on this object to print a summary of the model\index{linear regression!model summaries}, which includes the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. Recall, that we previously used the `summary()` function to get summary statistics about a vector. This is an example of how multiple functions can have the same name. R figues out which `summary()` function to use by identifying that the argument we passed in is a `lm` object.
 
 ```{r}
 simp_model <- lm(formula = SBP ~ LEAD, data = nhanes_df)
 summary(simp_model)
 ```
 
-To visualize this model, we can add the estimated regression line to our scatter plot. In `ggplot2`, this can be done with the `geom_smooth()` function. In base R, we use the `abline()` function, which can take in a regression model as an input. We can see that the estimated regression line does not fit our data very well.
+To visualize this model, we can add the estimated regression line to our scatter plot. In `ggplot2`, this can be done with the `geom_smooth()` function. In base R, we use the `abline()` function\index{R functions!abline()@\texttt{abline()}}, which can take in a regression model as an input. We can see that the estimated regression line does not fit our data very well.
 
 ```{r}
 plot(nhanes_df$LEAD, nhanes_df$SBP, 
@@ -87,7 +87,7 @@ Fit a simple linear regression model with `SBP` as the outcome and `AGE` as the 
 # Insert your solution here:
 ```
 
-## Multiple Linear Regression
+## Multiple Linear Regression \index{linear regression!multiple linear regression}
 
 We now create a model that is similar to the previous one except that it also adjusts for age and sex. To add these variables into the model, we have to specify a new formula. In the following code chunk, we fit this model and then print a summary, again using the `summary()` function.
 
@@ -96,7 +96,7 @@ adj_model <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
 summary(adj_model)
 ```
 
-We can also extract the estimated regression coefficients from the model using the `coef()` function or by using the `tidy()` function from the **broom** package. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval by specifying `conf.int = TRUE`. In our example, we add a 95% confidence interval (which is the default value for `conf.level`).
+We can also extract the estimated regression coefficients from the model using the `coef()`\index{R functions!coef()@\texttt{coef()}} function or by using the `tidy()`\index{R functions!tidy()@\texttt{tidy()}} function from the **broom** package\index{R package!broom}. This function puts the coefficient estimates, standard errors, statistics, and p-values in a data frame. We can also add a confidence interval by specifying `conf.int = TRUE`. In our example, we add a 95% confidence interval (which is the default value for `conf.level`).
 
 ```{r}
 coef(adj_model)
@@ -106,7 +106,7 @@ coef(adj_model)
 tidy(adj_model, conf.int = TRUE, conf.level = 0.95)
 ```
 
-Some other useful summary functions are `resid()`, which returns the residual values for the model, and `fitted()`, which returns the fitted values or estimated y values. We can also predict on new data using the `predict()` function. In the following plot, we look at the distribution of the residual values and then plot the fitted vs. true values. We observe some extreme residual values as well as the fact that the absolute residual values increase with increased blood pressure values.
+Some other useful summary functions are `resid()`\index{R functions!resid()@\texttt{resid()}}, which returns the residual values for the model, and `fitted()`\index{R functions!fitted()@\texttt{fitted()}}, which returns the fitted values or estimated y values. We can also predict on new data using the `predict()`\index{R functions!predict()@\texttt{predict()}} function. In the following plot, we look at the distribution of the residual values and then plot the fitted vs. true values. We observe some extreme residual values as well as the fact that the absolute residual values increase with increased blood pressure values.
 
 ```{r}
 summary(resid(adj_model))
@@ -119,13 +119,13 @@ plot(nhanes_df$SBP, fitted(adj_model),
 abline(a = 0, b = 1, col = "red", lwd = 2)
 ```
 
-We can next perform a nested hypothesis test between our simple linear regresion model and our adjusted model using the `anova()` function. We pass both models to this function along with the argument `test="F"` to indicate that we are performing an F-test. The `print()` function shows the two tested models along with the associated p-value, which indicates a significantly better fit for the adjusted model.
+We can next perform a nested hypothesis test between our simple linear regresion model and our adjusted model using the `anova()`\index{R functions!anova()@\texttt{anova()}} function. We pass both models to this function along with the argument `test="F"` to indicate that we are performing an F-test. The `print()`\index{R functions!print()@\texttt{print()}} function shows the two tested models along with the associated p-value, which indicates a significantly better fit for the adjusted model.
 
 ```{r}
 print(anova(simp_model, adj_model, test= "F"))
 ```
 
-The model summary for the adjusted model displays the estimated coefficient for `sex` as `SEXFemale`, which indicates that the reference level for sex is male. If we want to change our reference level, we can reorder the factor variable either by using the `factor()` function and specifying `Female` as the first level or by using the `relevel()` function. The `ref` argument in the `relevel()` function specifies the new reference level. Now, when we run the model, we can see that the estimated coefficient for `sex` is labeled as `SEXMale`.
+The model summary for the adjusted model displays the estimated coefficient for `sex` as `SEXFemale`, which indicates that the reference level for sex is male. If we want to change our reference level\index{linear regression!reference levels}, we can reorder the factor variable either by using the `factor()` function and specifying `Female` as the first level or by using the `relevel()`\index{R functions!relevel()@\texttt{relevel()}} function. The `ref` argument in the `relevel()` function specifies the new reference level. Now, when we run the model, we can see that the estimated coefficient for `sex` is labeled as `SEXMale`.
 
 ```{r}
 nhanes_df$SEX <- relevel(nhanes_df$SEX, ref = "Female")
@@ -140,9 +140,9 @@ lm(SBP ~ . - ID - RACE - EDUCATION - INCOME - SMOKE - YEAR - BMI_CAT -
    LEAD_QUANTILE - DBP - ALC - HYP - RACE, data = nhanes_df)
 ```
 
-## Diagnostic Plots and Measures
+## Diagnostic Plots and Measures \index{linear regression!diagnostic plots}
 
-We can tell from the previous plot that our model doesn't have a great fit. We use some further diagnostic plots and measures to learn more. R has some built-in plots available for linear regression models, which can be displayed using the `plot()` function. Similar the `summary()` function, this function acts differently when passed an `lm` object. The four plots include (a) Residuals vs. Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs. Fitted, and (d) Standardized Residuals vs. Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook's distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals, so this last plot summarizes the outliers, leverage, and influential points. The plots show that our residuals do not look normally distributed and that we have may have some high leverage points.
+We can tell from the previous plot that our model doesn't have a great fit. We use some further diagnostic plots and measures to learn more. R has some built-in plots available for linear regression models, which can be displayed using the `plot()`\index{R functions!plot()@\texttt{plot()}} function. Similar the `summary()` function, this function acts differently when passed an `lm` object. The four plots include (a) Residuals vs. Fitted, (b) a QQ-plot for the residuals, (c) Standardized residuals (sqrt) vs. Fitted, and (d) Standardized Residuals vs. Leverage. In the last plot, you may observe that there is a dashed line. Any points outside of these lines have a Cook's distance of greater than 0.5. Additionally, points with labels correspond to the points with the largest residuals, so this last plot summarizes the outliers, leverage, and influential points. The plots show that our residuals do not look normally distributed and that we have may have some high leverage points.
 
 ```{r}
 #| fig-height: 7
@@ -152,7 +152,7 @@ plot(adj_model)
 
 ### Normality
 
-Beyond the default plots, we can also plot a histogram of the residuals and a qq-plot. The `qqnorm()` and `qqline()` functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot shown, the residuals are positively skewed, and thus the assumption of normality is not satisfied for our residuals. Later in this chapter, we discuss how we might transform this dataset and/or model to satisfy this assumption.
+Beyond the default plots, we can also plot a histogram of the residuals and a qq-plot. The `qqnorm()`\index{R functions!qqnorm()@\texttt{qqnorm()}} and `qqline()`\index{R functions!qqline()@\texttt{qqline()}} functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot shown, the residuals are positively skewed, and thus the assumption of normality is not satisfied for our residuals. Later in this chapter, we discuss how we might transform this dataset and/or model to satisfy this assumption.
 
 ```{r}
 par(mfrow = c(1, 2)) # plot next to each other
@@ -162,7 +162,7 @@ qqnorm(resid(adj_model))
 qqline(resid(adj_model), col = "red") 
 ```
 
-Instead of using the direct residuals, we can also find the standardized residuals with the function `rstandard()`. The standardized residuals are the raw residuals divided by an estimate of the standard deviation for the residual, which is different for each observation.
+Instead of using the direct residuals, we can also find the standardized residuals with the function `rstandard()`\index{R functions!rstandard()@\texttt{rstandard()}}. The standardized residuals are the raw residuals divided by an estimate of the standard deviation for the residual, which is different for each observation.
 
 ```{r}
 par(mfrow = c(1, 2)) 
@@ -184,7 +184,7 @@ plot(nhanes_df$LEAD, resid(adj_model),
      xlab = "Blood Lead Level", ylab = "Residuals")
 ```
 
-To quantify any collinearity between the included covariates, we can calculate the variance inflation factors. The `vif()` function in the **car** package allows us to calculate the variance inflation factors or generalized variance inflation factors for all covariates. In our case, all the VIF values are around 1, indicating low levels of collinearity.
+To quantify any collinearity between the included covariates, we can calculate the variance inflation factors. The `vif()`\index{R functions!vif()@\texttt{vif()}} function in the **car** package\index{R package!car} allows us to calculate the variance inflation factors or generalized variance inflation factors for all covariates. In our case, all the VIF values are around 1, indicating low levels of collinearity.
 
 ```{r}
 vif(adj_model)
@@ -200,7 +200,7 @@ Fit a linear regression model with `SBP` as the outcome and with `INCOME`, `RACE
 # Insert your solution here: 
 ```
 
-### Leverage and Influence
+### Leverage and Influence \index{linear regression!leverage} \index{linear regression!influence}
 
 We may also be interested in how each observation is influencing the model. Leverage values measure how much an individual observation's $y$ value influences its own predicted value and indicate whether observations have extreme predictor values compared to the rest of the data. Leverage values range from 0 to 1 and sum to the number of estimated coefficients. Observations with high leverage have the potential to significantly impact the estimated regression coefficients and the overall fit of the model. Therefore, examining leverage values helps identify observations that may be influential or outliers. In the following code chunk, we find the ten highest leverage values and then find those observations in the data.
 
@@ -211,14 +211,14 @@ nhanes_df[order(hatvalues(adj_model), decreasing = TRUE),] %>%
   head(10)
 ```
 
-Some other measures of influence are the DFBETAs and Cook's distance, which measure how much each observation influences the estimated coefficients and the estimated `y` values, respectively. The `influence.measures()` function provides a set of measures that quantify the influence of each observation on a linear regression model: these include the DFBETAS for each model variable, DFFITS, covariance ratios, Cook's distances, and the leverage values. The output returns the values in a matrix called `infmat`, which we convert to a data frame.
+Some other measures of influence are the DFBETAs and Cook's distance, which measure how much each observation influences the estimated coefficients and the estimated `y` values, respectively. The `influence.measures()`\index{R functions!influence.measures()@\texttt{influence.measures()}} function provides a set of measures that quantify the influence of each observation on a linear regression model: these include the DFBETAS for each model variable, DFFITS, covariance ratios, Cook's distances, and the leverage values. The output returns the values in a matrix called `infmat`, which we convert to a data frame.
 
 ```{r}
 inf_mat <- influence.measures(adj_model)[['infmat']]
 as.data.frame(inf_mat) %>% head()
 ```
 
-## Interactions and Transformations
+## Interactions and Transformations \index{linear regression!interactions} \index{linear regression!transformations}
 
 We now try to improve our model. To start, we look at potential transformations for our outcome variable. We consider a log transformation for both our outcome, systolic blood pressure, and our predictor of interest, blood lead level. Both of these variables have a fairly skewed distribution and may benefit from such a transformation. In the following code, you can see that the transformed variables have distributions that are more symmetrical.
 
@@ -275,7 +275,7 @@ Instead of adding in a log transformation for `LEAD` like we did previously, try
 # Insert your solution here:
 ```
 
-Additionally, we might consider polynomial transformations. The `poly(x, degree=1)` function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this approach for this particular example, but we show some example code for creating such a transformation (in this case, a cubic transformation for blood lead level).
+Additionally, we might consider polynomial transformations. The `poly(x, degree=1)`\index{R functions!poly()@\texttt{poly()}} function allows us to specify a polynomial transformation where we might have higher degree terms. We do not pursue this approach for this particular example, but we show some example code for creating such a transformation (in this case, a cubic transformation for blood lead level).
 
 ```{r}
 model_poly <- lm(SBP ~ poly(LEAD, 3) + AGE + SEX, data = nhanes_df)
@@ -295,9 +295,9 @@ model_interaction <- lm(log(SBP) ~ log(LEAD) + AGE + SEX +
 summary(model_interaction)
 ```
 
-## Evaluation Metrics
+## Evaluation Metrics \index{linear regression!evaluation measures}
 
-In addition to adjusted R-squared, there are a few other metrics that can help us to understand how well our model fits the data and to help with model selection. The `AIC()` and `BIC()` functions find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.
+In addition to adjusted R-squared, there are a few other metrics that can help us to understand how well our model fits the data and to help with model selection. The `AIC()`\index{R functions!AIC()@\texttt{AIC()}} and `BIC()` functions\index{R functions!BIC()@\texttt{BIC()}} find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.
 
 ```{r}
 AIC(model_log_log)
@@ -325,11 +325,11 @@ mse <- mean((nhanes_df$SBP - pred_y)^2)
 mse
 ```
 
-## Stepwise Selection
+## Stepwise Selection \index{linear regression!stepwise selection}
 
 So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We conclude this chapter by demonstrating how to implement one such method, **stepwise selection**, in R. [Chapter -@sec-model-selection] expands upon this model selection technique by showing how to implement regularized models in R.
 
-The `step()` function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper model formulas to consider. In the following example, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.
+The `step()`\index{R functions!step()@\texttt{step()}} function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper model formulas to consider. In the following example, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.
 
 By default, the `step()` function prints each step in the process and uses AIC to guide its decisions. We can set `trace=0` to avoid the print behavior and update the argument `k` to `log(n)` to use BIC, where `n` is the number of observations. In the output, we see that the algorithm first adds in race, then BMI, then income, then education, and then smoking status. In fact, all variables were added to the model! The final output is an `lm` object that we can use just like the ones earlier in this chapter. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.
 

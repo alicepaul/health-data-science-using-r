@@ -1,8 +1,8 @@
 # Merging and Reshaping Data {#sec-merging-reshaping}
 
-In this chapter, we continue to look at some of the ways to manipulate data using the **tidyverse** packages. In particular, we look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert between *wide form* (more columns, fewer rows) and *long form* (fewer columns, more rows). We can also use data pivots to put our data into what is called *tidy form*. Additionally, we look at combining information from multiple data frames into a single data frame. The key ideas when merging data are to think about what the common information is between the data frames and to consider which values we want to keep.
+In this chapter, we continue to look at some of the ways to manipulate data using the **tidyr**\index{R packages!tidyr} and **dplyr**\index{R packages!dplyr} packages, which are part of the **tidyverse** group of packages\index{R packages!tidyverse}. In particular, we look at reshaping and merging data frames in order to get the data in the format we want. When reshaping data, we can convert between *wide form*\index{wide form} (more columns, fewer rows) and *long form*\index{long form} (fewer columns, more rows). We can also use data pivots to put our data into what is called *tidy form*\index{tidy data}. Additionally, we look at combining information from multiple data frames into a single data frame. The key ideas when merging data are to think about what the common information is between the data frames and to consider which values we want to keep.
 
-For this chapter, we use three data sets. The first data set is `covidcases`, which contains the weekly COVID-19 case and death counts by county in the United States for 2020 [@covid_data; @covid_article]; the second data set is `mobility`, which contains daily mobility estimates by state in 2020 [@warren2020mobility]; and the third data set is `lockdowndates`, which contains the start and end dates for statewide stay at home orders [@covid_policy]. Take a look at the first few rows of each data frame and read the documentation for the column descriptions.
+For this chapter, we use three data sets. The first data set is `covidcases`\index{Data sets!covidcases@\texttt{covidcases}}, which contains the weekly COVID-19 case and death counts by county in the United States for 2020 [@covid_data; @covid_article]; the second data set is `mobility`\index{Data sets!mobility@\texttt{mobility}}, which contains daily mobility estimates by state in 2020 [@warren2020mobility]; and the third data set is `lockdowndates`\index{Data sets!lockdowndates@\texttt{lockdowndates}}, which contains the start and end dates for statewide stay at home orders [@covid_policy]. Take a look at the first few rows of each data frame and read the documentation for the column descriptions.
 
 ```{r}
 #| results: 'hide'
@@ -29,7 +29,7 @@ head(mobility)
 head(lockdowndates)
 ```
 
-Both the mobility and lockdown data frames contain date columns. Right now, these columns in both data sets are of the class character, which we can see in the printed output. We can use the `as.Date()` function to tell R to treat these columns as dates instead of characters. When using this function, we need to specify the date format as an argument so that R knows how to parse this text to a date. Our format is given as `%Y-%M-%D`, where the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). In the following code, we convert the classes of these columns to 'Date'.
+Both the mobility and lockdown data frames contain date columns. Right now, these columns in both data sets are of the class character, which we can see in the printed output. We can use the `as.Date()`\index{R functions!as.Date()@\texttt{as.Date()}} function to tell R to treat these columns as dates instead of characters. When using this function, we need to specify the date format \index{date format} as an argument so that R knows how to parse this text to a date. Our format is given as `%Y-%M-%D`, where the `%Y` stands for the full four-digit year, `%M` is a two-digit month (e.g. January is coded "01" vs "1"), and `%D` stands for the two-digit day (e.g. the third day is coded "03" vs "3"). In the following code, we convert the classes of these columns to 'Date'.
 
 ```{r}
 mobility$date <- as.Date(mobility$date, formula = "%Y-%M-%D")
@@ -42,14 +42,14 @@ class(lockdowndates$Lockdown_Start)
 class(lockdowndates$Lockdown_End)
 ```
 
-After coding these columns as dates, we can access information such as the day, month, year, or week from them. These functions are all available in the **lubridate** package [@R-lubridate], which is a package in the **tidyverse** that allows us to manipulate dates.
+After coding these columns as dates, we can access information such as the day, month, year, or week from them. These functions are all available in the **lubridate** package [@R-lubridate]\index{R packages!lubridate}, which is a package in the **tidyverse** that allows us to manipulate dates.
 
 ```{r}
 month(mobility$date[1])
 week(mobility$date[1])
 ```
 
-Next, we add a date column to `covidcases`. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates using the **lubridate** package. January 1, 2020 was a Wednesday and is counted as the first week, so to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019 (the last Sunday before 2020). We show a simple example of adding one week to this date before doing this conversion for the entire column.
+Next, we add a date column to `covidcases`. In this case, we need to use the week number to find the date. Luckily, we can add days, months, weeks, or years to dates using the **lubridate**\index{R packages!lubridate} package. January 1, 2020 was a Wednesday and is counted as the first week, so to find the corresponding Sunday for each week, we add the recorded week number minus one to December 29, 2019 (the last Sunday before 2020). We show a simple example of adding one week to this date before doing this conversion for the entire column.
 
 ```{r}
 as.Date("2019-12-29") + weeks(1)
@@ -62,7 +62,7 @@ head(covidcases)
 
 ## Tidy Data
 
-The **tidyverse** is designed around interacting with **tidy data** with the premise that using data in a tidy format can streamline our analysis. Data is considered **tidy** if:
+The **tidyverse** is designed around interacting with **tidy data** \index{tidy data} with the premise that using data in a tidy format can streamline our analysis. Data is considered **tidy** if:
 
 -   Each variable is associated with a single column.
 
@@ -92,11 +92,11 @@ mat_mort2 <- data.frame(
 head(mat_mort2)
 ```
 
-## Reshaping Data
+## Reshaping Data \index{pivoting data} \index{reshaping data}
 
 The mobility and COVID-19 case data are both already in tidy form: each observation corresponds to a single row, and every column is a single variable. We might consider whether the lockdown dates should be reformatted to be tidy. Another way to represent this data would be to have each observation be the start or end of a stay at home order.
 
-To reshape our data, we use the `pivot_longer()` function to change the data from what is called **wide form** to what is called **long form**. This kind of pivot involves taking a subset of columns that we want to *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image in @fig-pivot-long shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns `cols` that we want to transform (these `cols` are `phys`, `hear`, and `eye` in the left table). The long form contains a new column `names_to` that contains the exam type and `values_to` that contains a binary variable indicating whether or not each exam was completed.
+To reshape our data, we use the `pivot_longer()`\index{R functions!pivot\textunderscore longer()@\texttt{pivot\textunderscore longer()}} function to change the data from what is called **wide form** \index{wide form} to what is called **long form**\index{long form}. This kind of pivot\index{data pivots} involves taking a subset of columns that we want to *gather* into a single column while increasing the number of rows in the data set. Before pivoting, we have to think about which columns we are transforming. The image in @fig-pivot-long shows a picture of some data on whether students have completed a physical, hearing, or eye exam. The data is presented in wide form on the left and long form on the right. To transform wide data to long data, we have identified a subset of columns `cols` that we want to transform (these `cols` are `phys`, `hear`, and `eye` in the left table). The long form contains a new column `names_to` that contains the exam type and `values_to` that contains a binary variable indicating whether or not each exam was completed.
 
 ![Pivoting Longer.](images/merging_data/pivot-long.png){#fig-pivot-long fig-align="center" width="300pt"}
 
@@ -115,7 +115,7 @@ lockdown_long <- lockdowndates %>%
 head(lockdown_long)
 ```
 
-In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form) using the function `pivot_wider()`. This function again first takes in a data table but now we specify the arguments `names_from` and `values_from`. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form in the following code, we specify that `names_from` is the lockdown event and `values_from` is the date itself. Now we are back to the same form as before!
+In R, we can also transform our data in the opposite direction (from long form to wide form instead of from wide form to long form) using the function `pivot_wider()`\index{R functions!pivot\textunderscore wider()@\texttt{pivot\textunderscore wider()}}. This function again first takes in a data table but now we specify the arguments `names_from` and `values_from`. The former indicates the column that R should get the new column names from, and the latter indicates where the row values should be taken from. For example, in order to pivot our lockdown data back to wide form in the following code, we specify that `names_from` is the lockdown event and `values_from` is the date itself. Now we are back to the same form as before!
 
 ```{r}
 lockdown_wide <- pivot_wider(lockdown_long, 
@@ -124,7 +124,7 @@ lockdown_wide <- pivot_wider(lockdown_long,
 head(lockdown_wide)
 ```
 
-Here's another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the `month()` function to be able to group by month and state. Additionally, you can see that I add an `ungroup()` at the end. When we summarize on data grouped by more than one variable, the summarized output is still grouped. In this case, the warning message states that the data is still grouped by state.
+Here's another example: suppose that I want to create a data frame where the columns correspond to the number of cases for each state in New England and the rows correspond to the numbered months. First, I need to filter my data to New England and then summarize my data to find the number of cases per month. I use the `month()`\index{R functions!month()@\texttt{month()}} function to be able to group by month and state. Additionally, you can see that I add an `ungroup()` at the end. When we summarize on data grouped by more than one variable, the summarized output is still grouped. In this case, the warning message states that the data is still grouped by state.
 
 ```{r}
 ne_cases <- covidcases %>% 
@@ -155,7 +155,7 @@ Create a similar data frame as we did in the previous example but this time usin
 # Insert your solution here:
 ```
 
-The pivots seen so far were relatively simple in that there was only one set of values we were pivoting on (e.g. the lockdown date, covid cases). The [**tidyr** package](https://tidyr.tidyverse.org/articles/pivot.html) provides examples of more complex pivots that you might want to apply to your data [@R-tidyr]. 
+The pivots seen so far were relatively simple in that there was only one set of values we were pivoting on (e.g. the lockdown date, covid cases). The [**tidyr** package](https://tidyr.tidyverse.org/articles/pivot.html) provides examples of more complex pivots that you might want to apply to your data [@R-tidyr]\index{R packages!tidyr}. 
 
 ::: {.content-visible when-format="html"}
 ### Pivot Video
@@ -165,7 +165,7 @@ In this video, we demonstrate a pivot longer when there is information in the co
 {{< video https://www.youtube.com/embed/X4JnidcfUJw width="700" height="500" >}}
 :::
 
-## Merging Data with Joins
+## Merging Data with Joins \index{data joins} \index{merging data}
 
 In the last section, we saw how to manipulate our current data into new formats. Now, we see how we can combine multiple data sources. Merging two data frames is called *joining*, and the functions we use to perform this joining depends on how we want to match values between the data frames. For example, we can join information about age and statin use from `table1` and `table2` matching by name.
 
@@ -179,14 +179,14 @@ full_join(table1, table2, by = "name")
 
 The following list gives an overview of the different possible joins. For each join type, we specify two tables, `table1` and `table2`, and the `by` argument, which specifies the columns used to match rows between tables.
 
-**Types of Joins**:
+**Types of Joins**\index{data joins!types}:
 
--   `left_join(table1, table2, by)`: Joins each row of table1 with all matches in table2.\
--   `right_join(table1, table2, by)`: Joins each row of table2 with all matches in table1 (the opposite of a left join)\
--   `inner_join(table1, table2, by)`: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped.\
--   `full_join(table1, table2, by)`: Keeps all rows from both tables and joins those that match. Rows that do not find a match have NA values filled in.\
--   `semi_join(table1, table2, by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2.\
--   `anti_join(table1, table2, by)`: Keeps all rows in table1 that *do not* have a match in table2 but does not join to any information from table2. The opposite of a semi join.
+-   `left_join(table1, table2, by)`: Joins each row of table1 with all matches in table2. \index{R functions!left\textunderscore join()@\texttt{left\textunderscore join()}}\
+-   `right_join(table1, table2, by)`: Joins each row of table2 with all matches in table1 (the opposite of a left join) \index{R functions!right\textunderscore join()@\texttt{right\textunderscore join()}}\
+-   `inner_join(table1, table2, by)`: Looks for all matches between rows in table1 and table2. Rows that do not find a match are dropped. \index{R functions!inner\textunderscore join()@\texttt{inner\textunderscore join()}}\
+-   `full_join(table1, table2, by)`: Keeps all rows from both tables and joins those that match. Rows that do not find a match have NA values filled in. \index{R functions!full\textunderscore join()@\texttt{full\textunderscore join()}}\
+-   `semi_join(table1, table2, by)`: Keeps all rows in table1 that have a match in table2 but does not join to any information from table2. \index{R functions!semi\textunderscore join()@\texttt{semi\textunderscore join()}}\
+-   `anti_join(table1, table2, by)`: Keeps all rows in table1 that *do not* have a match in table2 but does not join to any information from table2. The opposite of a semi join. \index{R functions!anti\textunderscore join()@\texttt{anti\textunderscore join()}}
 
 ::: {.content-visible when-format="html"}
 ### Types of Joins Video
@@ -194,7 +194,7 @@ The following list gives an overview of the different possible joins. For each j
 {{< video https://www.youtube.com/embed/slazeLLQBoY width="700" height="500" >}}
 :::
 
-We first demonstrate a left join using the `left_join()` function. This function takes in two data tables (table1 and table2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. In the subsequent code chunk, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table is `covidcases` and we match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
+We first demonstrate a left join using the `left_join()`\index{R functions!left\textunderscore join()@\texttt{left\textunderscore join()}} function. This function takes in two data tables (table1 and table2) and the columns to match rows by. In a left join, for every row of table1, we look for all matching rows in table2 and add any columns not used to do the matching. Thus, every row in table1 corresponds to at least one entry in the resulting table but possibly more if there are multiple matches. In the subsequent code chunk, we use a left join to add the lockdown information to our `covidcases` data. In this case, the first table is `covidcases` and we match by `state`. Since the state column has a slightly different name in the two data frames ("state" in `covidcases` and "State" in `lockdowndates`), we specify that `state` is equivalent to `State` in the `by` argument.
 
 ```{r}
 covidcases_full <- left_join(covidcases, lockdowndates, 
@@ -202,7 +202,7 @@ covidcases_full <- left_join(covidcases, lockdowndates,
 head(covidcases_full)
 ```
 
-These two new columns allow us to determine whether the start of each recorded week was during a lockdown. We use the `between()` function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.
+These two new columns allow us to determine whether the start of each recorded week was during a lockdown. We use the `between()`\index{R functions!between()@\texttt{between()}} function to create a new column `lockdown` before dropping the two date columns. We can check that this column worked as expected by choosing a single county to look at.
 
 ```{r}
 covidcases_full <- covidcases_full %>%
@@ -213,7 +213,7 @@ covidcases_full %>%
          date <= as.Date("2020-05-10"))
 ```
 
-We now want to add in the mobility data. In the previous join, we wanted to keep any observation in `covidcases` regardless if it was in the `lockdowndates` data frame. Therefore, we used a left join. In this case, we only want to keep observations that have mobility data for that state on each date. This indicates that we want to use an *inner join*. The function `inner_join()` takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by both state and date.
+We now want to add in the mobility data. In the previous join, we wanted to keep any observation in `covidcases` regardless if it was in the `lockdowndates` data frame. Therefore, we used a left join. In this case, we only want to keep observations that have mobility data for that state on each date. This indicates that we want to use an *inner join*. The function `inner_join()`\index{R functions!inner\textunderscore join()@\texttt{inner\textunderscore join()}} takes in two data tables (table1 and table2) and the columns to match rows by. The function only keeps rows in table1 that match to a row in table2. Again, those columns in table2 not used to match with table1 are added to the resulting outcome. In this case, we match by both state and date.
 
 ```{r}
 covidcases_full <- inner_join(covidcases_full, mobility, 

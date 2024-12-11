@@ -1,6 +1,6 @@
 # Case Study: Predicting Tuberculosis Risk {#sec-cs-regression}
 
-For this chapter, we use the `tb_diagnosis` dataset seen in [Chapter -@sec-cs-preprocessing] from the **HDSinRdata** package. These data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF [@baik2020clinical]. Our goal is to conduct a similar regression analysis to @baik2020clinical and use these data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike @baik2020clinical, we do not restrict our analysis to simple integer risk score models. 
+For this chapter\index{Case study!regression analysis}, we use the `tb_diagnosis`\index{Data sets!tb\textunderscore diagnosis@\texttt{tb\textunderscore diagnosis}} dataset seen in [Chapter -@sec-cs-preprocessing] from the **HDSinRdata** package\index{R packages!HDSinRdata}. These data contains information on 1,762 patients in rural South Africa and urban Uganda who presented at a health clinic with tuberculosis-related symptoms and who were tested for tuberculosis (TB) using Xpert MTB/RIF [@baik2020clinical]. Our goal is to conduct a similar regression analysis to @baik2020clinical and use these data to derive a risk model for screening patients for treatment while awaiting Xpert results. Unlike @baik2020clinical, we do not restrict our analysis to simple integer risk score models. 
 
 ```{r}
 #| results: 'hide'
@@ -14,6 +14,7 @@ library(gtsummary)
 library(glmnet)
 library(pROC)
 ```
+
 Similar to @baik2020clinical, we use the data from rural South Africa to derive our risk model and use the data from urban Uganda as a withheld validation set. Further, we divide the data from South Africa into a training and test set using a 70/30 split. 
 
 ```{r}
@@ -60,7 +61,7 @@ tbl_summary(tb_southafrica, by = c(tb),
 ```
 
 
-## Model Selection
+## Model Selection \index{model selection}
 
 Our goal is to predict TB diagnosis. We compare two risk models: a logistic regression model and a lasso logistic regression model. For both of these models, we fit our model on the training data. For the lasso model, we use 5-fold cross-validation to choose the penalty parameter. In the following code, we create a table with the estimated exponentiated coefficients. 
 
@@ -132,7 +133,7 @@ coef_df <- data.frame(
 coef_df
 ```
 
-## Evaluate Model on Validation Data
+## Evaluate Model on Validation Data \index{validation data} \index{external validation}
 
 We then evaluate the lasso model on the withheld validation data. These data comes from clinics in urban Uganda and contains only 387 observations. The generated table shows that this population differs from our training population including having a lower proportion of patients diagnosed with TB. 
 

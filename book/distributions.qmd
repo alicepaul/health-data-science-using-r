@@ -13,7 +13,7 @@ library(HDSinRdata)
 data(NHANESsample)
 ```
 
-In the following code, we demonstrate an example of drawing random samples. Anytime we perform an operation in R in which the outcome has some randomness, we are using R's random number generator under the hood. This means that the results change every time we run our code. In order to make sure our code is replicable, we have to set a random seed, which makes the results the same every time. The `set.seed()` function takes in a numeric seed value. You can use any number as the seed. In the next code chunk, we first sample a random value from the numbers 1 to 10 without setting a seed. Note that every time you run this code chunk, the output can change. However, in the following code chunk we set a seed, which means that the result is always the same (in this case, it's equal to 2).
+In the following code, we demonstrate an example of drawing random samples. Anytime we perform an operation in R in which the outcome has some randomness, we are using R's random number generator under the hood. This means that the results change every time we run our code. In order to make sure our code is replicable, we have to set a *random seed*\index{random seed}, which makes the results the same every time. The `set.seed()`\index{R functions!set.seed()@\texttt{set.seed()}} function takes in a numeric seed value. You can use any number as the seed. In the next code chunk, we first sample a random value from the numbers 1 to 10 without setting a seed. Note that every time you run this code chunk, the output can change. However, in the following code chunk we set a seed, which means that the result is always the same (in this case, it's equal to 2).
 
 ```{r}
 sample(1:10, 1)
@@ -24,18 +24,18 @@ set.seed(5)
 sample(1:10, 1)
 ```
 
-## Probability Distributions in R
+## Probability Distributions in R \index{probability distributions}
 
 All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, Poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:
 
--   `r[dist]()`: generates random samples from the given distribution (e.g. `rnorm()`, `runif()`)\
+-   `r[dist]()`: generates random samples from the given distribution (e.g. `rnorm()`, `runif()`) \ 
 -   `d[dist]()`: density function for the distribution (e.g. `dnorm()`, `dunif()`)\
 -   `p[dist]()`: cumulative distribution function for the distribution (e.g. `pnorm()`, `punif()`)\
 -   `q[dist]()`: quantile function for the distribution (e.g. `qnorm()`, `qunif()`)
 
 Let's see how these work in practice, using the normal and binomial distributions as examples.
 
-### Random Samples
+### Random Samples \index{probability distributions!sampling} \index{R functions!rnorm()@\texttt{rnorm()}} \index{R functions!rbinom()@\texttt{rbinom()}}
 
 The following code generates a sample of 100 random numbers following a normal distribution with mean 5 and standard deviation 1. As you can see, the function takes in `n` (the number of observations), `mean` (the mean with default value 0), and `sd` (the standard deviation with default value 1). A histogram plot (using the built-in `hist()` function) shows that the generated values look roughly normally distributed.
 
@@ -65,7 +65,7 @@ x <- rbinom(n = 100, p = rep(c(0.25, 0.75), 50), size = 10)
 hist(x)
 ```
 
-### Density Function
+### Density Function \index{probability distributions!density function} \index{R functions!rnorm()@\texttt{dnorm()}} \index{R functions!rbinom()@\texttt{dbinom()}}
 
 Next, we look at the density function. Recall that the probability density function for a normal distribution with mean $\mu$ and standard deviation $\sigma$ is given by the following formula.
 
@@ -107,7 +107,7 @@ We can also specify a vector for a distribution's parameters to find the distrib
 dbinom(4, size = 10, p = c(0.25, 0.5))
 ```
 
-### Cumulative Distribution
+### Cumulative Distribution \index{probability distributions!cumulative distribution function} \index{R functions!rnorm()@\texttt{pnorm()}} \index{R functions!rbinom()@\texttt{pbinom()}}
 
 Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by `pnorm()`, which takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this returns a 50% probability because the normal distribution is symmetric with mean equal to the median. In the following code, we verify this for two different values of the mean.
 
@@ -131,7 +131,7 @@ pbinom(c(3, 3, 4, 4), size = c(12, 10, 12, 10),
        p=c(0.25, 0.5, 0.25, 0.5))
 ```
 
-### Quantile Distribution
+### Quantile Distribution \index{probability distributions!quantile function} \index{R functions!rnorm()@\texttt{qnorm()}} \index{R functions!rbinom()@\texttt{qbinom()}}
 
 Lastly, we have the quantile distribution function, which is the inverse of the cumulative distribution function. This function takes in a probability `x`, a `mean`, and a `sd` and returns the value for which the cumulative distribution function is equal to `x`. Thus, when `x` is equal to 0.5, the `qnorm()` function returns the median of the distribution, which is equal to the mean for the normal distribution.
 
@@ -146,11 +146,11 @@ For the discrete binomial distribution, the `qbinom()` function returns the larg
 qbinom(c(0.2, 0.3), size = 10, p = 0.5)
 ```
 
-### Reference List for Probability Distributions
+### Reference List for Probability Distributions \index{probability distributions!available distributions}
 
 In the previous examples, we only used the normal and binomial distributions. The following list contains the other probability distributions available in R. For each distribution, we have given the arguments for the `r[dist]()` function. The other three functions have a similar format. Unless otherwise stated, the parameter `n` is the number of observations.
 
--   **Beta**: `rbeta(n, shape1, shape2, ncp = 0)` with shape parameters `shape1` and `shape2` (and optional non-centrality parameter `ncp`).
+-   **Beta**: `rbeta(n, shape1, shape2, ncp = 0)` with shape parameters `shape1` and `shape2` (and optional non-centrality parameter `ncp`). 
 -   **Binomial**: `rbinom(n, size, prob)` with probability of success `prob` and number of trials `size`
 -   **Cauchy**: `rcauchy(n, location = 0, scale = 1)` with location parameter `location` and scale parameter `scale`.
 -   **Chi-Square**: `rchisq(n, df, ncp = 0)` with `df` degrees of freedom and optional non-centrality parameter `ncp`.
@@ -178,7 +178,7 @@ Set the random seed to be `123`, and then generate 5 random numbers following a 
 # Insert your solution here:
 ```
 
-## Empirical Distributions and Sampling Data
+## Empirical Distributions and Sampling Data \index{empirical distributions} \index{sampling}
 
 At the start of this chapter, we used the `sample()` function. This function can also be used to sample from an empirical distribution. The `sample(x, size, replace=FALSE, prob=NULL)` function takes in the values we want to sample from `x`, the number of observations we want to sample `size`, and whether we want to sample with replacement `replace`. If we don't want to sample such that each value has an equal probability of being chosen, we can also set a probability vector `prob`, which must have the same length as `x`. In the following code, we sample 500 rows without replacement from the `NHANESsample` data. To do so, we select 500 values from the indices 1 to the number of rows in the data. We then select rows of the data using these indices.
 
@@ -188,7 +188,7 @@ nhanes_sample <- NHANESsample[nhanes_sample_ids, ]
 dim(nhanes_sample)
 ```
 
-We now demonstrate sampling with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*.
+We now demonstrate sampling with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*\index{bootstrap sampling}.
 
 ```{r}
 nhanes_sample_ids <- sample(1:nrow(NHANESsample), nrow(NHANESsample), 
@@ -197,7 +197,7 @@ nhanes_sample <- NHANESsample[nhanes_sample_ids, ]
 dim(nhanes_sample)
 ```
 
-Another way to sample from a data frame is to use the `slice_sample()` function from the **tidyverse**. In this function, we can either specify the number of observations to sample `n` or the proportion of observations to sample `prop`. Additionally, we can sample with or without replacement by setting the value of the argument `replace` (with default value FALSE). We use this function to randomly sample 20% of observations without replacement.
+Another way to sample from a data frame is to use the `slice_sample()`\index{R functions!slice\textunderscore sample()@\texttt{slice\textunderscore sample()}} function from the **tidyverse**. In this function, we can either specify the number of observations to sample `n` or the proportion of observations to sample `prop`. Additionally, we can sample with or without replacement by setting the value of the argument `replace` (with default value FALSE). We use this function to randomly sample 20% of observations without replacement.
 
 ```{r}
 nhanes_sample <- NHANESsample %>%
@@ -213,7 +213,7 @@ Set the random seed to `5` and then sample 50 observations with replacement from
 # Insert your solution here:
 ```
 
-Beyond sampling, we can also find the empirical cumulative distribution. That is, we can use a given vector to infer a distribution. In the following case, we draw a random sample from a normal distribution `vec` and then find its empirical cumulative distribution using the `ecdf()` function. This function actually returns a function, which can then be used to find the sample cumulative distribution for different values similar to the `p[dist]()` functions. In our example, we find the sample probability that $X \leq 0$.
+Beyond sampling, we can also find the empirical cumulative distribution\index{empirical distributions!cumulative distribution}. That is, we can use a given vector to infer a distribution. In the following case, we draw a random sample from a normal distribution `vec` and then find its empirical cumulative distribution using the `ecdf()`\index{R functions!ecdf()@\texttt{ecdf()}} function. This function actually returns a function, which can then be used to find the sample cumulative distribution for different values similar to the `p[dist]()` functions. In our example, we find the sample probability that $X \leq 0$.
 
 ```{r}
 vec <- rnorm(100) 

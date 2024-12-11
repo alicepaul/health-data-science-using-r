@@ -1,6 +1,6 @@
 # Writing Efficient Code {#sec-efficiency}
 
-When we talk about efficient code, we are talking about computational efficiency or writing code that is fast to execute. For this topic, we need to peek under the hood to consider how R is implementing our code in order to understand what can slow down our code. We use the **microbenchmark** package [@R-microbenchmark] to time our code execution. For demonstration, we use a subset of the `pain` dataset from the **HDSinRdata** package. 
+When we talk about efficient code\index{efficiency}, we are talking about computational efficiency or writing code that is fast to execute. For this topic, we need to peek under the hood to consider how R is implementing our code in order to understand what can slow down our code. We use the **microbenchmark** package [@R-microbenchmark] \index{R packages!microbenchmark} to time our code execution\index{benchmarking code}. For demonstration, we use a subset of the `pain` dataset \index{Data sets!pain@\texttt{pain}} from the **HDSinRdata** package. 
 
 ```{r}
 #| results: 'hide'
@@ -18,7 +18,7 @@ pain <- pain %>%
   na.omit()
 ```
 
-The function `Sys.time()` returns the current system time. This allows us to find the net time required to execute a chunk of code. For example, the following code finds how long it takes to loop through the data to find the number of people who had an improvement in pain. 
+The function `Sys.time()`\index{R functions!Sys.time()@\texttt{Sys.time()}}  returns the current system time. This allows us to find the net time required to execute a chunk of code. For example, the following code finds how long it takes to loop through the data to find the number of people who had an improvement in pain. 
 
 ```{r}
 start_time <- Sys.time()
@@ -33,7 +33,7 @@ end_time <- Sys.time()
 end_time - start_time
 ```
 
-Using `Sys.time()` is a simple approach to time our code. The function `microbenchmark()` from the **microbenchmark** package allows us to replicate an expression multiple times to get an average execution time. We can pass multiple expressions to this function and specify a unit of measurement and number of times to replicate each expression. 
+Using `Sys.time()` is a simple approach to time our code. The function `microbenchmark()`\index{R functions!microbenchmark()@\texttt{microbenchmark()}} from the **microbenchmark** package allows us to replicate an expression multiple times to get an average execution time. We can pass multiple expressions to this function and specify a unit of measurement and number of times to replicate each expression. 
 
 ```
 microbenchmark(first expression, second expression, units ="ms", 
@@ -54,7 +54,7 @@ microbenchmark( pain_inc = {
 }, unit = "ms")
 ```
 
-## Use Fast and Vectorized Functions
+## Use Fast and Vectorized Functions \index{vectorized functions}
 
 R is known as a slower programming language. In part, R sacrifices computation time to make it more welcoming to new programmers. However, not all of R is actually written in R. Many functions that are in base R are actually written in C or Fortran. These functions are significantly faster than if we wrote them ourselves. When possible, we should use base R functions rather than writing our own. Let's take a look at the difference in time when we write our own summation function compared to using the `sum()` function.
 
@@ -82,7 +82,7 @@ microbenchmark({
 }, unit = "ms")
 ```
 
-This is much faster. Loops are notoriously slow in R so you often hear the advice to avoid loops. Using apply functions like `apply()` and `sapply()` are loop-hiding functions. Using these functions instead of an explicit loop doesn't improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code. 
+This is much faster. Loops are notoriously slow in R so you often hear the advice to avoid loops\index{loops}. Using apply functions like `apply()` and `sapply()` are loop-hiding functions\index{R functions!apply()@\texttt{apply()}}\index{apply functions}. Using these functions instead of an explicit loop doesn't improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code. 
 
 The true functions that can improve efficiency over loops are *vectorized* functions, which can be evaluated on a vector of values. Vectorizing our code means that we are thinking about a vector approach rather than computing something for each element of the vector and looping through these values. A vectorized function returns output that is the same dimensions as the input and operates on these elements in an efficient manner. 
 
@@ -98,7 +98,7 @@ microbenchmark(loop_sqrt = {
 
 ### Practice Question
 
-First, read the documentation of the function `tapply()`. This is another function in the apply function library that was not covered in [Chapter -@sec-control-flows]. Rewrite the following code without using a loop using the `tapply()` function. Would you expect this approach to be faster? Why or why not?
+First, read the documentation of the function `tapply()`\index{R functions!tapply()@\texttt{tapply()}}. This is another function in the apply function library that was not covered in [Chapter -@sec-control-flows]. Rewrite the following code without using a loop using the `tapply()` function. Would you expect this approach to be faster? Why or why not?
 
 ```{r}
 mean_pain <- c()
@@ -109,7 +109,7 @@ for (r in pat_races){
 }
 ```
 
-## Avoid Copies and Duplicates
+## Avoid Copies and Duplicates \text{objects!copies}
 
 Another aspect of our programs that can slow down our operations is any time we need to create a large object. Look at the following code. First, we create a matrix `m`. We then create a matrix `n` that is equal to `m`. Last, we update `n` by taking the logarithm of all elements plus one, differentiating it from `m`. R creates copies upon modification. That means, that when we initialize `n` we have not actually created a second matrix in memory. Instead, we have two names for the same matrix. On the third line, we want to update `n` so we need to actually create a second matrix that is different from `m`. 
 
@@ -226,9 +226,9 @@ for (r in pat_races){
 }
 ```
 
-## Parallel Programming
+## Parallel Programming \index{parallel programming}
 
-Another approach to make our code more efficient is using parallel processing. When we run loops in R, only one iteration is run at a time. For example, the following code runs a random walk 100 times in serial. Parallel processing allows us to execute multiple calls to this function at the same time. This is done by running these processes on separate cores, or processors, on your machine. For example, if we had six cores available we would be able to run 1/6 of the replications on each processor and reduce our overall computation time. The **parallel** package [@R-parallel] contains functions to implement parallel processing on different operating systems. Unfortunately, this functionality is often not supported within RStudio and is not covered in this book. We recommend using the `mclapply()` function from the **parallel** package to implement parallel processing using forking. This does not work on Windows but is much simpler to implement. For parallel processing on Windows, we recommend looking into the socket approach using the `parLapply()` function in the **parallel** package.
+Another approach to make our code more efficient is using parallel processing. When we run loops in R, only one iteration is run at a time. For example, the following code runs a random walk 100 times in serial. Parallel processing allows us to execute multiple calls to this function at the same time. This is done by running these processes on separate cores, or processors, on your machine. For example, if we had six cores available we would be able to run 1/6 of the replications on each processor and reduce our overall computation time. The **parallel** package [@R-parallel] \index{R packages!parallel} contains functions to implement parallel processing on different operating systems. Unfortunately, this functionality is often not supported within RStudio and is not covered in this book. We recommend using the `mclapply()` function from the **parallel** package to implement parallel processing using forking. This does not work on Windows but is much simpler to implement. For parallel processing on Windows, we recommend looking into the socket approach using the `parLapply()` function in the **parallel** package.
 
 ```{r, eval= FALSE}
 replicate(100, rw1(1000))

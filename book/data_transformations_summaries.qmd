@@ -1,6 +1,6 @@
 # Data Transformations and Summaries {#sec-transformations-summaries}
 
-In this chapter, we introduce the **dplyr** package [@R-dplyr], which is part of the **tidyverse** group of packages, to expand our tools in exploring and transforming our data. We learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We also practice combining these operations using the pipe operator `%>%` from the **tidyverse**. We use the same sample of the National Health and Nutrition Examination Survey [@nhanes] as in [Chapter -@sec-exploratory].
+In this chapter, we introduce the **dplyr**\index{R packages!dplyr} package [@R-dplyr], which is part of the **tidyverse**\index{R packages!tidyverse} group of packages, to expand our tools in exploring and transforming our data. We learn how to do some basic manipulations of data (e.g. adding or removing columns, filtering data, arranging by one or multiple columns) as well as how to summarize data (e.g. grouping by values, calculating summary statistics). We also practice combining these operations using the pipe operator `%>%` from the **tidyverse**. We use the same sample of the National Health and Nutrition Examination Survey [@nhanes] \index{Data sets!NHANESSample@\texttt{NHANESSample}} as in [Chapter -@sec-exploratory].
 
 ```{r}
 #| results: 'hide'
@@ -21,7 +21,7 @@ Take a look at the class of `NHANESsample`. As we might expect, the data is stor
 class(NHANESsample)
 ```
 
-However, **tidyverse** packages also work with another data structure called a **tibble**. A **tibble** has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()` function. In practice, there are only very slight differences between the two data structures, and you generally do not need to convert data frames to tibbles. In the following code chunks, we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.
+However, **tidyverse** packages also work with another data structure called a **tibble**\index{tibble}. A **tibble** has all the properties of data frames that we have learned so far, but they are a more modern version of a data frame. To convert our data to this data structure we use the `as_tibble()`\index{R functions!as\textunderscore tibble()@\texttt{as\textunderscore tibble()}} function. In practice, there are only very slight differences between the two data structures, and you generally do not need to convert data frames to tibbles. In the following code chunks, we convert our data from a data frame to a tibble and print the head of the data before converting it back to a data frame and repeating. You can see the two structures have a slightly different print statement but are otherwise very similar.
 
 ```{r}
 nhanes_df <- as_tibble(NHANESsample)
@@ -35,9 +35,9 @@ print(head(nhanes_df))
 
 We mention tibbles here since some functions in the **tidyverse** convert data frames to tibbles in their output. In particular, when we later summarize over groups we can expect a tibble to be returned. It is useful to be aware that our data may change data structure with such functions and to know that we can always convert back if needed.
 
-## Subsetting Data
+## Subsetting Data \index{subsetting data} \index{selecting data} \index{filtering data}
 
-In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()` function. The **dplyr** package has its own functions that are useful for subsetting data. The `select()` function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%` from the **magittr** library of the **tidyverse**. Similar to the pipe operator `|>` in base R, the pipe operator `%>%` takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The following output shows that there are only two columns in the filtered data.
+In earlier chapters, we have seen how to select and filter data using row and column indices as well as using the `subset()`\index{R functions!subset()@\texttt{subset()}} function. The **dplyr** package has its own functions that are useful for subsetting data. The `select()`\index{R functions!select()@\texttt{select()}} function allows us to select a subset of columns: this function takes in the data frame (or tibble) and the names or indices of the columns we want to select. For example, if we only wanted to select the variables for race and blood lead level, we could specify these two columns. To display the result of this selection, we use the pipe operator `%>%` \index{pipe operator} from the **magittr** \index{R packages!magittr} package of the **tidyverse**. Similar to the pipe operator `|>` in base R, the pipe operator `%>%` takes the result on the left hand side and passes it as the first argument to the function on the right hand side. The following output shows that there are only two columns in the filtered data.
 
 ```{r}
 select(nhanes_df, c(RACE, LEAD)) %>% head()
@@ -50,13 +50,13 @@ nhanes_df <- nhanes_df %>% select(-c(ID, LEAD_QUANTILE))
 names(nhanes_df)
 ```
 
-While `select()` allows us to choose a subset of columns, the `filter()` function allows us to choose a subset of rows. The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter -@sec-exploratory]. We choose to filter the data to only observations after 2008.
+While `select()` allows us to choose a subset of columns, the `filter()`\index{R functions!filter()@\texttt{filter()}} function allows us to choose a subset of rows. The `filter()` function takes a data frame as the first argument and a vector of booleans as the second argument. This vector of booleans can be generated using conditional statements as we used in [Chapter -@sec-exploratory]. We choose to filter the data to only observations after 2008.
 
 ```{r}
 nhanes_df_recent <- nhanes_df %>% filter(YEAR >= 2008)
 ```
 
-We can combine conditions by using multiple `filter()` calls, by creating a more complicated conditional statement using the `&` (and), `|` (or), and `%in%` (in) operators, or by separating the conditions with commas within filter. In the following code, we demonstrate these three ways to filter the data to males between 2008 and 2012. Note that the `between()` function allows us to capture the logic `YEAR >= 2008 & YEAR <= 2012`.
+We can combine conditions by using multiple `filter()` calls, by creating a more complicated conditional statement using the `&` (and), `|` (or), and `%in%` (in) operators, or by separating the conditions with commas within filter. In the following code, we demonstrate these three ways to filter the data to males between 2008 and 2012. Note that the `between()`\index{R functions!between()@\texttt{between()}} function allows us to capture the logic `YEAR >= 2008 & YEAR <= 2012`.
 
 ```{r}
 # Example 1: multiple filter calls
@@ -76,13 +76,13 @@ nhanes_df_males3 <- nhanes_df %>%
 
 The use of parentheses in the previous code is especially important in order to capture our desired logic. In all these examples, we broke our code up into multiple lines, which makes it easier to read. A good rule of thumb is to not go past 80 characters in a line, and R Studio conveniently has a vertical gray line at this limit. To create a new line, you can hit enter either after an operator (e.g. `%>%`, `+`, `|`) or within a set of unfinished brackets or parentheses. Either of these breaks lets R know that your code is not finished yet.
 
-Lastly, we can subset the data using the `slice()` function to select a slice of rows by their index. The function takes in the data set and a vector of indices. In the following example, we find the first and last rows of the data.
+Lastly, we can subset the data using the `slice()`\index{R functions!slice()@\texttt{slice()}} function to select a slice of rows by their index. The function takes in the data set and a vector of indices. In the following example, we find the first and last rows of the data.
 
 ```{r}
 slice(nhanes_df, c(1, nrow(nhanes_df)))
 ```
 
-A few other useful slice functions are `slice_sample()`, `slice_max()`, and `slice_min()`. The first takes in an argument `n` which specifies the number of *random* rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument `order_by` and return the `n` rows with either the highest or lowest values in that column. For example, we can find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.
+A few other useful slice functions are `slice_sample()`\index{R functions!slice\textunderscore sample()@\texttt{slice\textunderscore sample()}}, `slice_max()`\index{R functions!slice\textunderscore max()@\texttt{slice\textunderscore max()}}, and `slice_min()`\index{R functions!slice\textunderscore min()@\texttt{slice\textunderscore min()}}. The first takes in an argument `n` which specifies the number of *random* rows to sample from the data. For example, we could randomly sample 100 rows from our data. The latter two allow us to specify a column through the argument `order_by` and return the `n` rows with either the highest or lowest values in that column. For example, we can find the three male observations from 2007 with the highest and lowest blood lead levels and select a subset of columns to display.
 
 ```{r}
 # three male observations with highest blood lead level in 2007
@@ -108,23 +108,23 @@ Filter the data to only those with an education level of more than HS who report
 # Insert your solution here:
 ```
 
-## Updating Rows and Columns
+## Updating Rows and Columns \index{rename columns} \index{modify columns} \index{sorting data}
 
-The next few functions we look at allow us to update the rows and columns in our data. For example, the `rename()` function allows us to change the names of columns. In the following code, we change the name of `INCOME` to `PIR` since this variable is the poverty income ratio and also update the name of `SMOKE` to be `SMOKE_STATUS`. When specifying these names, the new name is on the left of the `=` and the old name is on the right.
+The next few functions we look at allow us to update the rows and columns in our data. For example, the `rename()`\index{R functions!rename()@\texttt{rename()}} function allows us to change the names of columns. In the following code, we change the name of `INCOME` to `PIR` since this variable is the poverty income ratio and also update the name of `SMOKE` to be `SMOKE_STATUS`. When specifying these names, the new name is on the left of the `=` and the old name is on the right.
 
 ```{r}
 nhanes_df <- nhanes_df %>% rename(PIR = INCOME, SMOKE_STATUS = SMOKE)
 names(nhanes_df)
 ```
 
-In the last chapter, we created a new variable called `EVER_SMOKE` based on the smoking status variable using the `ifelse()` function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked.
+In the last chapter, we created a new variable called `EVER_SMOKE` based on the smoking status variable using the `ifelse()`\index{R functions!ifelse()@\texttt{ifelse()}} function. Recall that this function allows us to specify a condition and then two alternative values based on whether we meet or do not meet this condition. We see that there are about 15,000 subjects in our data who never smoked.
 
 ```{r}
 ifelse(nhanes_df$SMOKE_STATUS == "NeverSmoke", "No", "Yes") %>% 
   table()
 ```
 
-Another useful function from the **tidyverse** is the `case_when()` function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value to be assigned when that condition is TRUE.
+Another useful function from the **tidyverse** is the `case_when()`\index{R functions!case\textunderscore when()@\texttt{case\textunderscore when()}} function, which is an extension of the `ifelse()` function but allows to specify more than two cases. We demonstrate this function to show how we could relabel the levels of the `SMOKE_STATUS` column. For each condition, we use the right side of the `~` to specify the value to be assigned when that condition is TRUE.
 
 ```{r}
 case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
@@ -134,7 +134,7 @@ case_when(nhanes_df$SMOKE_STATUS == "NeverSmoke" ~ "Never Smoked",
   table()
 ```
 
-In the previous example, we did not store the columns we created. To do so, we could use the `$` operator or the `cbind()` function. The **tidyverse** also includes an alternative function to add columns called `mutate()`. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the subsequent example, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and the function interprets it as that column.
+In the previous example, we did not store the columns we created. To do so, we could use the `$` operator or the `cbind()` function. The **tidyverse** also includes an alternative function to add columns called `mutate()`\index{R functions!mutate()@\texttt{mutate()}}. This function takes in a data frame and a set of columns with associated names to add to the data or update. In the subsequent example, we create the column `EVER_SMOKE` and update the column `SMOKE_STATUS`. Within the `mutate()` function, we do not have to use the `$` operator to reference the column `SMOKE_STATUS`. Instead, we can specify just the column name and the function interprets it as that column.
 
 ```{r}
 nhanes_df <- nhanes_df %>% 
@@ -146,7 +146,7 @@ nhanes_df <- nhanes_df %>%
                      SMOKE_STATUS == "StillSmoke" ~ "Current Smoker")) 
 ```
 
-The last function we demonstrate in this section is the `arrange()` function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the following code filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order. That is, the value of `DBP1` is used to sort rows that have the same systolic blood pressure values. 
+The last function we demonstrate in this section is the `arrange()`\index{R functions!arrange()@\texttt{arrange()}} function, which takes in a data frame and a vector of columns used to sort the data (data is sorted by the first column with ties being sorted by the second column, etc.). By default, the `arrange()` function sorts the data in increasing order, but we can use the `desc()` function to instead sort in descending order. For example, the following code filters the data to male smokers before sorting by decreasing systolic and diastolic blood pressure in descending order. That is, the value of `DBP1` is used to sort rows that have the same systolic blood pressure values. 
 
 ```{r}
 nhanes_df %>% 
@@ -174,16 +174,16 @@ Create a new column called `DBP_CHANGE` that is equal to the difference between 
 # Insert your solution here:                    
 ```
 
-## Summarizing and Grouping
+## Summarizing and Grouping \index{grouping data} \index{summarizing data}
 
-If we want to understand how many observations there are for each given race category, we could use the `table()` function as we described in earlier chapters. Another similar function is the `count()` function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. In the following code, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!
+If we want to understand how many observations there are for each given race category, we could use the `table()` function as we described in earlier chapters. Another similar function is the `count()`\index{R functions!count()@\texttt{count()}} function. This function takes in a data frame and one or more columns and counts the number of rows for each combination of unique values in these columns. If no columns are specified, it counts the total number of rows in the data frame. In the following code, we find the total number of rows (31,265) and the number of observations by race and year. We can see that the number in each group fluctuates quite a bit!
 
 ```{r}
 count(nhanes_df)
 count(nhanes_df, RACE, YEAR)
 ```
 
-Finding the counts like we did previously is a form of a summary statistic for our data. The `summarize()` function in the **tidyverse** is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the subsequent example, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()` function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing these values (otherwise we could get NA as our output).
+Finding the counts like we did previously is a form of a summary statistic for our data. The `summarize()`\index{R functions!summarize()@\texttt{summarize()}} function in the **tidyverse** is used to compute summary statistics of the data and allows us to compute multiple statistics: this function takes in a data frame and one or more summary functions based on the given column names. In the subsequent example, we find the total number of observations as well as the mean and median systolic blood pressure for Non-Hispanic Blacks. Note that the `n()`\index{R functions!n()@\texttt{n()}} function is the function within `summarize()` that finds the number of observations. In the `mean()` and `median()` functions we set `na.rm=TRUE` to remove NAs before computing these values (otherwise we could get NA as our output).
 
 ```{r}
 nhanes_df %>%
@@ -192,7 +192,7 @@ nhanes_df %>%
             MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
-If we wanted to repeat this for the other race groups, we would have to change the arguments to the `filter()` function each time. To avoid having to repeat our code and/or do this multiple times, we can use the `group_by()` function, which takes a data frame and one or more columns with which to group the data. In the following code, we group using the `RACE` variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the `slice()` function with index 1, it returns the first row for each group.
+If we wanted to repeat this for the other race groups, we would have to change the arguments to the `filter()` function each time. To avoid having to repeat our code and/or do this multiple times, we can use the `group_by()`\index{R functions!group\textunderscore by()@\texttt{group\textunderscore by()}} function, which takes a data frame and one or more columns with which to group the data. In the following code, we group using the `RACE` variable. When we look at printed output it looks almost the same as it did before except we can see that its class is now a grouped data frame, which is printed at the top. In fact, a grouped data frame (or grouped tibble) acts like a set of data frames: one for each group. If we use the `slice()`\index{R functions!slice()@\texttt{slice()}} function with index 1, it returns the first row for each group.
 
 ```{r}
 nhanes_df %>% 
@@ -200,7 +200,7 @@ nhanes_df %>%
   slice(1)
 ```
 
-Grouping data is very helpful in combination with the `summarize()` function. Like with the `slice()` function, `summarize()` calculates the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each racial group. Note that the returned summarized data is in a tibble.
+Grouping data is very helpful in combination with the `summarize()` function. Like with the `slice()` function, `summarize()`\index{R functions!summarize()@\texttt{summarize()}} calculates the summary values for each group. We can now find the total number of observations as well as the mean systolic and diastolic blood pressure values for each racial group. Note that the returned summarized data is in a tibble.
 
 ```{r}
 nhanes_df %>% 
@@ -209,7 +209,7 @@ nhanes_df %>%
             MEAN_DBP = mean(DBP1, na.rm=TRUE))
 ```
 
-After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the `ungroup()` function, which restores the data to a single data frame. After ungrouping by race, we can see that we get a single observation returned by the `slice()` function.
+After summarizing, the data is no longer grouped by race. If we ever want to remove the group structure from our data, we can use the `ungroup()`\index{R functions!ungroup()@\texttt{ungroup()}} function, which restores the data to a single data frame. After ungrouping by race, we can see that we get a single observation returned by the `slice()` function.
 
 ```{r}
 nhanes_df %>% 
@@ -238,7 +238,7 @@ Create a data frame summarizing the percent of patients with hypertension by smo
 
 ## Exercises
 
-The following exercises use the `covidcases` dataset from the **HDSinRdata** package. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
+The following exercises use the `covidcases` data set \index{Data sets!covidcases@\texttt{covidcases}} from the **HDSinRdata** package\index{R packages!HDSinRdata}. Before completing the exercises, be sure to read the documentation for this data (`?covidcases`).
 
 ```{r}
 data(covidcases)

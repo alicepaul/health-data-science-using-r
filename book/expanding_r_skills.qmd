@@ -2,9 +2,9 @@
 
 Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that are available in R. In this chapter, we talk about how to use new packages, interpret error messages, debugging, and overall good programming practices to help you take your R programming to the next level.
 
-## Reading Documentation for New Packages
+## Reading Documentation for New Packages \index{R packages!documentation}
 
-As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages helps you expand your R skills beyond the topics covered here. We demonstrate these skills using the **stringr** package [@R-stringr], which is a package that is part of the **tidyverse** and has several functions for dealing with text data.
+As you start to apply the tools from this book to your own work or in new settings, you may need to install and use new packages or encounter some unexpected errors. Practicing reading package documentation and responding to error messages helps you expand your R skills beyond the topics covered here. We demonstrate these skills using the **stringr** package [@R-stringr]\index{R packages!stringr}, which is a package that is part of the **tidyverse** and has several functions for dealing with text data.
 
 ```{r}
 #| results: 'hide'
@@ -15,7 +15,7 @@ library(tidyverse)
 library(HDSinRdata)
 ```
 
-Every published package has a CRAN website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [**stringr**](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette ["Introduction to String R"](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
+Every published package has a CRAN\index{CRAN} website. This website contains a reference manual that contains the documentation for the functions and data available in the package. Most often, the website also includes useful vignettes that give examples of how to use the functions in the package. The site also tells you what the requirements for using the package are, who the authors of the package are, and when the package was last updated. For example, take a look at the CRAN site for [**stringr**](https://cran.r-project.org/web/packages/stringr/index.html) and read the vignette ["Introduction to String R"](https://cran.r-project.org/web/packages/stringr/vignettes/stringr.html).
 
 We use the **stringr** package to demonstrate cleaning up text related to a PubMed search query for a systematic review. An example search query is given in the following code chunk and is taken from @GUE202131. Our first goal is to extract the actual search query from the text along with all the terms used in the query. We can assume that the search query is either fully contained in parentheses or is a sequence of parenthetical phrases connected with AND or OR. Our goal is to extract the search query as well as all the individual search terms used in the query, but we have to get there in a series of steps.
 
@@ -27,7 +27,7 @@ Embase, and the Cochrane Library, using the following search query:
 ’SWAP’ OR ’TTM’)."
 ```
 
-The first thing we want to do with the text is clean up the white space by removing any trailing, leading, or repeated spaces. In our example, the string starts with a trailing space and there are also multiple spaces right before the search query. Searching for "white space" in the **stringr** reference manual, we find the `str_trim()` and `str_squish()` functions. Read the documentation for these two functions. You should find that `str_squish()` is the function we are looking for and that it takes a single argument.
+The first thing we want to do with the text is clean up the white space by removing any trailing, leading, or repeated spaces. In our example, the string starts with a trailing space and there are also multiple spaces right before the search query. Searching for "white space" in the **stringr** reference manual, we find the `str_trim()` and `str_squish()` functions. Read the documentation for these two functions. You should find that `str_squish()`\index{R functions!str\textunderscore squish()@\texttt{str\textunderscore squish()}} is the function we are looking for and that it takes a single argument.
 
 ```{r}
 sample_str <- str_squish(sample_str)
@@ -36,7 +36,7 @@ sample_str
 
 ## Trying Simple Examples
 
-The premise of testing a function on a single string is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. Our next task is to split the text into words and store this as a character vector. Read the documentation to determine why we use the `str_split_1()` function. We then double check that the returned result is indeed a vector and print the result.
+The premise of testing a function on a single string is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. Our next task is to split the text into words and store this as a character vector. Read the documentation to determine why we use the `str_split_1()`\index{R functions!str\textunderscore split\textunderscore 1()@\texttt{str\textunderscore split\textunderscore 1()}} function. We then double check that the returned result is indeed a vector and print the result.
 
 ```{r}
 sample_str_words <- str_split_1(sample_str, " ")
@@ -44,7 +44,7 @@ class(sample_str_words)
 sample_str_words
 ```
 
-We now want to identify words in this vector that have starting and/or end parentheses. The function `grepl()` takes in a character vector `x` and a pattern to search for. It returns a logical vector for whether or not each element of `x` has a match for that pattern.
+We now want to identify words in this vector that have starting and/or end parentheses. The function `grepl()` \index{R functions!grepl@\texttt{grepl()}} takes in a character vector `x` and a pattern to search for. It returns a logical vector for whether or not each element of `x` has a match for that pattern.
 
 ```{r}
 grepl(sample_str_words, ")")
@@ -52,7 +52,7 @@ grepl(sample_str_words, ")")
 
 That didn't match what we expected. We expected to have multiple TRUE/FALSE values outputted - one for each word. Let's read the documentation again.
 
-## Deciphering Error Messages and Warnings
+## Deciphering Error Messages and Warnings \index{error messages} \index{warnings}
 
 The previous warning message gives us a good clue for what went wrong. It says that the inputted pattern has length \> 1. However, the pattern we gave it is a single character. In fact, we specified the arguments in the wrong order. Let's try again. This time we specify `x` and `pattern`.
 
@@ -68,7 +68,7 @@ grepl(x = sample_str_words, pattern = "\\(")
 
 When a function doesn't return what we expect it to, it is a good idea to first test whether the arguments we gave it match what we expect, then re-read the documentation, and then look for other resources for help. For example, we could check that `sample_str_words` is indeed a character vector, then re-read the **stringr** documentation, and then search our problem.
 
-### Debugging Code
+### Debugging Code \index{debugging}
 
 The following code is supposed to extract the search query from the text as well as find the individual search terms used in the query. However, the code is incorrect. You can try out two test strings given to see why the code output is wrong. Practice reading through the code to understand what it is trying to do. The comments are there to help explain the steps, but you may also want to print the output to figure out what it is doing.
 
@@ -123,11 +123,11 @@ We shows how we can test and fix the previous code by using some simple debuggin
 {{< video https://www.youtube.com/embed/2yfjXyAbbK8 width="700" height="500" >}}
 :::
 
-## General Programming Tips
+## General Programming Tips \index{programming principles}
 
 As you write more complex code and functions, we want to focus on practicing good programming principles. This helps when you need to share or update your code or when you inevitably run into errors or unexpected behavior. Following are some general programming tips and how they relate to communication and debugging.
 
-1.  **Consistent naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging,  check that you haven't used the same name for different objects or different names for the same object. You can do this by using the `ls()` function to find all current objects or by checking your environment pane.
+1.  **Consistent naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging,  check that you haven't used the same name for different objects or different names for the same object. You can do this by using the `ls()` function \index{R functions!ls()@\texttt{ls()}} to find all current objects or by checking your environment pane.
 
     ```{r}
     # Recommended

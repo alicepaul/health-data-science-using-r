@@ -1,6 +1,6 @@
-# Case Study: Designing a Simulation Study {#sec-cs-simulation}
+# Case Study: Designing a Simulation Study {#sec-cs-simulation} 
 
-Simulation studies are an ideal setting for utilizing functions. When conducting a simulation study, we often need to generate data, run statistical methods, and collect results and we replicate this for a large number of simulations. Functions will ensure that we can write cleaner and reproducible code. In this case study, we will write the code for a simulation study that is based on the analysis by @hastie2020best, which compared different methods for sparse regression. For our purposes, we will focus on the comparison between lasso and ridge regression, introduced in [Chapter -@sec-model-selection]. 
+Simulation studies\index{simulation study} are an ideal setting for utilizing functions. When conducting a simulation study, we often need to generate data, run statistical methods, and collect results and we replicate this for a large number of simulations. Functions will ensure that we can write cleaner and reproducible code\index{reproducible code}. In this case study\index{Case study!simulation study}, we will write the code for a simulation study that is based on the analysis by @hastie2020best, which compared different methods for sparse regression. For our purposes, we will focus on the comparison between lasso\index{lasso regression} and ridge regression\index{ridge regression}, introduced in [Chapter -@sec-model-selection]. 
 
 Our goal is to understand the predictive power of the two models for different data settings. We will generate our training and test data using the following data generating mechanism which relies on the number of observations $n$, the number of predictors $p$, the sparsity $s \leq p$, predictor correlation level $\rho$, and $\nu$ signal-to-noise ratio. 
 
@@ -17,7 +17,7 @@ In @hastie2020best, they vary all five parameters $n$, $p$, $s$, $\rho$, and $\n
 
 ## Outlining Our Approach
 
-Before coding our method, let's recap the steps we will need to perform for a single simulation and practice top-down programming. In a single simulation, we need to generate our training and test data, fit our models, and store the results in a way that we can use later. There are two potential sketches of how we can program this code shown in @fig-sketch. Take a look at the differences. In the first, we are storing the data we generate and have a separate function for each method. In the second, we have a function that calculates our end metrics for an inputted model and we have a function that runs through the different methods. A benefit of the first approach is that it will be more flexible; if we think of another method we want to compare we would be easily able to add it without having to re-run any other code. A benefit of the second approach is that we are ensuring that the results stored for each method are the same. Of course, you could also do a hybrid between the two and use a metrics function in the first approach. 
+Before coding our method, let's recap the steps we will need to perform for a single simulation and practice top-down programming\index{top-down programming}. In a single simulation, we need to generate our training and test data, fit our models, and store the results in a way that we can use later. There are two potential sketches of how we can program this code shown in @fig-sketch. Take a look at the differences. In the first, we are storing the data we generate and have a separate function for each method. In the second, we have a function that calculates our end metrics for an inputted model and we have a function that runs through the different methods. A benefit of the first approach is that it will be more flexible; if we think of another method we want to compare we would be easily able to add it without having to re-run any other code. A benefit of the second approach is that we are ensuring that the results stored for each method are the same. Of course, you could also do a hybrid between the two and use a metrics function in the first approach. 
 
 ![Example Approaches to Sketching out Functions.](images/cs-simulation/sketches.png){#fig-sketch fig-align="center" width="50%"}
 
@@ -27,7 +27,7 @@ Let's take a closer look at the second approach. For our metrics function, we ha
 
 ## Coding Our Simulation Study
 
-We first load in the packages we will use. We will use the **MASS** package for the `mvrnorm()` function, which generates data from a multivariate normal distribution, we will use the **glmnet** package to implement our lasso and ridge models, and we will use the **tidyverse** and **patchwork** packages for summarizing and plotting the results. 
+We first load in the packages we will use. We will use the **MASS** package\index{R packages!MASS} for the `mvrnorm()` function\index{R functions!mvnorm()@\texttt{mvnorm()}}, which generates data from a multivariate normal distribution, we will use the **glmnet**\index{R packages!glmnet} package to implement our lasso and ridge models, and we will use the **tidyverse**\index{R packages!tidyverse} and **patchwork**\index{R packages!patchwork} packages for summarizing and plotting the results. 
 
 ```{r}
 #| results: 'hide'
@@ -116,7 +116,7 @@ get_metrics <- function(coef_est, test_data) {
 }
 ```
 
-Next, we will write a function that takes in the given parameters, fits the two models, and outputs the evaluation metrics. In this case, we will let the parameters be a named vector that contains all the components needed for the data simulation. We will also include an optional argument to set the random seed. In the code below, we find the time it takes to fit each model using `Sys.time()`. This function finds the current system time. Therefore, we can find the difference between them using the `difftime()` function. We also make sure to format the lasso and ridge results in the same manner. 
+Next, we will write a function that takes in the given parameters, fits the two models, and outputs the evaluation metrics. In this case, we will let the parameters be a named vector that contains all the components needed for the data simulation. We will also include an optional argument to set the random seed. In the code below, we find the time it takes to fit each model using `Sys.time()`\index{R functions!Sys.time()@\texttt{Sys.time()}}. This function finds the current system time. Therefore, we can find the difference between them using the `difftime()`\index{R functions!difftime()@\texttt{difftime()}} function. We also make sure to format the lasso and ridge results in the same manner. 
 
 ```{r}
 #' Model selection simulation
@@ -188,7 +188,7 @@ model_selection <- function(params, seed = NULL) {
 
 ## Results
 
-Now it's time to run our simulation! We first need to find the combinations of parameters we want to use in our simulation design. In our case, we will set $n = 500$, $\rho = 0.35$, and $s = 10$. We will vary $p \in \{50, 100\}$ and the signal-to-noise ratio $\nu \in \{0.1, 0.5, 1.5\}$. We also want to run each possible combination of parameters ten times so that we can average across the results. We use the `expand.grid()` function to create a matrix that contains a row for each simulation. 
+Now it's time to run our simulation! We first need to find the combinations of parameters we want to use in our simulation design. In our case, we will set $n = 500$, $\rho = 0.35$, and $s = 10$. We will vary $p \in \{50, 100\}$ and the signal-to-noise ratio $\nu \in \{0.1, 0.5, 1.5\}$. We also want to run each possible combination of parameters ten times so that we can average across the results. We use the `expand.grid()`\index{R functions!expand.grid()@\texttt{expand.grid()}} function to create a matrix that contains a row for each simulation. 
 
 ```{r}
 # Set up parameter grid
@@ -206,7 +206,7 @@ param_grid <- as.matrix(param_grid)
 head(param_grid)
 ```
 
-Recall that our main function took in a named vector that contained all needed parameters. This allows us to use an `apply()` function to run our simulation. In order to summarize by method, we pivot the results to a longer form with a column for method.
+Recall that our main function took in a named vector that contained all needed parameters. This allows us to use an `apply()`\index{R functions!apply()@\texttt{apply()}} function to run our simulation. In order to summarize by method, we pivot the results to a longer form with a column for method.
 
 ```{r}
 # Run experiments
