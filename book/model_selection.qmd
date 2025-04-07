@@ -13,7 +13,7 @@ library(glmnet)
 library(L0Learn)
 ```
 
-To demonstrate these packages, we use the same motivating example as in [Chapter -@sec-linear-regression]. Recall, that the `NHANESsample` dataset \index{Data sets!NHANESSample@\texttt{NHANESSample}} contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Our focus is looking at the association between blood lead levels and systolic blood pressure. We first create a single systolic blood pressure by averaging across all measurements. We also transform lead with a log transformation before dropping variables we want to exclude from our analysis.
+To demonstrate these packages, we use the same motivating example as in [Chapter -@sec-linear-regression]. Recall, that the `NHANESsample` dataset \index{Datasets!NHANESSample@\texttt{NHANESSample}} contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Our focus is looking at the association between blood lead levels and systolic blood pressure. We first create a single systolic blood pressure by averaging across all measurements. We also transform lead with a log transformation before dropping variables we want to exclude from our analysis.
 
 ```{r}
 # load in data
@@ -93,7 +93,7 @@ If we plot the resulting object, we can see the model coefficients for each resu
 plot(mod_lasso, xvar = "lambda", label = TRUE)
 ```
 
-We can also print our results. This prints a matrix with the values of $\lambda$ used. For each $\lambda$ value we can also see the number of nonzero coefficients (`Df`) and the percent deviance explained (`%dev`).
+We can also print our results. This prints a matrix with the values of $\lambda$ used. For each $\lambda$ value we can also see the number of non-zero coefficients (`Df`) and the percent deviance explained (`%dev`).
 
 ```{r}
 print(mod_lasso)
@@ -119,7 +119,7 @@ foldid <- sample(1:5, size = nrow(x), replace = TRUE)
 table(foldid)
 ```
 
-Next, we call the `cv.glmnet()`\index{R functions!cv.glmnet()@\texttt{cv.glmnet()}} function which implements k-fold cross-validation \index{cross-validation} across a grid of $\lambda$ values. Similar to before, we specified `x`, `y`, and `alpha = 1`. This time, we also include the measure to use for cross-validation (`mse` indicates mean squared error) and provide the fold vector `foldid`. If you do not want to provide folds, you can instead use the `nfolds` argument to specify the number of folds and the function creates them. Plotting the returned object shows us the estimated mean squared error for different values of $\lambda$ as well as error bars for each estimate. Similar to before it also shows the number of non-zero coefficients at the top.
+Next, we call the `cv.glmnet()`\index{R functions!cv.glmnet()@\texttt{cv.glmnet()}} function which implements k-fold cross-validation \index{cross-validation} across a grid of $\lambda$ values. Similar to before, we specified `x`, `y`, and `alpha = 1`. This time, we also include the measure to use for cross-validation (`mse` indicates mean squared error) and provide the fold vector `foldid`. If you do not want to provide folds, you can instead use the `nfolds` argument to specify the number of folds desired and the `cv.glmnet()` function will create them. Plotting the returned object shows us the estimated mean squared error for different values of $\lambda$ as well as error bars for each estimate. Similar to before, it also shows the number of non-zero coefficients at the top.
 
 ```{r}
 cv_lasso <- cv.glmnet(x, y, foldid = foldid, alpha = 1,
@@ -129,7 +129,7 @@ plot(cv_lasso)
 
 There are two vertical dashed lines included in the plot. These correspond to two values of $\lambda$ that are stored in our object. The first is `lambda.min`. This corresponds to the $\lambda$ value with the lowest estimated mean squared error. The other is `lambda.1se`. This corresponds to the largest $\lambda$ value whose estimated mean squared error is within one standard error of the lowest value. As indicated in the plot, this corresponds to a model with fewer included coefficients and higher regularization.
 
-We use the `lambda.min` value as our chosen $\lambda$ value. To extract the coefficients corresponding to this $\lambda$ value we again use the `coef()` function. However, this $\lambda$ might not be one of the initial 25 used for our `mod_lasso` object. In this case, the `coef()` function uses linear interpolation to get the estimated coefficients. If we want to refit our model for this particular value of $\lambda$ we can instead specify the argument `exact = TRUE` and provide `x` and `y`.
+We use the `lambda.min` value as our chosen $\lambda$ value. To extract the coefficients corresponding to this $\lambda$ value we again use the `coef()` function. However, this $\lambda$ might not be one of the initial 25 used for our `mod_lasso` object. In this case, the `coef()` function uses linear interpolation to get the estimated coefficients. If we want to refit our model for this particular value of $\lambda$, we can instead specify the argument `exact = TRUE` and provide `x` and `y`.
 
 ```{r}
 lasso_coef <- coef(mod_lasso, s = cv_lasso$lambda.min,
@@ -137,10 +137,10 @@ lasso_coef <- coef(mod_lasso, s = cv_lasso$lambda.min,
 lasso_coef
 ```
 
-We now repeat the same process for a model with $\alpha = 0$ and $\alpha = 0.5$. In this case, we call the `glmnet()` function with our chosen $\lambda$ value to find the coefficients. This is equivalent to what we did for our lasso model. Last, we create a data frame with the estimated coefficients for each model. The `coef()` function returns a matrix so this requires converting these to numeric vectors.
+We now repeat the same process for a model with $\alpha = 0$ and $\alpha = 0.5$. In this case, we call the `glmnet()` function with our chosen $\lambda$ value to find the coefficients. This is equivalent to what we did for our lasso model. Last, we create a data frame with the estimated coefficients for each model. The `coef()` function returns a matrix, so this requires converting these to numeric vectors.
 
 ```{r}
-# cross validation using same folds
+# cross-validation using same folds
 cv_ridge <- cv.glmnet(x, y, foldid = foldid, alpha = 0,
                       type.measure = "mse")
 cv_elastic <- cv.glmnet(x, y, foldid = foldid, alpha = 0.5,
@@ -196,7 +196,7 @@ plot(mod_l0)
 print(mod_l0)
 ```
 
-To extract the model for a particular value, we can use the `coef()`\index{R functions!coef()@\texttt{coef()}} function and specify the $\lambda$ and $\gamma$ value to use. 
+To extract the model for a particular value, we can use the `coef()`\index{R functions!coef()@\texttt{coef()}} function and specify the $\lambda$ and $\gamma$ values to use. 
 
 ```{r}
 coef_l0 <- coef(mod_l0, lambda = 1.75475e-03, gamma = 0)
@@ -225,7 +225,7 @@ cv_l0l2 = L0Learn.cvfit(x, y, loss = "SquaredError",
 plot(cv_l0l2)
 ```
 
-The returned results are stored in `cvMeans`. This is a list of matrices - one for each value of $\gamma$. To extract these into a more manageable form, we use the `sapply()` function to convert each matrix to a numeric vector and create a matrix of results. The columns of this matrix correspond to the 10 $\gamma$ values used and each column of this matrix corresponds to 100 $\lambda$ values chosen for that particular value of $\gamma$. We use the `which()` function to find which one has the lowest estimated mean squared error.
+The returned results are stored in `cvMeans`. This is a list of matrices — one for each value of $\gamma$. To extract these into a more manageable form, we use the `sapply()` function to convert each matrix to a numeric vector and create a matrix of results. The columns of this matrix correspond to the 10 $\gamma$ values used, and each column of this matrix corresponds to 100 $\lambda$ values chosen for that particular value of $\gamma$. We use the `which()` function to find which one has the lowest estimated mean squared error.
 
 ```{r}
 cv_res <- sapply(cv_l0l2$cvMeans, as.numeric)
@@ -240,7 +240,7 @@ gamma_min <- cv_l0l2$fit$gamma[[min_ind[2]]]
 lambda_min <- cv_l0l2$fit$lambda[[min_ind[2]]][min_ind[1]]
 ```
 
-Last, we find the estimated coefficients for this model using the `coef()` function on the cross-validation object `cv_l0l2`. 
+We find the estimated coefficients for this model using the `coef()` function on the cross-validation object `cv_l0l2`. 
 
 ```{r}
 cv_coef_l0 <- coef(cv_l0l2, gamma = gamma_min, lambda = lambda_min)
@@ -248,7 +248,7 @@ rownames(cv_coef_l0) <- c("Intercept", colnames(x))
 cv_coef_l0
 ```
 
-Last, we use the `predict()`\index{R functions!predict()@\texttt{predict()}} function on `cv_l0l2` to evaluate our resulting model. To do so, we need to specify $\lambda$ and $\gamma$ as well as our data `x`. This model is much sparser than the ones in the previous section but our mean squared error on our training data is a little higher.
+Last, we use the `predict()`\index{R functions!predict()@\texttt{predict()}} function on `cv_l0l2` to evaluate our resulting model. To do so, we need to specify $\lambda$ and $\gamma$ as well as our data `x`. This model is much sparser than the ones in the previous section, but our mean squared error on our training data is a little higher.
 
 ```{r}
 pred_l0l2 <- predict(cv_l0l2, gamma = gamma_min, 

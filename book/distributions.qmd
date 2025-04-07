@@ -24,14 +24,14 @@ set.seed(5)
 sample(1:10, 1)
 ```
 
-## Probability Distributions in R \index{probability distributions}
+## Probability Distribution Functions \index{probability distributions}
 
-All of the common discrete (e.g. Bernoulli, binomial) and continuous (e.g. normal, uniform, exponential, Poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:
+All of the common discrete (e.g., Bernoulli, binomial) and continuous (e.g., normal, uniform, exponential, Poisson) probability distributions have corresponding functions in R. For each of these distributions, there are four available functions:
 
--   `r[dist]()`: generates random samples from the given distribution (e.g. `rnorm()`, `runif()`) \ 
--   `d[dist]()`: density function for the distribution (e.g. `dnorm()`, `dunif()`)\
--   `p[dist]()`: cumulative distribution function for the distribution (e.g. `pnorm()`, `punif()`)\
--   `q[dist]()`: quantile function for the distribution (e.g. `qnorm()`, `qunif()`)
+-   `r[dist]()`: random sample function for the given distribution (e.g., `rnorm()`, `runif()`)
+-   `d[dist]()`: density function for the distribution (e.g., `dnorm()`, `dunif()`)
+-   `p[dist]()`: cumulative distribution function for the distribution (e.g., `pnorm()`, `punif()`)
+-   `q[dist]()`: quantile function for the distribution (e.g., `qnorm()`, `qunif()`)
 
 Let's see how these work in practice, using the normal and binomial distributions as examples.
 
@@ -44,7 +44,7 @@ x <- rnorm(n = 100, mean = 5, sd = 1)
 hist(x)
 ```
 
-We can also input a vector instead of a single value for the `mean` or `sd` arguments if we want each sample to come from its own normal distribution. As an example, we generate 100 random numbers with the default standard deviation of 1 where half of the samples have a mean of 0 and the other half have a mean of 5.
+We can also input a vector instead of a single value for the `mean` or `sd` arguments if we want each sample to come from its own normal distribution. As an example, we generate 100 random numbers with the default standard deviation of 1 where half of the samples have a mean of 0, and the other half have a mean of 5.
 
 ```{r}
 x <- rnorm(n = 100, mean = rep(c(0,5), 50))
@@ -95,7 +95,7 @@ For example, we can find the probability of getting exactly 3 heads from 10 coin
 dbinom(3, size = 10, p = 0.5)
 ```
 
-While `dnorm()` allows us to specify any continuous values for $x$, `dbinom()` gives us a warning if `x` contains non-integer values since the support of a binomial variable only includes integers.
+While `dnorm()` allows us to specify any continuous values for $x$, `dbinom()` gives us a warning if `x` contains non-integer values, since the support of a binomial variable only includes integers.
 
 ```{r}
 dbinom(2.4, size = 10, p = 0.5)
@@ -111,20 +111,18 @@ dbinom(4, size = 10, p = c(0.25, 0.5))
 
 Next, we take a look at the cumulative distribution function. For the normal distribution, the cumulative distribution is given by `pnorm()`, which takes in a value `x`, a `mean`, and a `sd` and returns the probability that a random variable following a $N(mean, sd)$ distribution is less than `x`. For example, for `x` equal to the mean, this returns a 50% probability because the normal distribution is symmetric with mean equal to the median. In the following code, we verify this for two different values of the mean.
 
-
 ```{r}
 pnorm(0)
 pnorm(5, mean = 5, sd = 1)
 ```
 
-Since the binomial distribution is discrete, it can only take on integer values from 0 to `size`. This means that, for example, the `pbinom()` function returns the same value for 3, 3.5, 3.6, all the way up to, but not including, 4 - this is because $P(X \leq 3) = P(X \leq 3.2) = P(X \leq 3.5) = P(X \leq 3.6)$ and so on. Note that here we passed in a vector of values `x`.
+Since the binomial distribution is discrete, it can only take on integer values from 0 to `size`. This means that, for example, the `pbinom()` function returns the same value for 3, 3.5, 3.6, all the way up to, but not including, 4. This is because $P(X \leq 3) = P(X \leq 3.2) = P(X \leq 3.5) = P(X \leq 3.6)$ and so on. Note that here we passed in a vector of values `x`.
 
 ```{r}
 pbinom(c(3, 3.5, 3.6, 4), size = 10, p = 0.5)
 ```
 
 We can also vary the parameters for the distribution by passing a vector for `size` and/or `p` to the cumulative distribution function. In the subsequent code chunk, we find the probability that $X \leq 3$ and the probability that $X \leq 4$ with 12 trials and a probability 0.25 and with 10 trials and a probability 0.5.
-
 
 ```{r}
 pbinom(c(3, 3, 4, 4), size = c(12, 10, 12, 10), 
@@ -150,8 +148,8 @@ qbinom(c(0.2, 0.3), size = 10, p = 0.5)
 
 In the previous examples, we only used the normal and binomial distributions. The following list contains the other probability distributions available in R. For each distribution, we have given the arguments for the `r[dist]()` function. The other three functions have a similar format. Unless otherwise stated, the parameter `n` is the number of observations.
 
--   **Beta**: `rbeta(n, shape1, shape2, ncp = 0)` with shape parameters `shape1` and `shape2` (and optional non-centrality parameter `ncp`). 
--   **Binomial**: `rbinom(n, size, prob)` with probability of success `prob` and number of trials `size`
+-   **Beta**: `rbeta(n, shape1, shape2, ncp = 0)` with shape parameters `shape1` and `shape2` (and optional non-centrality parameter `ncp`).
+-   **Binomial**: `rbinom(n, size, prob)` with probability of success `prob` and number of trials `size`.
 -   **Cauchy**: `rcauchy(n, location = 0, scale = 1)` with location parameter `location` and scale parameter `scale`.
 -   **Chi-Square**: `rchisq(n, df, ncp = 0)` with `df` degrees of freedom and optional non-centrality parameter `ncp`.
 -   **Exponential**: `rexp(n, rate = 1)` with rate `rate` (i.e., mean = 1/rate).
@@ -188,7 +186,7 @@ nhanes_sample <- NHANESsample[nhanes_sample_ids, ]
 dim(nhanes_sample)
 ```
 
-We now demonstrate sampling with replacement. By doing so, we create a new data set that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*\index{bootstrap sampling}.
+We now demonstrate sampling with replacement. By doing so, we create a new dataset that is sampled from the empirical distribution of the data and that is called a *bootstrap sample*\index{bootstrap sampling}.
 
 ```{r}
 nhanes_sample_ids <- sample(1:nrow(NHANESsample), nrow(NHANESsample), 
@@ -207,7 +205,7 @@ dim(nhanes_sample)
 
 ### Practice Question
 
-Set the random seed to `5` and then sample 50 observations with replacement from the set of integers from 1 to 100. Take the mean of those observations - it should be 56.7.
+Set the random seed to `5` and then sample 50 observations with replacement from the set of integers from 1 to 100. Take the mean of those observations; it should be 56.7.
 
 ```{r}
 # Insert your solution here:
@@ -233,7 +231,7 @@ ggplot(df) +
   geom_line(aes(x = x, y= distn), color = "red") 
 ```
 
-In practice, the empirical cumulative distribution might involve data from a given data set that you want to use to represent the population's distribution. As an example, in the following code we find the empirical distribution of blood lead level from the `NHANESsample` data frame. A blood lead level of 5 µg/dL or above is considered elevated. We can see 96.4% of observations have a blood lead level below this threshold.
+In practice, the empirical cumulative distribution might involve data from a given dataset that you want to use to represent the population's distribution. As an example, in the following code we find the empirical distribution of blood lead level from the `NHANESsample` data frame. A blood lead level of 5 µg/dL or above is considered elevated. We can see 96.4% of observations have a blood lead level below this threshold.
 
 ```{r}
 ecdf_lead <- ecdf(nhanes_sample$LEAD)

@@ -1,7 +1,7 @@
 
 # Hypothesis Testing {#sec-hypothesis-testing}
   
-In this chapter, we look at hypothesis testing \index{hypothesis testing} in R. We start with single sample distributions and tests, and then we look at hypothesis tests for comparing two samples. Examples include testing for positive correlations, performing two-sample paired t-tests, and testing for equal variance among groups. The data we use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county [@itop]\index{Data sets!itop@\texttt{itop}}. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.
+In this chapter, we look at hypothesis testing \index{hypothesis testing} in R. We start with single sample distributions and tests, and then we look at hypothesis tests for comparing two samples. Examples include testing for positive correlations, performing two-sample paired t-tests, and testing for equal variance among groups. The data we use in this section comes from the Texas Health and Human Services Department and includes the reported number of induced terminations of pregnancy (ITOPs) from 2016 to 2021, stratified by both race and county [@itop]\index{Datasets!itop@\texttt{itop}}. The data also contains the rate of abortions per 1000 females aged 15-49. Read the data documentation to see the full variable descriptions.
 
 We use the **tidyverse**\index{R packages!tidyverse}, **gt**\index{R packages!gt}, and **gtsummary**\index{R packages!gtsummary} packages to help manipulate and summarize the data. The **car** package\index{R packages!car} [@R-car] contains the function `leveneTest()` to implement a Levene's test for homogeneity of variance across groups, and all other hypothesis tests are available in base R.
 
@@ -19,7 +19,7 @@ library(gtsummary)
 data(tex_itop)
 ```
 
-## Univariate Distributions and One-Sample Tests \index{hypothesis testing:one-sample tests}
+## Univariate Distributions and One-Sample Tests \index{hypothesis testing!one-sample tests}
 
 Let's begin by looking at a single outcome of interest - the number of induced terminations of pregnancy (referred to as ITOPs or abortions below) in 2021 per 1000 females ages 15-49 in each county. We use the number of females ages 15-49 as a proxy to scale the number of abortions by the population size, though this is not truly reflective of the number of people who can give birth in each county.
 
@@ -28,7 +28,7 @@ county_rates_2021 <- tex_itop$total_rate[tex_itop$year == 2021]
 hist(county_rates_2021, breaks = 35)
 ```
 
-We can see in the figure that this is a heavy-tailed distribution. In the following code, we find the 10 counties with the highest rates and see that there are some counties that very few total abortions but that have some of the highest abortion rates. This indicates a small population. On the other hand, we also observe Harris county, which contains the city of Houston and has both a high total abortion count and a high abortion rate.
+We can see in the figure that this is a heavy-tailed distribution. In the following code, we find the ten counties with the highest rates and see that there are some counties that have very few total abortions but that have some of the highest abortion rates. This indicates a small population. On the other hand, we also observe Harris county, which contains the city of Houston and has both a high total abortion count and a high abortion rate.
 
 ```{r}
 tex_itop %>% 
@@ -37,7 +37,7 @@ tex_itop %>%
   dplyr::select(c(county, total_itop, total_rate))
 ```
 
-Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, among these small counties the rates in Loving County and Terrel County are high enough that we might consider them to be outliers. For this one-sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties $\mu$ we can do so by simply using the `mean()` function. For reference, the Centers for Disease Control estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15--44 years [@kortsmit2023abortion].
+Some of the counties are so small that we may want to consider dropping them from our analysis. In particular, among these small counties, the rates in Loving County and Terrell County are high enough that we might consider them to be outliers. For this one-sample analysis, however, we do not remove them. If we wanted to estimate the mean abortion rate among counties $\mu$, we can do so by simply using the `mean()` function. For reference, the Centers for Disease Control estimated the national abortion rate in 2020 to be 11.2 abortions per 1,000 women aged 15--44 years [@kortsmit2023abortion].
 
 ```{r}
 mean(county_rates_2021, na.rm = TRUE)
@@ -71,7 +71,7 @@ t.test(county_rates_2021, alternative = "less", mu = 6.23,
        conf.level=0.95)
 ```
 
-The output for this test is printed. If we want to reference these values, we need to save the result. The object `t_test_res` is a list that contains information about the statistic, p-value, confidence interval, etc. The list of outputs are similar to other test objects, so it is useful to look at what is contained in each by reading the test documentation (`?t.test`). We find the p-value from `t_test_res`.
+The output for this test is printed. If we want to reference these values, we need to save the result. The object `t_test_res` is a list that contains information about the statistic, p-value, confidence interval, etc. The list of outputs is similar to other test objects, so it is useful to look at what is contained in each by reading the test documentation (`?t.test`). We find the p-value from `t_test_res`.
 
 ```{r}
 t_test_res <- t.test(county_rates_2021, alternative = "less", 
@@ -85,7 +85,7 @@ t_test_res$p.value
 
 ### Practice Question
 
-Test whether there were significantly more abortions in 2019 compared to 2020 using a one-sided t-test. Your test statistic should be -6.4736.
+Test whether there were significantly more abortions in 2019 compared to 2020 using a one-sided t-test. Your test statistic should be $-6.4736$.
 
 ```{r}
 # Insert your solution here:
@@ -102,7 +102,7 @@ wilcox_res$p.value
 
 ## Correlation and Covariance \index{correlations} \index{covariance}
 
-We now look at two-sample tests. To start, we look at the 2020 and 2021 rates by county. We pivot our data into a wider format in order to create 2020 and 2021 rate columns, and, this time, we filter out the Loving and Terrel counties to remove outliers. We then create a scatter plot of 2021 vs. 2020 rates and observe a linear correlation between the two.
+We now look at two-sample tests. To start, we look at the 2020 and 2021 rates by county. We pivot our data into a wider format in order to create 2020 and 2021 rate columns, and, this time, we filter out the Loving and Terrell counties to remove outliers. We then create a scatter plot of 2021 vs. 2020 rates and observe a linear correlation between the two.
 
 ```{r}
 county_rates <- tex_itop %>%
@@ -141,7 +141,7 @@ cor_test_res
 cor_test_res$conf.int
 ```
 
-## Two-Sample Tests for Continuous Variables \index{hypothesis testing:two-sample tests, continuous}
+## Two-Sample Tests for Continuous Variables \index{hypothesis testing!two-sample tests, continuous}
 
 If we wanted to directly compare the difference between 2020 and 2021 rates, we could use a two-sample test. In this case, because our samples are paired by county, we can use a two-sample paired t-test. Specifically, we use a two-sided test to test the null hypothesis that the rates are equal by specifying two different vectors `x` and `y`. Note that we used the default values of `mu = 0` and `alternative = "two.sided"`. Additionally, we used the default value `var.equal = FALSE`, which implies that the samples may have different variances. From the results, we reject the null hypothesis that the two county rates are equal at the 0.05 level. We also print a 95% confidence interval of the difference in means.
 
@@ -164,7 +164,7 @@ county_rates_type <- tex_itop %>%
   mutate(rate_change = (y2021 - y2020)) 
 ```
 
-We again use a two-sample two-sided t-test, but this time the data are not paired. In the following code, we show an alternative way to specify a t-test test using a formula `lhs ~ rhs`, where `lhs` is a numeric column and `rhs` is a factor column with two levels. We must also specify the data in this case. From the R output in this case, we would fail to reject the null hypothesis at the 0.05 level and conclude that the rate changes for urban and rural counties are not significantly different. We also print the estimates used in the t-test using `estimate`, which shows the estimated mean in both groups.
+We again use a two-sample two-sided t-test, but this time the data are not paired. In the following code, we show an alternative way to specify a t-test using a formula `lhs ~ rhs`, where `lhs` is a numeric column and `rhs` is a factor column with two levels. We must also specify the data in this case. From the R output in this case, we would fail to reject the null hypothesis at the 0.05 level and conclude that the rate changes for urban and rural counties are not significantly different. We also print the estimates used in the t-test using `estimate`, which shows the estimated mean in both groups.
 
 ```{r}
 t_test_unpaired <- t.test(rate_change ~ urban, 
@@ -206,7 +206,7 @@ Use an appropriate test to determine whether the ITOP rates in 2016 significantl
 
 ### Two-Sample Variance Tests
 
-We could also test whether the variance of a continuous variable is equal between groups. To start, we compare the variance in abortion rates in 2021 between urban and rural counties using an F test. Our null hypothesis for this test is that the variance in both groups is equal. The function `var.test()`\index{R functions!var.test()@\texttt{var.test()}} implements an F test and has the same main arguments as the `t.test()` function: vectors `x` and `y` OR a `formula` and `data`, the alternative hypothesis `alternative`, and `conf.level`. Additionally, we can specify the hypothesized ratio of the variances through the argument `ratio` (default value 1). Note that this function assumes that the two samples come from normally distributed populations. We fail to reject the null hypothesis that the variance in rates are equal at the 0.05 level and print the estimate of the ratio of variances, which is around 1.11.
+We could also test whether the variance of a continuous variable is equal between groups. To start, we compare the variance in abortion rates in 2021 between urban and rural counties using an F-test. Our null hypothesis for this test is that the variance in both groups is equal. The function `var.test()`\index{R functions!var.test()@\texttt{var.test()}} implements an F-test and has the same main arguments as the `t.test()` function: vectors `x` and `y` OR a `formula` and `data`, the alternative hypothesis `alternative`, and `conf.level`. Additionally, we can specify the hypothesized ratio of the variances through the argument `ratio` (default value 1). Note that this function assumes that the two samples come from normally distributed populations. We fail to reject the null hypothesis that the variances in rates are equal at the 0.05 level and print the estimate of the ratio of variances, which is around 1.11.
 
 ```{r}
 f_test <- var.test(y2021 ~ urban, county_rates_type)
@@ -214,7 +214,7 @@ f_test
 f_test$estimate
 ```
 
-Lastly, we implement a Levene's test \index{R functions!leveneTest()@\texttt{leveneTest()}} to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and data set, as demonstrated, or by providing two vectors `y`, a numeric vector, and `g`, a vector specifying the groups. This test is from the **car** package \index{R packages!car} and has slightly different output than other tests. In particular, to access the p-value, we need to access the value named `'Pr(>F)'`. In this case, we actually do reject the null hypothesis at the 0.05 level.
+Lastly, we implement a Levene's test \index{R functions!leveneTest()@\texttt{leveneTest()}} to test whether group variances are equal when there are more than two groups. This test can be specified using a formula and dataset, as demonstrated, or by providing two vectors `y`, a numeric vector, and `g`, a vector specifying the groups. This test is from the **car** package \index{R packages!car} and has slightly different output than other tests. In particular, to access the p-value, we need to access the value named `'Pr(>F)'`. In this case, we actually do reject the null hypothesis at the 0.05 level.
 
 ```{r}
 levene_test <- leveneTest(y2021 ~ as.factor(county_type), 
@@ -223,7 +223,7 @@ print(levene_test)
 levene_test[['Pr(>F)']]
 ```
 
-## Two-Sample Tests for Categorical Variables \index{hypothesis testing:two-sample tests, categorical}
+## Two-Sample Tests for Categorical Variables \index{hypothesis testing!two-sample tests, categorical}
 
 In the previous two-sample tests, we were comparing the distributions of continuous variables. We now look at comparing distributions of categorical variables. We first categorize counties by their abortion rate in 2020 being above or below 11.2, which was the national average rate that year. We display the distribution of this variable by the urban/rural grouping using a contingency table below.
 
@@ -234,7 +234,7 @@ county_rates_type$below_nat_avg <-
 table(county_rates_type$below_nat_avg, county_rates_type$urban)
 ```
 
-We can use a Fisher's exact test to test whether the classifications of being above and below the national average and being rural and urban are associated with each other. In this case, the null hypothesis is that the odds or being below the national average is equal between rural and urban counties. The `fisher.test()`\index{R functions!fisher.test()@\texttt{fisher.test()}} function can either take in a contingency table as a matrix or can be specified by two factor vectors `x` and `y`, which is how we implement it in the following code. Additionally, there is the option to specify the `alternative` and `conf.level` arguments. We do not see a statistically significant difference between urban and rural counties at the 0.05 level with the estimated odds ratio is around 0.23.
+We can use a Fisher's exact test to test whether the classifications of being above and below the national average and being rural and urban are associated with each other. In this case, the null hypothesis is that the odds of being below the national average is equal between rural and urban counties. The `fisher.test()`\index{R functions!fisher.test()@\texttt{fisher.test()}} function can either take in a contingency table as a matrix or can be specified by two factor vectors `x` and `y`, which is how we implement it in the following code. Additionally, there is the option to specify the `alternative` and `conf.level` arguments. We do not see a statistically significant difference between urban and rural counties at the 0.05 level with the estimated odds ratio being around 0.23.
 
 ```{r}
 fisher_test <- fisher.test(county_rates_type$urban, 
@@ -243,7 +243,7 @@ fisher_test
 fisher_test$estimate
 ```
 
-An alternative test is a Pearson's Chi-Squared test, which can be used for large sample sizes. The counts of rural and urban counties in the 'Above Nat Avg' category are very small, so we recategorize our outcome to be at or above Texas's average to avoid this complication. The `chisq.test()`\index{R functions!chisq.test()@\texttt{chisq.test()}} function also takes in a contingency table as a matrix or can be specified by two factor vectors `x` and `y`. Another useful argument is `correct` (default is TRUE) which indicates whether to apply a continuity correction. For this test, we observe a statistically significant difference in the proportion of counties above the national average between rural and urban counties and reject the null hypothesis at the 0.05 level.
+An alternative test is a Pearson's Chi-Squared test, which can be used for large sample sizes. The counts of rural and urban counties in the 'Above Nat Avg' category are very small, so we re-categorize our outcome to be at or above Texas's average to avoid this complication. The `chisq.test()`\index{R functions!chisq.test()@\texttt{chisq.test()}} function also takes in a contingency table as a matrix or can be specified by two factor vectors `x` and `y`. Another useful argument is `correct` (default is TRUE) which indicates whether to apply a continuity correction. For this test, we observe a statistically significant difference in the proportion of counties above the national average between rural and urban counties and reject the null hypothesis at the 0.05 level.
 
 ```{r}
 tex_mean <- mean(county_rates_type$y2020)
@@ -270,23 +270,31 @@ Repeat the Chi-Squared test, but this time use the RUCC codes instead of the `ur
 
 ## Adding Hypothesis Tests to Summary Tables \index{summary tables}
 
-In [Chapter -@sec-exploratory], we used the **gt** \index{R packages!gt} and **gtsummary** packages \index{R packages!gtsummary} to create summary tables of variables. When creating a stratified table (done by adding the `by` argument), we can automatically add p-values for hypothesis tests comparing across populations using the `add_p()`\index{R functions!add\textunderscore p()@\texttt{add\textunderscore p()}} function. By default, the `add_p()` function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the `by` variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher's Exact Test for categorical variables with any expected cell count less than five). The chosen test(s) are displayed as footnotes.
+In [Chapter -@sec-exploratory], we used the **gt** \index{R packages!gt} and **gtsummary** packages \index{R packages!gtsummary} to create summary tables of variables. When creating a stratified table (done by adding the `by` argument), we can automatically add p-values for hypothesis tests comparing across populations using the `add_p()`\index{R functions!add\textunderscore p()@\texttt{add\textunderscore p()}} function. By default, the `add_p()` function uses a Kruskal-Wallis rank sum test for continuous variables (or a Wilcoxon rank sum test when the `by` variable has two levels) and uses a Chi-Squared Contingency Table Test for categorical variables (or a Fisher's Exact Test for categorical variables with any expected cell count less than five). The chosen tests are displayed as footnotes.
 
 ```{r}
-#| eval: false
-
-tbl_summary(tex_itop, include = c(total_rate, white_rate, asian_rate, 
-                                  hispanic_rate, black_rate, 
-                                  native_american_rate),
-           by = "year", 
+tbl_summary(tex_itop, 
+            by = "year",
+            include = c(total_rate, white_rate, asian_rate, 
+                        hispanic_rate, black_rate, 
+                        native_american_rate),
+            label = list(
+              total_rate = "Overall",
+              white_rate = "White",
+              asian_rate = "Asian",
+              hispanic_rate = "Hispanic",
+              black_rate = "Black",
+              native_american_rate = "Native American"),
            statistic = list(all_continuous() ~ "{mean} ({sd})")) %>% 
   add_p() %>%
-  as_gt() 
+  modify_header(label = "**Variable**") %>%
+  as_gt() %>%
+  cols_width(label ~ "50pt",
+             everything() ~ "30pt")
 ```
 
-![Summary Table Stratified by Year.](images/hypothesis_tests/gt-summary-table.png){#fig-gt-summary-table fig-align="center" width="100%"}
 
-We observe that a Kruskal-Wallis rank sum test was used to compare abortion rates across year for each racial group. All of the reported p-values are above 0.05 so overall it indicates that there were not statistically significant changes across years in the abortion rate.
+We observe that a Kruskal-Wallis rank sum test was used to compare abortion rates across year for each racial group. All of the reported p-values are above 0.05, so overall it indicates that there were not statistically significant changes across years in the abortion rate.
 
 ::: {.content-visible when-format="html"}
 ## Recap Video
@@ -297,7 +305,7 @@ We observe that a Kruskal-Wallis rank sum test was used to compare abortion rate
 
 ## Exercises
 
-For the following exercises, we use the `pain` data\index{Data sets!pain@\texttt{pain}} from the **HDSinRdata** package\index{R packages!HDSinRdata}.
+For the following exercises, we use the `pain` data\index{Datasets!pain@\texttt{pain}} from the **HDSinRdata** package\index{R packages!HDSinRdata}.
 
 ```{r}
 data(pain)
@@ -305,7 +313,9 @@ data(pain)
 
 1.  Determine whether the presence or absence of follow-up information is significantly associated with the initial average pain intensity. What do the results suggest?
 
-2.  First, plot `PROMIS_PAIN_BEHAVIOR` grouped by race (you can use the `PAT_RACE_CAT` variable that we defined in [Chapter -@sec-ggplot2]. What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.
+2.  First, plot `PROMIS_PAIN_BEHAVIOR` grouped by race (you can use the `PAT_RACE_CAT` variable that we defined in [Chapter -@sec-ggplot2]). What do you observe? Next, choose an appropriate test to determine whether this variable differs significantly by race.
+
+\newpage
 
 3.  Examine the association between `CCI_BIN` and `MEDICAID_BIN`. Are these variables significantly related to each other? How would you describe their relationship?
 

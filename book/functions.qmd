@@ -11,7 +11,7 @@ library(testthat)
 library(tidyverse)
 ```
 
-One type of function we have already written is an *anonymous function*\index{anonymous function}. These are functions that are not saved or given a name. These functions typically exist if we want to input a function argument to another function but we don't want to save that function for future use. For example, in the following code, we use the `apply()`\index{R functions!apply()@\texttt{apply()}} function on a data frame to find the proportion of observations that are NA for each column. Note that since the function is so short it is easy enough to define within the `apply()` function call by just including the code for what is returned. For functions with more than one line, you would not want use an anonymous function and would need to define the function.
+One type of function we have already written is an *anonymous function*\index{anonymous function}. These are functions that are not saved or given a name. These functions typically exist if we want to input a function argument to another function but we don't want to save that function for future use. For example, in the following code, we use the `apply()`\index{R functions!apply()@\texttt{apply()}} function on a data frame to find the proportion of observations that are NA for each column. Note that since the function is so short, it is easy enough to define within the `apply()` function call by just including the code for what is returned. For functions with more than one line, you would not want to use an anonymous function and would need to define the function.
 
 ```{r}
 df <- data.frame(x1 = c(NA, 1, 1, 0),
@@ -22,7 +22,7 @@ apply(df, 2, function(x) sum(is.na(x)) / length(x))
 
 ## Components of a Function
 
-To start storing functions we need to give them a name and define their input (arguments) \index{functions!arguments} and output (return values)\index{functions!return value}. To do so we assign a function name to a function object as shown in the following code. This example function has two arguments `arg1` and `arg2` and returns `output`.
+To start storing functions, we need to give them a name and define their input (arguments) \index{functions!arguments} and output (return values)\index{functions!return value}. To do so, we assign a function name to a function object as shown in the following code. This example function has two arguments `arg1` and `arg2` and returns `output`.
 
 ```         
 function_name <- function(arg1, arg2){
@@ -31,7 +31,7 @@ function_name <- function(arg1, arg2){
 }
 ```
 
-Take a look at the following simple function. The name of this function is `say_hello` and there is no input (arguments) or output (return values) associated with this function. Instead, it just prints out a hello statement.
+Take a look at the following simple function. The name of this function is `say_hello`, and there is no input (arguments) or output (return values) associated with this function. Instead, it just prints out a hello statement.
 
 ```{r}
 say_hello <- function(){
@@ -39,7 +39,7 @@ say_hello <- function(){
 }
 ```
 
-Running the previous code creates an object called `say_hello` of the class `function`. We can run this function by calling it using empty parenthesis (since there are no input arguments).
+Running the previous code creates an object called `say_hello` of the class `function`. We can run this function by calling it using empty parentheses (since there are no input arguments).
 
 ```{r}
 class(say_hello)
@@ -83,7 +83,7 @@ dist_to_origin(1, 2, 3)
 dist_to_origin(y = 2, z = 3)
 ```
 
-Besides passing in numeric values, strings, data frames, lists, or vectors, we can also pass other types of objects in as arguments to a function. For example, we can take another function in as an argument. In the next example, we create two functions. The first function calculates the euclidean distance between two points. The second one computes the distance from a given point to the origin. Note that this updated function to find the distance to the origin is more flexible and written in a cleaner manner. First, it allows us to input a point of any length. Second, it allows us to specify the distance function used. This also demonstrates calling a function within another function.
+Besides passing in numeric values, strings, data frames, lists, or vectors, we can also pass other types of objects in as arguments to a function. For example, we can take another function in as an argument. In the next example, we create two functions. The first function calculates the Euclidean distance between two points. The second one computes the distance from a given point to the origin. Note that this updated function to find the distance to the origin is more flexible and written in a cleaner manner. First, it allows us to input a point of any length. Second, it allows us to specify the distance function used. This also demonstrates calling a function within another function.
 
 Try out calling `euclidean_dist()` and `dist_to_origin()` on different values.
 
@@ -121,7 +121,7 @@ lm(y ~ x)
 
 ### Return Values \index{functions!return value}
 
-If you read the documentation for `lm()`\index{R functions!lm()@\texttt{lm()}} by calling `?lm` we can see that there are a lot of arguments that have default values. The other thing to note about the `lm` documentation is that there are multiple values returned. In fact, the type of object returned is a list containing all the different things we want to know about the results such as the coefficients.
+If we read the documentation for `lm()`\index{R functions!lm()@\texttt{lm()}} by calling `?lm`, we can see that there are a lot of arguments that have default values. The other thing to note about the `lm` documentation is that there are multiple values returned. In fact, the type of object returned is a list containing all the different things we want to know about the results such as the coefficients.
 
 ```{r}
 simp_model <- lm(y ~ x)
@@ -155,7 +155,7 @@ result
 
 ### Scope of Objects \index{objects!scope}
 
-When working within functions and calling functions, we want to remember the scope of our objects. *Global objects* \index{objects!global} are objects defined outside of functions. These values can also be accessed outside or inside functions. For example, the object `y` is defined outside of a function and so is a global object meaning we can use its value inside the function.
+When working within functions and calling functions, we want to remember the scope of our objects. *Global objects* \index{objects!global} are objects defined outside of functions. These values can also be accessed outside or inside functions. For example, the object `y` is defined outside of a function and so is a global object, meaning we can use its value inside the function.
 
 ```{r}
 y <- "Cassandra"
@@ -167,9 +167,9 @@ ex_scope <- function(){
 ex_scope()
 ```
 
-If we change the value of a global object within a function however, it does not update the value outside of the function. In the subsequent code chunk, we add 1 to `y` inside the function but it does not change the value of `y` after the function is done. Every time we run a function, R creates a new sub-environment inside, which can access the values of global objects but also creates its own *local objects*\index{objects!local}. In this case, the function creates its own object `y`, which is a local object that is a copy of the original object.
+If we change the value of a global object within a function however, it does not update the value outside of the function. In the subsequent code chunk, we add 1 to `y` inside the function, but it does not change the value of `y` after the function is done. Every time we run a function, R creates a new sub-environment inside, which can access the values of global objects but also creates its own *local objects*\index{objects!local}. In this case, the function creates its own object `y`, which is a local object that is a copy of the original object.
 
-As another example, the function also creates a local object called `z` which ceases to exist after we run the function. If we try to print `z` on the last line we would get an error that `z` is not found. All objects created inside functions only exist in that sub-environment and are erased when we are no longer in the function. Therefore, we want to make sure we return any values we want to store.
+As another example, the function also creates a local object called `z` which ceases to exist after we run the function. If we try to print `z` on the last line, we would get an error that `z` is not found. All objects created inside functions only exist in that sub-environment and are erased when we are no longer in the function. Therefore, we want to make sure we return any values we want to store.
 
 ```{r}
 y <- 5
@@ -184,7 +184,7 @@ ex_local(2)
 y
 ```
 
-To update global objects within a function, you can use the `<<-` operator (global assignment operator)\index{global assignment}. This looks for an object in the global environment and updates its value (or creates an object with this value if none is found). For example, the following function updates the value of the global objects `y`. As a general practice, we should be careful using global objects within a function and it often is safer to use input arguments and return values instead.
+To update global objects within a function, you can use the `<<-` operator (global assignment operator)\index{global assignment}. This looks for an object in the global environment and updates its value (or creates an object with this value if none is found). For example, the following function updates the value of the global objects `y`. As a general practice, we should be careful using global objects within a function, and it often is safer to use input arguments and return values instead.
 
 ```{r}
 y <- 5
@@ -200,7 +200,7 @@ y
 
 ### Functions within Functions and Returning Functions \index{functions!local functions} \index{functions!returning functions}
 
-Sometimes we see functions written inside other functions. Writing functions within functions can be useful to separate out some part of the code or to give that function access to the local environment objects. In the following example, the inner function has access to the value of `x` even though we have not passed it as an argument. The downside of this structure is the function `add_x()` does not exist outside the function so we cannot call it in other code. 
+Sometimes we see functions written inside other functions. Writing functions within functions can be useful to separate out some part of the code or to give that function access to the local environment objects. In the following example, the inner function has access to the value of `x` even though we have not passed it as an argument. The downside of this structure is that the function `add_x()` does not exist outside the function, so we cannot call it in other code. 
 
 ```{r}
 add_x_seq <- function(x){
@@ -249,7 +249,7 @@ euclidean_dist <- function(pt1, pt2){
 }
 ```
 
-Each comment should start with a pound sign and back-tick. The first block of lines is the introduction and the first line of the comment block is reserved for the title. This is the first information we want the user to know about the function and should be a single line. For all other information besides the title, we use certain tags.
+Each comment should start with a pound sign and backtick. The first block of lines is the introduction, and the first line of the comment block is reserved for the title. This is the first information we want the user to know about the function and should be a single line. For all other information besides the title, we use certain tags.
 
 -   `@description` This tag should be placed first and is a place where you can briefly put more information about the function beyond the title. You can also add more details with the `@details` tag.
 
@@ -271,7 +271,7 @@ coin_flips <- function(prob, n = 10){
 
 ## Debugging and Testing \index{debugging}
 
-As we write more complex code and functions, we want to learn how to test our code. When it comes to testing code, a good mantra is "test early and test often." So avoid writing too much code before running and checking that the results match what you expect. Here are some simple principles that are applicable to debugging in any setting.
+As we write more complex code and functions, we want to learn how to test our code. When it comes to testing code, a good mantra is "test early and test often". So avoid writing too much code before running and checking that the results match what you expect. Here are some simple principles that are applicable to debugging in any setting.
 
 -   Start simple and build up in steps.
 -   Check your syntax by checking that all parentheses (), brackets \[\], and curly braces {} match where you expect.
@@ -303,7 +303,7 @@ high_cor <- function(df, threshold = 0.6){
 
 ```
 
-Next, to start simple we want to create some artificial data we can use to test our function. We use the `mvnrorm()`\index{R functions!mvnorm()@\texttt{mvnorm()}} function from the **MASS*\index{R packages!MASS} package [@R-MASS] to control the correlation between our columns and add in a categorical column that should be ignored by our function. 
+Next, to start simple, we want to create some artificial data we can use to test our function. We use the `mvnrorm()`\index{R functions!mvnorm()@\texttt{mvnorm()}} function from the **MASS**\index{R packages!MASS} package [@R-MASS] to control the correlation between our columns and add in a categorical column that should be ignored by our function. 
 
 ```{r}
 set.seed(4)
@@ -335,7 +335,8 @@ Let's start with step 1. Before putting code into our function, we are going to 
 df_numeric <- select_if(test_df, is.numeric)
 head(df_numeric)
 ```
-This worked. Next we need to find the strong correlations. Now, we can use the correlation function to find the correlations. We then want to iterate through all pairs to check if the absolute value of the correlation is above our threshold. We use a loop for this. In our first attempt, we create a nested for loop where `i` is the index of one column and `j` is the index of the second column in the pair. We can see we must have some mistakes because we are getting pairs where `i` and `j` are equal to each other and we are also getting zeros. Note how we are using print statements. This helps us to identify that we need to add parentheses for the first for loop and we need to update `j` to start at `i+1`. 
+
+This worked. Next we need to find the strong correlations. Now, we can use the correlation function to find the correlations. We then want to iterate through all pairs to check if the absolute value of the correlation is above our threshold. We use a loop for this. In our first attempt, we create a nested for loop where `i` is the index of one column and `j` is the index of the second column in the pair. We can see we must have some mistakes because we are getting pairs where `i` and `j` are equal to each other, and we are also getting zeros. Note how we are using print statements. This helps us to identify that we need to add parentheses for the first for loop, and we need to update `j` to start at `i+1`. 
 
 ```{r}
 cor_mat <- cor(df_numeric)
@@ -357,7 +358,8 @@ for (i in 1:(n-1)){
   }
 }
 ```
-Next, we need to add an if statement to check whether there is a correlation above the given threshold. In this case to check if our code is working correctly, we use a print statement for only those that meet the condition. 
+
+Next, we need to add an if statement to check whether there is a correlation above the given threshold. In this case, to check if our code is working correctly, we use a print statement for only those that meet the condition. 
 
 ```{r}
 n <- nrow(cor_mat)
@@ -370,7 +372,7 @@ for (i in 1:(n-1)){
 }
 ```
 
-We have sketched out our code more thoroughly so we have a good idea of how we want to compute our result. We now move to writing our function. Importantly, we need to make sure that we use our input arguments now rather than our test values. In the subsequent version, we also add in a results data frame that we use to keep track of our results and we add an additional argument for how to deal with NA values in calculating the correlations. The output matches what we expect for our test data frame.
+We have sketched out our code more thoroughly, so we have a good idea of how we want to compute our result. We now move to writing our function. Importantly, we need to make sure that we use our input arguments now rather than our test values. In the subsequent version, we also add in a results data frame that we use to keep track of our results, and we add an additional argument for how to deal with NA values in calculating the correlations. The output matches what we expect for our test data frame.
 
 ```{r}
 #' Find pairs of columns with strong correlation
@@ -419,7 +421,7 @@ high_cor <- function(df, threshold = 0.6, use = "everything"){
 high_cor(test_df)
 ```
 
-We can prevent unexpected behavior of our functions by using `stop()`\index{R functions!stop()@\texttt{stop()}} functions to limit a function to be run on certain types of arguments\index{generating errors}. This is helpful if other people will use your function or if you might forget any assumptions you built into the function. The `stop()` function stops the execution of the current expression and returns a message. In the following example, we check to make sure that the point given is a numeric vector. Further, we check to see whether the vector has length zero and return 0 if it does.
+We can prevent unexpected behavior of our functions by using `stop()`\index{R functions!stop()@\texttt{stop()}} functions to limit a function to be run on certain types of arguments\index{generating errors}. This is helpful if other people will use your function or if you might forget any assumptions you built into the function. The `stop()` function stops the execution of the current expression and returns a message. In the following example, we check to make sure that the point given is a numeric vector. Further, we check to see whether the vector has length 0 and return 0 if it does.
 
 ```{r}
 #' Distance to the origin
@@ -447,9 +449,9 @@ dist_to_origin <- function(pt1, dist_func = euclidean_dist){
 }
 ```
 
-### Unit tests \index{unit testing}
+### Unit Tests \index{unit testing}
 
-We know our function `high_cor()` works on a single example. To thoroughly test our functions, we want to run them on several different input values. These types of tests are called *unit tests*. We try to vary these test values to cover a wide range of possibilities. For example, for a numeric argument, test positive and negative input values. For a vector input, test an empty vector, a vector of length one, and a vector with multiple values. If you discover an error, we need to go back to debugging mode to resolve it.
+We know our function `high_cor()` works on a single example. To thoroughly test our functions, we want to run them on several different input values. These types of tests are called *unit tests*. We try to vary these test values to cover a wide range of possibilities. For example, for a numeric argument, test positive and negative input values. For a vector input, test an empty vector, a vector of length 1, and a vector with multiple values. If you discover an error, we need to go back to debugging mode to resolve it.
 
 To test our function, we use the **testthat**\index{R packages!testthat} package [@R-testthat]. This includes several functions that can check our expectations. For example, there is the `expect_equal(object, expected)` \index{R functions!expect\textunderscore equal()@\texttt{expect\textunderscore equal()}} function which checks whether `object` matches `expected` up to a given numeric tolerance. If we want to only check the values of our objects but not the attributes, we can set the argument `ignore_attr = FALSE`. Other functions from this package are `expect_error(object)`\index{R functions!expect\textunderscore error()@\texttt{expect\textunderscore error()}} which can be used to test that an error message was returned and `expect_true(object)`\index{R functions!expect\textunderscore true()@\texttt{expect\textunderscore true()}} which can be used to test whether a condition is met.
 
@@ -458,7 +460,7 @@ testthat::expect_equal(paste0("A","B"), "AB")
 testthat::expect_true(mean(c(1,2,3)) > 1)
 ```
 
-In the following code chunk, we demonstrate some tests for the `dist_to_origin()` function. Our tests here focus on the format of the vector. We should test each function separately so we would write a separate batch of tests for the Euclidean distance function.
+In the following code chunk, we demonstrate some tests for the `dist_to_origin()` function. Our tests here focus on the format of the vector. We should test each function separately, so we would write a separate batch of tests for the Euclidean distance function.
 
 ```{r}
 # check error message for character vector
@@ -483,7 +485,7 @@ testthat::expect_equal(dist_to_origin(c(2,8.5,3)), 9.233093,
 
 ### Practice Question
 
-Following are a series of tests for the function `high_cor()` with different data frame sizes and types of columns. Unfortunately, not all the tests are working. Use your debugging skills to fix the function to pass the tests and write at least one additional test.
+Following are a series of tests for the function `high_cor()` with different data frame sizes and types of columns. Unfortunately, not all of the tests are working. Use your debugging skills to fix the function to pass the tests and write at least one additional test.
 
 ```{r, eval = FALSE}
 # mixed data frame - should return a data frame with three columns
@@ -517,7 +519,7 @@ For each question, be sure to document your function(s) using roxygen style docu
 
 2.  Suppose we have two binary vectors `x` and `y` each of length $n$. Let $m_{1}$ be the number of indices where `x` or `y` has a 1 and $m_2$ be the number of indices where both `x` and `y` equal 1. For example, if `x <- (1,1,0)` and `y <- c(0,1,0)` then $m_1 = 2$ and $m_2 =1$. The Jaccard distance is defined as $1-m_2/m_1$ and measures the dissimilarity between two binary vectors. Write a function `jaccard_dist()` that takes in two binary vectors and returns the Jaccard distance between the two.
 
-3.  For this question we use a subset of the `pain` data \index{Data sets!pain@\texttt{pain}} from the **HDSinRdata** package. Recall, that this data contains binary variables representing where people experienced pain. Write a function that takes in a data frame with all binary columns and returns a matrix with the Jaccard distance between all observations. That is, if `D` is the returned matrix, then `D[i,j]` is the Jaccard distance between observation `i` and observation `j`. Apply your function to the pain data and plot the distribution of these distances. 
+3.  For this question we use a subset of the `pain` data \index{Datasets!pain@\texttt{pain}} from the **HDSinRdata** package. Recall, that this data contains binary variables representing where people experienced pain. Write a function that takes in a data frame with all binary columns and returns a matrix with the Jaccard distance between all observations. That is, if `D` is the returned matrix, then `D[i,j]` is the Jaccard distance between observation `i` and observation `j`. Apply your function to the pain data and plot the distribution of these distances. 
 
     ```{r}
     library(HDSinRdata)

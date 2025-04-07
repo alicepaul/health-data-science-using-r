@@ -1,6 +1,6 @@
 # Case Study: Exploring Early COVID-19 Data {#sec-cs-eda}
 
-In this chapter, we demonstrate a short exploratory analysis as a case study\index{Case study!exploratory analysis}. This case study focuses on COVID-19 cases and deaths during 2020 using the `covidcases`\index{Data sets!covidcases@\texttt{covidcases}} and `mobility`\index{Data sets!mobility@\texttt{mobility}} datasets from the **HDSinRdata** package\index{R packages!HDSinRdata}. A new package that is used in this case study is **usmap**\index{R packages!usmap} package [@R-usmap], which allows us to easily create spatial plots of the United States. 
+In this chapter, we demonstrate a short exploratory analysis as a case study\index{Case study!exploratory analysis}. This case study focuses on COVID-19 cases and deaths during 2020 using the `covidcases`\index{Datasets!covidcases@\texttt{covidcases}} and `mobility`\index{Datasets!mobility@\texttt{mobility}} datasets from the **HDSinRdata** package\index{R packages!HDSinRdata}. A new package that is used in this case study is **usmap**\index{R packages!usmap} package [@R-usmap], which allows us to easily create spatial plots of the United States. 
 
 ```{r}
 #| results: 'hide'
@@ -43,7 +43,7 @@ mobility_week <- mobility %>%
 head(mobility_week)
 ```
  
-For both of our datasets, we want to check whether each state was observed across all dates and how the state's name is represented. For the mobility data, our data is at the state level so we can use the `table()` function.
+For both of our datasets, we want to check whether each state was observed across all dates and how the state's name is represented. For the mobility data, our data is at the state level, so we can use the `table()` function.
 
 ```{r}
 # Find number of dates recorded for each state
@@ -81,7 +81,7 @@ Next, we want to get some simple information about the continuous variables in o
 summary(covid[, c("weekly_cases", "weekly_deaths", "m50")])
 ```
 
-These negative numbers are clear data discrepancies. When showing the distribution of cases in our exploratory analysis we may choose to either code these as 0 or NA. We decide to recode these negative values as NA.
+These negative numbers are clear data discrepancies. When showing the distribution of cases in our exploratory analysis, we may choose to either code these as 0 or NA. We decide to re-code these negative values as NA.
 
 ```{r}
 # Set negative counts to NA
@@ -119,10 +119,11 @@ Now that our data are merged and cleaned, we start exploring mobility and cases 
 covid %>%
   select(c("region", "m50", "weekly_cases", "weekly_deaths")) %>%
   tbl_summary(by = "region", missing = "no") %>%
-  as_gt()
+  as_gt() %>%
+  cols_width(everything() ~ "55pt")
 ```
 
-We then plot mobility over time both for the whole country and by region. Across the country we see a similar pattern in how mobility fluctuated but that certain regions had overall higher mobility than others. 
+We then plot mobility over time both for the whole country and by region. Across the country, we see a similar pattern in how mobility fluctuated, but certain regions had overall higher mobility than others. 
 
 ```{r, message = FALSE}
 # Average mobility in the US over time - overall 
@@ -154,7 +155,7 @@ pmob2 <- covid %>%
 pmob1+pmob2
 ```
 
-We then look at cases and deaths by region. A limitation of these data are that we do not have population counts which would allow us to standardize these numbers. However, we do use a secondary y-axis using the `sec_axis()`\index{R functions!sec\textunderscore axis()@\texttt{sec\textunderscore axis()}} function within `scale_y_continuous()` to allow us to plot deaths and cases together. In this case, the secondary axis\index{secondary axis} is scaled by 1/10th of the primary axis. 
+We then look at cases and deaths by region. A limitation of these data are that we do not have population counts which would allow us to standardize these numbers. However, a secondary y-axis using the `sec_axis()`\index{R functions!sec\textunderscore axis()@\texttt{sec\textunderscore axis()}} function within `scale_y_continuous()` allows us to plot deaths and cases together. In this case, the secondary axis\index{secondary axis} is scaled by 1/10th of the primary axis. 
 
 ```{r}
 # Change in number cases over time, per region
@@ -179,7 +180,7 @@ ggplot() +
 
 ```
 
-To look at how mobility and cases are related, we look at a scatter plot of mobility and cases in California.
+To examine how mobility and cases are related, we look at a scatter plot of mobility and cases in California.
 
 ```{r}
 covid_ca <- covid %>% filter(state == "California")

@@ -1,4 +1,4 @@
-# Expanding your R Skills {#sec-expanding-skills}
+# Expanding Your R Skills {#sec-expanding-skills}
 
 Throughout this book, we have covered some popular packages as well as many of the specific functions from these packages. However, it would be impossible to cover all of the packages, functions, and options that are available in R. In this chapter, we talk about how to use new packages, interpret error messages, debugging, and overall good programming practices to help you take your R programming to the next level.
 
@@ -24,7 +24,7 @@ sample_str <- " A systematic search will be performed in PubMed,
 Embase, and the Cochrane Library, using the following search query:   
 ('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 
 'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR 
-’SWAP’ OR ’TTM’)."
+'SWAP' OR 'TTM')."
 ```
 
 The first thing we want to do with the text is clean up the white space by removing any trailing, leading, or repeated spaces. In our example, the string starts with a trailing space and there are also multiple spaces right before the search query. Searching for "white space" in the **stringr** reference manual, we find the `str_trim()` and `str_squish()` functions. Read the documentation for these two functions. You should find that `str_squish()`\index{R functions!str\textunderscore squish()@\texttt{str\textunderscore squish()}} is the function we are looking for and that it takes a single argument.
@@ -36,7 +36,7 @@ sample_str
 
 ## Trying Simple Examples
 
-The premise of testing a function on a single string is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example on which you can anticipate what the outcome should look like. Our next task is to split the text into words and store this as a character vector. Read the documentation to determine why we use the `str_split_1()`\index{R functions!str\textunderscore split\textunderscore 1()@\texttt{str\textunderscore split\textunderscore 1()}} function. We then double check that the returned result is indeed a vector and print the result.
+The premise of testing a function on a single string is a good example of starting with a simple case. Rather than applying your function to your full dataset right away, you want to first make sure that you understand how it works on a simple example and on which you can anticipate what the outcome should look like. Our next task is to split the text into words and store this as a character vector. Read the documentation to determine why we use the `str_split_1()`\index{R functions!str\textunderscore split\textunderscore 1()@\texttt{str\textunderscore split\textunderscore 1()}} function. We then double-check that the returned result is indeed a vector and print the result.
 
 ```{r}
 sample_str_words <- str_split_1(sample_str, " ")
@@ -50,17 +50,17 @@ We now want to identify words in this vector that have starting and/or end paren
 grepl(sample_str_words, ")")
 ```
 
-That didn't match what we expected. We expected to have multiple TRUE/FALSE values outputted - one for each word. Let's read the documentation again.
+That didn't match what we expected. We expected to have multiple TRUE/FALSE values outputted, one for each word. Let's read the documentation again.
 
 ## Deciphering Error Messages and Warnings \index{error messages} \index{warnings}
 
-The previous warning message gives us a good clue for what went wrong. It says that the inputted pattern has length \> 1. However, the pattern we gave it is a single character. In fact, we specified the arguments in the wrong order. Let's try again. This time we specify `x` and `pattern`.
+The previous warning message gives us a good clue for what went wrong. It says that the inputted pattern has length \>1. However, the pattern we gave it is a single character. In fact, we specified the arguments in the wrong order. Let's try again. This time we specify `x` and `pattern`.
 
 ```{r}
 grepl(x = sample_str_words, pattern = ")")
 ```
 
-That fixed it. However, it won't work if we change that to an opening parenthesis. Try it out for yourself to see this. The error message says that it is looking for an end parentheses. In this case, the documentation does not help us. Let’s try searching “stringr find start parentheses” using an online search engine. Our search results indicate that we may need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression (a technique often referred to as “escaping” a character). Investigating the reason for an error, including using online material, is an important skill for a programmer to have.
+That fixed it. However, it won't work if we change that to an opening parenthesis. Try it out for yourself to see this. The error message says that it is looking for an end parenthesis. In this case, the documentation does not help us. Let’s try searching “stringr find start parentheses” using an online search engine. Our search results indicate that we may need to use backslashes to tell R to read the parentheses literally rather than as a special character used in a regular expression (a technique often referred to as “escaping” a character). Investigating the reason for an error, including using online material, is an important skill for a programmer to have.
 
 ```{r}
 grepl(x = sample_str_words, pattern = "\\(")
@@ -76,8 +76,8 @@ The following code is supposed to extract the search query from the text as well
 sample_strA <- " A systematic search will be performed in PubMed, 
 Embase, and the Cochrane Library, using the following search query:   
 ('out-of-hospital cardiac arrest' OR 'OHCA') AND ('MIRACLE 2' OR 
-'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS’ OR 
-’SWAP’ OR ’TTM’)."
+'OHCA' OR 'CAHP' OR 'C-GRAPH' OR 'SOFA' OR 'APACHE' OR 'SAPS' OR 
+'SWAP' OR 'TTM')."
 
 sample_strB <- "Searches will be conducted in MEDLINE via PubMed, Web 
 of Science, Scopus and Embase. The following search strategy will be 
@@ -127,7 +127,7 @@ We shows how we can test and fix the previous code by using some simple debuggin
 
 As you write more complex code and functions, we want to focus on practicing good programming principles. This helps when you need to share or update your code or when you inevitably run into errors or unexpected behavior. Following are some general programming tips and how they relate to communication and debugging.
 
-1.  **Consistent naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging,  check that you haven't used the same name for different objects or different names for the same object. You can do this by using the `ls()` function \index{R functions!ls()@\texttt{ls()}} to find all current objects or by checking your environment pane.
+1.  **Consistent Naming.** Use consistent and informative names for your objects and functions. For example, you can see that within this text we have only used lowercase letters, underscores (`_`), and occasionally numbers in our names. These names should also be informative and unique. This makes it easier to check for typos or duplicate names when debugging. When debugging,  check that you haven't used the same name for different objects or different names for the same object. You can do this by using the `ls()` function \index{R functions!ls()@\texttt{ls()}} to find all current objects or by checking your environment pane.
 
     ```{r}
     # Recommended
@@ -139,9 +139,11 @@ As you write more complex code and functions, we want to focus on practicing goo
     x1 <- mean(ages)
     ```
 
-2.  **Make Your Code Readable.** Readable code requires several elements of communication. As with writing an essay, we need to break our code into digestible and structured pieces. First, code should be broken into blocks, using white space to separate steps, and should use correct levels of indentation (one extra level of indentation for each new loop, if/else statement, or function). This means that closing curly braces should be on their own line indicating the end of the block. This makes it easy to check that all parentheses (), brackets \[\], and curly braces {} match. Additionally, you should use line breaks to avoid going over 80 characters on a single line of code. RStudio has an option to reformat or re-indent your code under the Code tab.
+\newpage
 
-    Besides the structure of your code, writing helpful comments and function documentation are key for making your code readable. A good rule of thumb is to write comments for yourself a year from now - you might remember the project goal but you won't remember what `x` represents. You likely do not need a comment for every line of code but you might need comments to explain the overall goal of a code block or to clarify lines that aren't self-explanatory.
+2.  **Make Your Code Readable.** Readable code requires several elements of communication. As with writing an essay, we need to break our code into digestible and structured pieces. First, code should be broken into blocks, using white space to separate steps, and should use correct levels of indentation (one extra level of indentation for each new loop, if/else statement, or function). This means that closing curly braces should be on their own line indicating the end of the block. This makes it easy to check that all parentheses (), brackets \[\], and curly braces {} match. Additionally, you should use line breaks to avoid going over 80 characters on a single line of code. RStudio has an option to re-format or re-indent your code under the Code tab.
+
+    Besides the structure of your code, writing helpful comments and function documentation is key for making your code readable. A good rule of thumb is to write comments for yourself a year from now; you might remember the project goal, but you won't remember what `x` represents. You likely do not need a comment for every line of code but you might need comments to explain the overall goal of a code block or to clarify lines that aren't self-explanatory.
 
     In the following code, we have not used indentation. This makes it hard to see the structure of the code such as what lines of code are in the loop or if statement. The function does not have any roxygen documentation. However, we have added too many comments. The comments here are repetitive with the code. Last, we named the function `unique()`, which is already a function in R.
 
@@ -186,7 +188,7 @@ As you write more complex code and functions, we want to focus on practicing goo
     }
     ```
 
-3.  **Don't Repeat Yourself.** Repeating code increases the likelihood of errors. Additionally, it makes it hard to update our code later on. When we find ourselves repeating code, we should use a function. If you find yourself repeating constants you should define these values as an object. The subsequent code uses a single line of code to convert categorical variables to factors and stores a vector of which columns are categorical.
+3.  **Don't Repeat Yourself.** Repeating code increases the likelihood of errors. Additionally, it makes it hard to update our code later on. When we find ourselves repeating code, we should use a function. If you find yourself repeating constants, you should define these values as an object. The subsequent code uses a single line of code to convert categorical variables to factors and stores a vector of which columns are categorical.
 
     ```{r}
     dry_df <- data.frame(age = ages,
@@ -200,9 +202,10 @@ As you write more complex code and functions, we want to focus on practicing goo
     dry_df[cat_vars] <- lapply(dry_df[cat_vars], factor)
     ```
 
-4.  **Practice Reading Documentation.** Whenever we are using a new function, you should read the documentation first. When debugging, you should check that the input arguments to a function match what is expected and check the examples. Reading these examples also helps when writing your own documentation so you can better understand how to communicate to your audience.
 
-5.  **Start Simple, Build Up.** If we write a large amount of code at once and then it fails to work, it's hard to understand what went wrong. Instead, we should build up our code or functions in small steps and check it after each step. When it comes to testing code, a good mantra is *test early and test often*. So, try to avoid writing too much code before running and checking that the results match what you expect. If you do end up writing a big chunk of code, you can use localize your error by checking the values of objects at different points.
+4.  **Practice Reading Documentation.** Whenever you are using a new function, you should read the documentation first. When debugging, you should check that the input arguments to a function match what is expected and check the examples. Reading these examples also helps when writing your own documentation so you can better understand how to communicate to your audience.
+
+5.  **Start Simple, Build Up.** If we write a large amount of code at once and then it fails to work, it's hard to understand what went wrong. Instead, we should build up our code or functions in small steps and check it after each step. When it comes to testing code, a good mantra is *test early and test often*. So, try to avoid writing too much code before running and checking that the results match what you expect. If you do end up writing a big chunk of code, you can localize your error by checking the values of objects at different points.
 
 6.  **Get Comfortable Asking for Help.** In software engineering, it's a known tip to have a rubber ducky (or other adorable object) at your desk to talk through your code. Having to verbalize and explain your approach can be really helpful for debugging. R's error messages can sometimes hint at what the error might stem from, but they are not always direct. Searching for error messages you don't understand might give you a better understanding of the problem.
 
@@ -261,7 +264,7 @@ These exercises focus on reading function documentation and debugging.
       geom_abline(intercept = 0, slope = 1, color = "red") + 
       geom_errorbar(aes(x = expected, ymin = observed - 1.96 * se, 
                     ymax = observed + 1.96 * se), 
-                colour = "black", width = .01)+
+                color = "black", width = .01)+
       geom_point(aes(x = expected, y = observed)) +
       labs(x="Expected Proportion", y="Observed Proportion") +
       theme_minimal()

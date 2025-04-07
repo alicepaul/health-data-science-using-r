@@ -1,7 +1,7 @@
 # Case Study: Cleaning Tuberculosis Screening Data {#sec-cs-preprocessing}
 
 In this chapter, we put some of our R skills together in a case study\index{Case study:data cleaning and pre-processing}. This case study focuses on data cleaning and pre-processing. We use the `tb_diagnosis_raw`\index{R packages!readr}
-\index{Data sets!tb\textunderscore diagnosis\textunderscore raw@\texttt{tb\textunderscore diagnosis\textunderscore raw}} data from the **HDSinRdata** package\index{R packages!HDSinRdata}. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse**\index{R packages!tidyverse} packages as well as the summary tables from **gtsummary**\index{R packages!gtsummary}.
+\index{Datasets!tb\textunderscore diagnosis\textunderscore raw@\texttt{tb\textunderscore diagnosis\textunderscore raw}} data from the **HDSinRdata** package\index{R packages!HDSinRdata}. This data contains information on 1,634 patients in rural South Africa who presented at a health clinic with tuberculosis-related symptoms and were tested for tuberculosis (TB) using Xpert MTB/RIF. Our goal is to clean this data to reflect the pre-processing described in @baik2020clinical. This paper uses this data to derive a simple risk score model for screening patients for treatment while awaiting Xpert results. We use the **tidyverse**\index{R packages!tidyverse} packages as well as the summary tables from **gtsummary**\index{R packages!gtsummary}.
 
 ```{r}
 #| results: 'hide'
@@ -80,7 +80,7 @@ tb_df <- tb_df %>% select(-c(other_conditions_fac___1,
 table(tb_df$diabetes)
 ```
 
-Next, we similarly code our variables about HIV status, smoking, and whether the patient has ever been diagnosed with tuberculosis before. For these variables, if the patient answered that they did not know if their HIV status or had tested positive for TB, we code these as 0 to be consistent with the paper. 
+Next, we similarly code our variables about HIV status, smoking, and whether the patient has ever been diagnosed with tuberculosis before. For these variables, if the patient answered that they did not know their HIV status or if they had tested positive for TB, we code these as 0 to be consistent with the paper. 
 
 ```{r}
 # Re-code variables with missing or refused values
@@ -189,11 +189,12 @@ tbl_summary(tb_df, by = "tb",
               ever_smoke = "Ever Smoked",
               past_tb = "Past TB",
               male = "Male",
-              hs_less = "High School or Less Educ",
+              hs_less = "High School or Less Educ.",
               two_weeks = "Two Weeks Symptoms",
               diabetes = "Diabetes",
               num_symptoms = "Number of Symptoms"
             )) %>%
   add_overall() %>%
-  as_gt()
+  as_gt() %>%
+  cols_width(everything() ~ "55pt")
 ```

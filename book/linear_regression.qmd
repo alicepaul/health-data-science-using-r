@@ -3,7 +3,7 @@
   
 This chapter introduces you to linear regression\index{linear regression} analysis in R. We cover how to fit linear regression models, check model assumptions using diagnostic plots, change model formulas by adding transformations and interactions, calculate performance metrics, and perform variable selection using stepwise selection.
 
-For this chapter, we use the `NHANESsample` dataset \index{Data sets!NHANESSample@\texttt{NHANESSample}} seen in [Chapter -@sec-exploratory]. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by @huang2022association. Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis.
+For this chapter, we use the `NHANESsample` dataset \index{Datasets!NHANESSample@\texttt{NHANESSample}} seen in [Chapter -@sec-exploratory]. The sample contains lead, blood pressure, BMI, smoking status, alcohol use, and demographic variables from NHANES 1999-2018. Variable selection and feature engineering were conducted in an effort to replicate the regression analyses conducted by @huang2022association. Use the help operator `?NHANESsample` to read the variable descriptions. Note that we ignore survey weights for this analysis.
 
 We use the **broom** package\index{R package!broom} [@R-broom] to present the estimated coefficients for our regression models and the **car** package\index{R package!car} to compute variance inflation factors.
 
@@ -61,9 +61,9 @@ plot(nhanes_df$LEAD, nhanes_df$SBP,
      pch = 16)
 ```
 
-Despite our observations, we continue by fitting a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)`\index{R functions!lm()@\texttt{lm()}} fits a linear model in R. The first argument is the formula of the linear model: on the left hand side of the `~` we put the outcome variable, and on the right hand side we put the independent variable. When we have multiple independent variables we separate them with a `+` (e.g. `y~x1+x2`). The output of this function is an `lm` object.
+Despite our observations, we continue by fitting a simple linear regression model to explain the association between `SBP` and `LEAD`. The function `lm(formula = y ~ x, data)`\index{R functions!lm()@\texttt{lm()}} fits a linear model in R. The first argument is the formula of the linear model: on the left-hand side of the `~` we put the outcome variable, and on the right-hand side we put the independent variable. When we have multiple independent variables, we separate them with a `+` (e.g., `y~x1+x2`). The output of this function is an `lm` object.
 
-We can call the `summary()`\index{R functions!summary()@\texttt{summary()}} function on this object to print a summary of the model\index{linear regression!model summaries}, which includes the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. Recall, that we previously used the `summary()` function to get summary statistics about a vector. This is an example of how multiple functions can have the same name. R figues out which `summary()` function to use by identifying that the argument we passed in is a `lm` object.
+We can call the `summary()`\index{R functions!summary()@\texttt{summary()}} function on this object to print a summary of the model\index{linear regression!model summaries}, which includes the estimated coefficients, information about the residuals, the R-squared and adjusted R-squared values, and the F-statistic. Recall, that we previously used the `summary()` function to get summary statistics about a vector. This is an example of how multiple functions can have the same name. R figures out which `summary()` function to use by identifying that the argument we passed in is a `lm` object.
 
 ```{r}
 simp_model <- lm(formula = SBP ~ LEAD, data = nhanes_df)
@@ -152,7 +152,7 @@ plot(adj_model)
 
 ### Normality
 
-Beyond the default plots, we can also plot a histogram of the residuals and a qq-plot. The `qqnorm()`\index{R functions!qqnorm()@\texttt{qqnorm()}} and `qqline()`\index{R functions!qqline()@\texttt{qqline()}} functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot shown, the residuals are positively skewed, and thus the assumption of normality is not satisfied for our residuals. Later in this chapter, we discuss how we might transform this dataset and/or model to satisfy this assumption.
+Beyond the default plots, we can also plot a histogram of the residuals and a qq-plot. The `qqnorm()`\index{R functions!qqnorm()@\texttt{qqnorm()}} and `qqline()`\index{R functions!qqline()@\texttt{qqline()}} functions can take in the residuals from our model as an argument. The latter adds the theoretical red line for reference. As both the histogram and qq-plot show, the residuals are positively skewed, and thus the assumption of normality is not satisfied for our residuals. Later in this chapter, we discuss how we might transform this dataset and/or model to satisfy this assumption.
 
 ```{r}
 par(mfrow = c(1, 2)) # plot next to each other
@@ -167,8 +167,9 @@ Instead of using the direct residuals, we can also find the standardized residua
 ```{r}
 par(mfrow = c(1, 2)) 
 hist(rstandard(adj_model), xlab = "Standardized Residuals", 
-     main = "Histogram of Standardized Residuals") 
-qqnorm(rstandard(adj_model)) 
+     main = "Histogram of Standardized Residuals",
+     cex.main = 0.65) 
+qqnorm(rstandard(adj_model), cex.main = 0.65) 
 qqline(rstandard(adj_model), col = "red")
 ```
 
@@ -192,7 +193,7 @@ vif(adj_model)
 
 ### Practice Question
 
-Fit a linear regression model with `SBP` as the outcome and with `INCOME`, `RACE`, `EDUCATION`, and `ALC` as independent variables. Then, plot the residuals vs. the fitted values as well and make a QQ plot for the standardized residuals from this model. They should look like @fig-residual-plots.
+Fit a linear regression model with `SBP` as the outcome and with `INCOME`, `RACE`, `EDUCATION`, and `ALC` as independent variables. Then, plot the residuals vs. the fitted values as well and make a QQ-plot for the standardized residuals from this model. They should look like @fig-residual-plots.
 
 ![Residual Plots.](images/linear_regression/residual-plots.png){#fig-residual-plots fig-align="center" width="80%"}
 
@@ -235,7 +236,7 @@ hist(log(nhanes_df$LEAD), xlab = "Log Blood Lead Level",
      main = "")
 ```
 
-To add a transformation to a model, we can simply apply the transformation in the formula for `lm()`. We find the adjusted R-squared for each potential model to compare their fits in addition to plotting the four qq-plots. Both indicate that the model with the log-log transformation (that is, with a log transformation applied to both the `SBP` and the `LEAD` variables) is the best fit though the model with just a log transformation for `SBP` has a similar qq-plot.
+To add a transformation to a model, we can simply apply the transformation in the formula for `lm()`. We find the adjusted R-squared for each potential model to compare their fits in addition to plotting the four qq-plots. Both indicate that the model with the log-log transformation (that is, with a log transformation applied to both the `SBP` and the `LEAD` variables) is the best fit, though the model with just a log transformation for `SBP` has a similar qq-plot.
 
 ```{r}
 model_nlog_nlog <- lm(SBP ~ LEAD + AGE + SEX, data = nhanes_df)
@@ -267,9 +268,9 @@ qqline(rstandard(model_log_log), col = "red")
 
 ### Practice Question
 
-Instead of adding in a log transformation for `LEAD` like we did previously, try a square root transformation `sqrt(LEAD)` and an inverse transformation `1/LEAD` while keeping the log transformation for the outcome `log(SBP)`. Which model fits better according to the adjusted R-squared? The resulting QQ plots should look like @fig-qq-plots.
+Instead of adding in a log transformation for `LEAD` like we did previously, try a square root transformation `sqrt(LEAD)` and an inverse transformation `1/LEAD` while keeping the log transformation for the outcome `log(SBP)`. Which model fits better according to the adjusted R-squared? The resulting QQ-plots should look like @fig-qq-plots.
 
-![QQ Plots for Possible Transformations.](images/linear_regression/qq-plots.png){#fig-qq-plots fig-align="center" width="80%"}
+![QQ-Plots for Possible Transformations.](images/linear_regression/qq-plots.png){#fig-qq-plots fig-align="center" width="80%"}
 
 ```{r}
 # Insert your solution here:
@@ -297,7 +298,7 @@ summary(model_interaction)
 
 ## Evaluation Metrics \index{linear regression!evaluation measures}
 
-In addition to adjusted R-squared, there are a few other metrics that can help us to understand how well our model fits the data and to help with model selection. The `AIC()`\index{R functions!AIC()@\texttt{AIC()}} and `BIC()` functions\index{R functions!BIC()@\texttt{BIC()}} find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.
+In addition to adjusted R-squared, there are a few other metrics that can help us to understand how well our model fits the data and can also help with model selection. The `AIC()`\index{R functions!AIC()@\texttt{AIC()}} and `BIC()` functions\index{R functions!BIC()@\texttt{BIC()}} find the Akaike information criterion (AIC) and Bayesian information criterion (BIC) values, respectively. Both AIC and BIC balance the trade-off between model complexity and goodness of fit. AIC takes into account both the goodness of fit (captured by the likelihood of the model) and the complexity of the model (captured by the number of parameters used). Lower AIC values are preferable. BIC is similar to AIC but has a stronger penalty for model complexity compared to AIC. Both measures indicate a preference for keeping the interaction term.
 
 ```{r}
 AIC(model_log_log)
@@ -309,7 +310,7 @@ BIC(model_log_log)
 BIC(model_interaction)
 ```
 
-The `predict()` function allows us to calculate the predicted `y` values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the `newdata` argument. The new data provided must contain the columns given in the model formula. We use the `predict()` function to find the predicted values from our model and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. The mean absolute error indicates that our model has fairly high residuals on average. While this model may be helpful for understanding the relationship between blood lead level and systolic blood pressure, it would not be very useful as a tool to predict the latter.
+The `predict()` function allows us to calculate the predicted `y` values. When called on a model with no data specified, it returns the predicted values for the training data. We could also specify new data using the `newdata` argument. The new data provided must contain the columns given in the model formula. We use the `predict()` function to find the predicted values from our model and then calculate the mean absolute error (MAE) and mean squared error (MSE) for our model. MAE is less sensitive to outliers compared to MSE. The MAE indicates that our model has fairly high residuals on average. While this model may be helpful for understanding the relationship between blood lead level and systolic blood pressure, it would not be very useful as a tool to predict the latter.
 
 ```{r}
 pred_y <- predict(model_interaction)
@@ -329,7 +330,7 @@ mse
 
 So far we have ignored the other variables in the data frame. When performing variable selection, there are multiple methods to use. We conclude this chapter by demonstrating how to implement one such method, **stepwise selection**, in R. [Chapter -@sec-model-selection] expands upon this model selection technique by showing how to implement regularized models in R.
 
-The `step()`\index{R functions!step()@\texttt{step()}} function takes in an initial model to perform stepwise selection on along with a direction `direction` ("forward", "backward", or "both"), and a scope `scope`. The scope specifies the lower and upper model formulas to consider. In the following example, we use forward selection so the lower formula is the formula for our current model and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested - that is, all terms in the lower formula must be contained in the upper formula.
+The `step()`\index{R functions!step()@\texttt{step()}} function takes in an initial model along with a `direction` ("forward", "backward", or "both"), and a `scope`. The scope specifies the lower and upper model formulas to consider. In the following example, we use forward selection so the lower formula is the formula for our current model, and the upper formula contains the other covariates we are considering adding in. These two formulas must be nested, that is, all terms in the lower formula must be contained in the upper formula.
 
 By default, the `step()` function prints each step in the process and uses AIC to guide its decisions. We can set `trace=0` to avoid the print behavior and update the argument `k` to `log(n)` to use BIC, where `n` is the number of observations. In the output, we see that the algorithm first adds in race, then BMI, then income, then education, and then smoking status. In fact, all variables were added to the model! The final output is an `lm` object that we can use just like the ones earlier in this chapter. We get the summary of the final model and see that the adjusted R-squared has improved to 0.2479.
 
@@ -360,10 +361,10 @@ For these exercises, we continue using the `nhanes_df` data.
 
 2.  Use forward stepwise selection to add possible interactions to the linear model from the previous question.
 
-3.  Draw a QQ plot for the model in Question 2, and describe the distribution that you observe.
+3.  Draw a QQ-plot for the model in Question 2, and describe the distribution that you observe.
 
 4.  Report the MAE and MSE of the model developed in Question 2. Then, find the row numbers of the observations with the top 5 Cook's Distance values for this model.
 
-5.  Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that improves the fit of this model. Then, fit and summarize this new model with the transformation included. How do the MSE and MAE of the new model compare to the previous one? Note that your predictions will be on the transformed scale so you'll need to convert them to the correct scale.
+5.  Look at some diagnostic plots for the model and use what you observe from these plots to choose a transformation that improves the fit of this model. Then, fit and summarize this new model with the transformation included. How do the MSE and MAE of the new model compare to the previous one? Note that your predictions will be on the transformed scale, so you'll need to convert them to the correct scale.
 
 

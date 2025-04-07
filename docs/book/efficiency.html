@@ -125,8 +125,6 @@ div.csl-indent {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -361,7 +359,7 @@ div.csl-indent {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../book/expanding_r_skills.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span></a>
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Expanding Your R Skills</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -507,7 +505,7 @@ div.csl-indent {
 </div>
 <p>This is much faster. Loops are notoriously slow in R so you often hear the advice to avoid loops. Using apply functions like <code>apply()</code> and <code>sapply()</code> are loop-hiding functions. Using these functions instead of an explicit loop doesn’t improve the efficiency of our code except that by using these functions we often simplify our code as a byproduct of rewriting our code.</p>
 <p>The true functions that can improve efficiency over loops are <em>vectorized</em> functions, which can be evaluated on a vector of values. Vectorizing our code means that we are thinking about a vector approach rather than computing something for each element of the vector and looping through these values. A vectorized function returns output that is the same dimensions as the input and operates on these elements in an efficient manner.</p>
-<p>The following code chunk shows a simple example of comparing taking the square root of each individual element or calling the <code>sqrt()</code> function, which is a vectorized function. Vectorized functions still have to operate on each element, but that loop is often written in C or Fortran rather than R making it significantly faster so this is a special case where we can utilize the speed of some functions.</p>
+<p>The following code chunk shows a simple example of comparing taking the square root of each individual element or calling the <code>sqrt()</code> function, which is a vectorized function. Vectorized functions still have to operate on each element, but that loop is often written in C or Fortran rather than R making it significantly faster, so this is a special case where we can utilize the speed of some functions.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">microbenchmark</span>(<span class="at">loop_sqrt =</span> {</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x)){</span>
@@ -534,17 +532,17 @@ div.csl-indent {
 </section>
 <section id="avoid-copies-and-duplicates" class="level2" data-number="20.2">
 <h2 data-number="20.2" class="anchored" data-anchor-id="avoid-copies-and-duplicates"><span class="header-section-number">20.2</span> Avoid Copies and Duplicates </h2>
-<p>Another aspect of our programs that can slow down our operations is any time we need to create a large object. Look at the following code. First, we create a matrix <code>m</code>. We then create a matrix <code>n</code> that is equal to <code>m</code>. Last, we update <code>n</code> by taking the logarithm of all elements plus one, differentiating it from <code>m</code>. R creates copies upon modification. That means, that when we initialize <code>n</code> we have not actually created a second matrix in memory. Instead, we have two names for the same matrix. On the third line, we want to update <code>n</code> so we need to actually create a second matrix that is different from <code>m</code>.</p>
+<p>Another aspect of our programs that can slow down our operations is any time we need to create a large object. Look at the following code. First, we create a matrix <code>m</code>. We then create a matrix <code>n</code> that is equal to <code>m</code>. Last, we update <code>n</code> by taking the logarithm of all elements plus one, differentiating it from <code>m</code>. R creates copies upon modification. This means that when we initialize <code>n</code> we have not actually created a second matrix in memory. Instead, we have two names for the same matrix. On the third line, we want to update <code>n</code>, so we need to actually create a second matrix that is different from <code>m</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">rpois</span>(<span class="dv">100000</span>, <span class="dv">6</span>), <span class="at">ncol=</span><span class="dv">1000</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> m</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">log</span>(n <span class="sc">+</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This is different from the subsequent code which updates <code>m</code> itself. In this case, R can modify the matrix in place by going through each element and updating its value rather than creating a new matrix. As the size of our data grows, creating copies can be expensive. Imagine, <code>m</code> being a large genetic data set with RNA sequencing data. First, this object may take up a lot of memory so creating a copy may mean we could run out of memory. Second, copying over all this information is expensive.</p>
+<p>This is different from the subsequent code which updates <code>m</code> itself. In this case, R can modify the matrix in place by going through each element and updating its value rather than creating a new matrix. As the size of our data grows, creating copies can be expensive. Imagine, <code>m</code> being a large genetic dataset with RNA-sequencing data. First, this object may take up a lot of memory, so creating a copy may mean we could run out of memory. Second, copying over all this information is expensive.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">log</span>(m <span class="sc">+</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Let’s consider another case. In the following code, we have two functions that both find the proportion of people within 1, 2, and <span class="math inline">\(&gt;2\)</span> standard deviations from the mean for one of the PROMIS instrument variables. When we input <code>pain</code> as an argument to the first function, we do not create a copy of it since we haven’t modified the data frame. However, once we create a new column, this means that we have to copy the full data frame. The second function instead takes in a single column, requiring us to copy only this information. The difference in execution time shows an edge to the second method, but the difference is small. This indicates that actually computing this new column and finding the proportions takes more time than the duplication.</p>
+<p>Let’s consider another case. In the following code, we have two functions that both find the proportion of people within 1, 2, and $&gt;$2 standard deviations from the mean for one of the PROMIS instrument variables. When we input <code>pain</code> as an argument to the first function, we do not create a copy of it since we haven’t modified the data frame. However, once we create a new column, this means that we have to copy the full data frame. The second function instead takes in a single column, requiring us to copy only this information. The difference in execution time shows an edge to the second method, but the difference is small. This indicates that actually computing this new column and finding the proportions takes more time than the duplication.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>code_promis1 <span class="ot">&lt;-</span> <span class="cf">function</span>(df){</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create new column with categories</span></span>
@@ -581,7 +579,7 @@ div.csl-indent {
 <span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.807 3.54   100</span></span>
 <span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  0.741 3.76   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Another time when we create copies of objects is when we modify their size. Functions like <code>cbind()</code>, <code>rbind()</code>, and <code>c()</code> create a new object that needs to copy over information to create one vector, matrix, or data frame. If we know the size of the final vector, matrix, or data frame, we can pre-allocate that space and fill in values. This means that the computer won’t have to repeatedly find more space. For example, take a look at the two ways to simulate a random walk in one dimension in the following code chunk. In the first method, the length of the vector <code>v</code> changes on each iteration of the loop whereas in the second <code>v</code> always has length <code>n</code>.</p>
+<p>Another time when we create copies of objects is when we modify their size. Functions like <code>cbind()</code>, <code>rbind()</code>, and <code>c()</code> create a new object that needs to copy over information to create one vector, matrix, or data frame. If we know the size of the final vector, matrix, or data frame, we can pre-allocate that space and fill in values. This means that the computer won’t have to repeatedly find more space. For example, take a look at the two ways to simulate a random walk in one dimension in the following code chunk. In the first method, the length of the vector <code>v</code> changes on each iteration of the loop, whereas in the second <code>v</code> always has length <code>n</code>.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rw1 <span class="ot">&lt;-</span> <span class="cf">function</span>(n){</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>)</span>
@@ -636,7 +634,7 @@ div.csl-indent {
 <span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat2(100) 0.496 0.512 0.578  0.520 0.534 4.16   100</span></span>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  random_mat3(100) 1.076 1.156 1.351  1.188 1.230 5.15   100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>This demonstrates that if you need to update the values of a vector, matrix, or data frame, try to do as much reassignment at once. For example, changing the a whole column at a time is better than changing the individual values. This avoids additional copies.</p>
+<p>This demonstrates that if you need to update the values of a vector, matrix, or data frame, try to do as much reassignment at once. For example, changing the whole column at a time is better than changing the individual values. This avoids additional copies.</p>
 <section id="practice-question-1" class="level3" data-number="20.2.1">
 <h3 data-number="20.2.1" class="anchored" data-anchor-id="practice-question-1"><span class="header-section-number">20.2.1</span> Practice Question</h3>
 <p>The following code fits a linear model for each racial group and records the coefficient. Rewrite this code so that we pre-allocate the results vector and use the <strong>microbenchmark</strong> to compare the efficiency between the two approaches.</p>
@@ -656,7 +654,7 @@ div.csl-indent {
 </section>
 <section id="parallel-programming" class="level2" data-number="20.3">
 <h2 data-number="20.3" class="anchored" data-anchor-id="parallel-programming"><span class="header-section-number">20.3</span> Parallel Programming </h2>
-<p>Another approach to make our code more efficient is using parallel processing. When we run loops in R, only one iteration is run at a time. For example, the following code runs a random walk 100 times in serial. Parallel processing allows us to execute multiple calls to this function at the same time. This is done by running these processes on separate cores, or processors, on your machine. For example, if we had six cores available we would be able to run 1/6 of the replications on each processor and reduce our overall computation time. The <strong>parallel</strong> package <span class="citation" data-cites="R-parallel">(<a href="references.html#ref-R-parallel" role="doc-biblioref">R Core Team 2024</a>)</span> contains functions to implement parallel processing on different operating systems. Unfortunately, this functionality is often not supported within RStudio and is not covered in this book. We recommend using the <code>mclapply()</code> function from the <strong>parallel</strong> package to implement parallel processing using forking. This does not work on Windows but is much simpler to implement. For parallel processing on Windows, we recommend looking into the socket approach using the <code>parLapply()</code> function in the <strong>parallel</strong> package.</p>
+<p>Another approach to make our code more efficient is using parallel processing. When we run loops in R, only one iteration is run at a time. For example, the following code runs a random walk 100 times in serial. Parallel processing allows us to execute multiple calls to this function at the same time. This is done by running these processes on separate cores, or processors, on your machine. For example, if we had six cores available, we would be able to run 1/6 of the replications on each processor and reduce our overall computation time. The <strong>parallel</strong> package <span class="citation" data-cites="R-parallel">(<a href="references.html#ref-R-parallel" role="doc-biblioref">R Core Team 2024</a>)</span> contains functions to implement parallel processing on different operating systems. Unfortunately, this functionality is often not supported within RStudio and is not covered in this book. We recommend using the <code>mclapply()</code> function from the <strong>parallel</strong> package to implement parallel processing using forking. This does not work on Windows but is much simpler to implement. For parallel processing on Windows, we recommend looking into the socket approach using the <code>parLapply()</code> function in the <strong>parallel</strong> package.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">replicate</span>(<span class="dv">100</span>, <span class="fu">rw1</span>(<span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -664,7 +662,7 @@ div.csl-indent {
 <section id="exercises" class="level2" data-number="20.4">
 <h2 data-number="20.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">20.4</span> Exercises</h2>
 <ol type="1">
-<li><p>The following code chunk includes four attempts to create a new column <code>LOWER_BACK</code> to the pain data. Note that the second and third attempt are vectorized whereas the first and fourth are not. Time each approach and order them from fastest to slowest.</p>
+<li><p>The following code chunk includes four attempts to create a new column <code>LOWER_BACK</code> to the pain data. Note that the second and third attempts are vectorized, whereas the first and fourth are not. Time each approach and order the approaches from fastest to slowest.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-overflow-wrap code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Attempt 1: loop</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>pain<span class="sc">$</span>LOWER_BACK <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode=</span><span class="st">"logical"</span>, <span class="at">length=</span><span class="fu">nrow</span>(pain))</span>
@@ -1129,8 +1127,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../book/expanding_r_skills.html" class="pagination-link" aria-label="<span class='chapter-number'>21</span>&nbsp; <span class='chapter-title'>Expanding your R Skills</span>">
-        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Expanding your R Skills</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../book/expanding_r_skills.html" class="pagination-link" aria-label="<span class='chapter-number'>21</span>&nbsp; <span class='chapter-title'>Expanding Your R Skills</span>">
+        <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Expanding Your R Skills</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

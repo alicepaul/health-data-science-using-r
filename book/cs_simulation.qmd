@@ -1,6 +1,6 @@
 # Case Study: Designing a Simulation Study {#sec-cs-simulation} 
 
-Simulation studies\index{simulation study} are an ideal setting for utilizing functions. When conducting a simulation study, we often need to generate data, run statistical methods, and collect results and we replicate this for a large number of simulations. Functions will ensure that we can write cleaner and reproducible code\index{reproducible code}. In this case study\index{Case study!simulation study}, we will write the code for a simulation study that is based on the analysis by @hastie2020best, which compared different methods for sparse regression. For our purposes, we will focus on the comparison between lasso\index{lasso regression} and ridge regression\index{ridge regression}, introduced in [Chapter -@sec-model-selection]. 
+Simulation studies\index{simulation study} are an ideal setting for utilizing functions. When conducting a simulation study, we often need to generate data, run statistical methods, and collect results, and we replicate this for a large number of simulations. Functions will ensure that we can write cleaner and reproducible code\index{reproducible code}. In this case study\index{Case study!simulation study}, we will write the code for a simulation study that is based on the analysis by @hastie2020best, which compared different methods for sparse regression. For our purposes, we will focus on the comparison between lasso\index{lasso regression} and ridge regression\index{ridge regression}, introduced in [Chapter -@sec-model-selection]. 
 
 Our goal is to understand the predictive power of the two models for different data settings. We will generate our training and test data using the following data generating mechanism which relies on the number of observations $n$, the number of predictors $p$, the sparsity $s \leq p$, predictor correlation level $\rho$, and $\nu$ signal-to-noise ratio. 
 
@@ -11,19 +11,24 @@ Our goal is to understand the predictive power of the two models for different d
 3.  We draw the outcome $y \in \mathbb{R}^n$ from a normal distribution $N(X \beta, \sigma^2 I)$, where $\sigma^2 = \frac{\beta \Sigma \beta}{\nu}$. This ensures that the data has signal-to-noise ratio, defined as $\text{Var}(x^T \beta)/\text{Var}(\sigma^2)$, equal to $\nu$. 
 
 After generating our data, we will use 5-fold cross-validation to fit a lasso or ridge regression model on the training data to get estimated coefficients $\hat{\beta}$. Last, we will predict on the withheld test set. The evaluation metrics we are interested in are the time to fit the model (in seconds), the relative test error 
-$$\text{RTE} = \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\sigma^2}, $$ and the proportion of variance explained 
+
+$$\text{RTE} = \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\sigma^2}, $$ 
+
+and the proportion of variance explained 
+
 $$\text{PVE} = 1 - \frac{(\hat{\beta}-\beta)^T \Sigma (\hat{\beta}-\beta)+\sigma^2}{\beta^T \Sigma \beta + \sigma^2}.$$ 
+
 In @hastie2020best, they vary all five parameters $n$, $p$, $s$, $\rho$, and $\nu$ to observe how the data generation impacts these metrics.  
 
 ## Outlining Our Approach
 
-Before coding our method, let's recap the steps we will need to perform for a single simulation and practice top-down programming\index{top-down programming}. In a single simulation, we need to generate our training and test data, fit our models, and store the results in a way that we can use later. There are two potential sketches of how we can program this code shown in @fig-sketch. Take a look at the differences. In the first, we are storing the data we generate and have a separate function for each method. In the second, we have a function that calculates our end metrics for an inputted model and we have a function that runs through the different methods. A benefit of the first approach is that it will be more flexible; if we think of another method we want to compare we would be easily able to add it without having to re-run any other code. A benefit of the second approach is that we are ensuring that the results stored for each method are the same. Of course, you could also do a hybrid between the two and use a metrics function in the first approach. 
+Before coding our method, let's recap the steps we will need to perform for a single simulation and practice top-down programming\index{top-down programming}. In a single simulation, we need to generate our training and test data, fit our models, and store the results in a way that we can use later. There are two potential sketches of how we can program this code shown in @fig-sketch. Take a look at the differences. In the first, we are storing the data we generate and have a separate function for each method. In the second, we have a function that calculates our end metrics for an inputted model, and we have a function that runs through the different methods. A benefit of the first approach is that it will be more flexible; if we think of another method we want to compare, we would be easily able to add it without having to re-run any other code. A benefit of the second approach is that we are ensuring that the results stored for each method are the same. Of course, you could also do a hybrid between the two and use a metrics function in the first approach. 
 
-![Example Approaches to Sketching out Functions.](images/cs-simulation/sketches.png){#fig-sketch fig-align="center" width="50%"}
+![Example Approaches to Sketching out Functions.](images/cs-simulation/sketches.png){#fig-sketch fig-align="center" width="90%"}
 
-Let's take a closer look at the second approach. For our metrics function, we have missed some inputs we will need. In particular, in order to calculate our end metrics, we will need to know the true coefficients $\beta$, the covariance matrix $\Sigma$, and the level of noise $\sigma$. Therefore, rather than returning a data frame, we will return a list that will contain $X$, $y$, and these values. For the first approach, this would require saving this information in a text file. Comparing between our two options, we will implement the second approach that does not store data. Another thing we can notice in our current sketch is that we likely want to store the results as a csv file, so rather than returning a list, we should return a vector that will correspond to a row in this file.  Our final sketch is in @fig-final-approach.
+Let's take a closer look at the second approach. For our metrics function, we have missed some inputs we will need. In particular, in order to calculate our end metrics, we will need to know the true coefficients $\beta$, the covariance matrix $\Sigma$, and the level of noise $\sigma$. Therefore, rather than returning a data frame, we will return a list that will contain $X$, $y$, and these values. For the first approach, this would require saving this information in a text file. Comparing between our two options, we will implement the second approach that does not store data. Another thing we can notice in our current sketch is that we likely want to store the results as a csv file, so rather than returning a list, we should return a vector that will correspond to a row in this file.  Our final sketch is shown in @fig-final-approach.
 
-![Updated Function Sketch.](images/cs-simulation/final_approach.png){#fig-final-approach fig-align="center" width="40%"}
+![Updated Function Sketch.](images/cs-simulation/final_approach.png){#fig-final-approach fig-align="center" width="80%"}
 
 ## Coding Our Simulation Study
 
@@ -47,7 +52,7 @@ We start by writing our function to generate our data. Our input here will be th
 #'
 #' @param n Number of observations
 #' @param p Number of variables
-#' @param s Sparsity level (number of nonzero coefficients)
+#' @param s Sparsity level (number of non-zero coefficients)
 #' @param snr Signal-to-noise ratio
 #' @param rho Predictor correlation level
 #' @return List containing simulated covariate matrix `X`, 
@@ -84,7 +89,7 @@ simulate_data <- function(n, p, s, snr, rho) {
 }
 ```
 
-Next, we will write a function for our model metrics. The only input we need from our model is the estimated coefficients. Otherwise, all of the information comes from the data we generate with the function we just wrote. We will utilize this list format to extract out the values needed for our formulas. 
+Next, we will write a function for our model metrics. The only input we need from our model is the estimated coefficients. Otherwise, all of the information comes from the data we generate with the function we just wrote. We will utilize this list format to extract the values needed for our formulas. 
 
 ```{r}
 #' Return model metrics
