@@ -421,11 +421,13 @@ Additionally, we could subset the data to only those who have a follow-up. The n
 pain_follow_up <- pain[!is.na(pain$PAIN_INTENSITY_AVERAGE.FOLLOW_UP), ]
 ```
 
-Earlier, we created a column indicating whether or not a patient has lower back pain. We now use the `any()` function to check whether a patient has general back pain. If at least one of these values is equal to 1, then the function returns TRUE. If we had used the `all()` function instead, this would check whether all values are equal to 1, indicating that a patient has pain in their whole back.
+Earlier, we created a column indicating whether or not a patient has lower back pain. We now use the `|` operator and the `pmax()` function to check whether a patient has general back pain. If at least one of the back region areas has value 1, then either of these approaches will return `TRUE`.  
 
 ```{r}
-pain$BACK <- any(pain$X208==1, pain$X209==1, pain$X212==1, 
-                 pain$X213==1, pain$X218==1, pain$X219==1)
+pain$BACK <- pmax(pain$X208, pain$X209, pain$X212, 
+                 pain$X213, pain$X218, pain$X219) == 1
+pain$BACK <- (pain$X208==1) | (pain$X209==1) | (pain$X212==1) |
++                  (pain$X213==1) | (pain$X218==1) | (pain$X219==1)
 ```
 
 ### Practice Question
